@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatchConfig {
+	private static final int			DRUM_CHANNEL	= 9;
+	
 	private Lock						lock			= new Lock();
 	private Logger						logger			= null;
 	private Synth						synth			= null;
@@ -98,7 +100,7 @@ public class PatchConfig {
 	private List<Integer> getAvailableInstrumentChannelsNoLock() {
 		List<Integer> r = new ArrayList<Integer>();
 		for (int i = 0; i < 16; i++) {
-			if (i!=10) {
+			if (i!=DRUM_CHANNEL) {
 				if (instruments[i]==null) {
 					r.add(i);
 				}
@@ -110,7 +112,7 @@ public class PatchConfig {
 	private Str loadPatchNoLock(Patch patch) {
 		Str error = new Str();
 		List<Integer> availableChannels = getAvailableInstrumentChannelsNoLock();
-		if (patch.instruments.size() > availableChannels.size()) {
+		if (patch.instruments.size() > availableChannels.size() && !(patch instanceof DrumPatch)) {
 			error.sb().append("Not enough channels available to load patch: ");
 			error.sb().append(patch.name);
 			error.sb().append(", ");
@@ -126,7 +128,11 @@ public class PatchConfig {
 			int[] channels = new int[patch.instruments.size()];
 			int i = 0;
 			for (Inst inst: patch.instruments) {
-				channels[i] = availableChannels.remove(0);
+				if (patch instanceof DrumPatch && inst instanceof DrumInst) {
+					channels[i] = DRUM_CHANNEL;
+				} else {
+					channels[i] = availableChannels.remove(0);
+				}
 				setInstrumentNoLock(channels[i],inst);
 				i++;
 			}
@@ -144,12 +150,19 @@ public class PatchConfig {
 			error.sb().append(name);
 			logger.error(this, error);
 		} else {
-			r = new Patch();
-			r.name = name;
-			for (int i = 0; i < group.channels.length; i++) {
-				Inst inst = instruments[group.channels[i]];
-				if (inst!=null) {
-					r.instruments.add(inst.copy());
+			if (group.channels.length==1 && group.channels[0]==DRUM_CHANNEL) {
+				DrumPatch dk = new DrumPatch();
+				dk.name = name;
+				dk.setDrumInstrument((DrumInst)instruments[DRUM_CHANNEL].copy());
+				r = dk;
+			} else {
+				r = new Patch();
+				r.name = name;
+				for (int i = 0; i < group.channels.length; i++) {
+					Inst inst = instruments[group.channels[i]];
+					if (inst!=null) {
+						r.instruments.add(inst.copy());
+					}
 				}
 			}
 		}
@@ -225,7 +238,7 @@ public class PatchConfig {
 	
 	private void setInstrumentNoLock(int channel,Inst instrument) {
 		instrument = instrument.copy();
-		if (channel>=0 && channel<16 && channel!=10) {
+		if (channel>=0 && channel<16 && (channel!=DRUM_CHANNEL || instrument instanceof DrumInst)) {
 			instruments[channel] = instrument;
 			instrument.channel = channel;
 			synth.setInstrument(channel, instrument);
@@ -243,7 +256,7 @@ public class PatchConfig {
 		if (ig==null) {
 			boolean add = true;
 			for (int i = 0; i < channels.length; i++) {
-				if (channels[i]>=0 && channels[i]<16 && channels[i]!=10) {
+				if (channels[i]>=0 && channels[i]<16 && (channels[i]!=DRUM_CHANNEL || channels.length==1)) {
 					ig = getGroupNoLock(channels[i]);
 					if (ig!=null) {
 						Str error = new Str();

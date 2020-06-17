@@ -8,7 +8,7 @@ public class MidiNote {
 	public int						channel			= 0;
 	public int						octave			= 3;
 	public int						octaveNote		= 0;
-	public int						velocity		= -1;
+	public int						velocity		= 128;
 	public int						delaySteps		= 0;
 	
 	@Override

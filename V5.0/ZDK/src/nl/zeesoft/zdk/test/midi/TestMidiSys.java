@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.test.midi;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.midi.DrumInst;
+import nl.zeesoft.zdk.midi.DrumPatch;
 import nl.zeesoft.zdk.midi.Inst;
 import nl.zeesoft.zdk.midi.Lfo;
 import nl.zeesoft.zdk.midi.LfoManager;
@@ -118,6 +120,32 @@ public class TestMidiSys extends TestObject {
 		config.unloadPatch(patchName);
 		assertEqual(config.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
 
+		String drumPatchName = "DrumKit";
+		DrumPatch dp = new DrumPatch(drumPatchName);
+		config.loadPatch(dp);
+		
+		dp = (DrumPatch) config.getPatch(drumPatchName);
+		DrumInst di = dp.getDrumInstrument();
+		assertEqual(di.instrument,118,"Drum kit instrument number does not match expectation");
+		assertEqual(di.channel,9,"Drum kit channel number does not matche expectation");
+		
+		// Play some drum notes
+		System.out.println();
+		System.out.println("Playing drum notes C-3 and C#3 ...");
+		player.startNotes(drumPatchName,"C-3");
+		sleep(500);
+		player.stopNotes(drumPatchName,"C-3");
+		player.startNotes(drumPatchName,"C#3");
+		sleep(500);
+		player.stopNotes(drumPatchName,"C#3");
+		player.startNotes(drumPatchName,"C-3");
+		sleep(500);
+		player.stopNotes(drumPatchName,"C-3");
+		player.startNotes(drumPatchName,"C#3");
+		sleep(500);
+		player.stopNotes(drumPatchName,"C#3");
+		System.out.println("Played drum notes");
+		
 		lfoManager.stop();
 		Waiter.waitTillRunnersDone(lfoManager.getRunners(),100);
 		

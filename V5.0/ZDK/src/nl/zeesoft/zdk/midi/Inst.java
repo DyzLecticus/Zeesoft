@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.midi;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Instantiator;
+
 public class Inst {
 	private static final int	BASE_OCTAVE		= 3;
 	
@@ -52,6 +54,7 @@ public class Inst {
 	public int					velocity		= 100;
 	public int					baseOctave		= 3;
 	public int					patchDelaySteps	= 0;
+	public float				stepPercentage	= 0.7F;
 	
 	public List<InstLfoSource>	lfoSources		= new ArrayList<InstLfoSource>();
 	
@@ -147,7 +150,7 @@ public class Inst {
 	}
 	
 	public Inst copy() {
-		Inst r = new Inst();
+		Inst r = (Inst) Instantiator.getNewClassInstance(this.getClass());
 		r.channel = channel;
 		r.solo = solo;
 		r.mute = mute;
@@ -198,8 +201,8 @@ public class Inst {
 					mn.octave = baseOctave - (BASE_OCTAVE - mn.octave);
 				}
 			}
-			if (mn.velocity<0) {
-				mn.velocity = velocity;
+			if (mn.velocity>0) {
+				mn.velocity = (int)(((float)mn.velocity / 127F) * (float)velocity);
 			}
 			r.add(mn);
 		}
