@@ -136,13 +136,9 @@ public class LfoGenerator implements StateListener {
 					} else {
 						value -= 1;
 					}
-					System.out.println(i + " = " + values[i]);
 				}
 			} else if (lfo.type.equals(Lfo.SINE)) {
 				int increments = MAX_VALUE * 2;
-				if (lfo.type.equals(Lfo.LINEAR)) {
-					increments = increments * 2;
-				}
 				values = new int[increments];
 				double value = MIN_VALUE;
 				for (int i = 0; i < increments; i++) {
@@ -155,7 +151,6 @@ public class LfoGenerator implements StateListener {
 					} else {
 						values[i] = base - (add * -1);
 					}
-					System.out.println(i + " = " + values[i] + " sin=" + Math.sin(Math.toRadians(r)));
 					value += 0.5D;
 				}
 			} else if (lfo.type.equals(Lfo.BINARY)) {
