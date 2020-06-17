@@ -6,6 +6,7 @@ import javax.sound.midi.Synthesizer;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class MidiSys {
@@ -40,7 +41,19 @@ public class MidiSys {
 		lock.unlock(self);
 		return r;
 	}
-
+	
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String ... filePaths) {
+		CodeRunnerChain r = null;
+		MidiSys self = new MidiSys();
+		lock.lock(self);
+		Synth synth = getSynthesizerNoLock();
+		if (synth!=null) {
+			r = SoundbankLoader.getCodeRunnerChainForSoundbankFiles(synth.getSynthesizer(), filePaths);
+		}
+		lock.unlock(self);
+		return r;
+	}
+	
 	public static PatchConfig getPatchConfig() {
 		MidiSys self = new MidiSys();
 		lock.lock(self);

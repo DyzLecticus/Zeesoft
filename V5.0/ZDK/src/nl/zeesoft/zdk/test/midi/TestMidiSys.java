@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.midi.PatchConfig;
 import nl.zeesoft.zdk.midi.State;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
@@ -34,6 +35,12 @@ public class TestMidiSys extends TestObject {
 	protected void test(String[] args) {
 		Logger logger = new Logger(true);
 		MidiSys.setLogger(logger);
+
+		CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
+			"resources/ZeeTrackerSynthesizers.sf2",
+			"resources/ZeeTrackerDrumKit.sf2"
+		);
+		Waiter.startAndWaitFor(chain,3000);
 		
 		State state = MidiSys.getState();
 		state.setBeatsPerMinute(100);
@@ -107,7 +114,7 @@ public class TestMidiSys extends TestObject {
 		player.stopNotes(patchName,"F-4","A#4","C-5");
 		
 		// Wait until the delayed notes have been played
-		Waiter.waitTillRunnersDone(player.getDelayedPlayers(),5000);
+		Waiter.waitForRunners(player.getDelayedPlayers(),5000);
 		assertEqual(player.getDelayedPlayers().size(),0,"Number of delayed note players does not match expectation");
 		sleep(500);
 		System.out.println("Played notes");
@@ -147,7 +154,7 @@ public class TestMidiSys extends TestObject {
 		System.out.println("Played drum notes");
 		
 		lfoManager.stop();
-		Waiter.waitTillRunnersDone(lfoManager.getRunners(),100);
+		Waiter.waitForRunners(lfoManager.getRunners(),100);
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}

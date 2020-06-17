@@ -229,7 +229,7 @@ public class HttpClient {
 			wrtr.flush();
 			
 			runner.start();
-			Waiter.waitTillDone(runner, readMs);
+			Waiter.waitFor(runner, readMs);
 			runner.stop();
 		}
 		

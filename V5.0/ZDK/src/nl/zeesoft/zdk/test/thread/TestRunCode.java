@@ -111,7 +111,7 @@ public class TestRunCode extends TestObject {
 		list.start();
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),2,"Number of active code runners does not match expectation");
 		sleep(5);
-		Waiter.waitTillDone(list,100);
+		Waiter.waitFor(list,100);
 		assertEqual(list.isBusy(),false,"List state does not match expectation");
 		exception = list.getCodes().get(1).getException();
 		assertNull(exception,"Exception does not match expectation (3)");
@@ -123,7 +123,7 @@ public class TestRunCode extends TestObject {
 		System.out.println("Test runner list exception handling;");
 		list.add(testCodeB);
 		list.start();
-		Waiter.waitTillDone(list,100);
+		Waiter.waitFor(list,100);
 		exception = list.getCodes().get(2).getException();
 		assertNotNull(exception,"Exception does not match expectation (4)");
 		System.out.println("Caught exception; " + exception);

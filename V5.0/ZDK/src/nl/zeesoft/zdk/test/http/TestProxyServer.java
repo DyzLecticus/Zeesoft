@@ -42,7 +42,7 @@ public class TestProxyServer extends TestObject {
 			
 			error = server.close();
 			List<CodeRunner> runners = server.getActiveRunners();
-			Waiter.waitTillRunnersDone(runners,1000);
+			Waiter.waitForRunners(runners,1000);
 			assertEqual(error,new Str(),"Closing proxy server returned an unexpected error");
 		}
 		

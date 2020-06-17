@@ -22,7 +22,7 @@ public abstract class RunnerObject implements Waitable {
 	
 	public void stopWait(int waitMs) {
 		stop();
-		Waiter.waitTillDone(this,waitMs);
+		Waiter.waitFor(this,waitMs);
 	}
 	
 	/**

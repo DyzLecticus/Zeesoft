@@ -119,13 +119,13 @@ public class TestHttpServer extends TestObject {
 				sleep(10);
 				error = proxy.close();
 				List<CodeRunner> runners = proxy.getActiveRunners();
-				Waiter.waitTillRunnersDone(runners,1000);
+				Waiter.waitForRunners(runners,1000);
 				assertEqual(error,new Str(),"Closing proxy server returned an unexpected error");
 			}
 			sleep(10);
 			error = server.close();
 			List<CodeRunner> runners = server.getActiveRunners();
-			Waiter.waitTillRunnersDone(runners,1000);
+			Waiter.waitForRunners(runners,1000);
 			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
 		}
 		

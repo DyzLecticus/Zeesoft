@@ -22,7 +22,7 @@ public class Waiter {
 		}
 	}
 	
-	public static void waitTillDone(Waitable waitable, int waitMs) {
+	public static void waitFor(Waitable waitable, int waitMs) {
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(waitable.isBusy() && waitedMs < waitMs) {
@@ -40,35 +40,35 @@ public class Waiter {
 		}
 	}
 	
-	public static void startAndWaitTillDone(CodeRunnerChain runnerChain, int waitMs) {
+	public static void startAndWaitFor(CodeRunnerChain runnerChain, int waitMs) {
 		if (runnerChain.size()>0) {
 			runnerChain.start();
-			waitTillDone(runnerChain, waitMs);
+			waitFor(runnerChain, waitMs);
 		}
 	}
 	
-	public static void startAndWaitTillDone(CodeRunnerList runnerList, int waitMs) {
+	public static void startAndWaitFor(CodeRunnerList runnerList, int waitMs) {
 		if (runnerList.size()>0) {
 			runnerList.start();
-			waitTillDone(runnerList, waitMs);
+			waitFor(runnerList, waitMs);
 		}
 	}
 	
-	public static void startAndWaitTillDone(List<CodeRunner> runners, int waitMs) {
+	public static void startAndWaitFor(List<CodeRunner> runners, int waitMs) {
 		for (CodeRunner runner: runners) {
 			runner.start();
 		}
 		if (runners.size()>0) {
-			waitTillRunnersDone(runners, waitMs);
+			waitForRunners(runners, waitMs);
 		}
 	}
 	
-	public static void waitTillRunnersDone(List<CodeRunner> runners, int waitMs) {
+	public static void waitForRunners(List<CodeRunner> runners, int waitMs) {
 		List<Waitable> waitables = new ArrayList<Waitable>(runners);
-		waitTillDone(waitables, waitMs);
+		waitFor(waitables, waitMs);
 	}
 	
-	public static void waitTillDone(List<Waitable> waitables, int waitMs) {
+	public static void waitFor(List<Waitable> waitables, int waitMs) {
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(oneOfWaitablesIsBusy(waitables) && waitedMs < waitMs) {

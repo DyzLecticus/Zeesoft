@@ -130,7 +130,7 @@ public class HttpsClient extends HttpClient {
 			}
 			
 			getRunner().start();
-			Waiter.waitTillDone(getRunner(), readMs);
+			Waiter.waitFor(getRunner(), readMs);
 			getRunner().stop();
 		}
 		

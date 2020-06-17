@@ -45,7 +45,7 @@ public class PartitionedCollection extends CompressedCollection {
 		Str error = FileIO.checkDirectory(path);
 		if (error.length()==0) {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForSave(path);
-			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
+			Waiter.startAndWaitFor(runnerChain, timeoutMs);
 		} else {
 			logger.error(this, error);
 		}
@@ -57,7 +57,7 @@ public class PartitionedCollection extends CompressedCollection {
 		Str error = FileIO.checkDirectory(path);
 		if (error.length()==0) {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForLoad(path);
-			Waiter.startAndWaitTillDone(runnerChain, timeoutMs);
+			Waiter.startAndWaitFor(runnerChain, timeoutMs);
 		} else {
 			logger.error(this, error);
 		}
