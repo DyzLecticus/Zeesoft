@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
 import nl.zeesoft.zdk.midi.PatchConfig;
 import nl.zeesoft.zdk.midi.State;
+import nl.zeesoft.zdk.midi.StateManager;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -45,9 +46,13 @@ public class TestMidiSys extends TestObject {
 		chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 		Waiter.startAndWaitFor(chain,3000);
 		
+		State state = new State();
+		state.beatsPerMinute = 100;
+		state.stepDelayPercentages[1] = 0.3F;
+		state.stepDelayPercentages[3] = 0.3F;
 		
-		State state = MidiSys.getState();
-		state.setBeatsPerMinute(100);
+		StateManager stateManager = MidiSys.getStateManager();
+		stateManager.setState(state);
 
 		// Create some LFOs
 		LfoManager lfoManager = MidiSys.getLfoManager();		

@@ -10,13 +10,13 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class MidiSys {
-	private static Lock			lock		= new Lock();
-	private static Logger		logger		= null;
-	private static State		state		= null;
-	private static Synth		synth		= null;
-	private static PatchConfig	patchConfig	= null;
-	private static LfoManager	lfoManager	= null;
-	private static NotePlayer	notePlayer	= null;
+	private static Lock				lock			= new Lock();
+	private static Logger			logger			= null;
+	private static StateManager		stateManager	= null;
+	private static Synth			synth			= null;
+	private static PatchConfig		patchConfig		= null;
+	private static LfoManager		lfoManager		= null;
+	private static NotePlayer		notePlayer		= null;
 	
 	public static void setLogger(Logger logger) {
 		MidiSys self = new MidiSys();
@@ -34,10 +34,10 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static State getState() {
+	public static StateManager getStateManager() {
 		MidiSys self = new MidiSys();
 		lock.lock(self);
-		State r = getStateNoLock();
+		StateManager r = getStateManagerNoLock();
 		lock.unlock(self);
 		return r;
 	}
@@ -83,7 +83,7 @@ public class MidiSys {
 			Synth synth = getSynthesizerNoLock();
 			PatchConfig config = getPatchConfigNoLock();
 			if (synth!=null && config!=null) {
-				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),getStateNoLock(),config,synth);
+				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),getStateManagerNoLock(),config,synth);
 			}
 		}
 		return MidiSys.notePlayer;
@@ -93,7 +93,7 @@ public class MidiSys {
 		if (MidiSys.lfoManager==null) {
 			Synth synth = getSynthesizerNoLock();
 			if (synth!=null) {
-				MidiSys.lfoManager = new LfoManager(getLoggerNoLock(),synth,getStateNoLock());
+				MidiSys.lfoManager = new LfoManager(getLoggerNoLock(),synth,getStateManagerNoLock());
 			}
 		}
 		return MidiSys.lfoManager;
@@ -122,11 +122,11 @@ public class MidiSys {
 		return MidiSys.synth;
 	}
 	
-	private static State getStateNoLock() {
-		if (MidiSys.state==null) {
-			MidiSys.state = new State(getLoggerNoLock());
+	private static StateManager getStateManagerNoLock() {
+		if (MidiSys.stateManager==null) {
+			MidiSys.stateManager = new StateManager(getLoggerNoLock());
 		}
-		return MidiSys.state;
+		return MidiSys.stateManager;
 	}
 	
 	private static Logger getLoggerNoLock() {

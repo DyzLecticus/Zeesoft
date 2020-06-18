@@ -9,12 +9,12 @@ import nl.zeesoft.zdk.thread.Lock;
 
 public class NotePlayer {
 	private Lock			lock			= new Lock();
-	private State			state			= null;
+	private StateManager	stateManager	= null;
 	private PatchConfig		patchConfig		= null;
 	private Synth			synth			= null;
 		
-	protected NotePlayer(Logger logger, State state, PatchConfig patchConfig, Synth synth) {
-		this.state = state;
+	protected NotePlayer(Logger logger, StateManager stateManager, PatchConfig patchConfig, Synth synth) {
+		this.stateManager = stateManager;
 		this.patchConfig = patchConfig;
 		this.synth = synth;
 		lock.setLogger(this, logger);
@@ -33,14 +33,14 @@ public class NotePlayer {
 	public void startNotes(String patchName, String... notes) {
 		List<MidiNote> mns = patchConfig.getNotes(patchName, notes);
 		lock.lock(this);
-		synth.startGroupNotes(mns,state.getMsPerStep());
+		synth.startGroupNotes(mns,stateManager.getMsPerStep());
 		lock.unlock(this);
 	}
 
 	public void stopNotes(String patchName, String... notes) {
 		List<MidiNote> mns = patchConfig.getNotes(patchName, notes);
 		lock.lock(this);
-		synth.stopGroupNotes(mns,state.getMsPerStep());
+		synth.stopGroupNotes(mns,stateManager.getMsPerStep());
 		lock.unlock(this);
 	}
 	

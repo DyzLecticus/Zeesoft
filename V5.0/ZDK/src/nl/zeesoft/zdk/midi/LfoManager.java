@@ -15,7 +15,7 @@ public class LfoManager {
 	private LfoGenerator[]				lfoGenerators	= new LfoGenerator[16];
 	private Inst[]						instruments		= new Inst[16];
 	
-	protected LfoManager(Logger logger, Synth synth, State state) {
+	protected LfoManager(Logger logger, Synth synth, StateManager state) {
 		this.synth = synth;
 		lock.setLogger(this, logger);
 		for (int i = 0; i < lfoGenerators.length; i++) {

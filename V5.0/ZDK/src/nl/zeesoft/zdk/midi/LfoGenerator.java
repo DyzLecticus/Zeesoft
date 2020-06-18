@@ -5,25 +5,25 @@ import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class LfoGenerator implements StateListener {
-	private static final int	MIN_VALUE	= 0;
-	private static final int	MAX_VALUE	= 64;
+public class LfoGenerator implements StateChangeListener {
+	private static final int	MIN_VALUE		= 0;
+	private static final int	MAX_VALUE		= 64;
 	
-	private Lock				lock		= new Lock();
-	private State				state		= null;
-	private int					lfoIndex	= 0;
+	private Lock				lock			= new Lock();
+	private StateManager		stateManager	= null;
+	private int					lfoIndex		= 0;
 	
-	private Lfo					lfo			= null;
+	private Lfo					lfo				= null;
 	
-	private CodeRunner			runner		= null;
+	private CodeRunner			runner			= null;
 	
-	private int[]				values		= null;
-	private int					valueIndex	= -1;
-	private long				actionTime	= -1;
-	private long				nsPerValue	= 100000;
+	private int[]				values			= null;
+	private int					valueIndex		= -1;
+	private long				actionTime		= -1;
+	private long				nsPerValue		= 100000;
 	
-	protected LfoGenerator(Logger logger, State state, int lfoIndex) {
-		this.state = state;
+	protected LfoGenerator(Logger logger, StateManager stateManager, int lfoIndex) {
+		this.stateManager = stateManager;
 		this.lfoIndex = lfoIndex;
 		lock.setLogger(this, logger);
 		calculateNsPerValueNoLock();
@@ -38,7 +38,7 @@ public class LfoGenerator implements StateListener {
 	}
 	
 	@Override
-	public void stateChanged(String property) {
+	public void stateChanged(State state) {
 		lock.lock(this);
 		calculateNsPerValueNoLock();
 		lock.unlock(this);
@@ -163,7 +163,7 @@ public class LfoGenerator implements StateListener {
 	
 	private void calculateNsPerValueNoLock() {
 		if (lfo!=null && values!=null) {
-			nsPerValue = (state.getNsPerStep() / (long)values.length) * (long)lfo.steps;
+			nsPerValue = (stateManager.getNsPerStep() / (long)values.length) * (long)lfo.steps;
 		} else {
 			nsPerValue = 100000;
 		}
