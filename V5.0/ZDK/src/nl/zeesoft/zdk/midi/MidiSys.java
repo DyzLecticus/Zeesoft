@@ -78,10 +78,6 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static int getMsPerStep(int beatsPerMinute, int stepsPerBeat) {
-		return (60000 / beatsPerMinute) / stepsPerBeat;
-	}
-	
 	private static NotePlayer getNotePlayerNoLock() {
 		if (MidiSys.notePlayer==null) {
 			Synth synth = getSynthesizerNoLock();

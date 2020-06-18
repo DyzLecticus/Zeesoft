@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.midi;
 
 public class DrumLayer {
-	public int		midiNoteNum		= 36;
+	public int		midiNoteNum		= 35;
 	public int		velocity		= 127; 
 	public float	stepPercentage	= 0.7F;
 	
