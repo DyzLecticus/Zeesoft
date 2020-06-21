@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
-public class PatchConfig {
+public class SynthManager {
 	private static final int			DRUM_CHANNEL	= 9;
 	
 	private Lock						lock			= new Lock();
@@ -18,7 +18,7 @@ public class PatchConfig {
 	private Inst[]						instruments 	= new Inst[16];
 	private List<InstGroup>				groups			= new ArrayList<InstGroup>();
 	
-	protected PatchConfig(Logger logger, Synth synth, LfoManager lfoManager) {
+	protected SynthManager(Logger logger, Synth synth, LfoManager lfoManager) {
 		this.logger = logger;
 		this.synth = synth;
 		this.lfoManager = lfoManager;
@@ -73,6 +73,15 @@ public class PatchConfig {
 	public void setInstrument(int channel,Inst instrument) {
 		lock.lock(this);
 		setInstrumentNoLock(channel, instrument);
+		lock.unlock(this);
+	}
+
+	public void setInstrumentPropertyValue(int channel,String property, int value) {
+		lock.lock(this);
+		if (instruments[channel]!=null) {
+			instruments[channel].setPropertyValue(property, value);
+			lfoManager.setInstrumentPropertyValue(channel, property, value);
+		}
 		lock.unlock(this);
 	}
 	
@@ -133,6 +142,7 @@ public class PatchConfig {
 				} else {
 					channels[i] = availableChannels.remove(0);
 				}
+				inst.channel = channels[i];
 				setInstrumentNoLock(channels[i],inst);
 				i++;
 			}

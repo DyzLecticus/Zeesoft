@@ -8,9 +8,6 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class StateManager {
-	public static final String			BEATS_PER_MINUTE		= "BPM";
-	public static final String			STEPS_PER_BEAT			= "SPB";
-	
 	private Lock						lock					= new Lock();
 	private Logger						logger					= null;
 	

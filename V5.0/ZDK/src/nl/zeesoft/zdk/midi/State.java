@@ -1,9 +1,9 @@
 package nl.zeesoft.zdk.midi;
 
 public class State {
-	public int		beatsPerMinute			= 120;
-	public int		stepsPerBeat			= 4;
-	public float[]	stepDelayPercentages	= new float[stepsPerBeat];
+	public int			beatsPerMinute			= 120;
+	public int			stepsPerBeat			= 4;
+	public float[]		stepDelayPercentages	= new float[stepsPerBeat];
 	
 	public float[] getStepDelayPercentages() {
 		if (stepDelayPercentages.length!=stepsPerBeat) {

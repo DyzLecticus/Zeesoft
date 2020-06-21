@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.midi.LfoManager;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
-import nl.zeesoft.zdk.midi.PatchConfig;
+import nl.zeesoft.zdk.midi.SynthManager;
 import nl.zeesoft.zdk.midi.State;
 import nl.zeesoft.zdk.midi.StateManager;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -100,12 +100,12 @@ public class TestMidiSys extends TestObject {
 		patch.instruments.add(inst4);
 		
 		// Load instrument patch
-		PatchConfig config = MidiSys.getPatchConfig();
-		config.loadPatch(patch);
-		assertEqual(config.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
+		SynthManager synthManager = MidiSys.getSynthManager();
+		synthManager.loadPatch(patch);
+		assertEqual(synthManager.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
 		
 		// Get instrument patch (instrument channels have been assigned)
-		patch = config.getPatch(patchName);
+		patch = synthManager.getPatch(patchName);
 		assertNotNull(patch,"Patch not found: " + patchName);
 		if (assertEqual(patch.instruments.size(),4,"Number of patch instruments does not match expectation")) {
 			assertEqual(patch.instruments.get(3).channel,3,"Assigned instrument channel does not match expectation");
@@ -130,18 +130,18 @@ public class TestMidiSys extends TestObject {
 		System.out.println("Played notes");
 		
 		if (patch.instruments.size()==4) {
-			config.removeInstrumentFromPatch(patchName, patch.instruments.get(3).channel);
-			assertEqual(config.getAvailableInstrumentChannels().size(),12,"Number of available channels does not match expectation(2)");
+			synthManager.removeInstrumentFromPatch(patchName, patch.instruments.get(3).channel);
+			assertEqual(synthManager.getAvailableInstrumentChannels().size(),12,"Number of available channels does not match expectation(2)");
 		}
 		
-		config.unloadPatch(patchName);
-		assertEqual(config.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
+		synthManager.unloadPatch(patchName);
+		assertEqual(synthManager.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
 
 		String drumPatchName = "DrumKit";
 		DrumPatch dp = new DrumPatch(drumPatchName);
-		config.loadPatch(dp);
+		synthManager.loadPatch(dp);
 		
-		dp = (DrumPatch) config.getPatch(drumPatchName);
+		dp = (DrumPatch) synthManager.getPatch(drumPatchName);
 		DrumInst di = dp.getDrumInstrument();
 		assertEqual(di.instrument,118,"Drum kit instrument number does not match expectation");
 		assertEqual(di.channel,9,"Drum kit channel number does not matche expectation");

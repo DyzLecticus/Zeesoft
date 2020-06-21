@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.midi;
 
 public class InstGroup {
 	protected String	name		= "";
-	protected int[]		channels	= new int[2];
+	protected int[]		channels	= new int[1];
 	
 	protected InstGroup copy() {
 		InstGroup r = new InstGroup();

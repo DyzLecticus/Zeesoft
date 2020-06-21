@@ -77,6 +77,14 @@ public class LfoManager {
 		lock.unlock(this);
 	}
 	
+	protected void setInstrumentPropertyValue(int channel, String property, int value) {
+		lock.lock(this);
+		if (instruments[channel]!=null) {
+			instruments[channel].setPropertyValue(property, value);
+		}
+		lock.unlock(this);
+	}
+	
 	protected void lfoSelectedNextValue(int lfoIndex, float percentage) {
 		lock.lock(this);
 		Lfo lfo = lfos[lfoIndex];

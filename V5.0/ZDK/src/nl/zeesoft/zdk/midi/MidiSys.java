@@ -14,7 +14,7 @@ public class MidiSys {
 	private static Logger			logger			= null;
 	private static StateManager		stateManager	= null;
 	private static Synth			synth			= null;
-	private static PatchConfig		patchConfig		= null;
+	private static SynthManager		synthManager	= null;
 	private static LfoManager		lfoManager		= null;
 	private static NotePlayer		notePlayer		= null;
 	
@@ -34,14 +34,6 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static StateManager getStateManager() {
-		MidiSys self = new MidiSys();
-		lock.lock(self);
-		StateManager r = getStateManagerNoLock();
-		lock.unlock(self);
-		return r;
-	}
-	
 	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String ... filePaths) {
 		CodeRunnerChain r = null;
 		MidiSys self = new MidiSys();
@@ -54,10 +46,18 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static PatchConfig getPatchConfig() {
+	public static StateManager getStateManager() {
 		MidiSys self = new MidiSys();
 		lock.lock(self);
-		PatchConfig r = getPatchConfigNoLock();
+		StateManager r = getStateManagerNoLock();
+		lock.unlock(self);
+		return r;
+	}
+	
+	public static SynthManager getSynthManager() {
+		MidiSys self = new MidiSys();
+		lock.lock(self);
+		SynthManager r = getSynthManagerNoLock();
 		lock.unlock(self);
 		return r;
 	}
@@ -81,9 +81,9 @@ public class MidiSys {
 	private static NotePlayer getNotePlayerNoLock() {
 		if (MidiSys.notePlayer==null) {
 			Synth synth = getSynthesizerNoLock();
-			PatchConfig config = getPatchConfigNoLock();
-			if (synth!=null && config!=null) {
-				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),getStateManagerNoLock(),config,synth);
+			SynthManager manager = getSynthManagerNoLock();
+			if (synth!=null && manager!=null) {
+				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),getStateManagerNoLock(),manager,synth);
 			}
 		}
 		return MidiSys.notePlayer;
@@ -99,14 +99,14 @@ public class MidiSys {
 		return MidiSys.lfoManager;
 	}
 	
-	private static PatchConfig getPatchConfigNoLock() {
-		if (MidiSys.patchConfig==null) {
+	private static SynthManager getSynthManagerNoLock() {
+		if (MidiSys.synthManager==null) {
 			Synth synth = getSynthesizerNoLock();
 			if (synth!=null) {
-				MidiSys.patchConfig = new PatchConfig(getLoggerNoLock(),synth,getLfoManagerNoLock());
+				MidiSys.synthManager = new SynthManager(getLoggerNoLock(),synth,getLfoManagerNoLock());
 			}
 		}
-		return MidiSys.patchConfig;
+		return MidiSys.synthManager;
 	}
 	
 	private static Synth getSynthesizerNoLock() {
