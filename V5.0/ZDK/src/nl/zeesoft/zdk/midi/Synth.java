@@ -39,10 +39,6 @@ public class Synth {
 		lock.setLogger(this, logger);
 	}
 	
-	protected Synthesizer getSynthesizer() {
-		return synthesizer;
-	}
-	
 	protected void setInstrument(int channel,Inst instrument) {
 		MidiChannel chan = synthesizer.getChannels()[channel];
 		if (chan!=null) {

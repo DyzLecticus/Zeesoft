@@ -9,21 +9,19 @@ import javax.sound.midi.Sequencer;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.thread.Lock;
 
-public class SequencePlayer implements MetaEventListener {
+public class SequencePlayer implements StateChangeListener, MetaEventListener {
 	private static final int	END_OF_SEQUENCE		= 47;
 	private Lock				lock				= new Lock();
 	private Sequencer			sequencer			= null;
 	
 	private Sequence			sequence			= null;
 	
-	protected SequencePlayer(Logger logger,Sequencer sequencer) {
+	protected SequencePlayer(Logger logger,Sequencer sequencer, StateManager state) {
 		this.sequencer = sequencer;
 		lock.setLogger(this, logger);
+		state.addListener(this);
+		sequencer.setTempoInBPM((float)state.getState().beatsPerMinute);
 		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
-	}
-	
-	protected Sequencer getSequencer() {
-		return sequencer;
 	}
 	
 	public void setSequence(Sequence sequence) {
@@ -54,6 +52,11 @@ public class SequencePlayer implements MetaEventListener {
 		boolean r = sequencer.isRunning();
 		lock.unlock(this);
 		return r;
+	}
+
+	@Override
+	public void stateChanged(State state) {
+		sequencer.setTempoInBPM((float)state.beatsPerMinute);
 	}
 
 	@Override

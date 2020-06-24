@@ -41,6 +41,18 @@ public class MidiSys {
 		return r;
 	}
 	
+	public static void closeDevices() {
+		MidiSys self = new MidiSys();
+		lock.lock(self);
+		if (MidiSys.seq!=null && MidiSys.seq.isOpen()) {
+			MidiSys.seq.close();
+		}
+		if (MidiSys.syn!=null && MidiSys.syn.isOpen()) {
+			MidiSys.syn.close();
+		}
+		lock.unlock(self);
+	}
+	
 	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String ... filePaths) {
 		CodeRunnerChain r = null;
 		MidiSys self = new MidiSys();
@@ -105,7 +117,7 @@ public class MidiSys {
 		if (MidiSys.sequencePlayer==null) {
 			Sequencer sequencer = getSeqNoLock();
 			if (sequencer!=null) {
-				MidiSys.sequencePlayer = new SequencePlayer(getLoggerNoLock(),sequencer);
+				MidiSys.sequencePlayer = new SequencePlayer(getLoggerNoLock(),sequencer,getStateManagerNoLock());
 			}
 		}
 		return MidiSys.sequencePlayer;

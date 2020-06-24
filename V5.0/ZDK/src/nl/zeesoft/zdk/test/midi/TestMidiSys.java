@@ -58,8 +58,8 @@ public class TestMidiSys extends TestObject {
 		
 		State state = new State();
 		state.beatsPerMinute = 100;
-		state.stepDelayPercentages[1] = 0.3F;
-		state.stepDelayPercentages[3] = 0.3F;
+		state.stepDelayPercentages[1] = 0.2F;
+		state.stepDelayPercentages[3] = 0.2F;
 		
 		StateManager stateManager = MidiSys.getStateManager();
 		stateManager.setState(state);
@@ -186,14 +186,14 @@ public class TestMidiSys extends TestObject {
 		Pattern pattern = new Pattern();
 		pattern.lanes = 4;
 		for (int s = 0; s < pattern.steps; s++) {
-			if (s==0 || s==7) {
+			if (s==0 || s==8) {
 				PatternNote pn = new PatternNote();
 				pn.step = s;
 				pn.lane = 0;
 				pn.octave = 3;
 				pn.octaveNote = 0;
 				pattern.notes.add(pn);
-			} else if (s==3 || s==11) {
+			} else if (s==4 || s==12) {
 				PatternNote pn = new PatternNote();
 				pn.step = s;
 				pn.lane = 1;
@@ -201,12 +201,21 @@ public class TestMidiSys extends TestObject {
 				pn.octaveNote = 1;
 				pattern.notes.add(pn);
 			}
-			PatternNote pn = new PatternNote();
-			pn.step = s;
-			pn.lane = 2;
-			pn.octave = 3;
-			pn.octaveNote = 2;
-			pattern.notes.add(pn);
+			if (s % 4 == 2) {
+				PatternNote pn = new PatternNote();
+				pn.step = s;
+				pn.lane = 4;
+				pn.octave = 3;
+				pn.octaveNote = 3;
+				pattern.notes.add(pn);
+			} else {
+				PatternNote pn = new PatternNote();
+				pn.step = s;
+				pn.lane = 2;
+				pn.octave = 3;
+				pn.octaveNote = 2;
+				pattern.notes.add(pn);
+			}
 		}
 		PatternToSequenceConvertor convertor = new PatternToSequenceConvertor(stateManager, synthManager);
 		Sequence sequence = convertor.generateSequenceForPattern(drumPatchName, pattern);
@@ -215,10 +224,16 @@ public class TestMidiSys extends TestObject {
 		sequencePlayer.setSequence(sequence);
 	
 		if (PLAY_SEQUENCES) {
+			// Play the drum sequence
+			System.out.println();
+			System.out.println("Playing drum pattern ...");
 			sequencePlayer.start();
 			sleep(10000);
 			sequencePlayer.stop();
+			System.out.println("Played drum pattern");
 		}
+		
+		MidiSys.closeDevices();
 		
 		lfoManager.stop();
 		Waiter.waitForRunners(lfoManager.getRunners(),100);

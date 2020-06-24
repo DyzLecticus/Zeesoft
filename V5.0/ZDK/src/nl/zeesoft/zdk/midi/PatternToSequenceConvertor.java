@@ -31,6 +31,7 @@ public class PatternToSequenceConvertor {
 			addTempoMetaEventToSequence(state,r);
 			addNotesToSequence(state,r,patch,pattern);
 		}
+		alignTrackEndings(state,r,pattern);
 		return r;
 	}
 	
@@ -57,7 +58,8 @@ public class PatternToSequenceConvertor {
 	}
 	
 	protected void addNotesToSequence(State state, Sequence sequence, Patch patch, Pattern pattern) {
-		long maxTick = getStepTick(state,pattern.steps);
+		long sequenceEndTick = getStepTick(state,pattern.steps);
+		int ticksPerStep = getTicksPerStep(state);
 		for (PatternNote pn: pattern.notes) {
 			if (pn.duration>0 && pn.step<pattern.steps) {
 				int index = 0;
@@ -65,23 +67,24 @@ public class PatternToSequenceConvertor {
 					List<MidiNote> mns = inst.getNotes(pn.toString());
 					for (MidiNote mn: mns) {
 						long startTick = getStepTick(state,pn.step + mn.delaySteps);
-						if (startTick>maxTick) {
-							startTick = startTick % maxTick;
+						if (startTick>sequenceEndTick) {
+							startTick = startTick % sequenceEndTick;
 						}
 						Track track = sequence.getTracks()[index];
 						createEventOnTrack(track,ShortMessage.NOTE_ON,inst.channel,mn.getMidiNoteNum(),mn.velocity,startTick);
-						long add = (pn.duration - 1) * RESOLUTION;
+						long add = (pn.duration - 1) * ticksPerStep;
 						if (mn.stepPercentage<1) {
-							add += (mn.stepPercentage * (float)RESOLUTION);
+							add += (mn.stepPercentage * (float)ticksPerStep);
 						}
 						long endTick = startTick + add;
 						long nextNoteTick = getStepTick(state,pn.step + pn.duration);
-						System.out.println(startTick + " - " + endTick + ": " + mn.getMidiNoteNum());
 						if (endTick>nextNoteTick) {
 							endTick = nextNoteTick - 1;
 						}
-						if (endTick>maxTick) {
-							endTick = endTick % maxTick;
+						if (endTick>sequenceEndTick) {
+							endTick = endTick % sequenceEndTick;
+						} else if (endTick==sequenceEndTick) {
+							endTick = sequenceEndTick - 1;
 						}
 						createEventOnTrack(track,ShortMessage.NOTE_OFF,inst.channel,mn.getMidiNoteNum(),mn.velocity,endTick);
 					}
@@ -91,17 +94,29 @@ public class PatternToSequenceConvertor {
 		}
 	}
 	
+	protected void alignTrackEndings(State state, Sequence sequence, Pattern pattern) {
+		long sequenceEndTick = getStepTick(state,pattern.steps);
+		for (int t = 0; t < sequence.getTracks().length; t++) {
+			createEventOnTrack(sequence.getTracks()[t],ShortMessage.NOTE_OFF,0,0,0,sequenceEndTick - 1);
+		}
+	}
+	
 	protected long getStepTick(State state,int step) {
 		long r = 0;
 		if (step>0) {
-			r = step * RESOLUTION;
+			int ticksPerStep = getTicksPerStep(state);
+			r = step * ticksPerStep;
 			int beatStep = step % state.stepsPerBeat;
 			float delayPercentage = state.getStepDelayPercentages()[beatStep];
 			if (delayPercentage>0) {
-				r = r + (int)(delayPercentage * (float)RESOLUTION);
+				r = r + (int)(delayPercentage * (float)ticksPerStep);
 			}
 		}
 		return r;
+	}
+	
+	protected int getTicksPerStep(State state) {
+		return RESOLUTION / state.stepsPerBeat;
 	}
 	
 	protected void createEventOnTrack(Track track, int type, int channel, int num, int val, long tick) {
