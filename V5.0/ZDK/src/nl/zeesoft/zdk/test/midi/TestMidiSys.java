@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.midi;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.midi.DrumInst;
 import nl.zeesoft.zdk.midi.DrumPatch;
 import nl.zeesoft.zdk.midi.Inst;
@@ -9,9 +10,9 @@ import nl.zeesoft.zdk.midi.LfoManager;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
-import nl.zeesoft.zdk.midi.SynthManager;
 import nl.zeesoft.zdk.midi.State;
 import nl.zeesoft.zdk.midi.StateManager;
+import nl.zeesoft.zdk.midi.SynthManager;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -101,7 +102,9 @@ public class TestMidiSys extends TestObject {
 		
 		// Load instrument patch
 		SynthManager synthManager = MidiSys.getSynthManager();
-		synthManager.loadPatch(patch);
+		synthManager.addPatch(patch);
+		Str error = synthManager.loadPatch(patch.name);
+		assertEqual(error,new Str(),"Error message does not match expectation");
 		assertEqual(synthManager.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
 		
 		// Get instrument patch (instrument channels have been assigned)
@@ -139,12 +142,15 @@ public class TestMidiSys extends TestObject {
 
 		String drumPatchName = "DrumKit";
 		DrumPatch dp = new DrumPatch(drumPatchName);
-		synthManager.loadPatch(dp);
+		synthManager.addPatch(dp);
+		synthManager.loadPatch(dp.name);
 		
 		dp = (DrumPatch) synthManager.getPatch(drumPatchName);
 		DrumInst di = dp.getDrumInstrument();
 		assertEqual(di.instrument,118,"Drum kit instrument number does not match expectation");
 		assertEqual(di.channel,9,"Drum kit channel number does not matche expectation");
+		assertEqual(synthManager.listPatches().size(),2,"Number of patches does not match expectation");
+		assertEqual(synthManager.listLoadedPatches().size(),1,"Number of loaded patches does not match expectation");
 		
 		// Play some drum notes
 		System.out.println();
