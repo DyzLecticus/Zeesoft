@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.test.midi;
 
+import javax.sound.midi.Sequence;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.midi.DrumInst;
@@ -10,6 +12,10 @@ import nl.zeesoft.zdk.midi.LfoManager;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
+import nl.zeesoft.zdk.midi.Pattern;
+import nl.zeesoft.zdk.midi.PatternNote;
+import nl.zeesoft.zdk.midi.PatternToSequenceConvertor;
+import nl.zeesoft.zdk.midi.SequencePlayer;
 import nl.zeesoft.zdk.midi.State;
 import nl.zeesoft.zdk.midi.StateManager;
 import nl.zeesoft.zdk.midi.SynthManager;
@@ -21,6 +27,9 @@ import nl.zeesoft.zdk.thread.ProgressBar;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestMidiSys extends TestObject {
+	private static final boolean	PLAY_NOTES		= false;
+	private static final boolean	PLAY_SEQUENCES	= true;
+	
 	public TestMidiSys(Tester tester) {
 		super(tester);
 	}
@@ -114,23 +123,26 @@ public class TestMidiSys extends TestObject {
 			assertEqual(patch.instruments.get(3).channel,3,"Assigned instrument channel does not match expectation");
 		}
 		
-		// Play some notes
 		NotePlayer player = MidiSys.getNotePlayer();
-		System.out.println();
-		System.out.println("Playing notes F-4, A#4 and C-5 ...");
-		player.startNotes(patchName,"F-4");
-		sleep(100);
-		player.startNotes(patchName,"A#4");
-		sleep(100);
-		player.startNotes(patchName,"C-5");
-		sleep(100);
-		player.stopNotes(patchName,"F-4","A#4","C-5");
 		
-		// Wait until the delayed notes have been played
-		Waiter.waitForRunners(player.getDelayedPlayers(),5000);
-		assertEqual(player.getDelayedPlayers().size(),0,"Number of delayed note players does not match expectation");
-		sleep(500);
-		System.out.println("Played notes");
+		if (PLAY_NOTES) {
+			// Play some notes
+			System.out.println();
+			System.out.println("Playing notes F-4, A#4 and C-5 ...");
+			player.startNotes(patchName,"F-4");
+			sleep(100);
+			player.startNotes(patchName,"A#4");
+			sleep(100);
+			player.startNotes(patchName,"C-5");
+			sleep(100);
+			player.stopNotes(patchName,"F-4","A#4","C-5");
+			
+			// Wait until the delayed notes have been played
+			Waiter.waitForRunners(player.getDelayedPlayers(),5000);
+			assertEqual(player.getDelayedPlayers().size(),0,"Number of delayed note players does not match expectation");
+			sleep(500);
+			System.out.println("Played notes");
+		}
 		
 		if (patch.instruments.size()==4) {
 			synthManager.removeInstrumentFromPatch(patchName, patch.instruments.get(3).channel);
@@ -152,22 +164,61 @@ public class TestMidiSys extends TestObject {
 		assertEqual(synthManager.listPatches().size(),2,"Number of patches does not match expectation");
 		assertEqual(synthManager.listLoadedPatches().size(),1,"Number of loaded patches does not match expectation");
 		
-		// Play some drum notes
-		System.out.println();
-		System.out.println("Playing drum notes C-3 and C#3 ...");
-		player.startNotes(drumPatchName,"C-3");
-		sleep(500);
-		player.stopNotes(drumPatchName,"C-3");
-		player.startNotes(drumPatchName,"C#3");
-		sleep(500);
-		player.stopNotes(drumPatchName,"C#3");
-		player.startNotes(drumPatchName,"C-3");
-		sleep(500);
-		player.stopNotes(drumPatchName,"C-3");
-		player.startNotes(drumPatchName,"C#3");
-		sleep(500);
-		player.stopNotes(drumPatchName,"C#3");
-		System.out.println("Played drum notes");
+		if (PLAY_NOTES) {
+			// Play some drum notes
+			System.out.println();
+			System.out.println("Playing drum notes C-3 and C#3 ...");
+			player.startNotes(drumPatchName,"C-3");
+			sleep(500);
+			player.stopNotes(drumPatchName,"C-3");
+			player.startNotes(drumPatchName,"C#3");
+			sleep(500);
+			player.stopNotes(drumPatchName,"C#3");
+			player.startNotes(drumPatchName,"C-3");
+			sleep(500);
+			player.stopNotes(drumPatchName,"C-3");
+			player.startNotes(drumPatchName,"C#3");
+			sleep(500);
+			player.stopNotes(drumPatchName,"C#3");
+			System.out.println("Played drum notes");
+		}
+		
+		Pattern pattern = new Pattern();
+		pattern.lanes = 4;
+		for (int s = 0; s < pattern.steps; s++) {
+			if (s==0 || s==7) {
+				PatternNote pn = new PatternNote();
+				pn.step = s;
+				pn.lane = 0;
+				pn.octave = 3;
+				pn.octaveNote = 0;
+				pattern.notes.add(pn);
+			} else if (s==3 || s==11) {
+				PatternNote pn = new PatternNote();
+				pn.step = s;
+				pn.lane = 1;
+				pn.octave = 3;
+				pn.octaveNote = 1;
+				pattern.notes.add(pn);
+			}
+			PatternNote pn = new PatternNote();
+			pn.step = s;
+			pn.lane = 2;
+			pn.octave = 3;
+			pn.octaveNote = 2;
+			pattern.notes.add(pn);
+		}
+		PatternToSequenceConvertor convertor = new PatternToSequenceConvertor(stateManager, synthManager);
+		Sequence sequence = convertor.generateSequenceForPattern(drumPatchName, pattern);
+		
+		SequencePlayer sequencePlayer = MidiSys.getSequencPlayer();
+		sequencePlayer.setSequence(sequence);
+	
+		if (PLAY_SEQUENCES) {
+			sequencePlayer.start();
+			sleep(10000);
+			sequencePlayer.stop();
+		}
 		
 		lfoManager.stop();
 		Waiter.waitForRunners(lfoManager.getRunners(),100);

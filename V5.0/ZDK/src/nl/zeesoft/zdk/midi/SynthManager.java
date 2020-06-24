@@ -156,9 +156,9 @@ public class SynthManager {
 		lock.unlock(this);
 	}
 	
-	protected List<MidiNote> getNotes(String groupName,String... notes) {
+	protected List<MidiNote> getNotes(String name,String... notes) {
 		lock.lock(this);
-		List<MidiNote> r = getNotesNoLock(groupName,notes);
+		List<MidiNote> r = getNotesNoLock(name,notes);
 		lock.unlock(this);
 		return r;
 	}
