@@ -8,8 +8,10 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpClient;
 import nl.zeesoft.zdk.http.HttpClientManager;
 import nl.zeesoft.zdk.http.HttpHeaderList;
+import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpServer;
 import nl.zeesoft.zdk.http.HttpServerConfig;
+import nl.zeesoft.zdk.http.ProxyRequestHandler;
 import nl.zeesoft.zdk.http.ProxyServerConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
@@ -40,20 +42,27 @@ public class TestHttpServer extends TestObject {
 		System.out.println("HttpServerConfig config = new HttpServerConfig(logger);");
 		System.out.println("// Create the server");
 		System.out.println("HttpServer server = new HttpServer(config);");
-		System.out.println("// Start the server");
-		System.out.println("server.start();");
+		System.out.println("// Open the server");
+		System.out.println("Str error = server.open();");
 		System.out.println("// Create the client");
 		System.out.println("HttpClient client = new HttpClient(\"GET\",\"http://127.0.0.1:8080/\");");
 		System.out.println("// Send the request and get the response");
 		System.out.println("client.sendRequest();");
+		System.out.println("int responseCode = client.getResponseCode();");
 		System.out.println("Str responseBody = client.getResponseBody();");
-		System.out.println("// Stop the server");
-		System.out.println("server.stop();");
+		System.out.println("// Close the server");
+		System.out.println("error = server.close();");
+		System.out.println("// Wait for connections to close if needed");
+		System.out.println("Waiter.waitForRunners(server.getActiveRunners(),1000);");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestHttpServer.class));
 		System.out.println(" * " + getTester().getLinkForClass(HttpServer.class));
+		System.out.println(" * " + getTester().getLinkForClass(HttpServerConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(HttpRequestHandler.class));
+		System.out.println(" * " + getTester().getLinkForClass(ProxyServerConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(ProxyRequestHandler.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows the full debug logging of a regular HTTP server and a proxy server handling some basic requests.  ");
@@ -124,8 +133,7 @@ public class TestHttpServer extends TestObject {
 			}
 			sleep(10);
 			error = server.close();
-			List<CodeRunner> runners = server.getActiveRunners();
-			Waiter.waitForRunners(runners,1000);
+			Waiter.waitForRunners(server.getActiveRunners(),1000);
 			assertEqual(error,new Str(),"Closing HTTP server returned an unexpected error");
 		}
 		

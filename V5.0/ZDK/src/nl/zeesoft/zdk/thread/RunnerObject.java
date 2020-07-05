@@ -41,6 +41,8 @@ public abstract class RunnerObject implements Waitable {
 
 	/**
 	 * Called when the runner caught an exception.
+	 * 
+	 * @param exception The exception that was caught
 	 */
 	protected void caughtException(Exception exception) {
 		// Override to implement

@@ -35,11 +35,14 @@ public class ZDK extends LibraryObject {
 		System.out.println();
 		System.out.println("It provides support for;  ");
 		System.out.println(" * Self documenting and testing libraries  ");
-		System.out.println(" * Extended StringBuilder manipulation and validation  ");
 		System.out.println(" * (Mock) File writing and reading  ");
+		System.out.println(" * Dynamic class instantiation and reflection  ");
+		System.out.println(" * Extended StringBuilder manipulation and validation  ");
+		System.out.println(" * TimeStamped logging  ");
 		System.out.println(" * Multi threading  ");
-		System.out.println(" * Object persistence  ");
+		System.out.println(" * Collection queries and persistence  ");
 		System.out.println(" * HTTP servers and requests  ");
+		System.out.println(" * Advanced MIDI instrument and sequence pattern design  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
