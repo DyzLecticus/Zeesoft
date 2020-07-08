@@ -14,16 +14,14 @@ public class SynthManager {
 	private Logger						logger			= null;
 	private Synth						synth			= null;
 	private LfoManager					lfoManager		= null;
-	private PatternManager				patternManager	= null;
 	
 	private Inst[]						instruments 	= new Inst[16];
 	private List<Patch>					patches			= new ArrayList<Patch>();
 	
-	protected SynthManager(Logger logger, Synth synth, LfoManager lfoManager, PatternManager patternManager) {
+	protected SynthManager(Logger logger, Synth synth, LfoManager lfoManager) {
 		this.logger = logger;
 		this.synth = synth;
 		this.lfoManager = lfoManager;
-		this.patternManager = patternManager;
 		lock.setLogger(this, logger);
 	}
 	
@@ -79,7 +77,6 @@ public class SynthManager {
 		Patch r = getPatchNoLock(name);
 		if (r!=null) {
 			r.name = newName;
-			patternManager.renamedPatch(name, newName);
 		}
 		lock.unlock(this);
 	}
@@ -92,7 +89,6 @@ public class SynthManager {
 				unloadPatch(name);
 			}
 			patches.remove(r);
-			patternManager.removedPatch(name);
 		}
 		lock.unlock(this);
 		return r;
@@ -176,7 +172,6 @@ public class SynthManager {
 		Patch existing = getPatchNoLock(patch.name);
 		if (existing==null) {
 			patches.add(patch);
-			patternManager.addedPatch(patch.name);
 		} else {
 			error.sb().append("Patch already exists with name: ");
 			error.sb().append(patch.name);

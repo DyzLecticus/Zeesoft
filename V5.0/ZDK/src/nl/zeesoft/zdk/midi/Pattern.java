@@ -14,7 +14,7 @@ public class Pattern {
 		r.lanes = lanes;
 		for (PatternNote note: notes) {
 			if (note.step>=0 && note.step<steps && note.lane>=0 && note.lane<lanes) {
-				r.notes.add(note);
+				r.notes.add(note.copy());
 			}
 		}
 		return r;

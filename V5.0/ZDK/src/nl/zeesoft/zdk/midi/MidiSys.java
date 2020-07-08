@@ -19,7 +19,6 @@ public class MidiSys {
 	private static SynthManager		synthManager	= null;
 	private static LfoManager		lfoManager		= null;
 	private static NotePlayer		notePlayer		= null;
-	private static PatternManager	patternManager	= null;
 	private static SequencePlayer	sequencePlayer	= null;
 	
 	private static Sequencer		seq				= null;
@@ -97,14 +96,6 @@ public class MidiSys {
 		return r;
 	}
 	
-	public static PatternManager getPatternManager() {
-		MidiSys self = new MidiSys();
-		lock.lock(self);
-		PatternManager r = getPatternManagerNoLock();
-		lock.unlock(self);
-		return r;
-	}
-	
 	public static SequencePlayer getSequencPlayer() {
 		MidiSys self = new MidiSys();
 		lock.lock(self);
@@ -121,13 +112,6 @@ public class MidiSys {
 			}
 		}
 		return MidiSys.sequencePlayer;
-	}
-	
-	private static PatternManager getPatternManagerNoLock() {
-		if (MidiSys.patternManager==null) {
-			MidiSys.patternManager = new PatternManager(getLoggerNoLock());
-		}
-		return MidiSys.patternManager;
 	}
 	
 	private static NotePlayer getNotePlayerNoLock() {
@@ -155,7 +139,7 @@ public class MidiSys {
 		if (MidiSys.synthManager==null) {
 			Synth synth = getSynthNoLock();
 			if (synth!=null) {
-				MidiSys.synthManager = new SynthManager(getLoggerNoLock(),synth,getLfoManagerNoLock(),getPatternManagerNoLock());
+				MidiSys.synthManager = new SynthManager(getLoggerNoLock(),synth,getLfoManagerNoLock());
 			}
 		}
 		return MidiSys.synthManager;

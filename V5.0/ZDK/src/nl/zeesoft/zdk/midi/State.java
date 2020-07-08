@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.midi;
 
+import nl.zeesoft.zdk.Instantiator;
+
 public class State {
 	public int			beatsPerMinute			= 120;
 	public int			stepsPerBeat			= 4;
@@ -21,7 +23,7 @@ public class State {
 	}
 	
 	public State copy() {
-		State r = new State();
+		State r = (State) Instantiator.getNewClassInstance(this.getClass());
 		r.beatsPerMinute = beatsPerMinute;
 		r.stepsPerBeat = stepsPerBeat;
 		r.stepDelayPercentages = new float[stepsPerBeat];

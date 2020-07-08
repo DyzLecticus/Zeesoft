@@ -4,16 +4,14 @@ import javax.sound.midi.Sequence;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.midi.PatchFactory;
 import nl.zeesoft.zdk.midi.DrumInst;
 import nl.zeesoft.zdk.midi.DrumPatch;
-import nl.zeesoft.zdk.midi.Inst;
 import nl.zeesoft.zdk.midi.Lfo;
 import nl.zeesoft.zdk.midi.LfoManager;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
-import nl.zeesoft.zdk.midi.Pattern;
-import nl.zeesoft.zdk.midi.PatternNote;
 import nl.zeesoft.zdk.midi.PatternToSequenceConvertor;
 import nl.zeesoft.zdk.midi.SequencePlayer;
 import nl.zeesoft.zdk.midi.State;
@@ -72,51 +70,18 @@ public class TestMidiSys extends TestObject {
 		lfoManager.setLfo(1,lfo2);
 		lfoManager.start();
 		
-		// Create some instruments
-		Inst inst1 = new Inst();
-
-		Inst inst2 = new Inst();
-		inst2.velocity = 60;
-		inst2.filter = 48;
-		inst2.pan = 0;
-		inst2.reverb = 24;
-		inst2.patchDelaySteps = 3;
-		
-		Inst inst3 = new Inst();
-		inst3.velocity = 40;
-		inst3.filter = 40;
-		inst3.pan = 127;
-		inst3.reverb = 36;
-		inst3.patchDelaySteps = 6;
-		
-		Inst inst4 = new Inst();
-		inst4.velocity = 20;
-		inst4.filter = 32;
-		inst4.reverb = 48;
-		inst4.patchDelaySteps = 9;
-		
-		// Connect instrument properties to LFOs
-		inst1.setLfoSource(Inst.FILTER,0,0.3F,true);
-		inst2.setLfoSource(Inst.FILTER,0,0.25F,true);
-		inst3.setLfoSource(Inst.FILTER,0,0.20F,true);
-		inst4.setLfoSource(Inst.FILTER,0,0.15F,true);
-
-		// Create instrument patch
+		// Create patch
 		String patchName = "EchoTest";
-		Patch patch = new Patch(patchName);
-		patch.instruments.add(inst1);
-		patch.instruments.add(inst2);
-		patch.instruments.add(inst3);
-		patch.instruments.add(inst4);
+		Patch patch = PatchFactory.getEchoSaw(patchName,3);
 		
-		// Load instrument patch
+		// Load patch
 		SynthManager synthManager = MidiSys.getSynthManager();
 		synthManager.addPatch(patch);
 		Str error = synthManager.loadPatch(patch.name);
 		assertEqual(error,new Str(),"Error message does not match expectation");
 		assertEqual(synthManager.getAvailableInstrumentChannels().size(),11,"Number of available channels does not match expectation(1)");
 		
-		// Get instrument patch (instrument channels have been assigned)
+		// Get patch (instrument channels have been assigned)
 		patch = synthManager.getPatch(patchName);
 		assertNotNull(patch,"Patch not found: " + patchName);
 		if (assertEqual(patch.instruments.size(),4,"Number of patch instruments does not match expectation")) {
@@ -153,7 +118,7 @@ public class TestMidiSys extends TestObject {
 		assertEqual(synthManager.getAvailableInstrumentChannels().size(),15,"Number of available channels does not match expectation(3)");
 
 		String drumPatchName = "DrumKit";
-		DrumPatch dp = new DrumPatch(drumPatchName);
+		DrumPatch dp = PatchFactory.getDefaultDrumPatch(drumPatchName);
 		synthManager.addPatch(dp);
 		synthManager.loadPatch(dp.name);
 		
@@ -183,42 +148,8 @@ public class TestMidiSys extends TestObject {
 			System.out.println("Played drum notes");
 		}
 		
-		Pattern pattern = new Pattern();
-		pattern.lanes = 4;
-		for (int s = 0; s < pattern.steps; s++) {
-			if (s==0 || s==8) {
-				PatternNote pn = new PatternNote();
-				pn.step = s;
-				pn.lane = 0;
-				pn.octave = 3;
-				pn.octaveNote = 0;
-				pattern.notes.add(pn);
-			} else if (s==4 || s==12) {
-				PatternNote pn = new PatternNote();
-				pn.step = s;
-				pn.lane = 1;
-				pn.octave = 3;
-				pn.octaveNote = 1;
-				pattern.notes.add(pn);
-			}
-			if (s % 4 == 2) {
-				PatternNote pn = new PatternNote();
-				pn.step = s;
-				pn.lane = 4;
-				pn.octave = 3;
-				pn.octaveNote = 3;
-				pattern.notes.add(pn);
-			} else {
-				PatternNote pn = new PatternNote();
-				pn.step = s;
-				pn.lane = 2;
-				pn.octave = 3;
-				pn.octaveNote = 2;
-				pattern.notes.add(pn);
-			}
-		}
 		PatternToSequenceConvertor convertor = new PatternToSequenceConvertor(stateManager, synthManager);
-		Sequence sequence = convertor.generateSequenceForPattern(drumPatchName, pattern);
+		Sequence sequence = convertor.generateSequenceForPattern(drumPatchName, dp.patterns[0]);
 		
 		SequencePlayer sequencePlayer = MidiSys.getSequencPlayer();
 		sequencePlayer.setSequence(sequence);

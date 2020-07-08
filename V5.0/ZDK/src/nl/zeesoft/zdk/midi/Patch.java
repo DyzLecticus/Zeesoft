@@ -6,8 +6,9 @@ import java.util.List;
 import nl.zeesoft.zdk.Instantiator;
 
 public class Patch {
-	public String			name			= "New patch";
-	public List<Inst>		instruments		= new ArrayList<Inst>();
+	public String		name			= "New patch";
+	public List<Inst>	instruments		= new ArrayList<Inst>();
+	public Pattern[]	patterns		= new Pattern[100];
 	
 	public Patch() {
 		
@@ -22,6 +23,11 @@ public class Patch {
 		r.name = name;
 		for (Inst inst: instruments) {
 			r.instruments.add(inst.copy());
+		}
+		for (int i = 0; i < patterns.length; i++) {
+			if (patterns[i]!=null) {
+				r.patterns[i] = patterns[i].copy();
+			}
 		}
 		return r;
 	}
