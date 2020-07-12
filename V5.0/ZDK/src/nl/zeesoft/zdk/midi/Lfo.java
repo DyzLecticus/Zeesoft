@@ -13,6 +13,11 @@ public class Lfo {
 		
 	}
 	
+	public Lfo(String type, int steps) {
+		this.type = type;
+		this.steps = steps;
+	}
+	
 	public Lfo(String type) {
 		this.type = type;
 		if (type.equals(BINARY)) {

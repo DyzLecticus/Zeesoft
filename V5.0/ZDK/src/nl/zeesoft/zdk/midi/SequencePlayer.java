@@ -13,11 +13,13 @@ public class SequencePlayer implements StateChangeListener, MetaEventListener {
 	private static final int	END_OF_SEQUENCE		= 47;
 	private Lock				lock				= new Lock();
 	private Sequencer			sequencer			= null;
+	private LfoManager			lfoManager			= null;
 	
 	private Sequence			sequence			= null;
 	
-	protected SequencePlayer(Logger logger,Sequencer sequencer, StateManager state) {
+	protected SequencePlayer(Logger logger,Sequencer sequencer, StateManager state, LfoManager lfoManager) {
 		this.sequencer = sequencer;
+		this.lfoManager = lfoManager;
 		lock.setLogger(this, logger);
 		state.addListener(this);
 		sequencer.setTempoInBPM((float)state.getState().beatsPerMinute);
@@ -35,6 +37,7 @@ public class SequencePlayer implements StateChangeListener, MetaEventListener {
 		lock.lock(this);
 		if (!sequencer.isRunning()) {
 			sequencer.start();
+			lfoManager.reset();
 		}
 		lock.unlock(this);
 	}

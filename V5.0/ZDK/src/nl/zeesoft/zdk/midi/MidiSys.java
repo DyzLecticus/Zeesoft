@@ -108,7 +108,7 @@ public class MidiSys {
 		if (MidiSys.sequencePlayer==null) {
 			Sequencer sequencer = getSeqNoLock();
 			if (sequencer!=null) {
-				MidiSys.sequencePlayer = new SequencePlayer(getLoggerNoLock(),sequencer,getStateManagerNoLock());
+				MidiSys.sequencePlayer = new SequencePlayer(getLoggerNoLock(),sequencer,getStateManagerNoLock(),getLfoManagerNoLock());
 			}
 		}
 		return MidiSys.sequencePlayer;

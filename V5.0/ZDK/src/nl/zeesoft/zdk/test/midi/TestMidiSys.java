@@ -4,14 +4,13 @@ import javax.sound.midi.Sequence;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.midi.PatchFactory;
 import nl.zeesoft.zdk.midi.DrumInst;
 import nl.zeesoft.zdk.midi.DrumPatch;
-import nl.zeesoft.zdk.midi.Lfo;
 import nl.zeesoft.zdk.midi.LfoManager;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.NotePlayer;
 import nl.zeesoft.zdk.midi.Patch;
+import nl.zeesoft.zdk.midi.PatchFactory;
 import nl.zeesoft.zdk.midi.PatternToSequenceConvertor;
 import nl.zeesoft.zdk.midi.SequencePlayer;
 import nl.zeesoft.zdk.midi.State;
@@ -62,12 +61,9 @@ public class TestMidiSys extends TestObject {
 		StateManager stateManager = MidiSys.getStateManager();
 		stateManager.setState(state);
 
-		// Create some LFOs
-		LfoManager lfoManager = MidiSys.getLfoManager();		
-		Lfo lfo1 = new Lfo();
-		Lfo lfo2 = new Lfo(Lfo.BINARY);
-		lfoManager.setLfo(0,lfo1);
-		lfoManager.setLfo(1,lfo2);
+		// Initialize default LFOs
+		LfoManager lfoManager = MidiSys.getLfoManager();
+		lfoManager.initializeDefaultLfos();
 		lfoManager.start();
 		
 		// Create patch

@@ -70,6 +70,12 @@ public class LfoGenerator implements StateChangeListener {
 		return r;
 	}
 	
+	protected void reset() {
+		lock.lock(this);
+		valueIndex = -1;
+		lock.unlock(this);
+	}
+	
 	protected void selectNextValue() {
 		int value = -1;
 		float percentage = 0;

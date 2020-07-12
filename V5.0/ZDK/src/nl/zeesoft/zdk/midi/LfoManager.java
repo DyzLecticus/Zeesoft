@@ -29,6 +29,18 @@ public class LfoManager {
 		}
 	}
 	
+	public void initializeDefaultLfos() {
+		setLfo(0,new Lfo());
+		setLfo(1,new Lfo(Lfo.SINE, 3));
+		setLfo(2,new Lfo(Lfo.SINE, 7));
+		setLfo(3,new Lfo(Lfo.BINARY, 2));
+		setLfo(3,new Lfo(Lfo.BINARY, 4));
+		setLfo(4,new Lfo(Lfo.SAW, 8));
+		setLfo(5,new Lfo(Lfo.LINEAR, 16));
+		setLfo(6,new Lfo(Lfo.SINE, 24));
+		setLfo(7,new Lfo(Lfo.LINEAR, 32));
+	}
+	
 	public void setLfo(int index, Lfo lfo) {
 		lock.lock(this);
 		if (index>=0 && index<16) {
@@ -57,6 +69,12 @@ public class LfoManager {
 	public void stop() {
 		for (int i = 0; i < lfoGenerators.length; i++) {
 			lfoGenerators[i].stop();
+		}
+	}
+	
+	public void reset() {
+		for (int i = 0; i < lfoGenerators.length; i++) {
+			lfoGenerators[i].reset();
 		}
 	}
 	
