@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,12 +74,27 @@ public class MFTL  {
 			String path = getSavesPath() + timeStamp + "-" + DEMO_WORLD;
 			File t = new File(path);
 			System.out.println("Creating backup: " + t.getAbsolutePath());
-	        Path source = Paths.get(s.getAbsolutePath());
-	        Path target = Paths.get(t.getAbsolutePath());
-	        try {
-				Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				e.printStackTrace();
+			copyPathRecursive(s.getAbsolutePath(), t.getAbsolutePath());
+		}
+	}
+	
+	private static void copyPathRecursive(String sourcePath, String targetPath) {
+		File s = new File(sourcePath);
+		File t = new File(targetPath);
+        Path source = Paths.get(s.getAbsolutePath());
+        Path target = Paths.get(t.getAbsolutePath());
+        try {
+			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+		} catch (DirectoryNotEmptyException de) {
+			// Ignore
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (s.isDirectory()) {
+			for (File f: s.listFiles()) {
+				String path = targetPath + "/" + f.getName();
+				System.out.println(path + " ...");
+				copyPathRecursive(sourcePath + "/" + f.getName(), path);
 			}
 		}
 	}
