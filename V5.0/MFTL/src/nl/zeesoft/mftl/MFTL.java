@@ -9,9 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.Calendar;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class MFTL  {
 	private static final String		EXECUTABLE			= "MinecraftLauncher.exe";
@@ -20,6 +24,7 @@ public class MFTL  {
 
 	private static final String		SAVES				= "/AppData/Roaming/.minecraft/saves/";
 	private static final String		DEMO_WORLD			= "Demo_World/";
+	private static final String		SESSION_LOCK		= "session.lock";
 
 	private static String 			launcherInstallPath	= "C:\\Program Files (x86)\\Minecraft Launcher";
 	
@@ -31,8 +36,10 @@ public class MFTL  {
 			if (err.length()>0) {
 				System.err.println(err);
 			} else {
-				backupDemoWorld();
+				CodeRunner runner = getSaveBackupMonitor();
+				runner.start();
 				runLauncher(l);
+				runner.stop();
 			}
 		}
 	}
@@ -66,10 +73,13 @@ public class MFTL  {
 		File s = new File(getSavesPath() + DEMO_WORLD);
 		if (s.exists()) {
 			Calendar cal = Calendar.getInstance();
+			int minute = cal.get(Calendar.MINUTE);
+			minute = minute - (minute % 10);
 			String timeStamp = cal.get(Calendar.YEAR)
 			    + "-" + String.format("%02d", (cal.get(Calendar.MONTH) + 1))
 			    + "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))
-			    + "-"+ String.format("%02d", cal.get(Calendar.HOUR_OF_DAY))
+			    + "_"+ String.format("%02d", cal.get(Calendar.HOUR_OF_DAY))
+			    + "-"+ String.format("%02d", minute)
 				;
 			String path = getSavesPath() + timeStamp + "-" + DEMO_WORLD;
 			File t = new File(path);
@@ -79,22 +89,24 @@ public class MFTL  {
 	}
 	
 	private static void copyPathRecursive(String sourcePath, String targetPath) {
-		File s = new File(sourcePath);
-		File t = new File(targetPath);
-        Path source = Paths.get(s.getAbsolutePath());
-        Path target = Paths.get(t.getAbsolutePath());
-        try {
-			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-		} catch (DirectoryNotEmptyException de) {
-			// Ignore
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		if (s.isDirectory()) {
-			for (File f: s.listFiles()) {
-				String path = targetPath + "/" + f.getName();
-				System.out.println(path + " ...");
-				copyPathRecursive(sourcePath + "/" + f.getName(), path);
+		if (!sourcePath.endsWith(SESSION_LOCK)) {
+			File s = new File(sourcePath);
+			File t = new File(targetPath);
+	        Path source = Paths.get(s.getAbsolutePath());
+	        Path target = Paths.get(t.getAbsolutePath());
+	        try {
+				Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+			} catch (DirectoryNotEmptyException de) {
+				// Ignore
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (s.isDirectory()) {
+				for (File f: s.listFiles()) {
+					String path = targetPath + "/" + f.getName();
+					//System.out.println(path + " ...");
+					copyPathRecursive(sourcePath + "/" + f.getName(), path);
+				}
 			}
 		}
 	}
@@ -118,5 +130,38 @@ public class MFTL  {
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
+	}
+	
+	private static CodeRunner getSaveBackupMonitor() {
+		CodeRunner r = new CodeRunner(getSaveBackupMonitorCode());
+		r.setSleepMs(1000);
+		return r;
+	}
+	
+	private static RunCode getSaveBackupMonitorCode() {
+		RunCode r = new RunCode() {
+			FileTime mt = null;
+			
+			@Override
+			protected boolean run() {
+				Path file = Paths.get(getSavesPath() + DEMO_WORLD + SESSION_LOCK);
+				BasicFileAttributes attr = null;
+				try {
+					attr = Files.readAttributes(file, BasicFileAttributes.class);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if (attr!=null) {
+					FileTime nmt = attr.lastModifiedTime();
+					if (mt == null || nmt.compareTo(mt) > 0) {
+						backupDemoWorld();
+						mt = nmt;
+					}
+				}
+				return false;
+			}
+			
+		};
+		return r;
 	}
 }
