@@ -178,8 +178,8 @@ The output of this test shows;
 File import;
 Reading file: 1
 Reading file: 2
-Reading file: 3
 Reading file: 4
+Reading file: 3
 Imported 4 files
 
 Progress bars;
@@ -375,9 +375,9 @@ Class references;
 The output of this test shows the full debug logging of a regular HTTP server and a proxy server handling some basic requests.  
 It also shows the mocked OS file actions that were performed.  
 ~~~~
-2020-07-05 10:13:12:580 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 8080 ...
-2020-07-05 10:13:12:580 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 8080
-2020-07-05 10:13:12:603 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:834 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 8080 ...
+2020-07-15 12:32:51:839 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 8080
+2020-07-15 12:32:51:858 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET / HTTP/1.1
 Content-Type: text/html
@@ -386,7 +386,7 @@ Connection: keep-alive
 >>>
 HTTP/1.1 200 OK
 Content-Length: 47
-2020-07-05 10:13:12:605 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:862 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -395,7 +395,7 @@ Connection: keep-alive
 >>>
 HTTP/1.1 404 File not found: http/pizza.txt
 Content-Length: 30
-2020-07-05 10:13:12:607 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:864 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 PUT /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -404,7 +404,7 @@ Connection: keep-alive
 Content-Length: 13
 >>>
 HTTP/1.1 200 OK
-2020-07-05 10:13:12:608 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:868 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -413,7 +413,7 @@ Connection: keep-alive
 >>>
 HTTP/1.1 200 OK
 Content-Length: 13
-2020-07-05 10:13:12:610 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:871 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 DELETE /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -421,9 +421,9 @@ Host: 127.0.0.1
 Connection: keep-alive
 >>>
 HTTP/1.1 200 OK
-2020-07-05 10:13:12:611 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 9090 ...
-2020-07-05 10:13:12:611 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 9090
-2020-07-05 10:13:12:613 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2020-07-15 12:32:51:872 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 9090 ...
+2020-07-15 12:32:51:873 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 9090
+2020-07-15 12:32:51:876 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET / HTTP/1.1
 Host: 127.0.0.1:8080
@@ -432,7 +432,7 @@ Connection: keep-alive
 >>>
 HTTP/1.1 200 OK
 Content-Length: 47
-2020-07-05 10:13:12:614 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 9090);
+2020-07-15 12:32:51:877 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 9090);
 <<<
 GET / HTTP/1.1
 Host: 127.0.0.1:8080
@@ -441,14 +441,14 @@ Connection: keep-alive
 >>>
 HTTP/1.1 200 OK
 Content-Length: 47
-2020-07-05 10:13:12:631 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
-2020-07-05 10:13:12:631 nl.zeesoft.zdk.http.HttpServer: Closed connections
-2020-07-05 10:13:12:631 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 9090 ...
-2020-07-05 10:13:12:631 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 9090
-2020-07-05 10:13:12:647 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
-2020-07-05 10:13:12:647 nl.zeesoft.zdk.http.HttpServer: Closed connections
-2020-07-05 10:13:12:647 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 8080 ...
-2020-07-05 10:13:12:647 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 8080
+2020-07-15 12:32:51:888 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
+2020-07-15 12:32:51:888 nl.zeesoft.zdk.http.HttpServer: Closed connections
+2020-07-15 12:32:51:888 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 9090 ...
+2020-07-15 12:32:51:889 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 9090
+2020-07-15 12:32:51:899 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
+2020-07-15 12:32:51:899 nl.zeesoft.zdk.http.HttpServer: Closed connections
+2020-07-15 12:32:51:899 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 8080 ...
+2020-07-15 12:32:51:900 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 8080
 
 Action log;
 WRITE:http/index.html:47
@@ -462,7 +462,7 @@ READ:http/index.html:47
 Test results
 ------------
 All 5 tests have been executed successfully (93 assertions).  
-Total test duration: 669 ms (total sleep duration: 176 ms).  
+Total test duration: 491 ms (total sleep duration: 166 ms).  
 
 Memory usage per test;  
  * nl.zeesoft.zdk.test.TestStr: 554 Kb / 0 Mb

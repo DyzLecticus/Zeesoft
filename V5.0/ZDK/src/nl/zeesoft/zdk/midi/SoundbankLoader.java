@@ -19,7 +19,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class SoundbankLoader {
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(Synthesizer synthesizer, String ... filePaths) {
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(Synthesizer synthesizer, List<String> filePaths) {
 		CodeRunnerChain r = new CodeRunnerChain();
 		List<RunCode> codes = new ArrayList<RunCode>();
 		for (String path: filePaths) {

@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.midi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
@@ -51,8 +54,8 @@ public class MidiSys {
 		}
 		lock.unlock(self);
 	}
-	
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String ... filePaths) {
+
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(List<String> filePaths) {
 		CodeRunnerChain r = null;
 		MidiSys self = new MidiSys();
 		lock.lock(self);
@@ -62,6 +65,14 @@ public class MidiSys {
 		}
 		lock.unlock(self);
 		return r;
+	}
+	
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String ... filePaths) {
+		List<String> pathList = new ArrayList<String>();
+		for (int i = 0; i < filePaths.length; i++) {
+			pathList.add(filePaths[i]);
+		}
+		return getCodeRunnerChainForSoundbankFiles(pathList);
 	}
 	
 	public static StateManager getStateManager() {
