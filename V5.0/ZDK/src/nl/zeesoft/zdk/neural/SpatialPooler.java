@@ -40,7 +40,7 @@ public class SpatialPooler {
 	protected Grid				connections					= null;
 	protected Grid				activations					= null;
 	protected HistoricalGrid	activationHistory			= null;
-	protected float				averageGlobalActivation	= 0.0F;
+	protected float				averageGlobalActivation		= 0.0F;
 	protected Grid				boostFactors				= null;
 		
 	public Str getDimensions() {
@@ -48,15 +48,12 @@ public class SpatialPooler {
 		r.sb().append(inputSizeX + "*" + inputSizeY);
 		r.sb().append(" > ");
 		r.sb().append(outputSizeX + "*" + outputSizeY);
-		r.sb().append("...");
 		return r;
 	}
 	
 	public void initialize() {
 		Str msg = new Str("Initializing spatial pooler; ");
-		msg.sb().append(inputSizeX + "*" + inputSizeY);
-		msg.sb().append(" > ");
-		msg.sb().append(outputSizeX + "*" + outputSizeY);
+		msg.sb().append(getDimensions());
 		msg.sb().append("...");
 		logger.debug(this, msg);
 		initialize(null);
@@ -124,6 +121,17 @@ public class SpatialPooler {
 		connections.applyFunction(function, runnerList);
 	}
 
+	public void buildInitializeChain(CodeRunnerChain runnerChain, boolean randomizeConnections) {
+		CodeRunnerList init = new CodeRunnerList();
+		initialize(init);
+		runnerChain.add(init);
+		if (randomizeConnections) {
+			CodeRunnerList rand = new CodeRunnerList();
+			randomizeConnections(rand);
+			runnerChain.add(rand);
+		}
+	}
+	
 	public void setInput(SDR sdr) {
 		input.copyValuesFrom(sdr.getColumns());
 		activeInputColumns = input.getActiveColumns();
@@ -131,9 +139,7 @@ public class SpatialPooler {
 		output.setValue(false);
 	}
 
-	public CodeRunnerChain getProcessorChain(boolean learn) {
-		CodeRunnerChain r = new CodeRunnerChain();
-		
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
 		CodeRunnerList activateColumns = new CodeRunnerList();
 		ColumnFunction function = new ColumnFunction() {
 			@Override
@@ -212,7 +218,6 @@ public class SpatialPooler {
 			}
 		});
 		
-		
 		CodeRunnerList updateBoostFactors = new CodeRunnerList();
 		function = new ColumnFunction() {
 			@Override
@@ -229,17 +234,15 @@ public class SpatialPooler {
 		};
 		boostFactors.applyFunction(function, updateBoostFactors);
 		
-		r.add(activateColumns);
-		r.add(selectWinners);
+		runnerChain.add(activateColumns);
+		runnerChain.add(selectWinners);
 		if (learn) {
-			r.add(adjustPermanences);
+			runnerChain.add(adjustPermanences);
 		}
-		r.add(cycleHistory);
-		r.add(updateHistory);
-		r.add(calculateHistoricActivation);
-		r.add(updateBoostFactors);
-		
-		return r;
+		runnerChain.add(cycleHistory);
+		runnerChain.add(updateHistory);
+		runnerChain.add(calculateHistoricActivation);
+		runnerChain.add(updateBoostFactors);
 	}
 	
 	public SDR getOutput() {

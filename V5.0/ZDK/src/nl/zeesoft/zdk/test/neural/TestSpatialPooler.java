@@ -1,13 +1,16 @@
 package nl.zeesoft.zdk.test.neural;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.neural.ScalarEncoder;
 import nl.zeesoft.zdk.neural.SpatialPooler;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
-import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestSpatialPooler extends TestObject {
@@ -31,33 +34,44 @@ public class TestSpatialPooler extends TestObject {
 		sp.logger = new Logger(true);
 		sp.initialize();
 		sp.randomizeConnections();
-		
-		CodeRunnerChain chain = new CodeRunnerChain();
-		CodeRunnerList init = new CodeRunnerList();
-		CodeRunnerList rand = new CodeRunnerList();
+
 		sp = new SpatialPooler();
 		sp.logger = new Logger(true);
-		sp.logger.debug(this, new Str("Async start"));
-		sp.initialize(init);
-		sp.randomizeConnections(rand);
-		chain.add(init);
-		chain.add(rand);
-		Waiter.startAndWaitFor(chain, 500);
-		sp.logger.debug(this, new Str("Async done"));
+		sp.logger.debug(this, new Str("Initializing spatial pooler (asynchronous) ..."));
+		CodeRunnerChain initializeChain = new CodeRunnerChain();
+		sp.buildInitializeChain(initializeChain, true);
+		Waiter.startAndWaitFor(initializeChain, 500);
+		sp.logger.debug(this, new Str("Initialized spatial pooler (asynchronous)"));
 		
-		CodeRunnerChain processorChain = sp.getProcessorChain(true);
+		CodeRunnerChain processorChain = new CodeRunnerChain();
+		sp.buildProcessorChain(processorChain, true);
 		
 		// TODO: Expand test and add assertions
-		SDR input = new SDR();
-		input.initialize(256, 1);
-		for (int i = 0; i < 16; i++) {
-			input.setValue(i,0,true);
+		
+		List<SDR> inputList = getInputSDRList(100);
+		List<SDR> outputList = new ArrayList<SDR>();
+		
+		int num = 0;
+		for (SDR input: inputList) {
+			sp.setInput(input);
+			Waiter.startAndWaitFor(processorChain, 100);
+			SDR output = sp.getOutput();
+			if (num % 20 == 0) {
+				System.out.println("Input SDR: " + input.toStr());
+				System.out.println("Output SDR: " + output.toStr());
+			}
+			outputList.add(output);
+			num++;
 		}
-		System.out.println("Input SDR: " + input.toStr());
-
-		sp.setInput(input);
-		Waiter.startAndWaitFor(processorChain, 500);
-		SDR output = sp.getOutput();
-		System.out.println("Output SDR: " + output.toStr());
+	}
+	
+	private List<SDR> getInputSDRList(int num) {
+		ScalarEncoder encoder = new ScalarEncoder();
+		List<SDR> r = new ArrayList<SDR>();
+		for (int i = 0; i < num; i++) {
+			encoder.value = i;
+			r.add(encoder.getEncodedValue());
+		}
+		return r;
 	}
 }
