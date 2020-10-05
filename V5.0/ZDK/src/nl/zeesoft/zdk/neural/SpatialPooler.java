@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.neural;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.ColumnFunction;
@@ -14,9 +13,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class SpatialPooler {
-	public Logger				logger						= new Logger();
-	
+public class SpatialPooler extends SDRProcessor {
 	public int					inputSizeX					= 16;
 	public int					inputSizeY					= 16;
 	
@@ -34,32 +31,24 @@ public class SpatialPooler {
 	public int					activationHistorySize		= 1000;
 	public int					boostStrength				= 10;
 	
-	protected SDR				input						= null;
-	protected List<GridColumn>	activeInputColumns			= null;
-	protected SDR				output						= null;
 	protected Grid				connections					= null;
 	protected Grid				activations					= null;
 	protected HistoricalGrid	activationHistory			= null;
 	protected float				averageGlobalActivation		= 0.0F;
 	protected Grid				boostFactors				= null;
 		
-	public Str getDimensions() {
+	@Override
+	public Str getDescription() {
 		Str r = new Str();
+		r.sb().append(" (");
 		r.sb().append(inputSizeX + "*" + inputSizeY);
 		r.sb().append(" > ");
 		r.sb().append(outputSizeX + "*" + outputSizeY);
+		r.sb().append(")");
 		return r;
 	}
-	
-	public void initialize() {
-		Str msg = new Str("Initializing spatial pooler; ");
-		msg.sb().append(getDimensions());
-		msg.sb().append("...");
-		logger.debug(this, msg);
-		initialize(null);
-		logger.debug(this, new Str("Initialized spatial pooler"));
-	}
 
+	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (inputSizeX < 2) {
 			inputSizeX = 2;
@@ -96,20 +85,15 @@ public class SpatialPooler {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, Object value) {
-				Grid g = new Grid();
-				g.initialize(inX, inY, 1, 0F);
-				return g;
+				Grid inputPermanences = new Grid();
+				inputPermanences.initialize(inX, inY, 1, 0F);
+				return inputPermanences;
 			}
 		};
 		connections.applyFunction(function, runnerList);
 	}
 	
-	public void randomizeConnections() {
-		logger.debug(this, new Str("Randomizing spatial pooler connections ..."));
-		randomizeConnections(null);
-		logger.debug(this, new Str("Randomized spatial pooler connections"));
-	}
-	
+	@Override
 	public void randomizeConnections(CodeRunnerList runnerList) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
@@ -120,25 +104,14 @@ public class SpatialPooler {
 		};
 		connections.applyFunction(function, runnerList);
 	}
-
-	public void buildInitializeChain(CodeRunnerChain runnerChain, boolean randomizeConnections) {
-		CodeRunnerList init = new CodeRunnerList();
-		initialize(init);
-		runnerChain.add(init);
-		if (randomizeConnections) {
-			CodeRunnerList rand = new CodeRunnerList();
-			randomizeConnections(rand);
-			runnerChain.add(rand);
-		}
-	}
 	
+	@Override
 	public void setInput(SDR sdr) {
-		input.copyValuesFrom(sdr.getColumns());
-		activeInputColumns = input.getActiveColumns();
+		super.setInput(sdr);
 		activations.setValue(0F);
-		output.setValue(false);
 	}
 
+	@Override
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
 		CodeRunnerList activateColumns = new CodeRunnerList();
 		ColumnFunction function = new ColumnFunction() {
@@ -244,11 +217,6 @@ public class SpatialPooler {
 		runnerChain.add(calculateHistoricActivation);
 		runnerChain.add(updateBoostFactors);
 	}
-	
-	public SDR getOutput() {
-		return new SDR(output);
-	}
-	
 
 	protected void randomConnectColumn(GridColumn column) {
 		Grid inputs = (Grid) column.getValue();

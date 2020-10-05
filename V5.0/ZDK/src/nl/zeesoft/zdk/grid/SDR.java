@@ -66,4 +66,18 @@ public class SDR extends Grid {
 		}
 		super.initialize(sizeX, sizeY, sizeZ, value);
 	}
+	
+	public int getOverlap(SDR sdr) {
+		int r = 0;
+		for (GridColumn column: getActiveColumns()) {
+			GridColumn other = sdr.getColumn(column.index);
+			if (other!=null) {
+				Object value = other.getValue();
+				if (value!=null && value instanceof Boolean && (boolean)value) {
+					r++;
+				}
+			}
+		}
+		return r;
+	}
 }

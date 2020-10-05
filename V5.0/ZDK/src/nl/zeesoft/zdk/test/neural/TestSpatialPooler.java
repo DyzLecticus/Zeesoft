@@ -63,6 +63,30 @@ public class TestSpatialPooler extends TestObject {
 			outputList.add(output);
 			num++;
 		}
+		
+		int s = outputList.size() - 1;
+		SDR lastOutput = outputList.get(s);
+		int overlap = 0;
+		num = 0;
+		for (int i = (s - 20); i >= 0; i = i - 20) {
+			SDR compare = outputList.get(i);
+			overlap = overlap + lastOutput.getOverlap(compare);
+			num++;
+		}
+		float averageSimilar = overlap / num;
+		
+		overlap = 0;
+		for (SDR output: outputList) {
+			for (SDR compare: outputList) {
+				if (output!=compare) {
+					overlap = overlap + output.getOverlap(compare);
+					num++;
+				}
+			}
+		}
+		float averageOverall = overlap / num;
+		
+		System.out.println("Average overlap for similar inputs: " + averageSimilar + ", overall: " + averageOverall);
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

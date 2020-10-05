@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.grid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -107,5 +110,20 @@ public class GridColumn {
 		lock.lock(this);
 		values = newValues;
 		lock.unlock(this);
+	}
+	
+	public List<Position> getValuePositions(Object value) {
+		List<Position> r = new ArrayList<Position>();
+		lock.lock(this);
+		for (int z = 0; z < values.length; z++) {
+			if ((values[z]==null && value==null) ||
+				(values[z]!=null && values[z]==value) ||
+				(values[z]!=null && values[z].equals(value))
+				) {
+				r.add(new Position(posX,posY,z));
+			}
+		}
+		lock.unlock(this);
+		return r;
 	}
 }

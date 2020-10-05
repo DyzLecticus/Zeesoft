@@ -313,4 +313,12 @@ public class Grid {
 		}
 		return r;
 	}
+	
+	public List<Position> getValuePositions(Object value) {
+		List<Position> r = new ArrayList<Position>();
+		for (GridColumn column: columns) {
+			r.addAll(column.getValuePositions(value));
+		}
+		return r;
+	}
 }
