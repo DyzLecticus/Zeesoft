@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.grid.Grid;
+import nl.zeesoft.zdk.grid.Position;
 
 public class DistalSegment {
 	public List<Synapse>	synapses		= new ArrayList<Synapse>();
@@ -20,7 +20,13 @@ public class DistalSegment {
 		return r;
 	}
 	
-	public void calculateActiveSynapses(Grid activeCells) {
-		
+	public void calculateActiveSynapses(List<Position> activeCellPositions, float permanenceThreshold) {
+		activeSynapses = 0;
+		for (Position pos: activeCellPositions) {
+			Synapse synapse = getSynapseTo(pos.x, pos.y, pos.z);
+			if (synapse.permanence > permanenceThreshold) {
+				activeSynapses++;
+			}
+		}
 	}
 }

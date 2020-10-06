@@ -10,19 +10,27 @@ import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class TemporalMemory extends SDRProcessor {
-	public int					sizeX				= 48;
-	public int					sizeY				= 48;
-	public int					sizeZ				= 16;
+	public int					sizeX					= 48;
+	public int					sizeY					= 48;
+	public int					sizeZ					= 16;
 
-	public int					maxSegmentsPerCell	= 256;
+	public int					maxSegmentsPerCell		= 256;
+	public int					maxSynapsesPerSegment	= 256;
 	
-	protected Grid				activeCells			= null;
-	protected List<Position>	activeCellPositions	= null;
-	protected Grid				predictiveCells		= null;
-	protected SDR				burstingColumns		= null;
-	protected Grid				distalSegments		= null;
+	public float				permanenceThreshold		= 0.1F;
+	public float				permanenceIncrement		= 0.05F;
+	public float				permanenceDecrement		= 0.008F;
+
+	public int					activationThreshold		= 13;
+	public int					matchingThreshold		= 10;
+	
+	protected List<Position>	activeCellPositions		= new ArrayList<Position>();
+	protected List<Position>	predictiveCellPositions	= new ArrayList<Position>();
+	protected SDR				burstingColumns			= null;
+	protected Grid				distalSegments			= null;
 
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
@@ -42,18 +50,18 @@ public class TemporalMemory extends SDRProcessor {
 		output = new SDR();
 		output.initialize(sizeX, sizeY * sizeZ);
 		
-		activeCells = new Grid();
-		activeCells.initialize(sizeX, sizeY, sizeZ, false);
+		activeCellPositions.clear();
+		predictiveCellPositions.clear();
 		
-		predictiveCells = new Grid();
-		predictiveCells.initialize(sizeX, sizeY, sizeZ, false);
+		burstingColumns = new SDR();
+		burstingColumns.initialize(sizeX, sizeY);
 		
 		distalSegments = new Grid();
 		distalSegments.initialize(sizeX, sizeY, sizeZ);
 		
 		ColumnFunction function = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				return new ArrayList<DistalSegment>();
 			}
 		};
@@ -64,7 +72,7 @@ public class TemporalMemory extends SDRProcessor {
 	public void randomizeConnections(CodeRunnerList runnerList) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				@SuppressWarnings("unchecked")
 				List<DistalSegment> segments = (ArrayList<DistalSegment>) value;
 				if (segments.size()>0) {
@@ -88,12 +96,11 @@ public class TemporalMemory extends SDRProcessor {
 	
 	@Override
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		
 		CodeRunnerList activateColumns = new CodeRunnerList();
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object[] applyFunction(GridColumn column, Object[] values) {
-				boolean active = true;
+				boolean active = false;
 				for (GridColumn inputColumn: activeInputColumns) {
 					if (column.posX()==inputColumn.posX() && column.posY()==inputColumn.posY()) {
 						active = true;
@@ -101,18 +108,67 @@ public class TemporalMemory extends SDRProcessor {
 					}
 				}
 				if (active) {
+					boolean predicted = false;
+					for (Position pos: predictiveCellPositions) {
+						if (pos.x==column.posX() && pos.y==column.posY()) {
+							activeCellPositions.add(pos);
+							predicted = true;
+						}
+					}
+					if (!predicted) {
+						activeCellPositions.addAll(Position.getColumnPositions(column.posX(), column.posY(), sizeZ));
+						values[0] = true;
+					}
 					// TODO:
-					// For each cell
-					// Check if predictive cell in column
-					// If no predictive cells; select random 
+					// Determine winners for learning?
 				}
-				// For each cell in column, check predictive, if true, activate
-				// If no predictive cells; burst column
 				return values;
 			}
 		};
 		burstingColumns.applyFunction(function, activateColumns);
 		
+		// TODO: Learning
+		
+		
+		CodeRunnerList clearPrediction = new CodeRunnerList();
+		clearPrediction.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				predictiveCellPositions.clear();
+				return true;
+			}
+		});
+		
+		CodeRunnerList predictActiveCells = new CodeRunnerList();
+		function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				@SuppressWarnings("unchecked")
+				List<DistalSegment> segments = (ArrayList<DistalSegment>) value;
+				if (segments.size()>0) {
+					boolean predict = false;
+					for (DistalSegment segment: segments) {
+						segment.calculateActiveSynapses(activeCellPositions, permanenceThreshold);
+						if (segment.activeSynapses>activationThreshold) {
+							predict = true;
+						}
+					}
+					if (predict) {
+						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
+					}
+				}
+				return value;
+			}
+		};
+		distalSegments.applyFunction(function, predictActiveCells);
+		
 		runnerChain.add(activateColumns);
+		runnerChain.add(clearPrediction);
+		runnerChain.add(predictActiveCells);
+	}
+	
+	public void debugColumnActivation() {
+		System.out.println("Burst SDR: " + burstingColumns.toStr());
+		System.out.println("activeCellPositions: " + activeCellPositions.size());
 	}
 }

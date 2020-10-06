@@ -25,12 +25,14 @@ public class GridColumn {
 	@Override
 	public String toString() {
 		Str vals = new Str();
+		lock.lock(this);
 		for (int z = 0; z < values.length; z++) {
 			if (vals.length()>0) {
 				vals.sb().append(", ");
 			}
 			vals.sb().append(values[z]);
 		}
+		lock.unlock(this);
 		vals.sb().insert(0,"[");
 		vals.sb().append("]");
 		return String.format("%02d", posX) + "," + String.format("%02d", posY) + "=" + vals;

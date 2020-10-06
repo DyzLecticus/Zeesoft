@@ -24,7 +24,7 @@ public class SpatialPooler extends SDRProcessor {
 	public float				potentialConnections		= 0.85F;
 	public float				potentialRadius				= 500;
 	
-	public float				connectionThreshold			= 0.1F;
+	public float				permanenceThreshold			= 0.1F;
 	public float				permanenceIncrement			= 0.05F;
 	public float				permanenceDecrement			= 0.008F;
 	
@@ -80,13 +80,13 @@ public class SpatialPooler extends SDRProcessor {
 		boostFactors = new Grid();
 		boostFactors.initialize(output.sizeX(),output.sizeY(), 1, 1F);
 		
-		final int inX = input.sizeX();
-		final int inY = input.sizeY();
+		final int inSizeX = input.sizeX();
+		final int inSizeY = input.sizeY();
 		ColumnFunction function = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Grid inputPermanences = new Grid();
-				inputPermanences.initialize(inX, inY, 1, 0F);
+				inputPermanences.initialize(inSizeX, inSizeY, 1, 0F);
 				return inputPermanences;
 			}
 		};
@@ -116,12 +116,12 @@ public class SpatialPooler extends SDRProcessor {
 		CodeRunnerList activateColumns = new CodeRunnerList();
 		ColumnFunction function = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Grid inputPermanences = (Grid) connections.getColumn(column.index()).getValue();
 				float newValue = (float) value;
 				for (GridColumn inputColumn: activeInputColumns) {
 					float permanence = (float) inputPermanences.getValue(inputColumn.posX(), inputColumn.posY());
-					if (permanence>connectionThreshold) {
+					if (permanence>permanenceThreshold) {
 						newValue = newValue + 1F; 
 					}
 				}
@@ -150,7 +150,7 @@ public class SpatialPooler extends SDRProcessor {
 		if (learn) {
 			function = new ColumnFunction() {
 				@Override
-				public Object applyFunction(GridColumn column, Object value) {
+				public Object applyFunction(GridColumn column, int posZ, Object value) {
 					if ((boolean)output.getValue(column.posX(), column.posY())) {
 						Grid winnerPermanences = (Grid) value;
 						for (GridColumn pColumn: winnerPermanences.getColumns()) {
@@ -194,7 +194,7 @@ public class SpatialPooler extends SDRProcessor {
 		CodeRunnerList updateBoostFactors = new CodeRunnerList();
 		function = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				float average = column.getAverageValue();
 				float factor = 0F;
 				if (average!=averageGlobalActivation && boostStrength>1) {
@@ -230,9 +230,9 @@ public class SpatialPooler extends SDRProcessor {
 			}
 			if (inReach && Rand.getRandomFloat(0, 1) < potentialConnections) {
 				if (Rand.getRandomInt(0, 1) ==1) {
-					inputColumn.setValue(Rand.getRandomFloat(connectionThreshold, 1));
+					inputColumn.setValue(Rand.getRandomFloat(permanenceThreshold, 1));
 				} else {
-					inputColumn.setValue(Rand.getRandomFloat(0, connectionThreshold));
+					inputColumn.setValue(Rand.getRandomFloat(0, permanenceThreshold));
 				}
 			} else {
 				inputColumn.setValue(-1F);

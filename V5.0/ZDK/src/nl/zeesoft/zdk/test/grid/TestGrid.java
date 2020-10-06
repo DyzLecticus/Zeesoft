@@ -44,7 +44,7 @@ public class TestGrid extends TestObject {
 		
 		ColumnFunction increment1 = new ColumnFunction() {
 			@Override
-			public Object applyFunction(GridColumn column, Object value) {
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				return (float)value + 1F;
 			}
 		};
