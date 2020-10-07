@@ -105,4 +105,14 @@ public class DistalSegment {
 			}
 		}
 	}
+	
+	public void clear() {
+		synapses.clear();
+		reset();
+	}
+	
+	public void reset() {
+		activeSynapses.clear();
+		potentialSynapses.clear();
+	}
 }

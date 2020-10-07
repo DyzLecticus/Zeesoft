@@ -142,6 +142,7 @@ public class TemporalMemory extends SDRProcessor {
 		burstingColumns.applyFunction(function, activateColumns);
 		
 		// TODO: Remove
+		/*
 		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
@@ -149,6 +150,7 @@ public class TemporalMemory extends SDRProcessor {
 				return true;
 			}
 		});
+		*/
 		
 		CodeRunnerList adjustColumnSegmentsAndSynapses = new CodeRunnerList();
 		if (learn) {
@@ -229,7 +231,6 @@ public class TemporalMemory extends SDRProcessor {
 		if (cellsByPotential.size()>0) {
 			List<Cell> potentialCells = cellsByPotential.get(cellsByPotential.lastKey());
 			winnerCell = potentialCells.get(Rand.getRandomInt(0, (potentialCells.size() -1)));
-			//System.out.println(column + " " + winnerCell.matchingDistalSegment.potentialSynapses.size());
 		} else {
 			// Find least connected cell
 			SortedMap<Integer,List<Cell>> cellsBySegments = new TreeMap<Integer,List<Cell>>();

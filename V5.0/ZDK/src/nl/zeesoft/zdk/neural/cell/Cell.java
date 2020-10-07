@@ -68,6 +68,13 @@ public class Cell {
 			segment.synapses.clear();
 		}
 		distalSegments.clear();
+		reset();
+	}
+	
+	public void reset() {
+		for (DistalSegment segment: distalSegments) {
+			segment.reset();
+		}
 		activeDistalSegments.clear();
 		matchingDistalSegments.clear();
 	}
