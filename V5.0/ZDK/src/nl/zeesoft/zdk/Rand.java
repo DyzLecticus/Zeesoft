@@ -21,6 +21,10 @@ public class Rand {
 	}
 
 	public static int getRandomInt(int min, int max) {
-		return Math.round(getRandomFloat(min,max));
+		int r = min;
+		if (min<max) {
+			r = Math.round(getRandomFloat(min,max));
+		}
+		return r;
 	}
 }

@@ -1,11 +1,7 @@
 package nl.zeesoft.zdk.neural;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -15,7 +11,6 @@ public class SDRProcessor {
 	
 	protected SDR				input						= null;
 	protected SDR				output						= null;
-	protected List<GridColumn>	activeInputColumns			= new ArrayList<GridColumn>();
 	
 	public Str getDescription() {
 		return new Str();
@@ -62,7 +57,6 @@ public class SDRProcessor {
 	public void setInput(SDR sdr) {
 		input.copyValuesFrom(sdr.getColumns());
 		output.setValue(false);
-		activeInputColumns = input.getActiveColumns();
 	}
 	
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {

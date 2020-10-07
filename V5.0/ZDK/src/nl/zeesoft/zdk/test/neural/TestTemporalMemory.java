@@ -48,14 +48,14 @@ public class TestTemporalMemory extends TestObject {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 100);
 			SDR output = tm.getOutput();
-			if (num % 52 == 0) {
-				System.out.println("Input SDR: " + input.toStr());
-				System.out.println("Output SDR: " + output.toStr());
-			}
 			outputList.add(output);
-			num++;
 			
-			tm.debugColumnActivation();
+			if (num % 4 == 0) {
+				//System.out.println("Input SDR: " + input.toStr());
+				//System.out.println("Output SDR: " + output.toStr());
+			}
+			tm.debug();
+			num++;
 		}
 	}
 	
@@ -63,14 +63,14 @@ public class TestTemporalMemory extends TestObject {
 		ScalarEncoder encoder = new ScalarEncoder();
 		encoder.encodeLength = 2304;
 		encoder.onBits = 46;
-		encoder.buckets = 52;
+		encoder.buckets = 40;
 		
-		Str err = encoder.test();
+		Str err = encoder.testOverlap(0,0);
 		assertEqual(err, new Str(),"Error message does not match expectation");
 		
 		List<SDR> r = new ArrayList<SDR>();
 		for (int i = 0; i < num; i++) {
-			encoder.value = i;
+			encoder.value = i % 4;
 			r.add(encoder.getEncodedValue());
 		}
 		return r;

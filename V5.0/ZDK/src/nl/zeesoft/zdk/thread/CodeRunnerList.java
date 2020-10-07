@@ -10,6 +10,14 @@ public class CodeRunnerList extends RunnerObject {
 	private Exception			exception		= null;
 	private List<CodeRunner>	activeRunners	= new ArrayList<CodeRunner>();
 	
+	public CodeRunnerList() {
+		
+	}
+	
+	public CodeRunnerList(RunCode code) {
+		add(code);
+	}
+	
 	public CodeRunner add(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
 		runner.setLogger(getLock().getLogger(this));

@@ -56,11 +56,12 @@ public class TestSpatialPooler extends TestObject {
 			sp.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 100);
 			SDR output = sp.getOutput();
+			outputList.add(output);
+			
 			if (num % 20 == 0) {
 				System.out.println("Input SDR: " + input.toStr());
 				System.out.println("Output SDR: " + output.toStr());
 			}
-			outputList.add(output);
 			num++;
 		}
 		

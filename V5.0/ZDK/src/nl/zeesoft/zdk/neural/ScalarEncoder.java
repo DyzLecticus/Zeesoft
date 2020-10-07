@@ -12,18 +12,33 @@ public class ScalarEncoder extends Encoder {
 		return getSDRForBucket(value);
 	}
 	
-	@Override
-	public Str test() {
-		Str r = super.test();
+	public Str testOverlap() {
+		return testOverlap(1, onBits);
+	}
+	
+	public Str testOverlap(int minOverlap, int maxOverlap) {
+		Str r = new Str();
 		SDR curr = getSDRForBucket(0);
 		for (int b = 1; b < buckets; b++) {
 			SDR next = getSDRForBucket(b);
 			int overlap = curr.getOverlap(next);
-			if (overlap==onBits || overlap==0) {
+			if (minOverlap > 0 && overlap < minOverlap) {
 				r.sb().append("Invalid bucket value overlap for value: ");
 				r.sb().append(b);
 				r.sb().append(", overlap: ");
 				r.sb().append(overlap);
+				r.sb().append(", minimum: ");
+				r.sb().append(minOverlap);
+			} else if (maxOverlap > 0 && overlap > maxOverlap) {
+				r.sb().append("Invalid bucket value overlap for value: ");
+				r.sb().append(b);
+				r.sb().append(", overlap: ");
+				r.sb().append(overlap);
+				r.sb().append(", minimum: ");
+				r.sb().append(minOverlap);
+			}
+			if (r.length()>0) {
+				break;
 			}
 			curr = next;
 		}

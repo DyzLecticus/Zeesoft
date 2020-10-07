@@ -7,6 +7,7 @@ public class ColumnFunction {
 		}
 		return values;
 	}
+	
 	public Object applyFunction(GridColumn column, int posZ, Object value) {
 		return value;
 	}

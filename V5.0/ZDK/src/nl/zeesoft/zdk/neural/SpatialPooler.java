@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Rand;
@@ -31,6 +32,7 @@ public class SpatialPooler extends SDRProcessor {
 	public int					activationHistorySize		= 1000;
 	public int					boostStrength				= 10;
 	
+	protected List<GridColumn>	activeInputColumns			= new ArrayList<GridColumn>();
 	protected Grid				connections					= null;
 	protected Grid				activations					= null;
 	protected HistoricalGrid	activationHistory			= null;
@@ -108,6 +110,7 @@ public class SpatialPooler extends SDRProcessor {
 	@Override
 	public void setInput(SDR sdr) {
 		super.setInput(sdr);
+		activeInputColumns = input.getActiveColumns();
 		activations.setValue(0F);
 	}
 
@@ -134,8 +137,7 @@ public class SpatialPooler extends SDRProcessor {
 		};
 		activations.applyFunction(function, activateColumns);
 		
-		CodeRunnerList selectWinners = new CodeRunnerList();
-		selectWinners.add(new RunCode() {
+		CodeRunnerList selectWinners = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
 				List<GridColumn> winners = activations.getColumnsByValue(false,outputOnBits);
@@ -182,8 +184,7 @@ public class SpatialPooler extends SDRProcessor {
 		CodeRunnerList updateHistory = new CodeRunnerList();
 		activationHistory.update(output, updateHistory);
 		
-		CodeRunnerList calculateHistoricActivation = new CodeRunnerList();
-		calculateHistoricActivation.add(new RunCode() {
+		CodeRunnerList calculateHistoricActivation = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
 				averageGlobalActivation = activationHistory.getAverageValue();
