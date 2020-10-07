@@ -183,7 +183,9 @@ public class TemporalMemory extends SDRProcessor {
 					cell.calculateSegmentActivity(activeCellPositions, permanenceThreshold);
 					cell.classifySegmentActivity(activationThreshold, matchingThreshold);
 					if (cell.activeDistalSegments.size()>0) {
+						lock.lock(this);
 						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
+						lock.unlock(this);
 					}
 				}
 				return value;
