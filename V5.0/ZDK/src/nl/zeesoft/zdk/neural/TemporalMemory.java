@@ -150,18 +150,18 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		});
 		
-		CodeRunnerList growSegmentsAndSynapses = new CodeRunnerList();
+		CodeRunnerList adjustColumnSegmentsAndSynapses = new CodeRunnerList();
 		if (learn) {
 			function = new ColumnFunction() {
 				@Override
 				public Object applyFunction(GridColumn column, int posZ, Object value) {
-					if (Position.posIsInList(column.posX(), column.posY(), posZ, activeCellPositions)) {
-						growSegmentsAndSynapses((Cell) value);
+					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
+						adjustColumnSegmentsAndSynapses(column);
 					}
 					return value;
 				}
 			};
-			cells.applyFunction(function, growSegmentsAndSynapses);
+			cells.applyFunction(function, adjustColumnSegmentsAndSynapses);
 		}
 		
 		CodeRunnerList clearPrediction = new CodeRunnerList(new RunCode() {
@@ -192,7 +192,7 @@ public class TemporalMemory extends SDRProcessor {
 		runnerChain.add(activateColumns);
 		if (learn) {
 			//runnerChain.add(debug);
-			runnerChain.add(growSegmentsAndSynapses);
+			runnerChain.add(adjustColumnSegmentsAndSynapses);
 		}
 		runnerChain.add(clearPrediction);
 		runnerChain.add(predictActiveCells);
@@ -236,7 +236,7 @@ public class TemporalMemory extends SDRProcessor {
 			for (int z = 0; z < sizeZ; z++) {
 				Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
 				int segments = cell.distalSegments.size();
-				List<Cell> cells = cellsByPotential.get(segments);
+				List<Cell> cells = cellsBySegments.get(segments);
 				if (cells==null) {
 					cells = new ArrayList<Cell>();
 					cellsBySegments.put(segments, cells);
@@ -253,35 +253,42 @@ public class TemporalMemory extends SDRProcessor {
 		}
 	}
 	
-	protected void growSegmentsAndSynapses(Cell cell) {
-		// increment/decrement permanence for active/inactive synapses
-		// grow segments and/or synapses to previous winners
-		if (cell.matchingDistalSegment!=null) {
-			cell.matchingDistalSegment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
-			int growNum = maxNewSynapseCount - cell.matchingDistalSegment.potentialSynapses.size();
-			if (growNum>0) {
-				cell.matchingDistalSegment.growSynapses(
-					cell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
-			}
-		} else {
-			if (cell.activeDistalSegments.size()>0) {
-				for (DistalSegment segment: cell.activeDistalSegments) {
-					segment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
-					int growNum = maxNewSynapseCount - segment.activeSynapses.size();
-					if (growNum>0) {
-						segment.growSynapses(
-							cell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+	protected void adjustColumnSegmentsAndSynapses(GridColumn column) {
+		boolean bursting = (boolean) burstingColumns.getValue(column.posX(), column.posY());
+		for (int z = 0; z < sizeZ; z++) {
+			if (bursting) {
+				if (Position.posIsInList(column.posX(), column.posY(), z, winnerCellPositions)) {
+					Cell winnerCell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+					if (winnerCell.matchingDistalSegment!=null) {
+						winnerCell.matchingDistalSegment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
+						int growNum = maxNewSynapseCount - winnerCell.matchingDistalSegment.potentialSynapses.size();
+						if (growNum>0) {
+							winnerCell.matchingDistalSegment.growSynapses(
+								winnerCell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						}
+					} else {
+						DistalSegment segment = winnerCell.createSegment(maxSegmentsPerCell);
+						int growNum = maxNewSynapseCount;
+						if (prevWinnerCellPositions.size()<growNum) {
+							growNum = prevWinnerCellPositions.size();
+						}
+						if (growNum>0) {
+							segment.growSynapses(
+								winnerCell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						}
 					}
 				}
 			} else {
-				DistalSegment segment = cell.createSegment(maxSegmentsPerCell);
-				int growNum = maxNewSynapseCount;
-				if (prevWinnerCellPositions.size()<growNum) {
-					growNum = prevWinnerCellPositions.size();
-				}
-				if (growNum>0) {
-					segment.growSynapses(
-						cell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+				Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+				if (cell.activeDistalSegments.size()>0) {
+					for (DistalSegment segment: cell.activeDistalSegments) {
+						segment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
+						int growNum = maxNewSynapseCount - segment.activeSynapses.size();
+						if (growNum>0) {
+							segment.growSynapses(
+								cell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						}
+					}
 				}
 			}
 		}

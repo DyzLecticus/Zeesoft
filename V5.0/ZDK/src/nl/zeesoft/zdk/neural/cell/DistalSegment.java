@@ -47,7 +47,6 @@ public class DistalSegment {
 			growPositions.remove(Rand.getRandomInt(0,(growPositions.size() - 1)));
 		}
 		if (growPositions.size()>0) {
-			//System.out.println(cellPosition + ", growing: " + growPositions.size());
 			for (Position pos: growPositions) {
 				Synapse synapse = new Synapse();
 				synapse.connectToPosX = pos.x;
