@@ -54,7 +54,7 @@ public class TestSpatialPooler extends TestObject {
 		int num = 0;
 		for (SDR input: inputList) {
 			sp.setInput(input);
-			Waiter.startAndWaitFor(processorChain, 100);
+			Waiter.startAndWaitFor(processorChain, 1000);
 			SDR output = sp.getOutput();
 			outputList.add(output);
 			

@@ -46,35 +46,38 @@ public class DistalSegment {
 		while (growPositions.size()>growNum) {
 			growPositions.remove(Rand.getRandomInt(0,(growPositions.size() - 1)));
 		}
-		for (Position pos: growPositions) {
-			Synapse synapse = new Synapse();
-			synapse.connectToPosX = pos.x;
-			synapse.connectToPosY = pos.y;
-			synapse.connectToPosZ = pos.z;
-			synapse.permanence = initialPermanence;
-			synapses.add(synapse);
-		}
-		if (synapses.size()>maxSynapsesPerSegment) {
-			SortedMap<Float,List<Synapse>> synapsesByPermanence = new TreeMap<Float,List<Synapse>>();
-			for (Synapse synapse: synapses) {
-				if (!Position.posIsInList(synapse.connectToPosX, synapse.connectToPosY, synapse.connectToPosZ, prevWinnerCellPositions)) {
-					float permanence = synapse.permanence;
-					List<Synapse> list = synapsesByPermanence.get(permanence);
-					if (list==null) {
-						list = new ArrayList<Synapse>();
-						synapsesByPermanence.put(permanence, list);
-					}
-					list.add(synapse);
-				}
+		if (growPositions.size()>0) {
+			//System.out.println(cellPosition + ", growing: " + growPositions.size());
+			for (Position pos: growPositions) {
+				Synapse synapse = new Synapse();
+				synapse.connectToPosX = pos.x;
+				synapse.connectToPosY = pos.y;
+				synapse.connectToPosZ = pos.z;
+				synapse.permanence = initialPermanence;
+				synapses.add(synapse);
 			}
-			while (synapses.size()>maxSynapsesPerSegment) {
-				Float firstKey = synapsesByPermanence.firstKey();
-				List<Synapse> list = synapsesByPermanence.get(firstKey);
-				Synapse remove = list.remove(Rand.getRandomInt(0,(list.size() - 1)));
-				if (list.size()==0) {
-					synapsesByPermanence.remove(firstKey);
+			if (synapses.size()>maxSynapsesPerSegment) {
+				SortedMap<Float,List<Synapse>> synapsesByPermanence = new TreeMap<Float,List<Synapse>>();
+				for (Synapse synapse: synapses) {
+					if (!Position.posIsInList(synapse.connectToPosX, synapse.connectToPosY, synapse.connectToPosZ, prevWinnerCellPositions)) {
+						float permanence = synapse.permanence;
+						List<Synapse> list = synapsesByPermanence.get(permanence);
+						if (list==null) {
+							list = new ArrayList<Synapse>();
+							synapsesByPermanence.put(permanence, list);
+						}
+						list.add(synapse);
+					}
 				}
-				synapses.remove(remove);
+				while (synapses.size()>maxSynapsesPerSegment) {
+					Float firstKey = synapsesByPermanence.firstKey();
+					List<Synapse> list = synapsesByPermanence.get(firstKey);
+					Synapse remove = list.remove(Rand.getRandomInt(0,(list.size() - 1)));
+					if (list.size()==0) {
+						synapsesByPermanence.remove(firstKey);
+					}
+					synapses.remove(remove);
+				}
 			}
 		}
 	}

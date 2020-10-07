@@ -15,9 +15,12 @@ import nl.zeesoft.zdk.neural.cell.Cell;
 import nl.zeesoft.zdk.neural.cell.DistalSegment;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
+import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class TemporalMemory extends SDRProcessor {
+	public Lock					lock							= new Lock();
+	
 	public int					sizeX							= 48;
 	public int					sizeY							= 48;
 	public int					sizeZ							= 16;
@@ -120,8 +123,10 @@ public class TemporalMemory extends SDRProcessor {
 					boolean predicted = false;
 					for (Position pos: predictiveCellPositions) {
 						if (pos.x==column.posX() && pos.y==column.posY()) {
+							lock.lock(this);
 							activeCellPositions.add(pos);
 							winnerCellPositions.add(pos);
+							lock.unlock(this);
 							predicted = true;
 							break;
 						}
@@ -135,6 +140,15 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		burstingColumns.applyFunction(function, activateColumns);
+		
+		// TODO: Remove
+		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				debug();
+				return true;
+			}
+		});
 		
 		CodeRunnerList growSegmentsAndSynapses = new CodeRunnerList();
 		if (learn) {
@@ -177,6 +191,7 @@ public class TemporalMemory extends SDRProcessor {
 		
 		runnerChain.add(activateColumns);
 		if (learn) {
+			//runnerChain.add(debug);
 			runnerChain.add(growSegmentsAndSynapses);
 		}
 		runnerChain.add(clearPrediction);
@@ -184,12 +199,18 @@ public class TemporalMemory extends SDRProcessor {
 	}
 	
 	public void debug() {
-		System.out.println("Burst SDR: " + burstingColumns.toStr());
-		System.out.println("activeCellPositions: " + activeCellPositions.size() + ", winnerCellPositions: " + winnerCellPositions.size() + ", predictiveCellPositions: " + predictiveCellPositions.size());
+		System.out.println(
+			"Burst SDR onBits: " + burstingColumns.getActiveColumns().size() + 
+			", activeCellPositions: " + activeCellPositions.size() + 
+			", winnerCellPositions: " + winnerCellPositions.size() + 
+			", predictiveCellPositions: " + predictiveCellPositions.size()
+			);
 	}
 	
 	protected void burstColumn(GridColumn column) {
+		lock.lock(this);
 		activeCellPositions.addAll(Position.getColumnPositions(column.posX(), column.posY(), sizeZ));
+		lock.unlock(this);
 		Cell winnerCell = null;
 		// Find potential match
 		SortedMap<Integer,List<Cell>> cellsByPotential = new TreeMap<Integer,List<Cell>>();
@@ -208,6 +229,7 @@ public class TemporalMemory extends SDRProcessor {
 		if (cellsByPotential.size()>0) {
 			List<Cell> potentialCells = cellsByPotential.get(cellsByPotential.lastKey());
 			winnerCell = potentialCells.get(Rand.getRandomInt(0, (potentialCells.size() -1)));
+			//System.out.println(column + " " + winnerCell.matchingDistalSegment.potentialSynapses.size());
 		} else {
 			// Find least connected cell
 			SortedMap<Integer,List<Cell>> cellsBySegments = new TreeMap<Integer,List<Cell>>();
@@ -225,7 +247,9 @@ public class TemporalMemory extends SDRProcessor {
 			winnerCell = leastConnectedCells.get(Rand.getRandomInt(0, (leastConnectedCells.size() -1)));
 		}
 		if (winnerCell!=null) {
+			lock.lock(this);
 			winnerCellPositions.add(winnerCell.position);
+			lock.unlock(this);
 		}
 	}
 	

@@ -46,7 +46,7 @@ public class TestTemporalMemory extends TestObject {
 		int num = 0;
 		for (SDR input: inputList) {
 			tm.setInput(input);
-			Waiter.startAndWaitFor(processorChain, 100);
+			Waiter.startAndWaitFor(processorChain, 10000);
 			SDR output = tm.getOutput();
 			outputList.add(output);
 			

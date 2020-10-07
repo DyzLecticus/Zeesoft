@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.Logger;
 public class CodeRunnerChain implements Waitable {
 	protected Lock						lock					= new Lock();
 	
+	protected boolean					logExceptions			= true;
+	
 	protected List<ProgressListener>	progressListeners		= new ArrayList<ProgressListener>();
 	
 	protected List<CodeRunnerList>		runnerLists				= new ArrayList<CodeRunnerList>();
@@ -66,6 +68,12 @@ public class CodeRunnerChain implements Waitable {
 				add(runnerList);
 			}
 		}
+	}
+	
+	public void setLogExceptions(boolean logExceptions) {
+		lock.lock(this);
+		this.logExceptions = logExceptions;
+		lock.unlock(this);
 	}
 
 	public List<RunCode> getCodes() {
@@ -169,7 +177,12 @@ public class CodeRunnerChain implements Waitable {
 	}
 	
 	protected void caughtException(Exception exception) {
-		// Override to implement
+		lock.lock(this);
+		boolean log = logExceptions;
+		lock.unlock(this);
+		if (log) {
+			exception.printStackTrace();
+		}
 	}
 	
 	protected void doneCallback() {
