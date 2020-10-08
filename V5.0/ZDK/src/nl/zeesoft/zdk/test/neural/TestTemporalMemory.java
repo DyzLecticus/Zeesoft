@@ -38,7 +38,7 @@ public class TestTemporalMemory extends TestObject {
 		CodeRunnerChain processorChain = new CodeRunnerChain();
 		tm.buildProcessorChain(processorChain, true);
 
-		List<SDR> inputList = getInputSDRList(100);
+		List<SDR> inputList = getInputSDRList(200);
 		List<SDR> outputList = new ArrayList<SDR>();
 
 		// TODO: Expand test and add assertions
@@ -54,6 +54,7 @@ public class TestTemporalMemory extends TestObject {
 				//System.out.println("Input SDR: " + input.toStr());
 				//System.out.println("Output SDR: " + output.toStr());
 			}
+			System.out.print(String.format("%03d", num) + " > ");
 			tm.debug();
 			num++;
 		}

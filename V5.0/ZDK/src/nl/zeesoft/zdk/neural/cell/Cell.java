@@ -58,7 +58,8 @@ public class Cell {
 		DistalSegment r = new DistalSegment();
 		distalSegments.add(0,r);
 		while (distalSegments.size()>maxSegmentsPerCell) {
-			distalSegments.remove(distalSegments.size() - 1);
+			DistalSegment remove = distalSegments.remove(distalSegments.size() - 1);
+			remove.clear();
 		}
 		return r;
 	}

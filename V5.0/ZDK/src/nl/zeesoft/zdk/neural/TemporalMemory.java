@@ -32,6 +32,7 @@ public class TemporalMemory extends SDRProcessor {
 	public float				permanenceThreshold				= 0.5F;
 	public float				permanenceIncrement				= 0.1F;
 	public float				permanenceDecrement				= 0.1F;
+	public float				predictedSegmentDecrement		= 0.2F;
 
 	public int					activationThreshold				= 13;
 	public int					matchingThreshold				= 10;
@@ -123,10 +124,7 @@ public class TemporalMemory extends SDRProcessor {
 					boolean predicted = false;
 					for (Position pos: predictiveCellPositions) {
 						if (pos.x==column.posX() && pos.y==column.posY()) {
-							lock.lock(this);
-							activeCellPositions.add(pos);
-							winnerCellPositions.add(pos);
-							lock.unlock(this);
+							activatePredictedColumn(pos);
 							predicted = true;
 							break;
 						}
@@ -159,6 +157,11 @@ public class TemporalMemory extends SDRProcessor {
 				public Object applyFunction(GridColumn column, int posZ, Object value) {
 					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
 						adjustColumnSegmentsAndSynapses(column);
+					} else if (
+						predictedSegmentDecrement > 0F &&
+						Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
+						) {
+						punishPredictedColumn(column);
 					}
 					return value;
 				}
@@ -211,6 +214,13 @@ public class TemporalMemory extends SDRProcessor {
 			);
 	}
 	
+	protected void activatePredictedColumn(Position pos) {
+		lock.lock(this);
+		activeCellPositions.add(pos);
+		winnerCellPositions.add(pos);
+		lock.unlock(this);
+	}
+	
 	protected void burstColumn(GridColumn column) {
 		lock.lock(this);
 		activeCellPositions.addAll(Position.getColumnPositions(column.posX(), column.posY(), sizeZ));
@@ -255,7 +265,18 @@ public class TemporalMemory extends SDRProcessor {
 			lock.unlock(this);
 		}
 	}
-	
+
+	protected void punishPredictedColumn(GridColumn column) {
+		for (int z = 0; z < sizeZ; z++) {
+			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+			if (cell.matchingDistalSegments.size()>0) {
+				for (DistalSegment segment: cell.matchingDistalSegments) {
+					segment.adaptSynapses(prevActiveCellPositions, predictedSegmentDecrement * -1F, 0F);
+				}
+			}
+		}
+	}
+
 	protected void adjustColumnSegmentsAndSynapses(GridColumn column) {
 		boolean bursting = (boolean) burstingColumns.getValue(column.posX(), column.posY());
 		for (int z = 0; z < sizeZ; z++) {
