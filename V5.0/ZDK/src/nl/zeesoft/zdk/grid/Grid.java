@@ -89,6 +89,30 @@ public class Grid {
 			List<GridColumn> columns = getColumns();
 			initialize(columns.size(), 1, sizeZ);
 			copyValuesFrom(columns);
+		} else if (sizeZ>1) {
+			List<GridColumn> columns = getColumns();
+			int oriSizeZ = sizeZ;
+			int newSizeZ = columns.size() * sizeZ;
+			initialize(newSizeZ, 1, 1);
+			for (GridColumn column: columns) {
+				boolean stop = false;
+				int s = column.index * oriSizeZ;
+				int e = s + oriSizeZ;
+				int z = 0;
+				for (int x = s; x < e; x++) {
+					GridColumn columnTo = getColumn(x, 0);
+					if (columnTo!=null) {
+						columnTo.setValue(column.getValue(z));
+					} else {
+						stop = true;
+						break;
+					}
+					z++;
+				}
+				if (stop) {
+					break;
+				}
+			}
 		}
 	}
 	
@@ -186,6 +210,12 @@ public class Grid {
 	public void setValue(int posX, int posY, int posZ, Object value) {
 		if (columnsByPos!=null && posX < sizeX && posY < sizeY && posZ < sizeZ) {
 			columnsByPos[posX][posY].setValue(posZ,value);
+		}
+	}
+	
+	public void setValue(List<Position> positions, Object value) {
+		for (Position pos: positions) {
+			setValue(pos.x, pos.y, pos.z, value);
 		}
 	}
 	

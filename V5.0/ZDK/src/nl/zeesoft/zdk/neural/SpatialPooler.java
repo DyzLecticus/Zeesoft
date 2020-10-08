@@ -96,7 +96,7 @@ public class SpatialPooler extends SDRProcessor {
 	}
 	
 	@Override
-	public void randomizeConnections(CodeRunnerList runnerList) {
+	public void resetConnections(CodeRunnerList runnerList) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object[] applyFunction(GridColumn column, Object[] values) {

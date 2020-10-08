@@ -31,11 +31,11 @@ public class SDRProcessor {
 	
 	public void randomizeConnections() {
 		logger.debug(this, new Str("Randomizing " + this.getClass().getSimpleName() + " connections ..."));
-		randomizeConnections(null);
+		resetConnections(null);
 		logger.debug(this, new Str("Randomized " + this.getClass().getSimpleName() + " connections"));
 	}
 	
-	public void randomizeConnections(CodeRunnerList runnerList) {
+	public void resetConnections(CodeRunnerList runnerList) {
 		// Override to implement
 	}
 
@@ -47,7 +47,7 @@ public class SDRProcessor {
 		}
 		if (randomizeConnections) {
 			CodeRunnerList rand = new CodeRunnerList();
-			randomizeConnections(rand);
+			resetConnections(rand);
 			if (rand.size()>0) {
 				runnerChain.add(rand);
 			}

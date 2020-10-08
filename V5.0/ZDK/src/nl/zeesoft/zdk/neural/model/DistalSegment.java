@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.cell;
+package nl.zeesoft.zdk.neural.model;
 
 import java.util.ArrayList;
 import java.util.List;

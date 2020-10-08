@@ -25,6 +25,11 @@ public class SDR extends Grid {
 		return r;
 	}
 	
+	@Override
+	public String toString() {
+		return toStr().toString();
+	}
+	
 	public Str toStr() {
 		Str r = new Str();
 		for (GridColumn column: getActiveColumns()) {

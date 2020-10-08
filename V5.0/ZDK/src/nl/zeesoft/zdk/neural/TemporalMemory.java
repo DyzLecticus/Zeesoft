@@ -11,8 +11,8 @@ import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDR;
-import nl.zeesoft.zdk.neural.cell.Cell;
-import nl.zeesoft.zdk.neural.cell.DistalSegment;
+import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.DistalSegment;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
@@ -88,7 +88,7 @@ public class TemporalMemory extends SDRProcessor {
 	}
 	
 	@Override
-	public void randomizeConnections(CodeRunnerList runnerList) {
+	public void resetConnections(CodeRunnerList runnerList) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
@@ -98,6 +98,29 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		cells.applyFunction(function, runnerList);
+	}
+	
+	public void resetState(CodeRunnerList runnerList) {
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				Cell cell = (Cell) value;
+				cell.reset();
+				return value;
+			}
+		};
+		cells.applyFunction(function, runnerList);
+		runnerList.add(new RunCode() {
+			@Override
+			protected boolean run() {
+				predictiveCellPositions.clear();
+				prevActiveCellPositions.clear();
+				prevWinnerCellPositions.clear();
+				activeCellPositions.clear();
+				winnerCellPositions.clear();
+				return true;
+			}
+		});
 	}
 	
 	@Override
@@ -138,6 +161,19 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		burstingColumns.applyFunction(function, activateColumns);
+		
+		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				Grid activations = new Grid();
+				activations.initialize(sizeX, sizeY, sizeZ, false);
+				activations.setValue(activeCellPositions, true);
+				activations.flatten();
+				activations.flatten();
+				output.copyFrom(activations);
+				return true;
+			}
+		});
 		
 		// TODO: Remove
 		/*
@@ -197,6 +233,7 @@ public class TemporalMemory extends SDRProcessor {
 		cells.applyFunction(function, predictActiveCells);
 		
 		runnerChain.add(activateColumns);
+		runnerChain.add(generateOutput);
 		if (learn) {
 			//runnerChain.add(debug);
 			runnerChain.add(adjustColumnSegmentsAndSynapses);

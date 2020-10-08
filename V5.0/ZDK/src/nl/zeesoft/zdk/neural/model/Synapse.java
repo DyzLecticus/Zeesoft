@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.cell;
+package nl.zeesoft.zdk.neural.model;
 
 public class Synapse {
 	public int		connectToPosX	= 0;

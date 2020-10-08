@@ -61,5 +61,18 @@ public class TestGrid extends TestObject {
 		Waiter.startAndWaitFor(runnerList, 100);
 		assertEqual((float)grid.getValue(10, 15, 4), 3.5F, "Value does not match expectation (6)");
 		System.out.println("New value at (10, 15, 4): " + grid.getValue(10, 15, 4));
+		
+		// Test flatten from 3D to 1D
+		grid = new Grid();
+		grid.initialize(4, 4, 4, false);
+		grid.setValue(0, 1, 0, true);
+		grid.setValue(0, 1, 1, true);
+		grid.setValue(0, 1, 2, true);
+		grid.setValue(0, 1, 3, true);
+		assertEqual(grid.getValuePositions(true).toString(),"[0,1,0, 0,1,1, 0,1,2, 0,1,3]","Value positions do not match expectation (1)");
+		grid.flatten();
+		assertEqual(grid.getValuePositions(true).toString(),"[1,0,0, 1,0,1, 1,0,2, 1,0,3]","Value positions do not match expectation (2)");
+		grid.flatten();
+		assertEqual(grid.getValuePositions(true).toString(),"[4,0,0, 5,0,0, 6,0,0, 7,0,0]","Value positions do not match expectation (3)");
 	}
 }
