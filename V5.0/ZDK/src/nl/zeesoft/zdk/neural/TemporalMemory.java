@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.neural.model.ApicalSegment;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.DistalSegment;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -19,12 +20,12 @@ import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class TemporalMemory extends SDRProcessor {
-	public Lock					lock							= new Lock();
+	private Lock				lock							= new Lock();
 	
 	public int					sizeX							= 48;
 	public int					sizeY							= 48;
 	public int					sizeZ							= 16;
-
+	
 	public int					maxSegmentsPerCell				= 256;
 	public int					maxSynapsesPerSegment			= 256;
 	
@@ -32,12 +33,14 @@ public class TemporalMemory extends SDRProcessor {
 	public float				permanenceThreshold				= 0.5F;
 	public float				permanenceIncrement				= 0.1F;
 	public float				permanenceDecrement				= 0.1F;
-	public float				predictedSegmentDecrement		= 0.2F;
+	
+	public float				distalSegmentDecrement			= 0.2F;
+	public float				apicalSegmentDecrement			= 0.2F;
 
 	public int					activationThreshold				= 13;
 	public int					matchingThreshold				= 10;
 	public int					maxNewSynapseCount				= 20;
-	
+
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
 	protected SDR				burstingColumns					= null;
 	protected Grid				cells							= null;
@@ -47,6 +50,9 @@ public class TemporalMemory extends SDRProcessor {
 	protected List<Position>	prevWinnerCellPositions			= new ArrayList<Position>();
 	protected List<Position>	predictiveCellPositions			= new ArrayList<Position>();
 
+	protected List<Position>	activeApicalCellPositions		= new ArrayList<Position>();
+	protected List<Position>	prevActiveApicalCellPositions	= new ArrayList<Position>();
+	
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (sizeX < 4) {
@@ -65,19 +71,14 @@ public class TemporalMemory extends SDRProcessor {
 		output = new SDR();
 		output.initialize(sizeX, sizeY * sizeZ);
 		
-		activeInputColumnPositions.clear();
-		activeCellPositions.clear();
-		winnerCellPositions.clear();
-		prevActiveCellPositions.clear();
-		prevWinnerCellPositions.clear();
-		predictiveCellPositions.clear();
-		
 		burstingColumns = new SDR();
 		burstingColumns.initialize(sizeX, sizeY);
 		
 		cells = new Grid();
 		cells.initialize(sizeX, sizeY, sizeZ);
 		
+		resetLocalState();
+
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
@@ -110,17 +111,17 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		cells.applyFunction(function, runnerList);
-		runnerList.add(new RunCode() {
-			@Override
-			protected boolean run() {
-				predictiveCellPositions.clear();
-				prevActiveCellPositions.clear();
-				prevWinnerCellPositions.clear();
-				activeCellPositions.clear();
-				winnerCellPositions.clear();
-				return true;
-			}
-		});
+		if (runnerList!=null) {
+			runnerList.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					resetLocalState();
+					return true;
+				}
+			});
+		} else {
+			resetLocalState();
+		}
 	}
 	
 	@Override
@@ -134,7 +135,14 @@ public class TemporalMemory extends SDRProcessor {
 		activeCellPositions.clear();
 		winnerCellPositions.clear();
 		
+		prevActiveApicalCellPositions = new ArrayList<Position>(activeApicalCellPositions);
+		activeApicalCellPositions.clear();
+		
 		Position.randomizeList(predictiveCellPositions);
+	}
+	
+	public void addContext(SDR sdr) {
+		activeApicalCellPositions = sdr.getValuePositions(true);
 	}
 	
 	@Override
@@ -175,34 +183,28 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		});
 		
-		// TODO: Remove
-		/*
-		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				debug();
-				return true;
-			}
-		});
-		*/
-		
-		CodeRunnerList adjustColumnSegmentsAndSynapses = new CodeRunnerList();
+		CodeRunnerList adaptColumnSegmentsAndSynapses = new CodeRunnerList();
 		if (learn) {
 			function = new ColumnFunction() {
 				@Override
 				public Object applyFunction(GridColumn column, int posZ, Object value) {
 					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
-						adjustColumnSegmentsAndSynapses(column);
+						adaptColumn(column);
 					} else if (
-						predictedSegmentDecrement > 0F &&
+						(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
 						Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
 						) {
-						punishPredictedColumn(column);
+						if (distalSegmentDecrement > 0F) {
+							punishPredictedColumn(column, distalSegmentDecrement, false);
+						}
+						if (apicalSegmentDecrement > 0F) {
+							punishPredictedColumn(column, apicalSegmentDecrement, true);
+						}
 					}
 					return value;
 				}
 			};
-			cells.applyFunction(function, adjustColumnSegmentsAndSynapses);
+			cells.applyFunction(function, adaptColumnSegmentsAndSynapses);
 		}
 		
 		CodeRunnerList clearPrediction = new CodeRunnerList(new RunCode() {
@@ -219,9 +221,12 @@ public class TemporalMemory extends SDRProcessor {
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Cell cell = (Cell) value;
 				if (cell.distalSegments.size()>0) {
-					cell.calculateSegmentActivity(activeCellPositions, permanenceThreshold);
+					cell.calculateDistalSegmentActivity(activeCellPositions, permanenceThreshold);
+					cell.calculateApicalSegmentActivity(activeApicalCellPositions, permanenceThreshold);
 					cell.classifySegmentActivity(activationThreshold, matchingThreshold);
-					if (cell.activeDistalSegments.size()>0) {
+					if ((activeApicalCellPositions.size()==0 && cell.activeDistalSegments.size()>0) ||
+						(activeApicalCellPositions.size()>0 && cell.activeDistalSegments.size()>0 && cell.activeApicalSegments.size()>0)
+						) {
 						lock.lock(this);
 						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
 						lock.unlock(this);
@@ -235,8 +240,7 @@ public class TemporalMemory extends SDRProcessor {
 		runnerChain.add(activateColumns);
 		runnerChain.add(generateOutput);
 		if (learn) {
-			//runnerChain.add(debug);
-			runnerChain.add(adjustColumnSegmentsAndSynapses);
+			runnerChain.add(adaptColumnSegmentsAndSynapses);
 		}
 		runnerChain.add(clearPrediction);
 		runnerChain.add(predictActiveCells);
@@ -267,8 +271,14 @@ public class TemporalMemory extends SDRProcessor {
 		SortedMap<Integer,List<Cell>> cellsByPotential = new TreeMap<Integer,List<Cell>>();
 		for (int z = 0; z < sizeZ; z++) {
 			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+			int potential = 0;
 			if (cell.matchingDistalSegment!=null) {
-				int potential = cell.matchingDistalSegment.potentialSynapses.size();
+				potential = cell.matchingDistalSegment.potentialSynapses.size();
+			}
+			if (cell.matchingApicalSegment!=null) {
+				potential = potential + cell.matchingApicalSegment.potentialSynapses.size();
+			}
+			if (potential>0) {
 				List<Cell> cells = cellsByPotential.get(potential);
 				if (cells==null) {
 					cells = new ArrayList<Cell>();
@@ -285,7 +295,7 @@ public class TemporalMemory extends SDRProcessor {
 			SortedMap<Integer,List<Cell>> cellsBySegments = new TreeMap<Integer,List<Cell>>();
 			for (int z = 0; z < sizeZ; z++) {
 				Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
-				int segments = cell.distalSegments.size();
+				int segments = cell.distalSegments.size() + cell.apicalSegments.size();
 				List<Cell> cells = cellsBySegments.get(segments);
 				if (cells==null) {
 					cells = new ArrayList<Cell>();
@@ -303,55 +313,56 @@ public class TemporalMemory extends SDRProcessor {
 		}
 	}
 
-	protected void punishPredictedColumn(GridColumn column) {
-		for (int z = 0; z < sizeZ; z++) {
-			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
-			if (cell.matchingDistalSegments.size()>0) {
-				for (DistalSegment segment: cell.matchingDistalSegments) {
-					segment.adaptSynapses(prevActiveCellPositions, predictedSegmentDecrement * -1F, 0F);
+	protected void adaptColumn(GridColumn column) {
+		boolean bursting = (boolean) burstingColumns.getValue(column.posX(), column.posY());
+		if (prevWinnerCellPositions.size()>0) {
+			for (int z = 0; z < sizeZ; z++) {
+				if (bursting) {
+					if (Position.posIsInList(column.posX(), column.posY(), z, winnerCellPositions)) {
+						Cell winnerCell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+						if (winnerCell.matchingDistalSegment!=null) {
+							winnerCell.adaptMatchingSegments(
+								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
+								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment);
+						} else {
+							winnerCell.createSegments(
+								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
+								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSegmentsPerCell, maxSynapsesPerSegment);
+						}
+					}
+				} else {
+					Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+					cell.adaptActiveSegments(
+						prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
+						initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment);
 				}
 			}
 		}
 	}
 
-	protected void adjustColumnSegmentsAndSynapses(GridColumn column) {
-		boolean bursting = (boolean) burstingColumns.getValue(column.posX(), column.posY());
+	protected void punishPredictedColumn(GridColumn column, float segmentDecrement, boolean apical) {
 		for (int z = 0; z < sizeZ; z++) {
-			if (bursting) {
-				if (Position.posIsInList(column.posX(), column.posY(), z, winnerCellPositions)) {
-					Cell winnerCell = (Cell) cells.getValue(column.posX(), column.posY(), z);
-					if (winnerCell.matchingDistalSegment!=null) {
-						winnerCell.matchingDistalSegment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
-						int growNum = maxNewSynapseCount - winnerCell.matchingDistalSegment.potentialSynapses.size();
-						if (growNum>0) {
-							winnerCell.matchingDistalSegment.growSynapses(
-								winnerCell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
-						}
-					} else {
-						DistalSegment segment = winnerCell.createSegment(maxSegmentsPerCell);
-						int growNum = maxNewSynapseCount;
-						if (prevWinnerCellPositions.size()<growNum) {
-							growNum = prevWinnerCellPositions.size();
-						}
-						if (growNum>0) {
-							segment.growSynapses(
-								winnerCell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
-						}
-					}
+			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+			if (apical) {
+				for (ApicalSegment segment: cell.matchingApicalSegments) {
+					segment.adaptSynapses(prevActiveApicalCellPositions, segmentDecrement * -1F, 0F);
 				}
 			} else {
-				Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
-				if (cell.activeDistalSegments.size()>0) {
-					for (DistalSegment segment: cell.activeDistalSegments) {
-						segment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
-						int growNum = maxNewSynapseCount - segment.activeSynapses.size();
-						if (growNum>0) {
-							segment.growSynapses(
-								cell.position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
-						}
-					}
+				for (DistalSegment segment: cell.matchingDistalSegments) {
+					segment.adaptSynapses(prevActiveCellPositions, segmentDecrement * -1F, 0F);
 				}
 			}
 		}
+	}
+	
+	protected void resetLocalState() {
+		predictiveCellPositions.clear();
+		prevActiveCellPositions.clear();
+		prevWinnerCellPositions.clear();
+		activeCellPositions.clear();
+		winnerCellPositions.clear();
+
+		activeApicalCellPositions.clear();
+		prevActiveApicalCellPositions.clear();
 	}
 }

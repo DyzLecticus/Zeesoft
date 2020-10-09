@@ -32,7 +32,7 @@ public class Controller {
 		r.addProgressListener(new ProgressBar("Loading soundbanks"));
 		r.start();
 		
-		MidiSys.getLfoManager().start();;
+		MidiSys.getLfoManager().start();
 		
 		settings.logger.debug(this,new Str("Initialized"));
 		return r;
