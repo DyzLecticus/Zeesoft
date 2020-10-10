@@ -1,13 +1,19 @@
 package nl.zeesoft.zdk;
 
 public class Logger {
-	private boolean		debug = false;
+	public static Logger	logger		= null;
+	
+	private boolean			debug		= false;
 	
 	public Logger() {
 		
 	}
 	
 	public Logger(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 	
@@ -39,5 +45,40 @@ public class Logger {
 		message.sb().insert(0, source.getClass().getName());
 		message.sb().insert(0, " ");
 		message.sb().insert(0, TimeStamp.getDateTimeString());
+	}
+	
+	public static void initializeLogger() {
+		initializeLogger("", false);
+	}
+	
+	public static void initializeLogger(String className, boolean debug) {
+		if (className.length()==0) {
+			className = Logger.class.getName();
+		}
+		logger = (Logger) Instantiator.getNewClassInstanceForName(className);
+		logger.setDebug(debug);
+	}
+	
+	public static void setLoggerDebug(boolean debug) {
+		getLogger().setDebug(debug);
+	}
+	
+	public static void dbg(Object source, Str message) {
+		getLogger().debug(source, message);
+	}
+	
+	public static void err(Object source, Str message) {
+		getLogger().error(source, message);
+	}
+	
+	public static void err(Object source, Str message, Exception ex) {
+		getLogger().error(source, message, ex);
+	}
+	
+	private static Logger getLogger() {
+		if (logger==null) {
+			initializeLogger();
+		}
+		return logger;
 	}
 }

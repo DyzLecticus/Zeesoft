@@ -13,10 +13,25 @@ public class Segment {
 	public List<Synapse>	activeSynapses		= new ArrayList<Synapse>();
 	public List<Synapse>	potentialSynapses	= new ArrayList<Synapse>();
 	
+	public Segment() {
+		
+	}
+
+	public Segment(Segment segment) {
+		copyFrom(segment);
+	}
+
+	public void copyFrom(Segment segment) {
+		clear();
+		for (Synapse synapse :segment.synapses) {
+			synapses.add(new Synapse(synapse));
+		}
+	}
+	
 	public void adaptSynapses(List<Position> prevActiveCellPositions, float permanenceIncrement, float permanenceDecrement) {
 		List<Synapse> removeSynapses = new ArrayList<Synapse>();
 		for (Synapse synapse: synapses) {
-			boolean active = Position.posIsInList(synapse.connectToPosX, synapse.connectToPosY, synapse.connectToPosZ, prevActiveCellPositions);
+			boolean active = Position.posIsInList(synapse.connectTo, prevActiveCellPositions);
 			if (active) {
 				synapse.permanence = synapse.permanence + permanenceIncrement;
 				if (synapse.permanence > 1F) {
@@ -49,16 +64,14 @@ public class Segment {
 		if (growPositions.size()>0) {
 			for (Position pos: growPositions) {
 				Synapse synapse = new Synapse();
-				synapse.connectToPosX = pos.x;
-				synapse.connectToPosY = pos.y;
-				synapse.connectToPosZ = pos.z;
+				synapse.connectTo = pos;
 				synapse.permanence = initialPermanence;
 				synapses.add(synapse);
 			}
 			if (synapses.size()>maxSynapsesPerSegment) {
 				SortedMap<Float,List<Synapse>> synapsesByPermanence = new TreeMap<Float,List<Synapse>>();
 				for (Synapse synapse: synapses) {
-					if (!Position.posIsInList(synapse.connectToPosX, synapse.connectToPosY, synapse.connectToPosZ, prevWinnerCellPositions)) {
+					if (!Position.posIsInList(synapse.connectTo, prevWinnerCellPositions)) {
 						float permanence = synapse.permanence;
 						List<Synapse> list = synapsesByPermanence.get(permanence);
 						if (list==null) {
@@ -84,7 +97,7 @@ public class Segment {
 	public Synapse getSynapseTo(int posX, int posY, int posZ) {
 		Synapse r = null;
 		for (Synapse synapse: synapses) {
-			if (synapse.connectToPosX == posX && synapse.connectToPosY == posY && synapse.connectToPosZ == posZ) {
+			if (synapse.connectTo.x == posX && synapse.connectTo.y == posY && synapse.connectTo.z == posZ) {
 				r = synapse;
 				break;
 			}

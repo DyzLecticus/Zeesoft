@@ -7,7 +7,6 @@ import nl.zeesoft.zdk.grid.Position;
 
 public class Cell {
 	public Position					position				= null;
-
 	public List<ProximalSegment>	proximalSegments		= new ArrayList<ProximalSegment>();
 	public List<DistalSegment>		distalSegments			= new ArrayList<DistalSegment>();
 	public List<ApicalSegment>		apicalSegments			= new ArrayList<ApicalSegment>();
@@ -26,6 +25,24 @@ public class Cell {
 	
 	public Cell(Position position) {
 		this.position = position;
+	}
+	
+	public Cell(Cell cell) {
+		copyFrom(cell);
+	}
+	
+	public void copyFrom(Cell cell) {
+		clear();
+		this.position = cell.position;
+		for (ProximalSegment segment : cell.proximalSegments) {
+			proximalSegments.add(new ProximalSegment(segment));
+		}
+		for (DistalSegment segment : cell.distalSegments) {
+			distalSegments.add(new DistalSegment(segment));
+		}
+		for (ApicalSegment segment : cell.apicalSegments) {
+			apicalSegments.add(new ApicalSegment(segment));
+		}
 	}
 	
 	public void calculateDistalSegmentActivity(List<Position> activeCellPositions, float permanenceThreshold) {

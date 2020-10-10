@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
 
 public class CodeRunnerChain implements Waitable {
 	protected Lock						lock					= new Lock();
@@ -24,15 +25,6 @@ public class CodeRunnerChain implements Waitable {
 		lock.unlock(this);
 	}
 	
-	public void setLogger(Logger logger) {
-		lock.setLogger(this, logger);
-		lock.lock(this);
-		for (CodeRunnerList runnerList: runnerLists) {
-			runnerList.setLogger(logger);
-		}
-		lock.unlock(this);
-	}
-	
 	public void add(RunCode code) {
 		if (code!=null) {
 			List<RunCode> codes = new ArrayList<RunCode>();
@@ -43,11 +35,9 @@ public class CodeRunnerChain implements Waitable {
 
 	public void addAll(List<RunCode> codes) {
 		if (codes.size()>0) {
-			Logger logger = lock.getLogger(this);
 			lock.lock(this);
 			if (!isBusyNoLock()) {
 				CodeRunnerList runnerList = getNewCodeRunnerList(codes);
-				runnerList.setLogger(logger);
 				runnerList.addAll(codes);
 				runnerLists.add(runnerList);
 			}
@@ -181,7 +171,7 @@ public class CodeRunnerChain implements Waitable {
 		boolean log = logExceptions;
 		lock.unlock(this);
 		if (log) {
-			exception.printStackTrace();
+			Logger.err(this, new Str(this.getClass().getName() + " caught exception"), exception);
 		}
 	}
 	

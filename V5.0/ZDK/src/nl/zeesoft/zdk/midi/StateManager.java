@@ -9,15 +9,9 @@ import nl.zeesoft.zdk.thread.Lock;
 
 public class StateManager {
 	private Lock						lock					= new Lock();
-	private Logger						logger					= null;
 	
 	private State						state					= new State();
 	private List<StateChangeListener>	listeners				= new ArrayList<StateChangeListener>();
-	
-	protected StateManager(Logger logger) {
-		this.logger = logger;
-		lock.setLogger(this, logger);
-	}
 
 	public void addListener(StateChangeListener listener) {
 		lock.lock(this);
@@ -66,7 +60,7 @@ public class StateManager {
 			try {
 				listener.stateChanged(state);
 			} catch (Exception ex) {
-				logger.error(this,new Str("Caught exception while notifying listeners of state change"), ex);
+				Logger.err(this,new Str("Caught exception while notifying listeners of state change"), ex);
 			}
 		}
 	}

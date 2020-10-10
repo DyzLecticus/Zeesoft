@@ -29,7 +29,6 @@ public class HttpConnection {
 	protected HttpConnection(HttpServerConfig config, Socket socket) {
 		this.config = config;
 		this.socket = socket;
-		lock.setLogger(this,config.getLogger());
 		runner = new CodeRunner(getHandler()) {
 			@Override
 			protected void stopped() {

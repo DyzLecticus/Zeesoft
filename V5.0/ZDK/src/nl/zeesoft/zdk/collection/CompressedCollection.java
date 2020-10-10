@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 
 public class CompressedCollection extends PersistableCollection {
@@ -17,14 +16,6 @@ public class CompressedCollection extends PersistableCollection {
 	
 	protected List<String>			classNames			= new ArrayList<String>();
 	protected List<String>			propertyNames		= new ArrayList<String>();
-	
-	public CompressedCollection() {
-		
-	}
-	
-	public CompressedCollection(Logger logger) {
-		super(logger);
-	}
 	
 	public void addClassName(String className) {
 		lock.lock(this);

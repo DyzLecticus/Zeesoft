@@ -3,8 +3,6 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
-
 public class CodeRunnerList extends RunnerObject {
 	private List<CodeRunner>	runners			= new ArrayList<CodeRunner>();
 	private Exception			exception		= null;
@@ -20,7 +18,6 @@ public class CodeRunnerList extends RunnerObject {
 	
 	public CodeRunner add(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
-		runner.setLogger(getLock().getLogger(this));
 		getLock().lock(this);
 		if (!isBusyNoLock()) {
 			runners.add(runner);
@@ -33,15 +30,6 @@ public class CodeRunnerList extends RunnerObject {
 		for (RunCode code: codes) {
 			add(code);
 		}
-	}
-	
-	public void setLogger(Logger logger) {
-		getLock().setLogger(this, logger);
-		getLock().lock(this);
-		for (CodeRunner runner: runners) {
-			runner.setLogger(logger);
-		}
-		getLock().unlock(this);
 	}
 	
 	public void setSleepMs(int sleepMs) {

@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Instantiator;
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
@@ -26,14 +25,6 @@ public class PersistableCollection extends CompleteCollection {
 	public static final String		LIST_START				= "@LS|";
 	public static final String		LIST_CONCATENATOR		= "|LC|";
 	public static final String		LIST_END				= "|LE@";
-	
-	public PersistableCollection() {
-		
-	}
-	
-	public PersistableCollection(Logger logger) {
-		super(logger);
-	}
 	
 	public Str toStr() {
 		lock.lock(this);

@@ -30,10 +30,11 @@ public class TestTemporalMemory extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		TemporalMemory tm = new TemporalMemory();
-		tm.logger = new Logger(true);
 		tm.initialize();
-		tm.randomizeConnections();
+		tm.resetConnections();
 
 		CodeRunnerChain processorChain = new CodeRunnerChain();
 		tm.buildProcessorChain(processorChain, true);

@@ -11,18 +11,15 @@ public class SynthManager {
 	private static final int			DRUM_CHANNEL	= 9;
 	
 	private Lock						lock			= new Lock();
-	private Logger						logger			= null;
 	private Synth						synth			= null;
 	private LfoManager					lfoManager		= null;
 	
 	private Inst[]						instruments 	= new Inst[16];
 	private List<Patch>					patches			= new ArrayList<Patch>();
 	
-	protected SynthManager(Logger logger, Synth synth, LfoManager lfoManager) {
-		this.logger = logger;
+	protected SynthManager(Synth synth, LfoManager lfoManager) {
 		this.synth = synth;
 		this.lfoManager = lfoManager;
-		lock.setLogger(this, logger);
 	}
 	
 	public Str addPatch(Patch patch) {
@@ -314,7 +311,7 @@ public class SynthManager {
 			Str error = new Str();
 			error.sb().append("Invalid instrument channel: ");
 			error.sb().append(channel);
-			logger.error(this, error);
+			Logger.err(this, error);
 		}
 	}
 

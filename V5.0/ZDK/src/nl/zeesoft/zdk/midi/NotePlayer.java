@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.midi;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -13,11 +12,10 @@ public class NotePlayer {
 	private SynthManager	synthManager	= null;
 	private Synth			synth			= null;
 		
-	protected NotePlayer(Logger logger, StateManager stateManager, SynthManager synthManager, Synth synth) {
+	protected NotePlayer(StateManager stateManager, SynthManager synthManager, Synth synth) {
 		this.stateManager = stateManager;
 		this.synthManager = synthManager;
 		this.synth = synth;
-		lock.setLogger(this, logger);
 	}
 
 	public void startNotes(int channel, String... notes) {

@@ -6,20 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
 
 public class CompleteCollection extends QueryableCollection {
 	protected boolean	complete	= true;
-	
-	public CompleteCollection() {
-		
-	}
-	
-	public CompleteCollection(Logger logger) {
-		super(logger);
-	}
 	
 	public void setComplete(boolean complete) {
 		lock.lock(this);

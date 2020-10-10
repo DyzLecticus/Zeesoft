@@ -16,7 +16,6 @@ import nl.zeesoft.zdk.thread.Lock;
 
 public class MidiSys {
 	private static Lock				lock			= new Lock();
-	private static Logger			logger			= null;
 	private static StateManager		stateManager	= null;
 	private static Synth			synth			= null;
 	private static SynthManager		synthManager	= null;
@@ -26,22 +25,6 @@ public class MidiSys {
 	
 	private static Sequencer		seq				= null;
 	private static Synthesizer 		syn				= null;
-	
-	public static void setLogger(Logger logger) {
-		MidiSys self = new MidiSys();
-		lock.lock(self);
-		MidiSys.logger = logger;
-		lock.unlock(self);
-		lock.setLogger(self,logger);
-	}
-	
-	public static Logger getLogger() {
-		MidiSys self = new MidiSys();
-		lock.lock(self);
-		Logger r = getLoggerNoLock();
-		lock.unlock(self);
-		return r;
-	}
 	
 	public static void closeDevices() {
 		MidiSys self = new MidiSys();
@@ -119,7 +102,7 @@ public class MidiSys {
 		if (MidiSys.sequencePlayer==null) {
 			Sequencer sequencer = getSeqNoLock();
 			if (sequencer!=null) {
-				MidiSys.sequencePlayer = new SequencePlayer(getLoggerNoLock(),sequencer,getStateManagerNoLock(),getLfoManagerNoLock());
+				MidiSys.sequencePlayer = new SequencePlayer(sequencer,getStateManagerNoLock(),getLfoManagerNoLock());
 			}
 		}
 		return MidiSys.sequencePlayer;
@@ -130,7 +113,7 @@ public class MidiSys {
 			Synth synth = getSynthNoLock();
 			SynthManager manager = getSynthManagerNoLock();
 			if (synth!=null && manager!=null) {
-				MidiSys.notePlayer = new NotePlayer(getLoggerNoLock(),getStateManagerNoLock(),manager,synth);
+				MidiSys.notePlayer = new NotePlayer(getStateManagerNoLock(),manager,synth);
 			}
 		}
 		return MidiSys.notePlayer;
@@ -140,7 +123,7 @@ public class MidiSys {
 		if (MidiSys.lfoManager==null) {
 			Synth synth = getSynthNoLock();
 			if (synth!=null) {
-				MidiSys.lfoManager = new LfoManager(getLoggerNoLock(),synth,getStateManagerNoLock());
+				MidiSys.lfoManager = new LfoManager(synth,getStateManagerNoLock());
 			}
 		}
 		return MidiSys.lfoManager;
@@ -150,7 +133,7 @@ public class MidiSys {
 		if (MidiSys.synthManager==null) {
 			Synth synth = getSynthNoLock();
 			if (synth!=null) {
-				MidiSys.synthManager = new SynthManager(getLoggerNoLock(),synth,getLfoManagerNoLock());
+				MidiSys.synthManager = new SynthManager(synth,getLfoManagerNoLock());
 			}
 		}
 		return MidiSys.synthManager;
@@ -160,7 +143,7 @@ public class MidiSys {
 		if (MidiSys.synth==null) {
 			Synthesizer synthesizer = getSynNoLock();
 			if (synthesizer!=null) {
-				MidiSys.synth = new Synth(getLoggerNoLock(),synthesizer);
+				MidiSys.synth = new Synth(synthesizer);
 			}
 		}
 		return MidiSys.synth;
@@ -168,16 +151,9 @@ public class MidiSys {
 	
 	private static StateManager getStateManagerNoLock() {
 		if (MidiSys.stateManager==null) {
-			MidiSys.stateManager = new StateManager(getLoggerNoLock());
+			MidiSys.stateManager = new StateManager();
 		}
 		return MidiSys.stateManager;
-	}
-	
-	private static Logger getLoggerNoLock() {
-		if (MidiSys.logger==null) {
-			MidiSys.logger = new Logger();
-		}
-		return MidiSys.logger;
 	}
 	
 	private static Sequencer getSeqNoLock() {
@@ -187,10 +163,10 @@ public class MidiSys {
 				if (seq!=null) {
 					seq.open();
 				} else {
-					getLoggerNoLock().error(new MidiSys(),new Str("Sequencer device is not supported"));
+					Logger.err(new MidiSys(),new Str("Sequencer device is not supported"));
 				}
 			} catch (MidiUnavailableException e) {
-				getLoggerNoLock().error(new MidiSys(),new Str("Failed to initialize sequencer"),e);
+				Logger.err(new MidiSys(),new Str("Failed to initialize sequencer"),e);
 			}
 		}
 		return seq;
@@ -208,10 +184,10 @@ public class MidiSys {
 						if (syn!=null) {
 							syn.open();
 						} else {
-							getLoggerNoLock().error(new MidiSys(),new Str("Synthesizer device is not supported"));
+							Logger.err(new MidiSys(),new Str("Synthesizer device is not supported"));
 						}
 					} catch (MidiUnavailableException e) {
-						getLoggerNoLock().error(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
+						Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
 					}
 					if (syn!=null) {
 						if (seq.getTransmitters().size()>0) {
@@ -219,14 +195,14 @@ public class MidiSys {
 								try {
 									trm.setReceiver(syn.getReceiver());
 								} catch (MidiUnavailableException e) {
-									getLoggerNoLock().error(new MidiSys(),new Str("Failed to link sequencer to synthesizer"),e);
+									Logger.err(new MidiSys(),new Str("Failed to link sequencer to synthesizer"),e);
 								}
 							}
 						} else {
 							try {
 								seq.getTransmitter().setReceiver(syn.getReceiver());
 							} catch (MidiUnavailableException e) {
-								getLoggerNoLock().error(new MidiSys(),new Str("Failed to link sequencer to synthesizer"),e);
+								Logger.err(new MidiSys(),new Str("Failed to link sequencer to synthesizer"),e);
 							}
 						}
 					}

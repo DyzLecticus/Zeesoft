@@ -21,8 +21,6 @@ import nl.zeesoft.zdk.thread.Waiter;
 public class HttpClient {
 	protected Lock				lock				= new Lock();
 	
-	protected Logger			logger				= null;
-	
 	protected String			method				= "";
 	protected URL				url					= null;
 	protected HttpHeaderList	headers				= new HttpHeaderList();
@@ -43,23 +41,18 @@ public class HttpClient {
 	private Exception			exception			= null;
 	
 	public HttpClient(Logger logger) {
-		this.logger = logger;
-		lock.setLogger(this, logger);
 		runner = getNewResponseReader();
 	}
 
 	public HttpClient(String method,String url) {
 		this.method = method;
 		setUrl(url);
-		lock.setLogger(this, logger);
 		runner = getNewResponseReader();
 	}
 	
 	public HttpClient(Logger logger,String method,String url) {
-		this.logger = logger;
 		this.method = method;
 		setUrl(url);
-		lock.setLogger(this, logger);
 		runner = getNewResponseReader();
 	}
 	
@@ -297,9 +290,7 @@ public class HttpClient {
 			error.sb().append(msg);
 			exception = e;
 		}
-		if (logger!=null) {
-			logger.error(this,new Str(msg),e);
-		}
+		Logger.err(this,new Str(msg),e);
 	}
 	
 	protected void readResponse() {
@@ -419,7 +410,6 @@ public class HttpClient {
 	
 	private CodeRunner getNewResponseReader() {
 		CodeRunner r = new CodeRunner(getResponseReaderCode());
-		r.setLogger(logger);
 		r.setSleepMs(0);
 		return r;
 	}

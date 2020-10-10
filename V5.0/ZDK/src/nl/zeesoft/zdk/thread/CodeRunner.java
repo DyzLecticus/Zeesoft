@@ -1,7 +1,5 @@
 package nl.zeesoft.zdk.thread;
 
-import nl.zeesoft.zdk.Logger;
-
 public class CodeRunner extends RunnerObject implements Runnable {
 	private RunCode		code		= null;
 	private int			sleepMs		= 100;
@@ -15,11 +13,6 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	
 	public RunCode getCode() {
 		return code;
-	}
-	
-	public void setLogger(Logger logger) {
-		getLock().setLogger(this, logger);
-		code.setLogger(logger);
 	}
 
 	public void setSleepMs(int sleepMs) {

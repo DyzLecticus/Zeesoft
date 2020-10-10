@@ -37,7 +37,7 @@ public class Grid {
 				GridColumn columnTo = getColumn(column.index);
 				if (columnTo!=null) {
 					for (int z = 0; z < sizeZ; z++) {
-						columnTo.setValue(z, column.getValue(z));
+						columnTo.setValue(z, copyValueFrom(column,z));
 					}
 				} else {
 					break;
@@ -350,5 +350,9 @@ public class Grid {
 			r.addAll(column.getValuePositions(value));
 		}
 		return r;
+	}
+	
+	protected Object copyValueFrom(GridColumn column, int posZ) {
+		return column.getValue(posZ);
 	}
 }

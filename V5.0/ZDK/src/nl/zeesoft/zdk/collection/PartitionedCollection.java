@@ -20,14 +20,6 @@ public class PartitionedCollection extends CompressedCollection {
 	protected int				timeoutMs		= 10000;
 	protected List<Str>			objStrs			= new ArrayList<Str>();
 	
-	public PartitionedCollection() {
-		
-	}
-	
-	public PartitionedCollection(Logger logger) {
-		super(logger);
-	}
-	
 	public void setPartitionSize(int partitionSize) {
 		lock.lock(this);
 		this.partitionSize = partitionSize;
@@ -47,7 +39,7 @@ public class PartitionedCollection extends CompressedCollection {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForSave(path);
 			Waiter.startAndWaitFor(runnerChain, timeoutMs);
 		} else {
-			logger.error(this, error);
+			Logger.err(this, error);
 		}
 		return error;
 	}
@@ -59,14 +51,13 @@ public class PartitionedCollection extends CompressedCollection {
 			CodeRunnerChain runnerChain = getCodeRunnerChainForLoad(path);
 			Waiter.startAndWaitFor(runnerChain, timeoutMs);
 		} else {
-			logger.error(this, error);
+			Logger.err(this, error);
 		}
 		return error;
 	}
 	
 	public CodeRunnerChain getCodeRunnerChainForSave(String path) {
 		CodeRunnerChain r = new CodeRunnerChain();
-		r.setLogger(logger);
 		r.addAll(getRunCodesForSave(path));
 		r.add(new RunCode() {
 			@Override
@@ -80,7 +71,6 @@ public class PartitionedCollection extends CompressedCollection {
 	
 	protected CodeRunnerChain getCodeRunnerChainForLoad(String path) {
 		CodeRunnerChain r = new CodeRunnerChain();
-		r.setLogger(logger);
 		r.add(new RunCode() {
 			@Override
 			protected boolean run() {
@@ -210,7 +200,7 @@ public class PartitionedCollection extends CompressedCollection {
 		lock.unlock(this);
 		Str error = data.toFile(path);
 		if (error.length()>0) {
-			logger.error(this,error);
+			Logger.err(this,error);
 		}
 		return error;
 	}
@@ -223,7 +213,7 @@ public class PartitionedCollection extends CompressedCollection {
 			objStrs.addAll(fromStrNoLock(data));
 			lock.unlock(this);
 		} else {
-			logger.error(this,error);
+			Logger.err(this,error);
 		}
 		return error;
 	}

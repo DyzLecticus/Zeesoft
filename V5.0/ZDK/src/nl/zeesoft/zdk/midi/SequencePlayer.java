@@ -7,6 +7,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class SequencePlayer implements StateChangeListener, MetaEventListener {
@@ -17,10 +18,9 @@ public class SequencePlayer implements StateChangeListener, MetaEventListener {
 	
 	private Sequence			sequence			= null;
 	
-	protected SequencePlayer(Logger logger,Sequencer sequencer, StateManager state, LfoManager lfoManager) {
+	protected SequencePlayer(Sequencer sequencer, StateManager state, LfoManager lfoManager) {
 		this.sequencer = sequencer;
 		this.lfoManager = lfoManager;
-		lock.setLogger(this, logger);
 		state.addListener(this);
 		sequencer.setTempoInBPM((float)state.getState().beatsPerMinute);
 		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
@@ -84,7 +84,7 @@ public class SequencePlayer implements StateChangeListener, MetaEventListener {
 		try {
 			sequencer.setSequence(sequence);
 		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
+			Logger.err(this, new Str("Invalid MIDI data"), e);
 		}
 		if (restart) {
 			sequencer.start();

@@ -42,9 +42,8 @@ public class TestMidiSys extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		Logger logger = new Logger(true);
-		MidiSys.setLogger(logger);
-
+		Logger.setLoggerDebug(true);
+		
 		// Load soundbanks
 		CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
 			"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",

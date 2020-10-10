@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.thread;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunner;
@@ -80,9 +79,6 @@ public class TestRunCode extends TestObject {
 		Exception exception = runner.getCode().getException();
 		assertNull(exception,"Exception does not match expectation (1)");
 
-		// Check set logger method
-		runner.setLogger(new Logger());
-				
 		System.out.println();
 		System.out.println("Test exception handling;");
 		RunCode testCodeB = new RunCode() {
@@ -115,9 +111,6 @@ public class TestRunCode extends TestObject {
 		assertEqual(list.isBusy(),false,"List state does not match expectation");
 		exception = list.getCodes().get(1).getException();
 		assertNull(exception,"Exception does not match expectation (3)");
-
-		// Check set logger method
-		list.setLogger(new Logger());
 		
 		System.out.println();
 		System.out.println("Test runner list exception handling;");

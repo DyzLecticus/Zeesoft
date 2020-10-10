@@ -14,19 +14,9 @@ public class QueryableCollection {
 	public final static String				ID_CONCATENATOR			= "@";
 	
 	protected final Lock					lock					= new Lock();
-	protected Logger						logger					= new Logger();
 	
 	protected long							nextId					= 1;
 	protected final SortedMap<Str,Object>	objects					= new TreeMap<Str,Object>();
-	
-	public QueryableCollection() {
-		
-	}
-	
-	public QueryableCollection(Logger logger) {
-		this.logger = logger;
-		lock.setLogger(this, logger);
-	}
 	
 	public Str put(Str id,Object object) {
 		if (object!=null) {
@@ -36,7 +26,7 @@ public class QueryableCollection {
 				error.sb().append("ID for ");
 				error.sb().append(object.getClass().getName());
 				error.sb().append(" object must start with  " + idPrefix);
-				logger.error(this, error);
+				Logger.err(this, error);
 			} else {
 				lock.lock(this);
 				id = putNoLock(id, object);

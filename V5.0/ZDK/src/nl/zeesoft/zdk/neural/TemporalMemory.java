@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDR;
 import nl.zeesoft.zdk.neural.model.ApicalSegment;
 import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.CellGrid;
 import nl.zeesoft.zdk.neural.model.DistalSegment;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -40,10 +41,12 @@ public class TemporalMemory extends SDRProcessor {
 	public int					activationThreshold				= 13;
 	public int					matchingThreshold				= 10;
 	public int					maxNewSynapseCount				= 20;
+	
+	public String				outputType						= "ACTIVE_OR_PREDICTED";
 
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
 	protected SDR				burstingColumns					= null;
-	protected Grid				cells							= null;
+	protected CellGrid			cells							= null;
 	protected List<Position>	activeCellPositions				= new ArrayList<Position>();
 	protected List<Position>	winnerCellPositions				= new ArrayList<Position>();
 	protected List<Position>	prevActiveCellPositions			= new ArrayList<Position>();
@@ -74,43 +77,19 @@ public class TemporalMemory extends SDRProcessor {
 		burstingColumns = new SDR();
 		burstingColumns.initialize(sizeX, sizeY);
 		
-		cells = new Grid();
-		cells.initialize(sizeX, sizeY, sizeZ);
-		
 		resetLocalState();
-
-		ColumnFunction function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				return new Cell(new Position(column.posX(), column.posY(), posZ));
-			}
-		};
-		cells.applyFunction(function, runnerList);
+		
+		cells = new CellGrid();
+		cells.initialize(sizeX, sizeY, sizeZ, runnerList);
 	}
 	
 	@Override
 	public void resetConnections(CodeRunnerList runnerList) {
-		ColumnFunction function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				Cell cell = (Cell) value;
-				cell.clear();
-				return value;
-			}
-		};
-		cells.applyFunction(function, runnerList);
+		cells.resetConnections(runnerList);
 	}
 	
 	public void resetState(CodeRunnerList runnerList) {
-		ColumnFunction function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				Cell cell = (Cell) value;
-				cell.reset();
-				return value;
-			}
-		};
-		cells.applyFunction(function, runnerList);
+		cells.resetState(runnerList);
 		if (runnerList!=null) {
 			runnerList.add(new RunCode() {
 				@Override
@@ -125,8 +104,8 @@ public class TemporalMemory extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR sdr) {
-		super.setInput(sdr);
+	public void setInput(SDR sdr, SDR context) {
+		super.setInput(sdr, context);
 		activeInputColumnPositions = input.getValuePositions(true);
 		burstingColumns.setValue(false);
 		
@@ -137,12 +116,11 @@ public class TemporalMemory extends SDRProcessor {
 		
 		prevActiveApicalCellPositions = new ArrayList<Position>(activeApicalCellPositions);
 		activeApicalCellPositions.clear();
+		if (context!=null) {
+			activeApicalCellPositions = context.getValuePositions(true);
+		}
 		
 		Position.randomizeList(predictiveCellPositions);
-	}
-	
-	public void addContext(SDR sdr) {
-		activeApicalCellPositions = sdr.getValuePositions(true);
 	}
 	
 	@Override

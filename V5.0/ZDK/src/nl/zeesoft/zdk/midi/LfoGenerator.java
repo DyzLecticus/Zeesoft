@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.midi;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
@@ -22,10 +21,9 @@ public class LfoGenerator implements StateChangeListener {
 	private long				actionTime		= -1;
 	private long				nsPerValue		= 100000;
 	
-	protected LfoGenerator(Logger logger, StateManager stateManager, int lfoIndex) {
+	protected LfoGenerator(StateManager stateManager, int lfoIndex) {
 		this.stateManager = stateManager;
 		this.lfoIndex = lfoIndex;
-		lock.setLogger(this, logger);
 		calculateNsPerValueNoLock();
 	}
 

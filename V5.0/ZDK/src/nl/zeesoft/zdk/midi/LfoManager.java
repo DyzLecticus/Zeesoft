@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.midi;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -15,11 +14,10 @@ public class LfoManager {
 	private LfoGenerator[]				lfoGenerators	= new LfoGenerator[16];
 	private Inst[]						instruments		= new Inst[16];
 	
-	protected LfoManager(Logger logger, Synth synth, StateManager state) {
+	protected LfoManager(Synth synth, StateManager state) {
 		this.synth = synth;
-		lock.setLogger(this, logger);
 		for (int i = 0; i < lfoGenerators.length; i++) {
-			lfoGenerators[i] = new LfoGenerator(logger,state,i) {
+			lfoGenerators[i] = new LfoGenerator(state,i) {
 				@Override
 				protected void selectedNextValue(int lfoIndex, float percentage) {
 					lfoSelectedNextValue(lfoIndex,percentage);

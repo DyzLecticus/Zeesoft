@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.test.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -71,8 +70,6 @@ public class TestCodeRunnerChain extends TestObject {
 			sleep(10);
 		}
 		assertEqual(chain.getDoneCodes(),5,"Number of done codes does not match expectation");
-		
-		chain.setLogger(new Logger());
 		
 		// Progress bar
 		System.out.println();

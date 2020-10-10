@@ -76,6 +76,10 @@ public class Position {
 		return r;
 	}
 	
+	public static boolean posIsInList(Position position, List<Position> positions) {
+		return posIsInList(position.x, position.y, position.z, positions);
+	}
+	
 	public static boolean posIsInList(int x, int y, int z, List<Position> positions) {
 		boolean r = false;
 		for (Position pos: positions) {

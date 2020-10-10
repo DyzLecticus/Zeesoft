@@ -7,8 +7,6 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 
 public class SDRProcessor {
-	public Logger				logger						= new Logger();
-	
 	protected SDR				input						= null;
 	protected SDR				output						= null;
 	
@@ -20,19 +18,19 @@ public class SDRProcessor {
 		Str msg = new Str("Initializing " + this.getClass().getSimpleName());
 		msg.sb().append(getDescription());
 		msg.sb().append(" ...");
-		logger.debug(this, msg);
+		Logger.dbg(this, msg);
 		initialize(null);
-		logger.debug(this, new Str("Initialized " + this.getClass().getSimpleName()));
+		Logger.dbg(this, new Str("Initialized " + this.getClass().getSimpleName()));
 	}
 
 	public void initialize(CodeRunnerList runnerList) {
 		// Override to implement
 	}
 	
-	public void randomizeConnections() {
-		logger.debug(this, new Str("Randomizing " + this.getClass().getSimpleName() + " connections ..."));
+	public void resetConnections() {
+		Logger.dbg(this, new Str("Resetting " + this.getClass().getSimpleName() + " connections ..."));
 		resetConnections(null);
-		logger.debug(this, new Str("Randomized " + this.getClass().getSimpleName() + " connections"));
+		Logger.dbg(this, new Str("Reset " + this.getClass().getSimpleName() + " connections"));
 	}
 	
 	public void resetConnections(CodeRunnerList runnerList) {
@@ -54,7 +52,11 @@ public class SDRProcessor {
 		}
 	}
 	
-	public void setInput(SDR sdr) {
+	public final void setInput(SDR sdr) {
+		setInput(sdr,null);
+	}
+	
+	public void setInput(SDR sdr, SDR context) {
 		input.copyValuesFrom(sdr.getColumns());
 		output.setValue(false);
 	}

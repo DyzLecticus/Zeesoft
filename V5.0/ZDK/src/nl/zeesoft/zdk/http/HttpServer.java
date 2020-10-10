@@ -24,7 +24,6 @@ public class HttpServer {
 	
 	public HttpServer(HttpServerConfig config) {
 		this.config = config.copy();
-		lock.setLogger(this,config.getLogger());
 		intializeServer();
 	}
 	

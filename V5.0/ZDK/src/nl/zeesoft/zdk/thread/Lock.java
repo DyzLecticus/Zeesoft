@@ -7,22 +7,7 @@ import nl.zeesoft.zdk.Str;
  * Synchronization lock 
  */
 public class Lock {
-	private Logger			logger		= new Logger();
-	
 	private Object			lockedBy	= null;
-	
-	public void setLogger(Object source, Logger logger) {
-		lock(source);
-		this.logger = logger;
-		unlock(source);
-	}
-	
-	public Logger getLogger(Object source) {
-		lock(source);
-		Logger r = logger;
-		unlock(source);
-		return r;
-	}
 	
 	public synchronized void lock(Object source) {
 		while (isLocked()) {
@@ -34,13 +19,11 @@ public class Lock {
 			}
 			attempt ++;
 			if (attempt>=1000) {
-				if (logger!=null) {
-					Str error = new Str();
-					error.sb().append("Lock failed after ");
-					error.sb().append(attempt);
-					error.sb().append(" attempts.");
-					logger.error(source, error);
-				}
+				Str error = new Str();
+				error.sb().append("Lock failed after ");
+				error.sb().append(attempt);
+				error.sb().append(" attempts.");
+				Logger.err(source, error, new Exception("Lock failed"));
 				attempt = 0;
 			}
 		}

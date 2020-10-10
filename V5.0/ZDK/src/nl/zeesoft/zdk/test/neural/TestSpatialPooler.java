@@ -30,18 +30,18 @@ public class TestSpatialPooler extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		SpatialPooler sp = new SpatialPooler();
-		sp.logger = new Logger(true);
 		sp.initialize();
-		sp.randomizeConnections();
+		sp.resetConnections();
 
 		sp = new SpatialPooler();
-		sp.logger = new Logger(true);
-		sp.logger.debug(this, new Str("Initializing spatial pooler (asynchronous) ..."));
+		Logger.dbg(this, new Str("Initializing spatial pooler (asynchronous) ..."));
 		CodeRunnerChain initializeChain = new CodeRunnerChain();
 		sp.buildInitializeChain(initializeChain, true);
 		Waiter.startAndWaitFor(initializeChain, 500);
-		sp.logger.debug(this, new Str("Initialized spatial pooler (asynchronous)"));
+		Logger.dbg(this, new Str("Initialized spatial pooler (asynchronous)"));
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();
 		sp.buildProcessorChain(processorChain, true);

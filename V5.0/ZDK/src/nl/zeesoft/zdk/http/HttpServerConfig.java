@@ -159,7 +159,7 @@ public class HttpServerConfig {
 	}
 	
 	protected void error(Object source, Str message) {
-		error(source, message, null);
+		logger.error(source, message);
 	}
 	
 	protected void error(Object source, Str message, Exception ex) {

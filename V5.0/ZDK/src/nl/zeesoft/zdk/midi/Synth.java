@@ -9,8 +9,6 @@ import java.util.TreeMap;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.Synthesizer;
 
-import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.midi.MidiNote;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class Synth {
@@ -34,9 +32,8 @@ public class Synth {
 	private List<MidiNote>			playingNotes		= new ArrayList<MidiNote>();
 	private List<DelayedNotePlayer>	delayedPlayers		= new ArrayList<DelayedNotePlayer>();
 	
-	protected Synth(Logger logger, Synthesizer synthesizer) {
+	protected Synth(Synthesizer synthesizer) {
 		this.synthesizer = synthesizer;
-		lock.setLogger(this, logger);
 	}
 	
 	protected void setInstrument(int channel,Inst instrument) {

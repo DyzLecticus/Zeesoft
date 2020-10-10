@@ -108,8 +108,8 @@ public class SpatialPooler extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR sdr) {
-		super.setInput(sdr);
+	public void setInput(SDR sdr, SDR context) {
+		super.setInput(sdr, context);
 		activeInputColumns = input.getActiveColumns();
 		activations.setValue(0F);
 	}
