@@ -3,9 +3,11 @@ package nl.zeesoft.zdk.neural.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.grid.Position;
 
-public class Cell {
+public class Cell implements StrAble {
 	public Position					position				= null;
 	public List<ProximalSegment>	proximalSegments		= new ArrayList<ProximalSegment>();
 	public List<DistalSegment>		distalSegments			= new ArrayList<DistalSegment>();
@@ -203,6 +205,45 @@ public class Cell {
 		}
 		activeDistalSegments.clear();
 		matchingDistalSegments.clear();
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		List<Segment> allSegments = new ArrayList<Segment>();
+		allSegments.addAll(proximalSegments);
+		allSegments.addAll(distalSegments);
+		allSegments.addAll(apicalSegments);
+		for (Segment segment: allSegments) {
+			if (r.length()>0) {
+				r.sb().append("!");
+			}
+			r.sb().append(segment.getClass().getSimpleName());
+			r.sb().append("@");
+			r.sb().append(segment.toStr());
+		}
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		clear();
+		List<Str> elems = str.split("!");
+		for (Str elem: elems) {
+			List<Str> sElems = elem.split("@");
+			Segment segment = null;
+			if (sElems.get(0).toString().equals(ProximalSegment.class.getSimpleName())) {
+				segment = new ProximalSegment();
+				proximalSegments.add((ProximalSegment)segment);
+			} else if (sElems.get(0).toString().equals(DistalSegment.class.getSimpleName())) {
+				segment = new DistalSegment();
+				distalSegments.add((DistalSegment)segment);
+			} else if (sElems.get(0).toString().equals(ApicalSegment.class.getSimpleName())) {
+				segment = new ApicalSegment();
+				apicalSegments.add((ApicalSegment)segment);
+			}
+			segment.fromStr(sElems.get(1));
+		}
 	}
 	
 	protected Segment createSegment(boolean apical, int maxSegmentsPerCell) {

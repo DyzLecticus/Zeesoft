@@ -48,7 +48,7 @@ public class TestTemporalMemory extends TestObject {
 		for (SDR input: inputList) {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
-			SDR output = tm.getOutput();
+			SDR output = tm.getOutputs().get(0);
 			outputList.add(output);
 			
 			if (num % 4 == 0) {

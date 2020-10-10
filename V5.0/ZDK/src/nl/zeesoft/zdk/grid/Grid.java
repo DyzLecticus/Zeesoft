@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
@@ -132,6 +133,16 @@ public class Grid {
 		}
 	}
 
+	public Str getDimensions() {
+		Str r = new Str();
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		r.sb().append("*");
+		r.sb().append(sizeZ);
+		return r;
+	}
+	
 	public int getPosXOn(Grid grid, int posX) {
 		float relative = (float)posX / (float)sizeX;
 		return (int)((float)grid.sizeX() * relative);

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.ColumnFunction;
 import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
@@ -68,12 +70,6 @@ public class TemporalMemory extends SDRProcessor {
 			sizeZ = 4;
 		}
 		
-		input = new SDR();
-		input.initialize(sizeX, sizeY);
-		
-		output = new SDR();
-		output.initialize(sizeX, sizeY * sizeZ);
-		
 		burstingColumns = new SDR();
 		burstingColumns.initialize(sizeX, sizeY);
 		
@@ -104,23 +100,46 @@ public class TemporalMemory extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR sdr, SDR context) {
-		super.setInput(sdr, context);
-		activeInputColumnPositions = input.getValuePositions(true);
-		burstingColumns.setValue(false);
-		
-		prevActiveCellPositions = new ArrayList<Position>(activeCellPositions);
-		prevWinnerCellPositions = new ArrayList<Position>(winnerCellPositions);
-		activeCellPositions.clear();
-		winnerCellPositions.clear();
-		
-		prevActiveApicalCellPositions = new ArrayList<Position>(activeApicalCellPositions);
-		activeApicalCellPositions.clear();
-		if (context!=null) {
-			activeApicalCellPositions = context.getValuePositions(true);
+	public void setInput(SDR... sdrs) {
+		if (sdrs.length>0) {
+			SDR input = sdrs[0];
+			if (input.sizeY()==1) {
+				input.square();
+			}
+			if (input.sizeX()==sizeX && input.sizeY()==sizeY && input.sizeZ()==1) {
+				super.setInput(sdrs);
+				activeInputColumnPositions = inputs.get(0).getValuePositions(true);
+				burstingColumns.setValue(false);
+				
+				prevActiveCellPositions = new ArrayList<Position>(activeCellPositions);
+				prevWinnerCellPositions = new ArrayList<Position>(winnerCellPositions);
+				activeCellPositions.clear();
+				winnerCellPositions.clear();
+				
+				prevActiveApicalCellPositions = new ArrayList<Position>(activeApicalCellPositions);
+				activeApicalCellPositions.clear();
+				if (sdrs.length>1) {
+					activeApicalCellPositions = sdrs[1].getValuePositions(true);
+				}
+				
+				Position.randomizeList(predictiveCellPositions);
+				
+				SDR output = new SDR();
+				output.initialize(sizeX * sizeY * sizeZ,1);
+				outputs.add(output);
+			} else {
+				Str msg = new Str("Input dimensions do not match expectation: ");
+				msg.sb().append(input.getDimensions());
+				msg.sb().append(" <> ");
+				msg.sb().append(sizeX);
+				msg.sb().append("*");
+				msg.sb().append(sizeY);
+				msg.sb().append("*1");
+				Logger.err(this, msg);
+			}
+		} else {
+			Logger.err(this, new Str("At least one input SDR is required"));
 		}
-		
-		Position.randomizeList(predictiveCellPositions);
 	}
 	
 	@Override
@@ -156,7 +175,7 @@ public class TemporalMemory extends SDRProcessor {
 				activations.setValue(activeCellPositions, true);
 				activations.flatten();
 				activations.flatten();
-				output.copyFrom(activations);
+				outputs.get(0).copyFrom(activations);
 				return true;
 			}
 		});

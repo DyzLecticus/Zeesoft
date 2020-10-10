@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.neural;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.SDR;
@@ -7,8 +10,8 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 
 public class SDRProcessor {
-	protected SDR				input						= null;
-	protected SDR				output						= null;
+	protected List<SDR>			inputs						= new ArrayList<SDR>();
+	protected List<SDR>			outputs						= new ArrayList<SDR>();
 	
 	public Str getDescription() {
 		return new Str();
@@ -52,20 +55,19 @@ public class SDRProcessor {
 		}
 	}
 	
-	public final void setInput(SDR sdr) {
-		setInput(sdr,null);
-	}
-	
-	public void setInput(SDR sdr, SDR context) {
-		input.copyValuesFrom(sdr.getColumns());
-		output.setValue(false);
+	public void setInput(SDR... sdrs) {
+		inputs.clear();
+		for (SDR sdr: sdrs) {
+			inputs.add(sdr);
+		}
+		outputs.clear();
 	}
 	
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
 		// Override to implement
 	}
 	
-	public SDR getOutput() {
-		return new SDR(output);
+	public List<SDR> getOutputs() {
+		return outputs;
 	}
 }

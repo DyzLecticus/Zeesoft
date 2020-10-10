@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.grid;
 
 import nl.zeesoft.zdk.thread.CodeRunnerList;
-import nl.zeesoft.zdk.thread.RunCode;
 
 public class HistoricalGrid extends Grid {
 	public void update(Grid grid) {
@@ -10,20 +9,6 @@ public class HistoricalGrid extends Grid {
 			if (column!=null) {
 				column.setValue(other.getValue());
 			}
-		}
-	}
-	
-	public void update(Grid grid, CodeRunnerList runnerList) {
-		if (runnerList!=null) {
-			runnerList.add(new RunCode() {
-				@Override
-				protected boolean run() {
-					update(grid);
-					return true;
-				}
-			});
-		} else {
-			update(grid);
 		}
 	}
 	

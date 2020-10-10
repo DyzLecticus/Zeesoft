@@ -6,9 +6,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.grid.Position;
 
-public class Segment {
+public class Segment implements StrAble {
 	public List<Synapse>	synapses			= new ArrayList<Synapse>();
 	public List<Synapse>	activeSynapses		= new ArrayList<Synapse>();
 	public List<Synapse>	potentialSynapses	= new ArrayList<Synapse>();
@@ -127,5 +129,28 @@ public class Segment {
 	public void reset() {
 		activeSynapses.clear();
 		potentialSynapses.clear();
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		for (Synapse synapse: synapses) {
+			if (r.length()>0) {
+				r.sb().append("#");
+			}
+			r.sb().append(synapse.toStr());
+		}
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		clear();
+		List<Str> elems = str.split("#");
+		for (Str elem: elems) {
+			Synapse synapse = new Synapse();
+			synapse.fromStr(elem);
+			synapses.add(synapse);
+		}
 	}
 }

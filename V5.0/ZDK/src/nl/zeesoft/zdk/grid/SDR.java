@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 
-public class SDR extends Grid {
+public class SDR extends Grid implements StrAble {
 	public SDR() {
 		
 	}
@@ -30,6 +31,7 @@ public class SDR extends Grid {
 		return toStr().toString();
 	}
 	
+	@Override
 	public Str toStr() {
 		Str r = new Str();
 		for (GridColumn column: getActiveColumns()) {
@@ -45,6 +47,7 @@ public class SDR extends Grid {
 		return r;
 	}
 	
+	@Override
 	public void fromStr(Str str) {
 		List<Str> split = str.split(";");
 		if (split.size()>2) {

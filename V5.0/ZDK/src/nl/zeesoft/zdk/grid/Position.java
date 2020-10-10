@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 
-public class Position {
+public class Position implements StrAble {
 	public int x = 0;
 	public int y = 0;
 	public int z = 0;
@@ -22,7 +24,7 @@ public class Position {
 	
 	@Override
 	public String toString() {
-		return x + "," + y + "," + z;
+		return toStr().toString();
 	}
 	
 	@Override
@@ -33,6 +35,27 @@ public class Position {
 			r = pos.x == x && pos.y == y && pos.z == z;
 		}
 		return r;
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		r.sb().append(x);
+		r.sb().append(",");
+		r.sb().append(y);
+		r.sb().append(",");
+		r.sb().append(z);
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> elems = str.split(",");
+		if (elems.size()==3) {
+			x = Integer.parseInt(elems.get(0).toString());
+			y = Integer.parseInt(elems.get(1).toString());
+			z = Integer.parseInt(elems.get(2).toString());
+		}
 	}
 	
 	public static List<Position> getColumnPositions(int x, int y, int sizeZ) {

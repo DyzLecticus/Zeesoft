@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.ColumnFunction;
@@ -65,30 +66,23 @@ public class SpatialPooler extends SDRProcessor {
 			outputSizeY = 4;
 		}
 		
-		input = new SDR();
-		input.initialize(inputSizeX, inputSizeY);
-		
-		output = new SDR();
-		output.initialize(outputSizeX, outputSizeY);
-		
-		connections = new Grid(output);
+		connections = new Grid();
+		connections.initialize(outputSizeX, outputSizeY);
 		
 		activations = new Grid();
-		activations.initialize(output.sizeX(),output.sizeY(), 1, 0F);
+		activations.initialize(outputSizeX, outputSizeY, 1, 0F);
 		
 		activationHistory = new HistoricalGrid();
-		activationHistory.initialize(output.sizeX(), output.sizeY(), activationHistorySize);
+		activationHistory.initialize(outputSizeX, outputSizeY, activationHistorySize);
 		
 		boostFactors = new Grid();
-		boostFactors.initialize(output.sizeX(),output.sizeY(), 1, 1F);
+		boostFactors.initialize(outputSizeX, outputSizeY, 1, 1F);
 		
-		final int inSizeX = input.sizeX();
-		final int inSizeY = input.sizeY();
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Grid inputPermanences = new Grid();
-				inputPermanences.initialize(inSizeX, inSizeY, 1, 0F);
+				inputPermanences.initialize(inputSizeX, inputSizeY, 1, 0F);
 				return inputPermanences;
 			}
 		};
@@ -108,10 +102,33 @@ public class SpatialPooler extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR sdr, SDR context) {
-		super.setInput(sdr, context);
-		activeInputColumns = input.getActiveColumns();
-		activations.setValue(0F);
+	public void setInput(SDR... sdrs) {
+		if (sdrs.length>0) {
+			SDR input = sdrs[0];
+			if (input.sizeY()==1) {
+				input.square();
+			}
+			if (input.sizeX()==inputSizeX && input.sizeY()==inputSizeY && input.sizeZ()==1) {
+				super.setInput(sdrs);
+				activeInputColumns = input.getActiveColumns();
+				activations.setValue(0F);
+				
+				SDR output = new SDR();
+				output.initialize(outputSizeX, outputSizeY);
+				outputs.add(output);
+			} else {
+				Str msg = new Str("Input dimensions do not match expectation: ");
+				msg.sb().append(input.getDimensions());
+				msg.sb().append(" <> ");
+				msg.sb().append(inputSizeX);
+				msg.sb().append("*");
+				msg.sb().append(inputSizeY);
+				msg.sb().append("*1");
+				Logger.err(this, msg);
+			}
+		} else {
+			Logger.err(this, new Str("At least one input SDR is required"));
+		}
 	}
 
 	@Override
@@ -142,7 +159,7 @@ public class SpatialPooler extends SDRProcessor {
 			protected boolean run() {
 				List<GridColumn> winners = activations.getColumnsByValue(false,outputOnBits);
 				for (GridColumn winner: winners) {
-					output.setValue(winner.posX(), winner.posY(), true);
+					outputs.get(0).setValue(winner.posX(), winner.posY(), true);
 				}
 				return true;
 			}
@@ -153,12 +170,12 @@ public class SpatialPooler extends SDRProcessor {
 			function = new ColumnFunction() {
 				@Override
 				public Object applyFunction(GridColumn column, int posZ, Object value) {
-					if ((boolean)output.getValue(column.posX(), column.posY())) {
+					if ((boolean)outputs.get(0).getValue(column.posX(), column.posY())) {
 						Grid winnerPermanences = (Grid) value;
 						for (GridColumn pColumn: winnerPermanences.getColumns()) {
 							float permanence = (float)pColumn.getValue();
 							if (permanence>=0) {
-								if ((boolean)input.getValue(pColumn.posX(), pColumn.posY())) {
+								if ((boolean)inputs.get(0).getValue(pColumn.posX(), pColumn.posY())) {
 									pColumn.setValue(permanence + permanenceIncrement);
 									if ((float)pColumn.getValue()>1F) {
 										pColumn.setValue(1F);
@@ -181,8 +198,13 @@ public class SpatialPooler extends SDRProcessor {
 		CodeRunnerList cycleHistory = new CodeRunnerList();
 		activationHistory.cycle(cycleHistory);
 		
-		CodeRunnerList updateHistory = new CodeRunnerList();
-		activationHistory.update(output, updateHistory);
+		CodeRunnerList updateHistory = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				activationHistory.update(outputs.get(0));
+				return true;
+			}
+		});
 		
 		CodeRunnerList calculateHistoricActivation = new CodeRunnerList(new RunCode() {
 			@Override
@@ -225,7 +247,7 @@ public class SpatialPooler extends SDRProcessor {
 		int posYonInput = connections.getPosYOn(inputs,column.posY()); 
 		for (GridColumn inputColumn: inputs.getColumns()) {
 			boolean inReach = true;
-			if (potentialRadius < input.sizeX() * input.sizeY()) {
+			if (potentialRadius < inputSizeX * inputSizeY) {
 				int distance = Grid.getDistance(inputColumn.posX(), inputColumn.posY(), posXonInput, posYonInput);
 				inReach = distance < potentialRadius;
 			}
