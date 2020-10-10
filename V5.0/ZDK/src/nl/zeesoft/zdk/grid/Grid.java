@@ -159,19 +159,27 @@ public class Grid {
 	}
 
 	public static int getDistance(int pos1X, int pos1Y, int pos2X, int pos2Y) {
-		int distX = 0;
-		int distY = 0;
-		if (pos1X > pos2X) {
-			distX = pos1X - pos2X;
-		} else {
-			distX = pos2X - pos1X;
+		int r = 0;
+		if (pos1X!=pos2X || pos1Y!=pos2Y) {
+			int distX = 0;
+			if (pos1X!=pos2X) {
+				if (pos1X > pos2X) {
+					distX = pos1X - pos2X;
+				} else {
+					distX = pos2X - pos1X;
+				}
+			}
+			int distY = 0;
+			if (pos1Y!=pos2Y) {
+				if (pos1Y > pos2Y) {
+					distY = pos1Y - pos2Y;
+				} else {
+					distY = pos2Y - pos1Y;
+				}
+			}
+			r = (int) Math.sqrt((distX * distX) + (distY * distY));
 		}
-		if (pos1Y > pos2Y) {
-			distY = pos1Y - pos2Y;
-		} else {
-			distY = pos2Y - pos1Y;
-		}
-		return (int) Math.sqrt((distX * distX) + (distY * distY));
+		return r;
 	}
 	
 	public int sizeX() {

@@ -8,10 +8,16 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class SDRProcessor {
+	protected int				processed					= 0;
 	protected List<SDR>			inputs						= new ArrayList<SDR>();
 	protected List<SDR>			outputs						= new ArrayList<SDR>();
+	
+	public void configure(SDRProcessorConfig config) {
+		// Override to implement
+	}
 	
 	public Str getDescription() {
 		return new Str();
@@ -67,7 +73,26 @@ public class SDRProcessor {
 		// Override to implement
 	}
 	
+	public void addIncrementProcessedToProcessorChain(CodeRunnerChain runnerChain) {
+		CodeRunnerList incrementProcessed = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				processed++;
+				return true;
+			}
+		});
+		runnerChain.add(incrementProcessed);
+	}
+	
 	public List<SDR> getOutputs() {
 		return outputs;
+	}
+
+	public int getProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(int processed) {
+		this.processed = processed;
 	}
 }

@@ -23,29 +23,29 @@ import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class TemporalMemory extends SDRProcessor {
-	private Lock				lock							= new Lock();
+	protected Lock				lock							= new Lock();
 	
-	public int					sizeX							= 48;
-	public int					sizeY							= 48;
-	public int					sizeZ							= 16;
+	// Configuration
+	protected int				sizeX							= 48;
+	protected int				sizeY							= 48;
+	protected int				sizeZ							= 16;
 	
-	public int					maxSegmentsPerCell				= 256;
-	public int					maxSynapsesPerSegment			= 256;
+	protected int				maxSegmentsPerCell				= 256;
+	protected int				maxSynapsesPerSegment			= 256;
 	
-	public float				initialPermanence				= 0.21F;
-	public float				permanenceThreshold				= 0.5F;
-	public float				permanenceIncrement				= 0.1F;
-	public float				permanenceDecrement				= 0.1F;
+	protected float				initialPermanence				= 0.21F;
+	protected float				permanenceThreshold				= 0.5F;
+	protected float				permanenceIncrement				= 0.1F;
+	protected float				permanenceDecrement				= 0.1F;
 	
-	public float				distalSegmentDecrement			= 0.2F;
-	public float				apicalSegmentDecrement			= 0.2F;
+	protected float				distalSegmentDecrement			= 0.2F;
+	protected float				apicalSegmentDecrement			= 0.2F;
 
-	public int					activationThreshold				= 13;
-	public int					matchingThreshold				= 10;
-	public int					maxNewSynapseCount				= 20;
-	
-	public String				outputType						= "ACTIVE_OR_PREDICTED";
+	protected int				activationThreshold				= 13;
+	protected int				matchingThreshold				= 10;
+	protected int				maxNewSynapseCount				= 20;
 
+	// State
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
 	protected SDR				burstingColumns					= null;
 	protected CellGrid			cells							= null;
@@ -57,6 +57,32 @@ public class TemporalMemory extends SDRProcessor {
 
 	protected List<Position>	activeApicalCellPositions		= new ArrayList<Position>();
 	protected List<Position>	prevActiveApicalCellPositions	= new ArrayList<Position>();
+	
+	@Override
+	public void configure(SDRProcessorConfig config) {
+		if (config instanceof TemporalMemoryConfig) {
+			TemporalMemoryConfig cfg = (TemporalMemoryConfig) config;
+			
+			this.sizeX = cfg.sizeX;
+			this.sizeY = cfg.sizeY;
+			this.sizeZ = cfg.sizeZ;
+			
+			this.maxSegmentsPerCell = cfg.maxSegmentsPerCell;
+			this.maxSynapsesPerSegment = cfg.maxSynapsesPerSegment;
+			
+			this.initialPermanence = cfg.initialPermanence;
+			this.permanenceThreshold = cfg.permanenceThreshold;
+			this.permanenceIncrement = cfg.permanenceIncrement;
+			this.permanenceDecrement = cfg.permanenceDecrement;
+			
+			this.distalSegmentDecrement = cfg.distalSegmentDecrement;
+			this.apicalSegmentDecrement	= cfg.apicalSegmentDecrement;
+
+			this.activationThreshold = cfg.activationThreshold;
+			this.matchingThreshold = cfg.matchingThreshold;
+			this.maxNewSynapseCount = cfg.maxNewSynapseCount;
+		}
+	}
 	
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
@@ -241,15 +267,32 @@ public class TemporalMemory extends SDRProcessor {
 		}
 		runnerChain.add(clearPrediction);
 		runnerChain.add(predictActiveCells);
+		addIncrementProcessedToProcessorChain(runnerChain);
+	}
+	
+	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain) {
+		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				debug();
+				return true;
+			}
+		});
+		runnerChain.add(debug);
 	}
 	
 	public void debug() {
-		System.out.println(
-			"Burst SDR onBits: " + burstingColumns.getActiveColumns().size() + 
-			", activeCellPositions: " + activeCellPositions.size() + 
-			", winnerCellPositions: " + winnerCellPositions.size() + 
-			", predictiveCellPositions: " + predictiveCellPositions.size()
-			);
+		Str msg = new Str();
+		msg.sb().append(processed);
+		msg.sb().append(" > burstingColumns: "); 
+		msg.sb().append(burstingColumns.getActiveColumns().size()); 
+		msg.sb().append(", activeCellPositions: "); 
+		msg.sb().append(activeCellPositions.size()); 
+		msg.sb().append(", winnerCellPositions: "); 
+		msg.sb().append(winnerCellPositions.size()); 
+		msg.sb().append(", predictiveCellPositions: ");
+		msg.sb().append(predictiveCellPositions.size());
+		Logger.dbg(this, msg);
 	}
 	
 	protected void activatePredictedColumn(Position pos) {

@@ -16,29 +16,55 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class SpatialPooler extends SDRProcessor {
-	public int					inputSizeX					= 16;
-	public int					inputSizeY					= 16;
+	// Configuration
+	protected int				inputSizeX					= 16;
+	protected int				inputSizeY					= 16;
 	
-	public int					outputSizeX					= 48;
-	public int					outputSizeY					= 48;
-	public int					outputOnBits				= 46;
+	protected int				outputSizeX					= 48;
+	protected int				outputSizeY					= 48;
+	protected int				outputOnBits				= 46;
 	
-	public float				potentialConnections		= 0.85F;
-	public float				potentialRadius				= 500;
+	protected float				potentialConnections		= 0.85F;
+	protected float				potentialRadius				= 500;
 	
-	public float				permanenceThreshold			= 0.1F;
-	public float				permanenceIncrement			= 0.05F;
-	public float				permanenceDecrement			= 0.008F;
+	protected float				permanenceThreshold			= 0.1F;
+	protected float				permanenceIncrement			= 0.05F;
+	protected float				permanenceDecrement			= 0.008F;
 	
-	public int					activationHistorySize		= 1000;
-	public int					boostStrength				= 10;
+	protected int				activationHistorySize		= 1000;
+	protected int				boostStrength				= 10;
 	
+	// State
 	protected List<GridColumn>	activeInputColumns			= new ArrayList<GridColumn>();
 	protected Grid				connections					= null;
 	protected Grid				activations					= null;
 	protected HistoricalGrid	activationHistory			= null;
 	protected float				averageGlobalActivation		= 0.0F;
 	protected Grid				boostFactors				= null;
+	
+	@Override
+	public void configure(SDRProcessorConfig config) {
+		if (config instanceof SpatialPoolerConfig) {
+			SpatialPoolerConfig cfg = (SpatialPoolerConfig) config;
+			
+			this.inputSizeX = cfg.inputSizeX;
+			this.inputSizeY = cfg.inputSizeY;
+			
+			this.outputSizeX = cfg.outputSizeX;
+			this.outputSizeY = cfg.outputSizeY;
+			this.outputOnBits = cfg.outputOnBits;
+			
+			this.potentialConnections = cfg.potentialConnections;
+			this.potentialRadius = cfg.potentialRadius;
+			
+			this.permanenceThreshold = cfg.permanenceThreshold;
+			this.permanenceIncrement = cfg.permanenceIncrement;
+			this.permanenceDecrement = cfg.permanenceDecrement;
+
+			this.activationHistorySize = cfg.activationHistorySize;
+			this.boostStrength = cfg.boostStrength;
+		}
+	}
 		
 	@Override
 	public Str getDescription() {
@@ -239,6 +265,7 @@ public class SpatialPooler extends SDRProcessor {
 		runnerChain.add(updateHistory);
 		runnerChain.add(calculateHistoricActivation);
 		runnerChain.add(updateBoostFactors);
+		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 
 	protected void randomConnectColumn(GridColumn column) {
