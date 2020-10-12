@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.processors;
 
 public class SpatialPoolerConfig extends SDRProcessorConfig{
 	public int		inputSizeX					= 16;

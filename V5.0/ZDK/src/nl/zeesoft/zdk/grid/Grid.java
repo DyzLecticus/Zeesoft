@@ -71,8 +71,8 @@ public class Grid {
 		columns.clear();
 		columnsByPos = new GridColumn[sizeX][sizeY];
 		int index = 0;
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
+		for (int y = 0; y < sizeY; y++) {
+			for (int x = 0; x < sizeX; x++) {
 				GridColumn column = new GridColumn();
 				column.index = index;
 				column.posX = x;
@@ -191,10 +191,8 @@ public class Grid {
 	}
 	
 	public void setValue(Object value) {
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
-				columnsByPos[x][y].setValue(value);
-			}
+		for (GridColumn column: columns) {
+			column.setValue(value);
 		}
 	}
 	

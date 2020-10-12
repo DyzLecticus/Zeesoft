@@ -5,9 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
-import nl.zeesoft.zdk.neural.SpatialPooler;
+import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;

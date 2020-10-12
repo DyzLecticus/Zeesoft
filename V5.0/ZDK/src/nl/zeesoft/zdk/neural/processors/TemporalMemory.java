@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.processors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,8 @@ import nl.zeesoft.zdk.grid.ColumnFunction;
 import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
-import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.grid.SDRGrid;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.model.ApicalSegment;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellGrid;
@@ -50,7 +51,7 @@ public class TemporalMemory extends SDRProcessor {
 
 	// State
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
-	protected SDR				burstingColumns					= null;
+	protected SDRGrid			burstingColumns					= null;
 	protected CellGrid			cells							= null;
 	protected List<Position>	activeCellPositions				= new ArrayList<Position>();
 	protected List<Position>	winnerCellPositions				= new ArrayList<Position>();
@@ -109,7 +110,7 @@ public class TemporalMemory extends SDRProcessor {
 			sizeZ = 4;
 		}
 		
-		burstingColumns = new SDR();
+		burstingColumns = new SDRGrid();
 		burstingColumns.initialize(sizeX, sizeY);
 		
 		resetLocalState();
@@ -145,9 +146,9 @@ public class TemporalMemory extends SDRProcessor {
 			if (input.sizeY()==1) {
 				input.square();
 			}
-			if (input.sizeX()==sizeX && input.sizeY()==sizeY && input.sizeZ()==1) {
+			if (input.sizeX()==sizeX && input.sizeY()==sizeY) {
 				super.setInput(sdrs);
-				activeInputColumnPositions = inputs.get(0).getValuePositions(true);
+				activeInputColumnPositions = inputs.get(0).toPositions();
 				burstingColumns.setValue(false);
 								
 				prevActiveCellPositions = new ArrayList<Position>(activeCellPositions);
@@ -158,22 +159,22 @@ public class TemporalMemory extends SDRProcessor {
 				prevActiveApicalCellPositions = new ArrayList<Position>(activeApicalCellPositions);
 				activeApicalCellPositions.clear();
 				if (sdrs.length>1) {
-					activeApicalCellPositions = sdrs[1].getValuePositions(true);
+					activeApicalCellPositions = sdrs[1].toPositions();
 				}
 				
 				Position.randomizeList(predictiveCellPositions);
 				
-				SDR output = new SDR();
-				output.initialize(sizeX * sizeY * sizeZ,1);
+				SDR output = new SDR(sizeX * sizeY * sizeZ,1);
 				outputs.add(output);
 			} else {
 				Str msg = new Str("Input dimensions do not match expectation: ");
-				msg.sb().append(input.getDimensions());
+				msg.sb().append(input.sizeX());
+				msg.sb().append("*");
+				msg.sb().append(input.sizeY());
 				msg.sb().append(" <> ");
 				msg.sb().append(sizeX);
 				msg.sb().append("*");
 				msg.sb().append(sizeY);
-				msg.sb().append("*1");
 				Logger.err(this, msg);
 			}
 		} else {
@@ -209,12 +210,13 @@ public class TemporalMemory extends SDRProcessor {
 		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
+				// TODO: Find a more efficient way of transforming 3D positions to 1D
 				Grid activations = new Grid();
 				activations.initialize(sizeX, sizeY, sizeZ, false);
 				activations.setValue(activeCellPositions, true);
 				activations.flatten();
 				activations.flatten();
-				outputs.get(0).copyFrom(activations);
+				outputs.get(0).fromPositions(activations.getValuePositions(true));
 				return true;
 			}
 		});

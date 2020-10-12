@@ -5,9 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
-import nl.zeesoft.zdk.neural.TemporalMemory;
+import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -40,7 +40,7 @@ public class TestTemporalMemory extends TestObject {
 		tm.buildProcessorChain(processorChain, true);
 		tm.addDebugToProcesssorChain(processorChain);
 
-		List<SDR> inputList = getInputSDRList(90);
+		List<SDR> inputList = getInputSDRList(500);
 		List<SDR> outputList = new ArrayList<SDR>();
 
 		// TODO: Expand test and add assertions
@@ -58,9 +58,6 @@ public class TestTemporalMemory extends TestObject {
 			}
 			num++;
 		}
-		System.out.println("Sleeping ...");
-		sleep(60000);
-		System.out.println("Done");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

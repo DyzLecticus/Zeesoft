@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.processors;
 
 public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public int		sizeX						= 48;

@@ -1,11 +1,11 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.processors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.SDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;

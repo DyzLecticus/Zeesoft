@@ -6,12 +6,12 @@ import java.util.List;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 
-public class SDR extends Grid implements StrAble {
-	public SDR() {
+public class SDRGrid extends Grid implements StrAble {
+	public SDRGrid() {
 		
 	}
 	
-	public SDR(SDR sdr) {
+	public SDRGrid(SDRGrid sdr) {
 		super(sdr);
 	}
 	
@@ -75,7 +75,7 @@ public class SDR extends Grid implements StrAble {
 		super.initialize(sizeX, sizeY, sizeZ, value);
 	}
 	
-	public int getOverlap(SDR sdr) {
+	public int getOverlap(SDRGrid sdr) {
 		int r = 0;
 		for (GridColumn column: getActiveColumns()) {
 			GridColumn other = sdr.getColumn(column.index);

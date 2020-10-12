@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.SDR;
 
 public class ScalarEncoder extends Encoder {
 	public int buckets	= 20;
@@ -56,7 +55,7 @@ public class ScalarEncoder extends Encoder {
 				e = encodeLength;
 			}
 			for (int i = s; i < e; i++) {
-				r.setValue(i, 0, true);
+				r.setBit(i, true);
 			}
 		}
 		return r;
