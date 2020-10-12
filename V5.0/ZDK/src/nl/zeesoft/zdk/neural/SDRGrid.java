@@ -1,10 +1,12 @@
-package nl.zeesoft.zdk.grid;
+package nl.zeesoft.zdk.neural;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
+import nl.zeesoft.zdk.grid.Grid;
+import nl.zeesoft.zdk.grid.GridColumn;
 
 public class SDRGrid extends Grid implements StrAble {
 	public SDRGrid() {
@@ -38,7 +40,7 @@ public class SDRGrid extends Grid implements StrAble {
 			if (r.length()>0) {
 				r.sb().append(",");
 			}
-			r.sb().append(column.index);
+			r.sb().append(column.index());
 		}
 		r.sb().insert(0,";");
 		r.sb().insert(0,"" + sizeY());

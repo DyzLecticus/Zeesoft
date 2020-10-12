@@ -1,7 +1,7 @@
-package nl.zeesoft.zdk.test.grid;
+package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.grid.SDRGrid;
+import nl.zeesoft.zdk.neural.SDRGrid;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
