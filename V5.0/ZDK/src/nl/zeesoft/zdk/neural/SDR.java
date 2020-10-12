@@ -184,6 +184,10 @@ public class SDR implements StrAble {
 	}
 	
 	protected int getBitIndexForPosition(int posX, int posY) {
+		return getBitIndexForPosition(posX, posY, sizeX);
+	}
+	
+	protected static int getBitIndexForPosition(int posX, int posY, int sizeX) {
 		int r = posX;
 		if (posY > 0) {
 			r += posY * sizeX;

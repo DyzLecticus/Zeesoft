@@ -33,7 +33,7 @@ public class SpatialPooler extends SDRProcessor {
 	protected float				permanenceDecrement			= 0.008F;
 	
 	protected int				activationHistorySize		= 1000;
-	protected int				boostStrength				= 1;
+	protected int				boostStrength				= 2;
 	
 	// State
 	protected List<Position>	activeInputPositions		= new ArrayList<Position>();
@@ -245,7 +245,7 @@ public class SpatialPooler extends SDRProcessor {
 		function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				float average = column.getAverageValue();
+				float average = activationHistory.getAverage(column.posX(),column.posY());
 				float factor = 0F;
 				if (average!=averageGlobalActivation && boostStrength>1) {
 					factor = (float) Math.exp((float)boostStrength * - 1 * (average - averageGlobalActivation));

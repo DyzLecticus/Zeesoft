@@ -80,6 +80,10 @@ public class SDRHistory {
 		return r;
 	}
 	
+	public float getAverage(int posX, int posY) {
+		return getAverage(SDR.getBitIndexForPosition(posX, posY, sizeX));
+	}
+	
 	public float getTotalAverage() {
 		float r = 0;
 		if (history.size()>0) {

@@ -224,17 +224,6 @@ public class Grid {
 		return r;
 	}
 	
-	public float getAverageValue() {
-		float r = 0;
-		if (columns.size()>0) {
-			for (GridColumn column: columns) {
-				r = r + column.getAverageValue();
-			}
-			r = r / (float)columns.size();
-		}
-		return r;
-	}
-	
 	public void applyFunction(ColumnFunction function) {
 		applyFunction(function, null);
 	}

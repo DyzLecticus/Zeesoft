@@ -16,5 +16,5 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 	public float	permanenceDecrement			= 0.008F;
 	
 	public int		activationHistorySize		= 1000;
-	public int		boostStrength				= 10;	
+	public int		boostStrength				= 2;	
 }

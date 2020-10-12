@@ -76,25 +76,15 @@ public class GridColumn {
 		return r;
 	}
 	
-	public float getAverageValue() {
-		float r = 0;
+	public List<Position> getValuePositions(Object value) {
+		List<Position> r = new ArrayList<Position>();
 		lock.lock(this);
-		if (values!=null && values.length>1) {
-			for (int z = 0; z < values.length; z++) {
-				if (values[z]!=null) {
-					if (values[z] instanceof Float) {
-						r = r + (float)values[z];
-					} else if (values[z] instanceof Integer) {
-						r = r + (int)values[z];
-					} else if (values[z] instanceof Boolean) {
-						if ((boolean)values[z]) {
-							r = r + 1F;
-						}
-					}
-				}
-			}
-			if (r>0) {
-				r = r / (float) values.length;
+		for (int z = 0; z < values.length; z++) {
+			if ((values[z]==null && value==null) ||
+				(values[z]!=null && values[z]==value) ||
+				(values[z]!=null && values[z].equals(value))
+				) {
+				r.add(new Position(posX,posY,z));
 			}
 		}
 		lock.unlock(this);
@@ -112,20 +102,5 @@ public class GridColumn {
 		lock.lock(this);
 		values = newValues;
 		lock.unlock(this);
-	}
-	
-	public List<Position> getValuePositions(Object value) {
-		List<Position> r = new ArrayList<Position>();
-		lock.lock(this);
-		for (int z = 0; z < values.length; z++) {
-			if ((values[z]==null && value==null) ||
-				(values[z]!=null && values[z]==value) ||
-				(values[z]!=null && values[z].equals(value))
-				) {
-				r.add(new Position(posX,posY,z));
-			}
-		}
-		lock.unlock(this);
-		return r;
 	}
 }
