@@ -82,6 +82,18 @@ public class Position implements StrAble {
 		return r;
 	}
 	
+	public static List<Position> selectMaxDistance(int posX, int posY, int distance, List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		int dist = 0;
+		for (Position pos: positions) {
+			dist = getDistance(posX,posY,pos.x,pos.y);
+			if (dist<=distance) {
+				r.add(pos);
+			}
+		}
+		return r;
+	}
+	
 	public static boolean posXIsInList(int x, List<Position> positions) {
 		boolean r = false;
 		for (Position pos: positions) {
@@ -130,18 +142,6 @@ public class Position implements StrAble {
 		return r;
 	}
 	
-	public static List<Position> selectMaxDistance(int posX, int posY, int distance, List<Position> positions) {
-		List<Position> r = new ArrayList<Position>();
-		int dist = 0;
-		for (Position pos: positions) {
-			dist = getDistance(posX,posY,pos.x,pos.y);
-			if (dist<=distance) {
-				r.add(pos);
-			}
-		}
-		return r;
-	}
-	
 	public static void randomizeList(List<Position> positions) {
 		List<Position> temp = new ArrayList<Position>(positions);
 		int size = positions.size();
@@ -149,5 +149,23 @@ public class Position implements StrAble {
 		for (int p = 0; p < size; p++) {
 			positions.add(temp.remove(Rand.getRandomInt(0, temp.size() - 1)));
 		}
+	}
+	
+	public static List<Position> flattenTo2D(int sizeZ, List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		for (Position pos: positions) {
+			r.add(new Position((pos.x * sizeZ) + pos.z, pos.y, 0));
+		}
+		return r;
+	}
+	
+	public static List<Position> squareTo3D(int sizeZ, List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		for (Position pos: positions) {
+			int z = pos.x % sizeZ;
+			int x = (pos.x - z) / sizeZ;
+			r.add(new Position(x, pos.y, z));
+		}
+		return r;
 	}
 }

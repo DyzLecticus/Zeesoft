@@ -9,7 +9,6 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.ColumnFunction;
-import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDRGrid;
@@ -163,9 +162,6 @@ public class TemporalMemory extends SDRProcessor {
 				}
 				
 				Position.randomizeList(predictiveCellPositions);
-				
-				SDR output = new SDR(sizeX * sizeY * sizeZ,1);
-				outputs.add(output);
 			} else {
 				Str msg = new Str("Input dimensions do not match expectation: ");
 				msg.sb().append(input.sizeX());
@@ -180,6 +176,9 @@ public class TemporalMemory extends SDRProcessor {
 		} else {
 			Logger.err(this, new Str("At least one input SDR is required"));
 		}
+		
+		outputs.add(new SDR(sizeX * sizeZ, sizeY));
+		outputs.add(new SDR(sizeX, sizeY));
 	}
 	
 	@Override
@@ -210,13 +209,8 @@ public class TemporalMemory extends SDRProcessor {
 		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
-				// TODO: Find a more efficient way of transforming 3D positions to 1D
-				Grid activations = new Grid();
-				activations.initialize(sizeX, sizeY, sizeZ, false);
-				activations.setValue(activeCellPositions, true);
-				activations.flatten();
-				activations.flatten();
-				outputs.get(0).fromPositions(activations.getValuePositions(true));
+				outputs.get(0).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
+				outputs.get(1).fromPositions(burstingColumns.getValuePositions(true));
 				return true;
 			}
 		});

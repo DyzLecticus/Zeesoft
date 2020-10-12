@@ -1,8 +1,12 @@
 package nl.zeesoft.zdk.test.grid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.grid.ColumnFunction;
 import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
+import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -71,8 +75,19 @@ public class TestGrid extends TestObject {
 		grid.setValue(0, 1, 3, true);
 		assertEqual(grid.getValuePositions(true).toString(),"[0,1,0, 0,1,1, 0,1,2, 0,1,3]","Value positions do not match expectation (1)");
 		grid.flatten();
-		assertEqual(grid.getValuePositions(true).toString(),"[1,0,0, 1,0,1, 1,0,2, 1,0,3]","Value positions do not match expectation (2)");
+		assertEqual(grid.getValuePositions(true).toString(),"[4,0,0, 4,0,1, 4,0,2, 4,0,3]","Value positions do not match expectation (2)");
 		grid.flatten();
-		assertEqual(grid.getValuePositions(true).toString(),"[4,0,0, 5,0,0, 6,0,0, 7,0,0]","Value positions do not match expectation (3)");
+		assertEqual(grid.getValuePositions(true).toString(),"[16,0,0, 17,0,0, 18,0,0, 19,0,0]","Value positions do not match expectation (3)");
+		
+		
+		Position pos = new Position(13,2,0);
+		List<Position> positions = new ArrayList<Position>();
+		positions.add(pos);
+		
+		positions = Position.squareTo3D(4, positions);
+		assertEqual(positions.get(0).toString(),"3,2,1","Squared position does not match expectation");
+		
+		positions = Position.flattenTo2D(4, positions);
+		assertEqual(positions.get(0).toString(),"13,2,0","Squared position does not match expectation");
 	}
 }

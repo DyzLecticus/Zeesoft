@@ -42,6 +42,7 @@ public class TestTemporalMemory extends TestObject {
 
 		List<SDR> inputList = getInputSDRList(500);
 		List<SDR> outputList = new ArrayList<SDR>();
+		List<SDR> burstingList = new ArrayList<SDR>();
 
 		// TODO: Expand test and add assertions
 
@@ -49,12 +50,15 @@ public class TestTemporalMemory extends TestObject {
 		for (SDR input: inputList) {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
-			SDR output = tm.getOutputs().get(0);
+			SDR output = tm.getOutput(0);
 			outputList.add(output);
+			SDR bursting = tm.getOutput(1);
+			burstingList.add(bursting);
 			
-			if (num % 4 == 0) {
+			if (num % 40 == 0) {
 				//System.out.println("Input SDR: " + input.toStr());
 				//System.out.println("Output SDR: " + output.toStr());
+				//System.out.println("Bursting SDR: " + bursting.toStr());
 			}
 			num++;
 		}

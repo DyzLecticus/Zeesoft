@@ -142,9 +142,6 @@ public class SpatialPooler extends SDRProcessor {
 				super.setInput(sdrs);
 				activeInputPositions = input.toPositions();
 				activations.setValue(0F);
-				
-				SDR output = new SDR(outputSizeX, outputSizeY);
-				outputs.add(output);
 			} else {
 				Str msg = new Str("Input dimensions do not match expectation: ");
 				msg.sb().append(input.sizeX());
@@ -160,6 +157,8 @@ public class SpatialPooler extends SDRProcessor {
 		} else {
 			Logger.err(this, new Str("At least one input SDR is required"));
 		}
+		
+		outputs.add(new SDR(outputSizeX, outputSizeY));
 	}
 
 	@Override

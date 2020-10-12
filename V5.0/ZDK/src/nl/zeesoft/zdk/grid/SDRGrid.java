@@ -74,18 +74,4 @@ public class SDRGrid extends Grid implements StrAble {
 		}
 		super.initialize(sizeX, sizeY, sizeZ, value);
 	}
-	
-	public int getOverlap(SDRGrid sdr) {
-		int r = 0;
-		for (GridColumn column: getActiveColumns()) {
-			GridColumn other = sdr.getColumn(column.index);
-			if (other!=null) {
-				Object value = other.getValue();
-				if (value!=null && value instanceof Boolean && (boolean)value) {
-					r++;
-				}
-			}
-		}
-		return r;
-	}
 }
