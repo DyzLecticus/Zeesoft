@@ -57,11 +57,27 @@ public class Position implements StrAble {
 			z = Integer.parseInt(elems.get(2).toString());
 		}
 	}
-	
-	public static List<Position> getColumnPositions(int x, int y, int sizeZ) {
-		List<Position> r = new ArrayList<Position>();
-		for (int z = 0; z < sizeZ; z++) {
-			r.add(new Position(x, y, z));
+
+	public static int getDistance(int pos1X, int pos1Y, int pos2X, int pos2Y) {
+		int r = 0;
+		if (pos1X!=pos2X || pos1Y!=pos2Y) {
+			int distX = 0;
+			if (pos1X!=pos2X) {
+				if (pos1X > pos2X) {
+					distX = pos1X - pos2X;
+				} else {
+					distX = pos2X - pos1X;
+				}
+			}
+			int distY = 0;
+			if (pos1Y!=pos2Y) {
+				if (pos1Y > pos2Y) {
+					distY = pos1Y - pos2Y;
+				} else {
+					distY = pos2Y - pos1Y;
+				}
+			}
+			r = (int) Math.sqrt((distX * distX) + (distY * distY));
 		}
 		return r;
 	}
@@ -109,6 +125,18 @@ public class Position implements StrAble {
 			if (pos.x==x && pos.y==y && pos.z==z) {
 				r = true;
 				break;
+			}
+		}
+		return r;
+	}
+	
+	public static List<Position> selectMaxDistance(int posX, int posY, int distance, List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		int dist = 0;
+		for (Position pos: positions) {
+			dist = getDistance(posX,posY,pos.x,pos.y);
+			if (dist<=distance) {
+				r.add(pos);
 			}
 		}
 		return r;

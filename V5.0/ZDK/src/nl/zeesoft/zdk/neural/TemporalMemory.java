@@ -41,6 +41,9 @@ public class TemporalMemory extends SDRProcessor {
 	protected float				distalSegmentDecrement			= 0.2F;
 	protected float				apicalSegmentDecrement			= 0.2F;
 
+	protected int				distalPotentialRadius			= 512;
+	protected int				apicalPotentialRadius			= 512;
+
 	protected int				activationThreshold				= 13;
 	protected int				matchingThreshold				= 10;
 	protected int				maxNewSynapseCount				= 20;
@@ -78,9 +81,19 @@ public class TemporalMemory extends SDRProcessor {
 			this.distalSegmentDecrement = cfg.distalSegmentDecrement;
 			this.apicalSegmentDecrement	= cfg.apicalSegmentDecrement;
 
+			this.distalPotentialRadius  = cfg.distalPotentialRadius;
+			this.apicalPotentialRadius  = cfg.apicalPotentialRadius;
+			
 			this.activationThreshold = cfg.activationThreshold;
 			this.matchingThreshold = cfg.matchingThreshold;
 			this.maxNewSynapseCount = cfg.maxNewSynapseCount;
+			
+			if (distalPotentialRadius > sizeX * sizeY) {
+				distalPotentialRadius = 0;
+			}
+			if (apicalPotentialRadius > sizeX * sizeY) {
+				apicalPotentialRadius = 0;
+			}
 		}
 	}
 	
@@ -136,7 +149,7 @@ public class TemporalMemory extends SDRProcessor {
 				super.setInput(sdrs);
 				activeInputColumnPositions = inputs.get(0).getValuePositions(true);
 				burstingColumns.setValue(false);
-				
+								
 				prevActiveCellPositions = new ArrayList<Position>(activeCellPositions);
 				prevWinnerCellPositions = new ArrayList<Position>(winnerCellPositions);
 				activeCellPositions.clear();
@@ -210,8 +223,9 @@ public class TemporalMemory extends SDRProcessor {
 		if (learn) {
 			function = new ColumnFunction() {
 				@Override
-				public Object applyFunction(GridColumn column, int posZ, Object value) {
+				public Object[] applyFunction(GridColumn column, Object[] values) {
 					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
+						//if (burstingColumnsOnBits>0) {
 						adaptColumn(column);
 					} else if (
 						(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
@@ -224,7 +238,7 @@ public class TemporalMemory extends SDRProcessor {
 							punishPredictedColumn(column, apicalSegmentDecrement, true);
 						}
 					}
-					return value;
+					return values;
 				}
 			};
 			cells.applyFunction(function, adaptColumnSegmentsAndSynapses);
@@ -304,7 +318,7 @@ public class TemporalMemory extends SDRProcessor {
 	
 	protected void burstColumn(GridColumn column) {
 		lock.lock(this);
-		activeCellPositions.addAll(Position.getColumnPositions(column.posX(), column.posY(), sizeZ));
+		activeCellPositions.addAll(cells.getColumnPositions(column));
 		lock.unlock(this);
 		Cell winnerCell = null;
 		// Find potential match
@@ -363,18 +377,21 @@ public class TemporalMemory extends SDRProcessor {
 						if (winnerCell.matchingDistalSegment!=null) {
 							winnerCell.adaptMatchingSegments(
 								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
-								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment);
+								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment,
+								distalPotentialRadius, apicalPotentialRadius);
 						} else {
 							winnerCell.createSegments(
 								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
-								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSegmentsPerCell, maxSynapsesPerSegment);
+								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSegmentsPerCell, maxSynapsesPerSegment,
+								distalPotentialRadius, apicalPotentialRadius);
 						}
 					}
 				} else {
 					Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
 					cell.adaptActiveSegments(
 						prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
-						initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment);
+						initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment,
+						distalPotentialRadius, apicalPotentialRadius);
 				}
 			}
 		}

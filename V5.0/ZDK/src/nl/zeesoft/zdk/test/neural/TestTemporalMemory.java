@@ -40,7 +40,7 @@ public class TestTemporalMemory extends TestObject {
 		tm.buildProcessorChain(processorChain, true);
 		tm.addDebugToProcesssorChain(processorChain);
 
-		List<SDR> inputList = getInputSDRList(200);
+		List<SDR> inputList = getInputSDRList(90);
 		List<SDR> outputList = new ArrayList<SDR>();
 
 		// TODO: Expand test and add assertions
@@ -58,6 +58,9 @@ public class TestTemporalMemory extends TestObject {
 			}
 			num++;
 		}
+		System.out.println("Sleeping ...");
+		sleep(60000);
+		System.out.println("Done");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

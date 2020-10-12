@@ -109,61 +109,104 @@ public class Cell implements StrAble {
 		}
 	}
 	
-	public void adaptActiveSegments(List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions, float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSynapsesPerSegment) {
+	public void adaptActiveSegments(
+		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions,
+		float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSynapsesPerSegment,
+		int distalPotentialRadius, int apicalPotentialRadius
+		) {
+		List<Position> growPositions = prevWinnerCellPositions;
+		if (distalPotentialRadius>0) {
+			growPositions = Position.selectMaxDistance(position.x, position.y, distalPotentialRadius, growPositions);
+		}
 		for (DistalSegment segment: activeDistalSegments) {
 			segment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
 			int growNum = maxNewSynapseCount - segment.activeSynapses.size();
 			if (growNum>0) {
 				segment.growSynapses(
-					position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+					position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 			}
 		}
 		if (prevActiveApicalCellPositions.size()>0) {
+			growPositions = prevActiveApicalCellPositions;
+			if (apicalPotentialRadius>0) {
+				// Assumes apical input XY dimensions match model XY dimensions 
+				growPositions = Position.selectMaxDistance(position.x, position.y, apicalPotentialRadius, growPositions);
+			}
 			for (ApicalSegment segment: activeApicalSegments) {
 				segment.adaptSynapses(prevActiveApicalCellPositions, permanenceIncrement, permanenceDecrement);
 				int growNum = maxNewSynapseCount - segment.activeSynapses.size();
 				if (growNum>0) {
 					segment.growSynapses(
-						position, growNum, prevActiveApicalCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 				}
 			}
 		}
 	}
 	
-	public void adaptMatchingSegments(List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions, float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSynapsesPerSegment) {
+	public void adaptMatchingSegments(
+		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions,
+		float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSynapsesPerSegment,
+		int distalPotentialRadius, int apicalPotentialRadius
+		) {
 		if (matchingDistalSegment!=null) {
+			List<Position> growPositions = prevWinnerCellPositions;
+			if (distalPotentialRadius>0) {
+				growPositions = Position.selectMaxDistance(position.x, position.y, distalPotentialRadius, growPositions);
+			}
 			matchingDistalSegment.adaptSynapses(prevActiveCellPositions, permanenceIncrement, permanenceDecrement);
 			int growNum = maxNewSynapseCount - matchingDistalSegment.potentialSynapses.size();
 			if (growNum>0) {
 				matchingDistalSegment.growSynapses(
-					position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+					position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 			}
 			if (matchingApicalSegment!=null) {
+				growPositions = prevActiveApicalCellPositions;
+				if (apicalPotentialRadius>0) {
+					// Assumes apical input XY dimensions match model XY dimensions 
+					growPositions = Position.selectMaxDistance(position.x, position.y, apicalPotentialRadius, growPositions);
+				}
 				matchingApicalSegment.adaptSynapses(prevActiveApicalCellPositions, permanenceIncrement, permanenceDecrement);
 				growNum = maxNewSynapseCount - matchingApicalSegment.potentialSynapses.size();
 				if (growNum>0) {
 					matchingApicalSegment.growSynapses(
-						position, growNum, prevActiveApicalCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 				}
 			}
 		}
 	}
 	
-	public void createSegments(List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions, float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSegmentsPerCell, int maxSynapsesPerSegment) {
+	public void createSegments(
+		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions,
+		float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSegmentsPerCell, int maxSynapsesPerSegment,
+		int distalPotentialRadius, int apicalPotentialRadius
+		) {
+		List<Position> growPositions = prevWinnerCellPositions;
+		if (distalPotentialRadius>0) {
+			growPositions = Position.selectMaxDistance(position.x, position.y, distalPotentialRadius, growPositions);
+		}
 		int growNum = maxNewSynapseCount;
-		if (prevWinnerCellPositions.size()<growNum) {
-			growNum = prevWinnerCellPositions.size();
+		if (growPositions.size()<growNum) {
+			growNum = growPositions.size();
 		}
 		if (growNum>0) {
 			DistalSegment distalSegment = (DistalSegment) createSegment(false,maxSegmentsPerCell);
 			distalSegment.growSynapses(
-				position, growNum, prevWinnerCellPositions, initialPermanence, maxSynapsesPerSegment);								
+				position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 			
 			if (prevActiveApicalCellPositions.size()>0) {
-				ApicalSegment apicalSegment = (ApicalSegment) createSegment(true,maxSegmentsPerCell);
+				growPositions = prevActiveApicalCellPositions;
+				if (apicalPotentialRadius>0) {
+					// Assumes apical input XY dimensions match model XY dimensions 
+					growPositions = Position.selectMaxDistance(position.x, position.y, apicalPotentialRadius, growPositions);
+				}
+				growNum = maxNewSynapseCount;
+				if (growPositions.size()<growNum) {
+					growNum = growPositions.size();
+				}
 				if (growNum>0) {
+					ApicalSegment apicalSegment = (ApicalSegment) createSegment(true,maxSegmentsPerCell);
 					apicalSegment.growSynapses(
-						position, growNum, prevActiveApicalCellPositions, initialPermanence, maxSynapsesPerSegment);								
+						position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
 				}
 			}
 		}

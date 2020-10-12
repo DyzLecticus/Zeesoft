@@ -157,30 +157,6 @@ public class Grid {
 		float relative = (float)posZ / (float)sizeZ;
 		return (int)((float)grid.sizeZ() * relative);
 	}
-
-	public static int getDistance(int pos1X, int pos1Y, int pos2X, int pos2Y) {
-		int r = 0;
-		if (pos1X!=pos2X || pos1Y!=pos2Y) {
-			int distX = 0;
-			if (pos1X!=pos2X) {
-				if (pos1X > pos2X) {
-					distX = pos1X - pos2X;
-				} else {
-					distX = pos2X - pos1X;
-				}
-			}
-			int distY = 0;
-			if (pos1Y!=pos2Y) {
-				if (pos1Y > pos2Y) {
-					distY = pos1Y - pos2Y;
-				} else {
-					distY = pos2Y - pos1Y;
-				}
-			}
-			r = (int) Math.sqrt((distX * distX) + (distY * distY));
-		}
-		return r;
-	}
 	
 	public int sizeX() {
 		return sizeX;
@@ -367,6 +343,22 @@ public class Grid {
 		List<Position> r = new ArrayList<Position>();
 		for (GridColumn column: columns) {
 			r.addAll(column.getValuePositions(value));
+		}
+		return r;
+	}
+	
+	public List<Position> getColumnPositions(GridColumn column) {
+		return getColumnPositions(column.posX, column.posY, sizeZ);
+	}
+	
+	public List<Position> getColumnPositions(int x, int y) {
+		return getColumnPositions(x, y, sizeZ);
+	}
+	
+	public static List<Position> getColumnPositions(int x, int y, int sizeZ) {
+		List<Position> r = new ArrayList<Position>();
+		for (int z = 0; z < sizeZ; z++) {
+			r.add(new Position(x, y, z));
 		}
 		return r;
 	}

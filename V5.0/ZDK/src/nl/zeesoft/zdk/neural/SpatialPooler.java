@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.grid.ColumnFunction;
 import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.HistoricalGrid;
+import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.grid.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -25,7 +26,7 @@ public class SpatialPooler extends SDRProcessor {
 	protected int				outputOnBits				= 46;
 	
 	protected float				potentialConnections		= 0.85F;
-	protected float				potentialRadius				= 500;
+	protected int				potentialRadius				= 500;
 	
 	protected float				permanenceThreshold			= 0.1F;
 	protected float				permanenceIncrement			= 0.05F;
@@ -63,6 +64,10 @@ public class SpatialPooler extends SDRProcessor {
 
 			this.activationHistorySize = cfg.activationHistorySize;
 			this.boostStrength = cfg.boostStrength;
+			
+			if (potentialRadius > inputSizeX * inputSizeY) {
+				potentialRadius = 0;
+			}
 		}
 	}
 		
@@ -274,8 +279,8 @@ public class SpatialPooler extends SDRProcessor {
 		int posYonInput = connections.getPosYOn(inputs,column.posY()); 
 		for (GridColumn inputColumn: inputs.getColumns()) {
 			boolean inReach = true;
-			if (potentialRadius < inputSizeX * inputSizeY) {
-				int distance = Grid.getDistance(inputColumn.posX(), inputColumn.posY(), posXonInput, posYonInput);
+			if (potentialRadius> 0 && potentialRadius < inputSizeX * inputSizeY) {
+				int distance = Position.getDistance(inputColumn.posX(), inputColumn.posY(), posXonInput, posYonInput);
 				inReach = distance < potentialRadius;
 			}
 			if (inReach && Rand.getRandomFloat(0, 1) < potentialConnections) {

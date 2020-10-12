@@ -16,6 +16,10 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public float	distalSegmentDecrement		= 0.2F;
 	public float	apicalSegmentDecrement		= 0.2F;
 
+	public int		distalPotentialRadius		= 0;
+	// Assumes apical input XY dimensions match model XY dimensions
+	public int		apicalPotentialRadius		= 0;
+
 	public int		activationThreshold			= 13;
 	public int		matchingThreshold			= 10;
 	public int		maxNewSynapseCount			= 20;

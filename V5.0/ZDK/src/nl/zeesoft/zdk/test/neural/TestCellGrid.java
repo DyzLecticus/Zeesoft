@@ -43,7 +43,11 @@ public class TestCellGrid extends TestObject {
 		grid2.fromStr(str);
 
 		Str str2 = grid2.toStr();
-		assertEqual(str,str2,"Cell grid Str does not match expectation");
+		assertEqual(str,str2,"Cell grid Str does not match expectation (1)");
+		
+		grid2 = new CellGrid(grid);
+		str2 = grid2.toStr();
+		assertEqual(str,str2,"Cell grid Str does not match expectation (2)");
 	}
 	
 	private void generateCellSegments(Cell cell, int basePosX) {
