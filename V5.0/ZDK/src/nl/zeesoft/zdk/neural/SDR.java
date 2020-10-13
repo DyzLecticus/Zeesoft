@@ -175,9 +175,9 @@ public class SDR implements StrAble {
 			}
 			for (int x = 0; x < sizeX; x++) {
 				if (onBits.contains(onBit)) {
-					r.sb().append("X");
+					r.sb().append("1");
 				} else {
-					r.sb().append("_");
+					r.sb().append("0");
 				}
 				onBit++;
 			}

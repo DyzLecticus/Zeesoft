@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdk.test.collection.TestCollections;
 import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
+import nl.zeesoft.zdk.test.neural.TestSDR;
 import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
 import nl.zeesoft.zdk.test.thread.TestRunCode;
 import nl.zeesoft.zdk.test.util.LibraryObject;
@@ -45,6 +46,7 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * HTTP servers and requests  ");
 		System.out.println(" * Advanced MIDI instrument and sequence pattern design  ");
 		System.out.println(" * High performance manipulation of large multi dimensional data structures  ");
+		System.out.println(" * Sparse distributed representations  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -60,5 +62,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestCollections(getTester()));
 		tests.add(new TestHttpServer(getTester()));
 		tests.add(new TestGrid(getTester()));
+		tests.add(new TestSDR(getTester()));
 	}
 }

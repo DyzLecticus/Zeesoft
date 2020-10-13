@@ -18,8 +18,35 @@ public class TestSDR extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not yet included in the ZDK test set");
+		System.out.println("This test shows how to create and compare sparse distributed representations using *SDR* instances.");
+		System.out.println("It also shows how to us a *ScalarEncoder* to encode integer (or float) values into *SDR* instances.");
+		System.out.println();
+		System.out.println("**Example implementation**  ");
+		System.out.println("~~~~");
+		System.out.println("// Create the SDR");
+		System.out.println("SDR sdrA = new SDR(10, 10);");
+		System.out.println("// Turn on the first and last bits");
+		System.out.println("sdrA.setBit(0,true);");
+		System.out.println("sdrA.setBit(99,true);");
+		System.out.println("// Create another SDR");
+		System.out.println("SDR sdrB = new SDR(10, 10);");
+		System.out.println("// Turn on the first and middle bits");
+		System.out.println("sdrB.setBit(0,true);");
+		System.out.println("sdrB.setBit(50,true);");
+		System.out.println("// Get the number of overlapping bits");
+		System.out.println("int overlap = sdrA.getOverlap(sdrB);");
+		System.out.println();
+		System.out.println("// Create the scalar encoder");
+		System.out.println("ScalarEncoder encoder = new ScalarEncoder();");
+		System.out.println("SDR sdr = encoder.getEncodedValue(0)");
+		System.out.println("~~~~");
+		System.out.println();
+		System.out.println("Class references;  ");
+		System.out.println(" * " + getTester().getLinkForClass(TestSDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
+		System.out.println();
+		System.out.println("**Test output**  ");
+		System.out.println("The output of this test shows an example SDR in its compressed and visualized form.");
 	}
 
 	@Override
@@ -76,7 +103,7 @@ public class TestSDR extends TestObject {
 		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;56,57,58,59,60,61,62,63"),"Encoded SDR does not match expectation (3)");
 		encoder.setPeriodic(true);
 		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;32,33,34,35,36,37,38,39"),"Encoded SDR does not match expectation (4)");
-				
+		
 		Str err = encoder.testMinimalOverlap();
 		assertEqual(err, new Str(), "Error message does not match expectation (1)");
 		
