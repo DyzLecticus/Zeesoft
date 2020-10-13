@@ -17,8 +17,10 @@ public class GridColumn {
 	
 	protected void initialize(int sizeZ, Object value) {
 		values = new Object[sizeZ];
-		for (int z = 0; z < sizeZ; z++) {
-			values[z] = value;
+		if (value!=null) {
+			for (int z = 0; z < sizeZ; z++) {
+				values[z] = value;
+			}
 		}
 	}
 	

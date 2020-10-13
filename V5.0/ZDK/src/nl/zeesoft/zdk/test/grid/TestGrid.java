@@ -23,8 +23,40 @@ public class TestGrid extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not yet included in the ZDK test set");
+		System.out.println("This test shows how to use *Grid* instances to store and manipulate multi dimensional data structures. ");
+		System.out.println("A *Grid* is a Matrix with an optional 3rd dimension. ");
+		System.out.println("It was designed to represent 2 or 3 dimensional data structures where the location of the value has signifigance. ");
+		System.out.println("*ColumnFunctions* can be used to manipulate XY value arrays in a functional and optionally multi threaded manner. ");
+		System.out.println();
+		System.out.println("**Example implementation**  ");
+		System.out.println("~~~~");
+		System.out.println("// Create the grid");
+		System.out.println("Grid grid = new Grid();");
+		System.out.println("// Initialize the grid");
+		System.out.println("Grid grid = new Grid(4, 4, 4, 0.5F);");
+		System.out.println("// Set a value");
+		System.out.println("grid.setValue(1, 2, 3, 0.5F);");
+		System.out.println("// Create a column function");
+		System.out.println("ColumnFunction increment1 = new ColumnFunction() {");
+		System.out.println("	@Override");
+		System.out.println("	public Object applyFunction(GridColumn column, int posZ, Object value) {");
+		System.out.println("		return (float)value + 1F;");
+		System.out.println("	}");
+		System.out.println("};");
+		System.out.println("// Apply the column function (specify a *CodeRunnerList* for multi threaded application)");
+		System.out.println("grid.applyFunction(increment1);");
+		System.out.println("// Get a value");
+		System.out.println("float value = (float) grid.getValue(1, 2, 3);");
+		System.out.println("~~~~");
+		System.out.println();
+		System.out.println("Class references;  ");
+		System.out.println(" * " + getTester().getLinkForClass(TestGrid.class));
+		System.out.println(" * " + getTester().getLinkForClass(Grid.class));
+		System.out.println(" * " + getTester().getLinkForClass(ColumnFunction.class));
+		System.out.println(" * " + getTester().getLinkForClass(CodeRunnerList.class));
+		System.out.println();
+		System.out.println("**Test output**  ");
+		System.out.println("The output of this test shows the number of columns for a 48*48*16 grid and some column value manipulations.  ");
 	}
 
 	@Override
@@ -78,7 +110,6 @@ public class TestGrid extends TestObject {
 		assertEqual(grid.getValuePositions(true).toString(),"[4,0,0, 4,0,1, 4,0,2, 4,0,3]","Value positions do not match expectation (2)");
 		grid.flatten();
 		assertEqual(grid.getValuePositions(true).toString(),"[16,0,0, 17,0,0, 18,0,0, 19,0,0]","Value positions do not match expectation (3)");
-		
 		
 		Position pos = new Position(13,2,0);
 		List<Position> positions = new ArrayList<Position>();
