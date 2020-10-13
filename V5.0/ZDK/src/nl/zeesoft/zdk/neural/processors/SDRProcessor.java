@@ -88,6 +88,10 @@ public class SDRProcessor {
 		return outputs;
 	}
 	
+	public SDR getOutput() {
+		return getOutput(0);
+	}
+	
 	public SDR getOutput(int index) {
 		SDR r = null;
 		if (index < outputs.size()) {

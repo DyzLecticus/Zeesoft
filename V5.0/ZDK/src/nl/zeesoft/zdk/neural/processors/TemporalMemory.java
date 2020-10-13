@@ -23,6 +23,10 @@ import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class TemporalMemory extends SDRProcessor {
+	public static final int		ACTIVE_CELLS_OUTPUT				= 0;
+	public static final int		BURSTING_COLUMNS_OUTPUT			= 1;
+	public static final int		PREDICTIVE_CELLS_OUTPUT			= 2;
+	
 	protected Lock				lock							= new Lock();
 	
 	// Configuration
@@ -179,6 +183,7 @@ public class TemporalMemory extends SDRProcessor {
 		
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 		outputs.add(new SDR(sizeX, sizeY));
+		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 	}
 	
 	@Override
@@ -205,15 +210,6 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		burstingColumns.applyFunction(function, activateColumns);
-		
-		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				outputs.get(0).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
-				outputs.get(1).fromPositions(burstingColumns.getValuePositions(true));
-				return true;
-			}
-		});
 		
 		CodeRunnerList adaptColumnSegmentsAndSynapses = new CodeRunnerList();
 		if (learn) {
@@ -269,14 +265,24 @@ public class TemporalMemory extends SDRProcessor {
 			}
 		};
 		cells.applyFunction(function, predictActiveCells);
-		
+
+		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				outputs.get(ACTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
+				outputs.get(BURSTING_COLUMNS_OUTPUT).fromPositions(burstingColumns.getValuePositions(true));
+				outputs.get(PREDICTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, predictiveCellPositions));
+				return true;
+			}
+		});
+
 		runnerChain.add(activateColumns);
-		runnerChain.add(generateOutput);
 		if (learn) {
 			runnerChain.add(adaptColumnSegmentsAndSynapses);
 		}
 		runnerChain.add(clearPrediction);
 		runnerChain.add(predictActiveCells);
+		runnerChain.add(generateOutput);
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 	

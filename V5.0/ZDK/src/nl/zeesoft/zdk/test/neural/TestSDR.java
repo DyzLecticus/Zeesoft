@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
+import nl.zeesoft.zdk.neural.ScalarEncoder;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -64,5 +65,26 @@ public class TestSDR extends TestObject {
 		assertEqual(hist.getAverage(0),1F,"Average for bit 0 does not match expectation");
 		assertEqual(hist.getAverage(15),0.5F,"Average for bit 15 does not match expectation");
 		assertEqual(hist.getTotalAverage(),0.15625F,"Total average does not match expectation");
+		
+		ScalarEncoder encoder = new ScalarEncoder();
+		encoder.setEncodeDimensions(8, 8);
+		encoder.setOnBits(8);
+		encoder.setMaxValue(56);
+		
+		assertEqual(encoder.getEncodedValue(0).toStr(),new Str("8;8;0,1,2,3,4,5,6,7"),"Encoded SDR does not match expectation (1)");
+		assertEqual(encoder.getEncodedValue(28).toStr(),new Str("8;8;28,29,30,31,32,33,34,35"),"Encoded SDR does not match expectation (2)");
+		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;56,57,58,59,60,61,62,63"),"Encoded SDR does not match expectation (3)");
+		encoder.setPeriodic(true);
+		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;32,33,34,35,36,37,38,39"),"Encoded SDR does not match expectation (4)");
+				
+		Str err = encoder.testMinimalOverlap();
+		assertEqual(err, new Str(), "Error message does not match expectation (1)");
+		
+		encoder.setMaxValue(4);
+		err = encoder.testMinimalOverlap();
+		assertEqual(err, new Str("Invalid bucket value overlap for value: 1.0, overlap: 0, minimum: 1"), "Error message does not match expectation (2)");
+		
+		err = encoder.testNoOverlap();
+		assertEqual(err, new Str(), "Error message does not match expectation (3)");
 	}
 }

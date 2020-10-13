@@ -170,6 +170,9 @@ public class SDR implements StrAble {
 		Str r = new Str();
 		Integer onBit = 0;
 		for (int y = 0; y < sizeY; y++) {
+			if (r.length()>0) {
+				r.sb().append("\n");
+			}
 			for (int x = 0; x < sizeX; x++) {
 				if (onBits.contains(onBit)) {
 					r.sb().append("X");
@@ -178,7 +181,6 @@ public class SDR implements StrAble {
 				}
 				onBit++;
 			}
-			r.sb().append("\n");
 		}
 		return r;
 	}

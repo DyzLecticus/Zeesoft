@@ -3,71 +3,128 @@ package nl.zeesoft.zdk.neural;
 import nl.zeesoft.zdk.Str;
 
 public class ScalarEncoder extends Encoder {
-	public int buckets	= 20;
-	public int onBits	= 16;
+	protected float		minValue	= 0;
+	protected float		maxValue	= 200;
 	
-	@Override
-	public SDR getEncodedValue() {
-		return getSDRForBucket(value);
-	}
-	
-	public Str testOverlap() {
-		return testOverlap(1, onBits);
-	}
-	
-	public Str testOverlap(int minOverlap, int maxOverlap) {
-		Str r = new Str();
-		SDR curr = getSDRForBucket(0);
-		for (int b = 1; b < buckets; b++) {
-			SDR next = getSDRForBucket(b);
-			int overlap = curr.getOverlap(next);
-			if (minOverlap > 0 && overlap < minOverlap) {
-				r.sb().append("Invalid bucket value overlap for value: ");
-				r.sb().append(b);
-				r.sb().append(", overlap: ");
-				r.sb().append(overlap);
-				r.sb().append(", minimum: ");
-				r.sb().append(minOverlap);
-			} else if (maxOverlap > 0 && overlap > maxOverlap) {
-				r.sb().append("Invalid bucket value overlap for value: ");
-				r.sb().append(b);
-				r.sb().append(", overlap: ");
-				r.sb().append(overlap);
-				r.sb().append(", minimum: ");
-				r.sb().append(minOverlap);
-			}
-			if (r.length()>0) {
-				break;
-			}
-			curr = next;
-		}
-		return r;
+	protected boolean	periodic	= false;
+
+	public float getMinValue() {
+		return minValue;
 	}
 
-	protected SDR getSDRForBucket(Object value) {
-		SDR r = super.getEncodedValue();
-		if (value!=null) {
-			float stepsPerBucket = (float)encodeLength / (float)buckets;
-			float bucket = getBucketForValue(value); 
-			int s = (int)(bucket * stepsPerBucket);
-			int e = s + onBits;
-			if (e > encodeLength) {
-				e = encodeLength;
-			}
-			for (int i = s; i < e; i++) {
-				r.setBit(i, true);
-			}
-		}
-		return r;
+	public void setMinValue(float minValue) {
+		this.minValue = minValue;
+	}
+
+	public float getMaxValue() {
+		return maxValue;
+	}
+
+	public void setMaxValue(float maxValue) {
+		this.maxValue = maxValue;
+	}
+
+	public boolean isPeriodic() {
+		return periodic;
+	}
+
+	public void setPeriodic(boolean periodic) {
+		this.periodic = periodic;
 	}
 	
-	protected float getBucketForValue(Object value) {
+	@Override
+	public SDR getEncodedValue(Object value) {
+		SDR r = super.getEncodedValue(value);
 		float val = 0;
 		if (value instanceof Float) {
 			val = (float) value;
 		} else if (value instanceof Integer) {
 			val = (int) value;
 		}
-		return (val % (float)buckets);
+		if (periodic) {
+			val = getCorrectedValue(val) % getCorrectedMaxValue();
+		} else {
+			if (val < minValue) {
+				val = minValue;
+			}
+			if (val > maxValue) {
+				val = maxValue;
+			}
+		}
+		float percentage = val / getCorrectedMaxValue();
+		int sBit = (int) (percentage * getBuckets());
+		int eBit = sBit + onBits;
+		for (int bit = sBit; bit < eBit; bit++) {
+			int b = bit;
+			if (bit >= getEncodeLength()) {
+				if (periodic) {
+					b = b % getEncodeLength();
+				} else {
+					break;
+				}
+			}
+			r.setBit(b, true);
+		}
+		return r;
+	}
+	
+	protected float getCorrectedMaxValue() {
+		float r = maxValue;
+		if (minValue!=0) {
+			if (minValue > 0) {
+				r = r - minValue;
+			} else {
+				r = r + (minValue * -1);
+			}
+		}
+		return r;
+	}
+	
+	protected float getCorrectedValue(float value) {
+		float r = value;
+		if (minValue!=0) {
+			if (minValue > 0) {
+				r = r - minValue;
+			} else {
+				r = r + (minValue * -1);
+			}
+		}
+		return r;
+	}
+	
+	public Str testMinimalOverlap() {
+		return testOverlap(1, onBits, 1);
+	}
+	
+	public Str testNoOverlap() {
+		return testOverlap(0, 1, 1);
+	}
+	
+	public Str testOverlap(int minOverlap, int maxOverlap, float resolution) {
+		Str r = new Str();
+		SDR curr = getEncodedValue(minValue);
+		for (float val = (minValue + resolution); val < maxValue; val+=resolution) {
+			SDR next = getEncodedValue(val);
+			int overlap = curr.getOverlap(next);
+			if (minOverlap > 0 && overlap < minOverlap) {
+				r.sb().append("Invalid bucket value overlap for value: ");
+				r.sb().append(val);
+				r.sb().append(", overlap: ");
+				r.sb().append(overlap);
+				r.sb().append(", minimum: ");
+				r.sb().append(minOverlap);
+				break;
+			} else if (maxOverlap > 0 && overlap > maxOverlap) {
+				r.sb().append("Invalid bucket value overlap for value: ");
+				r.sb().append(val);
+				r.sb().append(", overlap: ");
+				r.sb().append(overlap);
+				r.sb().append(", minimum: ");
+				r.sb().append(minOverlap);
+				break;
+			}
+			curr = next;
+		}
+		return r;
 	}
 }

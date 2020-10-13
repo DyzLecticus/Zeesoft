@@ -50,9 +50,9 @@ public class TestTemporalMemory extends TestObject {
 		for (SDR input: inputList) {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
-			SDR output = tm.getOutput(0);
+			SDR output = tm.getOutput();
 			outputList.add(output);
-			SDR bursting = tm.getOutput(1);
+			SDR bursting = tm.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
 			burstingList.add(bursting);
 			
 			if (num % 40 == 0) {
@@ -66,17 +66,16 @@ public class TestTemporalMemory extends TestObject {
 	
 	private List<SDR> getInputSDRList(int num) {
 		ScalarEncoder encoder = new ScalarEncoder();
-		encoder.encodeLength = 2304;
-		encoder.onBits = 46;
-		encoder.buckets = 40;
+		encoder.setEncodeDimensions(48, 48);
+		encoder.setOnBits(46);
+		encoder.setMaxValue(50);
 		
-		Str err = encoder.testOverlap(0,0);
-		assertEqual(err, new Str(),"Error message does not match expectation");
+		Str err = encoder.testNoOverlap();
+		assertEqual(err, new Str(), "Error message does not match expectation");
 		
 		List<SDR> r = new ArrayList<SDR>();
 		for (int i = 0; i < num; i++) {
-			encoder.value = i % 4;
-			r.add(encoder.getEncodedValue());
+			r.add(encoder.getEncodedValue(i % 4));
 		}
 		return r;
 	}

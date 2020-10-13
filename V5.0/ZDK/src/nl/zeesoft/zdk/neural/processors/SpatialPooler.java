@@ -17,6 +17,8 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class SpatialPooler extends SDRProcessor {
+	public static final int		ACTIVE_COLUMNS_OUTPUT		= 0;
+	
 	// Configuration
 	protected int				inputSizeX					= 16;
 	protected int				inputSizeY					= 16;
@@ -189,7 +191,7 @@ public class SpatialPooler extends SDRProcessor {
 			protected boolean run() {
 				List<GridColumn> winners = activations.getColumnsByValue(false,outputOnBits);
 				for (GridColumn winner: winners) {
-					outputs.get(0).setBit(winner.posX(), winner.posY(), true);
+					outputs.get(ACTIVE_COLUMNS_OUTPUT).setBit(winner.posX(), winner.posY(), true);
 				}
 				return true;
 			}
@@ -200,12 +202,12 @@ public class SpatialPooler extends SDRProcessor {
 			function = new ColumnFunction() {
 				@Override
 				public Object applyFunction(GridColumn column, int posZ, Object value) {
-					if ((boolean)outputs.get(0).getBit(column.posX(), column.posY())) {
+					if (outputs.get(ACTIVE_COLUMNS_OUTPUT).getBit(column.posX(), column.posY())) {
 						Grid winnerPermanences = (Grid) value;
 						for (GridColumn pColumn: winnerPermanences.getColumns()) {
 							float permanence = (float)pColumn.getValue();
 							if (permanence>=0) {
-								if ((boolean)inputs.get(0).getBit(pColumn.posX(), pColumn.posY())) {
+								if (inputs.get(0).getBit(pColumn.posX(), pColumn.posY())) {
 									pColumn.setValue(permanence + permanenceIncrement);
 									if ((float)pColumn.getValue()>1F) {
 										pColumn.setValue(1F);
@@ -228,7 +230,7 @@ public class SpatialPooler extends SDRProcessor {
 		CodeRunnerList updateHistory = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
-				activationHistory.addSDR(outputs.get(0));
+				activationHistory.addSDR(outputs.get(ACTIVE_COLUMNS_OUTPUT));
 				return true;
 			}
 		});
