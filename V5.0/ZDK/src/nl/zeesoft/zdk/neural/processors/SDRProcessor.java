@@ -36,31 +36,6 @@ public class SDRProcessor {
 		// Override to implement
 	}
 	
-	public void resetConnections() {
-		Logger.dbg(this, new Str("Resetting " + this.getClass().getSimpleName() + " connections ..."));
-		resetConnections(null);
-		Logger.dbg(this, new Str("Reset " + this.getClass().getSimpleName() + " connections"));
-	}
-	
-	public void resetConnections(CodeRunnerList runnerList) {
-		// Override to implement
-	}
-
-	public void buildInitializeChain(CodeRunnerChain runnerChain, boolean randomizeConnections) {
-		CodeRunnerList init = new CodeRunnerList();
-		initialize(init);
-		if (init.size()>0) {
-			runnerChain.add(init);
-		}
-		if (randomizeConnections) {
-			CodeRunnerList rand = new CodeRunnerList();
-			resetConnections(rand);
-			if (rand.size()>0) {
-				runnerChain.add(rand);
-			}
-		}
-	}
-	
 	public void setInput(SDR... sdrs) {
 		inputs.clear();
 		for (SDR sdr: sdrs) {

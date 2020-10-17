@@ -5,8 +5,9 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 
-public class SDRHistory {
+public class SDRHistory implements StrAble {
 	protected int			sizeX	= 1;
 	protected int			sizeY	= 1;
 	protected int			sizeZ	= 1000;
@@ -41,6 +42,57 @@ public class SDRHistory {
 		this.totals = new int[sizeX * sizeY];
 		for (int i = 0; i < sizeX * sizeY; i++) {
 			totals[i] = 0;
+		}
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		r.sb().append(sizeX);
+		r.sb().append(",");
+		r.sb().append(sizeY);
+		r.sb().append(",");
+		r.sb().append(sizeZ);
+		r.sb().append("\n");
+		for (int i = 0; i < totals.length; i++) {
+			if (i>0) {
+				r.sb().append(",");
+			}
+			r.sb().append(totals[i]);
+		}
+		for (SDR sdr: history) {
+			r.sb().append("\n");
+			r.sb().append(sdr.toStr());
+		}
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> elems = str.split("\n");
+		if (elems.size()>=2) {
+			clear();
+			
+			List<Str> dims = elems.get(0).split(",");
+			sizeX = Integer.parseInt(dims.get(0).toString());
+			sizeY = Integer.parseInt(dims.get(1).toString());
+			sizeZ = Integer.parseInt(dims.get(2).toString());
+			setDimensions(sizeX, sizeY, sizeZ);
+			
+			List<Str> tots = elems.get(1).split(",");
+			for (int i = 0; i < totals.length; i++) {
+				totals[i] = Integer.parseInt(tots.get(i).toString());
+			}
+			
+			int i = 0;
+			for (Str elem: elems) {
+				if (i>=2) {
+					SDR sdr = new SDR();
+					sdr.fromStr(elem);
+					history.add(sdr);
+				}
+				i++;
+			}
 		}
 	}
 	
@@ -99,8 +151,10 @@ public class SDRHistory {
 	
 	public void clear() {
 		history.clear();
-		for (int i = 0; i < sizeX * sizeY; i++) {
-			totals[i] = 0;
+		if (totals!=null) {
+			for (int i = 0; i < totals.length; i++) {
+				totals[i] = 0;
+			}
 		}
 	}
 }

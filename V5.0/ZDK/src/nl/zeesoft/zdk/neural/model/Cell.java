@@ -261,7 +261,7 @@ public class Cell implements StrAble {
 			if (r.length()>0) {
 				r.sb().append("!");
 			}
-			r.sb().append(segment.getClass().getSimpleName());
+			r.sb().append(segment.getClass().getSimpleName().substring(0, 1));
 			r.sb().append("@");
 			r.sb().append(segment.toStr());
 		}
@@ -275,13 +275,13 @@ public class Cell implements StrAble {
 		for (Str elem: elems) {
 			List<Str> sElems = elem.split("@");
 			Segment segment = null;
-			if (sElems.get(0).toString().equals(ProximalSegment.class.getSimpleName())) {
+			if (sElems.get(0).toString().equals(ProximalSegment.class.getSimpleName().substring(0, 1))) {
 				segment = new ProximalSegment();
 				proximalSegments.add((ProximalSegment)segment);
-			} else if (sElems.get(0).toString().equals(DistalSegment.class.getSimpleName())) {
+			} else if (sElems.get(0).toString().equals(DistalSegment.class.getSimpleName().substring(0, 1))) {
 				segment = new DistalSegment();
 				distalSegments.add((DistalSegment)segment);
-			} else if (sElems.get(0).toString().equals(ApicalSegment.class.getSimpleName())) {
+			} else if (sElems.get(0).toString().equals(ApicalSegment.class.getSimpleName().substring(0, 1))) {
 				segment = new ApicalSegment();
 				apicalSegments.add((ApicalSegment)segment);
 			}

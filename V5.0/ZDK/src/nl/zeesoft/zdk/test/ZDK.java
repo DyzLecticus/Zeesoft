@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdk.test.collection.TestCollections;
 import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
+import nl.zeesoft.zdk.test.neural.TestCellGrid;
 import nl.zeesoft.zdk.test.neural.TestSDR;
 import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
 import nl.zeesoft.zdk.test.thread.TestRunCode;
@@ -46,7 +47,15 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * HTTP servers and requests  ");
 		System.out.println(" * Advanced MIDI instrument and sequence pattern design  ");
 		System.out.println(" * High performance manipulation of large multi dimensional data structures  ");
-		System.out.println(" * Sparse distributed representations  ");
+		System.out.println(" * [Hierarchical Temporal Memory](https://numenta.com/)  ");
+		System.out.println("   * Sparse distributed representations  ");
+		System.out.println("   * Detailed neural cell modeling  ");
+		// TODO: Finish tests
+		//System.out.println("   * Spatial pooling  ");
+		//System.out.println("   * Temporal memory  ");
+		// TODO: Develop algorithms
+		//System.out.println("   * Anomaly detection  ");
+		//System.out.println("   * Value classification and prediction  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -63,5 +72,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestHttpServer(getTester()));
 		tests.add(new TestGrid(getTester()));
 		tests.add(new TestSDR(getTester()));
+		tests.add(new TestCellGrid(getTester()));
 	}
 }

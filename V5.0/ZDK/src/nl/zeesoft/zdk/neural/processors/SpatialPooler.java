@@ -16,7 +16,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class SpatialPooler extends SDRProcessor {
+public class SpatialPooler extends CellGridProcessor {
 	public static final int		ACTIVE_COLUMNS_OUTPUT		= 0;
 	
 	// Configuration
@@ -83,7 +83,7 @@ public class SpatialPooler extends SDRProcessor {
 		r.sb().append(")");
 		return r;
 	}
-
+	
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (inputSizeX < 2) {

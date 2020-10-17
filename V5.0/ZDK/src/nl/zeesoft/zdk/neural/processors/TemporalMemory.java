@@ -22,7 +22,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class TemporalMemory extends SDRProcessor {
+public class TemporalMemory extends CellGridProcessor {
 	public static final int		ACTIVE_CELLS_OUTPUT				= 0;
 	public static final int		BURSTING_COLUMNS_OUTPUT			= 1;
 	public static final int		PREDICTIVE_CELLS_OUTPUT			= 2;

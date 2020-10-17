@@ -51,6 +51,7 @@ public class TestSDR extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		// SDR
 		SDR sdr = new SDR(4, 4);
 		sdr.setBit(0, true);
 		sdr.setBit(7, true);
@@ -80,6 +81,7 @@ public class TestSDR extends TestObject {
 		
 		assertEqual(sdr2.toStr(),str,"SDR 2 Str does not match expectation");
 		
+		// History
 		SDRHistory hist = new SDRHistory(4, 4, 4);
 		
 		hist.addSDR(sdr);
@@ -93,6 +95,14 @@ public class TestSDR extends TestObject {
 		assertEqual(hist.getAverage(15),0.5F,"Average for bit 15 does not match expectation");
 		assertEqual(hist.getTotalAverage(),0.15625F,"Total average does not match expectation");
 		
+		Str histStr = hist.toStr();
+		
+		SDRHistory hist2 = new SDRHistory();
+		hist2.fromStr(histStr);
+		
+		assertEqual(hist2.toStr(),histStr, "History Str does not match expectation");
+		
+		// Encoder
 		ScalarEncoder encoder = new ScalarEncoder();
 		encoder.setEncodeDimensions(8, 8);
 		encoder.setOnBits(8);
