@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural.processors;
 
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.Waiter;
@@ -35,4 +36,20 @@ public class ProcessorManager {
 		lock.unlock(this);
 	}
 	
+	public void save(String path) {
+		lock.lock(this);
+		Str str = processor.toStr();
+		lock.unlock(this);
+		str.toFile(path);
+	}
+	
+	public void load(String path) {
+		Str str = new Str();
+		Str err = str.fromFile(path);
+		if (err.length()==0) {
+			lock.lock(this);
+			processor.fromStr(str);
+			lock.unlock(this);
+		}
+	}
 }
