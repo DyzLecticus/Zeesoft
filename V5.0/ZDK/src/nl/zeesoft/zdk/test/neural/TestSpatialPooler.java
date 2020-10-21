@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.model.CellGrid;
 import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
@@ -88,6 +89,18 @@ public class TestSpatialPooler extends TestObject {
 		float averageOverall = overlap / num;
 		
 		System.out.println("Average overlap for similar inputs: " + averageSimilar + ", overall: " + averageOverall);
+		assertEqual(averageSimilar>=44F,true,"Average overlap for similar inputs is below expectation");
+		assertEqual(averageOverall<=3F,true,"Average overlap for overall inputs is above expectation");
+		
+		CellGrid cellGrid = sp.toCellGrid(null);
+		
+		SpatialPooler sp2 = new SpatialPooler();
+		sp2.initialize();
+		sp2.fromCellGrid(cellGrid, null);
+		
+		CellGrid cellGrid2 = sp2.toCellGrid(null);
+		
+		assertEqual(cellGrid2.toStr(),cellGrid.toStr(),"Cell grid Str does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

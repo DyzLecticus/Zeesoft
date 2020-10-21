@@ -36,6 +36,16 @@ public class SDRProcessor {
 		// Override to implement
 	}
 	
+	public void setInput(List<SDR> sdrs) {
+		SDR[] in = new SDR[sdrs.size()];
+		int i = 0;
+		for (SDR sdr: sdrs) {
+			in[i] = sdr;
+			i++;
+		}
+		setInput(in);
+	}
+	
 	public void setInput(SDR... sdrs) {
 		inputs.clear();
 		for (SDR sdr: sdrs) {
@@ -60,7 +70,7 @@ public class SDRProcessor {
 	}
 	
 	public List<SDR> getOutputs() {
-		return outputs;
+		return new ArrayList<SDR>(outputs);
 	}
 	
 	public SDR getOutput() {

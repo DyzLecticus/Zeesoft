@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural.model;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
@@ -7,8 +8,10 @@ import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.grid.Position;
 
 public class Synapse implements StrAble {
-	public Position	connectTo		= new Position();
-	public float	permanence		= 0F;
+	private static final DecimalFormat	df			= new DecimalFormat("0.000");
+	
+	public Position						connectTo	= new Position();
+	public float						permanence	= 0F;
 	
 	public Synapse() {
 		
@@ -28,7 +31,7 @@ public class Synapse implements StrAble {
 		Str r = new Str();
 		r.sb().append(connectTo.toStr());
 		r.sb().append(";");
-		r.sb().append(permanence);
+		r.sb().append(df.format(permanence));
 		return r;
 	}
 

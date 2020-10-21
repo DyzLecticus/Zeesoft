@@ -12,6 +12,10 @@ import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
+import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.CellGrid;
+import nl.zeesoft.zdk.neural.model.ProximalSegment;
+import nl.zeesoft.zdk.neural.model.Synapse;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
@@ -77,9 +81,13 @@ public class SpatialPooler extends CellGridProcessor {
 	public Str getDescription() {
 		Str r = new Str();
 		r.sb().append(" (");
-		r.sb().append(inputSizeX + "*" + inputSizeY);
+		r.sb().append(inputSizeX);
+		r.sb().append("*");
+		r.sb().append(inputSizeY);
 		r.sb().append(" > ");
-		r.sb().append(outputSizeX + "*" + outputSizeY);
+		r.sb().append(outputSizeX);
+		r.sb().append("*");
+		r.sb().append(outputSizeY);
 		r.sb().append(")");
 		return r;
 	}
@@ -114,7 +122,7 @@ public class SpatialPooler extends CellGridProcessor {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Grid inputPermanences = new Grid();
-				inputPermanences.initialize(inputSizeX, inputSizeY, 1, 0F);
+				inputPermanences.initialize(inputSizeX, inputSizeY, 1, -1F);
 				return inputPermanences;
 			}
 		};
@@ -269,6 +277,70 @@ public class SpatialPooler extends CellGridProcessor {
 		runnerChain.add(updateBoostFactors);
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
+	
+	public void fromCellGrid(CellGrid cellGrid, CodeRunnerList runnerList) {
+		if (cellGrid.sizeX()==outputSizeX &&
+			cellGrid.sizeY()==outputSizeY
+			) {
+			ColumnFunction function = new ColumnFunction() {
+				@Override
+				public Object applyFunction(GridColumn column, int posZ, Object value) {
+					Cell cell = (Cell) value;
+					Grid inputPermanences = (Grid) connections.getValue(column.posX(), column.posY(), posZ);
+					for (ProximalSegment segment: cell.proximalSegments) {
+						for (Synapse synapse: segment.synapses) {
+							inputPermanences.setValue(synapse.connectTo.x, synapse.connectTo.y, 0, synapse.permanence);
+						}
+					}
+					return value;
+				}
+			};
+			cellGrid.applyFunction(function, runnerList);
+		}
+	}
+	
+	public CellGrid toCellGrid(CodeRunnerList runnerList) {
+		CellGrid cellGrid = new CellGrid();
+		cellGrid.initialize(outputSizeX, outputSizeY, 1);
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				Cell cell = new Cell(new Position(column.posX(), column.posY(), posZ));
+				cellGrid.setValue(column.posX(), column.posY(), posZ, cell);
+				ProximalSegment segment = new ProximalSegment();
+				cell.proximalSegments.add(segment);
+				Grid inputPermanences = (Grid) value;
+				for (int y = 0; y < inputPermanences.sizeY(); y++) {
+					for (int x = 0; x < inputPermanences.sizeX(); x++) {
+						float permanence = (float) inputPermanences.getValue(x, y);
+						if (permanence >= 0F) {
+							Synapse synapse = new Synapse();
+							synapse.connectTo.x = x;
+							synapse.connectTo.y = y;
+							synapse.connectTo.z = 0;
+							synapse.permanence = permanence;
+							segment.synapses.add(synapse);
+						}
+					}
+				}
+				return value;
+			}
+		};
+		connections.applyFunction(function, runnerList);
+		return cellGrid;
+	}
+	
+	public void setActivationHistory(SDRHistory activationHistory) {
+		if (activationHistory.sizeX()==outputSizeX &&
+			activationHistory.sizeY()==outputSizeY
+			) {
+			this.activationHistory = activationHistory;
+		}
+	}
+	
+	public SDRHistory getActivationHistory() {
+		return activationHistory;
+	}
 
 	protected void randomConnectColumn(GridColumn column) {
 		Grid inputs = (Grid) column.getValue();
@@ -281,7 +353,7 @@ public class SpatialPooler extends CellGridProcessor {
 				inReach = distance < potentialRadius;
 			}
 			if (inReach && Rand.getRandomFloat(0, 1) < potentialConnections) {
-				if (Rand.getRandomInt(0, 1) ==1) {
+				if (Rand.getRandomInt(0, 1) == 1) {
 					inputColumn.setValue(Rand.getRandomFloat(permanenceThreshold, 1));
 				} else {
 					inputColumn.setValue(Rand.getRandomFloat(0, permanenceThreshold));

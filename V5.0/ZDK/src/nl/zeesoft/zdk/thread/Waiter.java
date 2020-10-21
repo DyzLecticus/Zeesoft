@@ -3,26 +3,9 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Waiter {
-	public static void waitWhile(RunCode whileCode, int waitMs) {
-		int sleepMs = 1;
-		int waitedMs = 0;
-		while(whileCode.tryRunCatch() && waitedMs < waitMs) {
-			try {
-				Thread.sleep(sleepMs);
-				waitedMs += sleepMs;
-				if (waitedMs >= 100) {
-					sleepMs = 50;
-				} else if (waitedMs >= 10) {
-					sleepMs = 10;
-				}
-			} catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-	
-	public static void waitFor(Waitable waitable, int waitMs) {
+public class Waiter {	
+	public static boolean waitFor(Waitable waitable, int waitMs) {
+		boolean r = false;
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(waitable.isBusy() && waitedMs < waitMs) {
@@ -31,44 +14,44 @@ public class Waiter {
 				waitedMs += sleepMs;
 				if (waitedMs >= 100) {
 					sleepMs = 50;
-				} else if (waitedMs >= 10) {
+				} else if (waitedMs >= 25) {
 					sleepMs = 10;
 				}
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
+		if (waitedMs < waitMs) {
+			r = true;
+		}
+		return r;
 	}
 	
-	public static void startAndWaitFor(CodeRunnerChain runnerChain, int waitMs) {
+	public static boolean startAndWaitFor(CodeRunnerChain runnerChain, int waitMs) {
+		boolean r = false;
 		if (runnerChain.size()>0) {
 			runnerChain.start();
-			waitFor(runnerChain, waitMs);
+			r = waitFor(runnerChain, waitMs);
 		}
+		return r;
 	}
 	
-	public static void startAndWaitFor(CodeRunnerList runnerList, int waitMs) {
+	public static boolean startAndWaitFor(CodeRunnerList runnerList, int waitMs) {
+		boolean r = false;
 		if (runnerList.size()>0) {
 			runnerList.start();
-			waitFor(runnerList, waitMs);
+			r = waitFor(runnerList, waitMs);
 		}
+		return r;
 	}
 	
-	public static void startAndWaitFor(List<CodeRunner> runners, int waitMs) {
-		for (CodeRunner runner: runners) {
-			runner.start();
-		}
-		if (runners.size()>0) {
-			waitForRunners(runners, waitMs);
-		}
-	}
-	
-	public static void waitForRunners(List<CodeRunner> runners, int waitMs) {
+	public static boolean waitForRunners(List<CodeRunner> runners, int waitMs) {
 		List<Waitable> waitables = new ArrayList<Waitable>(runners);
-		waitFor(waitables, waitMs);
+		return waitFor(waitables, waitMs);
 	}
 	
-	public static void waitFor(List<Waitable> waitables, int waitMs) {
+	public static boolean waitFor(List<Waitable> waitables, int waitMs) {
+		boolean r = false;
 		int sleepMs = 1;
 		int waitedMs = 0;
 		while(oneOfWaitablesIsBusy(waitables) && waitedMs < waitMs) {
@@ -77,13 +60,17 @@ public class Waiter {
 				waitedMs += sleepMs;
 				if (waitedMs >= 100) {
 					sleepMs = 50;
-				} else if (waitedMs >= 10) {
+				} else if (waitedMs >= 25) {
 					sleepMs = 10;
 				}
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
+		if (waitedMs < waitMs) {
+			r = true;
+		}
+		return r;
 	}
 	
 	public static boolean oneOfWaitablesIsBusy(List<Waitable> waitables) {

@@ -44,6 +44,19 @@ public class SDRHistory implements StrAble {
 			totals[i] = 0;
 		}
 	}
+	
+	public int sizeX() {
+		return sizeX;
+	}
+	
+	public int sizeY() {
+		return sizeY;
+		
+	}
+	
+	public int sizeZ() {
+		return sizeZ;
+	}
 
 	@Override
 	public Str toStr() {

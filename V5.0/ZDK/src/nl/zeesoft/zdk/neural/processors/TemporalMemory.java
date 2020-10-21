@@ -55,7 +55,7 @@ public class TemporalMemory extends CellGridProcessor {
 	// State
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
 	protected SDRGrid			burstingColumns					= null;
-	protected CellGrid			cells							= null;
+	protected CellGrid			cellGrid							= null;
 	protected List<Position>	activeCellPositions				= new ArrayList<Position>();
 	protected List<Position>	winnerCellPositions				= new ArrayList<Position>();
 	protected List<Position>	prevActiveCellPositions			= new ArrayList<Position>();
@@ -100,6 +100,19 @@ public class TemporalMemory extends CellGridProcessor {
 			}
 		}
 	}
+		
+	@Override
+	public Str getDescription() {
+		Str r = new Str();
+		r.sb().append(" (");
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		r.sb().append("*");
+		r.sb().append(sizeZ);
+		r.sb().append(")");
+		return r;
+	}
 	
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
@@ -118,17 +131,17 @@ public class TemporalMemory extends CellGridProcessor {
 		
 		resetLocalState();
 		
-		cells = new CellGrid();
-		cells.initialize(sizeX, sizeY, sizeZ, runnerList);
+		cellGrid = new CellGrid();
+		cellGrid.initialize(sizeX, sizeY, sizeZ, runnerList);
 	}
 	
 	@Override
 	public void resetConnections(CodeRunnerList runnerList) {
-		cells.resetConnections(runnerList);
+		cellGrid.resetConnections(runnerList);
 	}
 	
 	public void resetState(CodeRunnerList runnerList) {
-		cells.resetState(runnerList);
+		cellGrid.resetState(runnerList);
 		if (runnerList!=null) {
 			runnerList.add(new RunCode() {
 				@Override
@@ -233,7 +246,7 @@ public class TemporalMemory extends CellGridProcessor {
 					return values;
 				}
 			};
-			cells.applyFunction(function, adaptColumnSegmentsAndSynapses);
+			cellGrid.applyFunction(function, adaptColumnSegmentsAndSynapses);
 		}
 		
 		CodeRunnerList clearPrediction = new CodeRunnerList(new RunCode() {
@@ -264,7 +277,7 @@ public class TemporalMemory extends CellGridProcessor {
 				return value;
 			}
 		};
-		cells.applyFunction(function, predictActiveCells);
+		cellGrid.applyFunction(function, predictActiveCells);
 
 		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
 			@Override
@@ -287,10 +300,16 @@ public class TemporalMemory extends CellGridProcessor {
 	}
 	
 	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain) {
+		addDebugToProcesssorChain(runnerChain, 40);
+	}
+	
+	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain, int mod) {
 		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
-				debug();
+				if (processed < mod || processed % mod == 0) {
+					debug();
+				}
 				return true;
 			}
 		});
@@ -311,6 +330,19 @@ public class TemporalMemory extends CellGridProcessor {
 		Logger.dbg(this, msg);
 	}
 	
+	public void setCellGrid(CellGrid cellGrid) {
+		if (cellGrid.sizeX()==sizeX &&
+			cellGrid.sizeY()==sizeY &&
+			cellGrid.sizeZ()==sizeZ
+			) {
+			this.cellGrid = cellGrid;
+		}
+	}
+	
+	public CellGrid getCellGrid() {
+		return cellGrid;
+	}
+	
 	protected void activatePredictedColumn(Position pos) {
 		lock.lock(this);
 		activeCellPositions.add(pos);
@@ -320,13 +352,13 @@ public class TemporalMemory extends CellGridProcessor {
 	
 	protected void burstColumn(GridColumn column) {
 		lock.lock(this);
-		activeCellPositions.addAll(cells.getColumnPositions(column));
+		activeCellPositions.addAll(cellGrid.getColumnPositions(column));
 		lock.unlock(this);
 		Cell winnerCell = null;
 		// Find potential match
 		SortedMap<Integer,List<Cell>> cellsByPotential = new TreeMap<Integer,List<Cell>>();
 		for (int z = 0; z < sizeZ; z++) {
-			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+			Cell cell = (Cell) cellGrid.getValue(column.posX(), column.posY(), z);
 			int potential = 0;
 			if (cell.matchingDistalSegment!=null) {
 				potential = cell.matchingDistalSegment.potentialSynapses.size();
@@ -350,7 +382,7 @@ public class TemporalMemory extends CellGridProcessor {
 			// Find least connected cell
 			SortedMap<Integer,List<Cell>> cellsBySegments = new TreeMap<Integer,List<Cell>>();
 			for (int z = 0; z < sizeZ; z++) {
-				Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+				Cell cell = (Cell) cellGrid.getValue(column.posX(), column.posY(), z);
 				int segments = cell.distalSegments.size() + cell.apicalSegments.size();
 				List<Cell> cells = cellsBySegments.get(segments);
 				if (cells==null) {
@@ -375,7 +407,7 @@ public class TemporalMemory extends CellGridProcessor {
 			for (int z = 0; z < sizeZ; z++) {
 				if (bursting) {
 					if (Position.posIsInList(column.posX(), column.posY(), z, winnerCellPositions)) {
-						Cell winnerCell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+						Cell winnerCell = (Cell) cellGrid.getValue(column.posX(), column.posY(), z);
 						if (winnerCell.matchingDistalSegment!=null) {
 							winnerCell.adaptMatchingSegments(
 								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
@@ -389,7 +421,7 @@ public class TemporalMemory extends CellGridProcessor {
 						}
 					}
 				} else {
-					Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+					Cell cell = (Cell) cellGrid.getValue(column.posX(), column.posY(), z);
 					cell.adaptActiveSegments(
 						prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
 						initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSynapsesPerSegment,
@@ -401,7 +433,7 @@ public class TemporalMemory extends CellGridProcessor {
 
 	protected void punishPredictedColumn(GridColumn column, float segmentDecrement, boolean apical) {
 		for (int z = 0; z < sizeZ; z++) {
-			Cell cell = (Cell) cells.getValue(column.posX(), column.posY(), z);
+			Cell cell = (Cell) cellGrid.getValue(column.posX(), column.posY(), z);
 			if (apical) {
 				for (ApicalSegment segment: cell.matchingApicalSegments) {
 					segment.adaptSynapses(prevActiveApicalCellPositions, segmentDecrement * -1F, 0F);
