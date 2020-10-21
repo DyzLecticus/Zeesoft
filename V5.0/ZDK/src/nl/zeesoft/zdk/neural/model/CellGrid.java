@@ -77,9 +77,9 @@ public class CellGrid extends Grid implements StrAble {
 					cell.apicalSegments.size()>0
 					) {
 					r.sb().append("\n");
-					r.sb().append(cell.position.toStr());
+					r.sb().append(cell.position.toStr().sb());
 					r.sb().append("=");
-					r.sb().append(cell.toStr());
+					r.sb().append(cell.toStr().sb());
 				}
 			}
 		}

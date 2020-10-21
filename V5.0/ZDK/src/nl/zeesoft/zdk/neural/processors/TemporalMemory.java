@@ -55,7 +55,7 @@ public class TemporalMemory extends CellGridProcessor {
 	// State
 	protected List<Position>	activeInputColumnPositions		= new ArrayList<Position>();
 	protected SDRGrid			burstingColumns					= null;
-	protected CellGrid			cellGrid							= null;
+	protected CellGrid			cellGrid						= null;
 	protected List<Position>	activeCellPositions				= new ArrayList<Position>();
 	protected List<Position>	winnerCellPositions				= new ArrayList<Position>();
 	protected List<Position>	prevActiveCellPositions			= new ArrayList<Position>();
@@ -341,6 +341,26 @@ public class TemporalMemory extends CellGridProcessor {
 	
 	public CellGrid getCellGrid() {
 		return cellGrid;
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = super.toStr();
+		r.sb().append(processed);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(getCellGrid().toStr().sb());
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> objects = str.split(OBJECT_SEPARATOR);
+		if (objects.size()>=2) {
+			processed = Integer.parseInt(objects.get(0).toString());
+			CellGrid cellGrid = new CellGrid();
+			cellGrid.fromStr(objects.get(1));
+			setCellGrid(cellGrid);
+		}
 	}
 	
 	protected void activatePredictedColumn(Position pos) {

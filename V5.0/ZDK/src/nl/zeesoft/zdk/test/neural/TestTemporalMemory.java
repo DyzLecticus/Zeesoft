@@ -44,9 +44,6 @@ public class TestTemporalMemory extends TestObject {
 		List<SDR> outputList = new ArrayList<SDR>();
 		List<SDR> burstingList = new ArrayList<SDR>();
 
-		// TODO: Expand test and add assertions
-
-		int num = 0;
 		for (SDR input: inputList) {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
@@ -54,14 +51,19 @@ public class TestTemporalMemory extends TestObject {
 			outputList.add(output);
 			SDR bursting = tm.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
 			burstingList.add(bursting);
-			
-			if (num % 40 == 0) {
-				//System.out.println("Input SDR: " + input.toStr());
-				//System.out.println("Output SDR: " + output.toStr());
-				//System.out.println("Bursting SDR: " + bursting.toStr());
-			}
-			num++;
 		}
+		
+		TemporalMemory tm2 = new TemporalMemory();
+		tm2.initialize(null);
+		tm2.fromStr(tm.toStr());
+		CodeRunnerChain processorChain2 = new CodeRunnerChain();
+		tm2.buildProcessorChain(processorChain2, true);
+		tm2.setInput(inputList.get(0));
+		Waiter.startAndWaitFor(processorChain2, 1000);
+		tm2.setInput(inputList.get(1));
+		Waiter.startAndWaitFor(processorChain2, 1000);
+		SDR burstSDR = tm2.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
+		assertEqual(burstSDR.onBits(),0,"Number of burst SDR on bits does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

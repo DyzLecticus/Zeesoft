@@ -47,8 +47,6 @@ public class TestSpatialPooler extends TestObject {
 		CodeRunnerChain processorChain = new CodeRunnerChain();
 		sp.buildProcessorChain(processorChain, true);
 		
-		// TODO: Expand test and add assertions
-		
 		List<SDR> inputList = getInputSDRList(100);
 		List<SDR> outputList = new ArrayList<SDR>();
 		
@@ -56,7 +54,7 @@ public class TestSpatialPooler extends TestObject {
 		for (SDR input: inputList) {
 			sp.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 1000);
-			SDR output = sp.getOutputs().get(0);
+			SDR output = sp.getOutput();
 			outputList.add(output);
 			
 			if (num % 20 == 0) {
@@ -93,14 +91,20 @@ public class TestSpatialPooler extends TestObject {
 		assertEqual(averageOverall<=3F,true,"Average overlap for overall inputs is above expectation");
 		
 		CellGrid cellGrid = sp.toCellGrid(null);
-		
 		SpatialPooler sp2 = new SpatialPooler();
-		sp2.initialize();
+		sp2.initialize(null);
 		sp2.fromCellGrid(cellGrid, null);
-		
 		CellGrid cellGrid2 = sp2.toCellGrid(null);
-		
 		assertEqual(cellGrid2.toStr(),cellGrid.toStr(),"Cell grid Str does not match expectation");
+		
+		CodeRunnerChain processorChain2 = new CodeRunnerChain();
+		sp2.buildProcessorChain(processorChain2, true);
+		sp2.fromStr(sp.toStr());
+		sp2.setInput(inputList.get(inputList.size()-1));
+		Waiter.startAndWaitFor(processorChain2, 1000);
+		SDR output = sp2.getOutput();
+		overlap = output.getOverlap(lastOutput);
+		assertEqual(overlap,46,"Overlap does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

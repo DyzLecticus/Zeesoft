@@ -5,15 +5,18 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class SDRProcessor {
-	protected int				processed					= 0;
-	protected List<SDR>			inputs						= new ArrayList<SDR>();
-	protected List<SDR>			outputs						= new ArrayList<SDR>();
+public class SDRProcessor implements StrAble {
+	protected final static String	OBJECT_SEPARATOR	= "@OBJECT@\n";
+	
+	protected int					processed			= 0;
+	protected List<SDR>				inputs				= new ArrayList<SDR>();
+	protected List<SDR>				outputs				= new ArrayList<SDR>();
 	
 	public void configure(SDRProcessorConfig config) {
 		// Override to implement
@@ -91,5 +94,16 @@ public class SDRProcessor {
 
 	public void setProcessed(int processed) {
 		this.processed = processed;
+	}
+
+	@Override
+	public Str toStr() {
+		// Override to implement
+		return new Str();
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		// Override to implement
 	}
 }

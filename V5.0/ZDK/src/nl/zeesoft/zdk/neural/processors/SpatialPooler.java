@@ -342,6 +342,31 @@ public class SpatialPooler extends CellGridProcessor {
 		return activationHistory;
 	}
 
+	@Override
+	public Str toStr() {
+		Str r = super.toStr();
+		r.sb().append(processed);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(toCellGrid(null).toStr().sb());
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(getActivationHistory().toStr().sb());
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> objects = str.split(OBJECT_SEPARATOR);
+		if (objects.size()>=3) {
+			processed = Integer.parseInt(objects.get(0).toString());
+			CellGrid cellGrid = new CellGrid();
+			cellGrid.fromStr(objects.get(1));
+			fromCellGrid(cellGrid,null);
+			SDRHistory hist = new SDRHistory();
+			hist.fromStr(objects.get(2));
+			setActivationHistory(hist);
+		}
+	}
+
 	protected void randomConnectColumn(GridColumn column) {
 		Grid inputs = (Grid) column.getValue();
 		int posXonInput = connections.getPosXOn(inputs,column.posX()); 

@@ -29,7 +29,7 @@ public class Synapse implements StrAble {
 	@Override
 	public Str toStr() {
 		Str r = new Str();
-		r.sb().append(connectTo.toStr());
+		r.sb().append(connectTo.toStr().sb());
 		r.sb().append(";");
 		r.sb().append(df.format(permanence));
 		return r;

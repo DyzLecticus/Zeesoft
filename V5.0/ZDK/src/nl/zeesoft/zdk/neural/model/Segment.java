@@ -138,7 +138,7 @@ public class Segment implements StrAble {
 			if (r.length()>0) {
 				r.sb().append("#");
 			}
-			r.sb().append(synapse.toStr());
+			r.sb().append(synapse.toStr().sb());
 		}
 		return r;
 	}

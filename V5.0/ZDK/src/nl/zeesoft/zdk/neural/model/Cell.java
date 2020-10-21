@@ -263,7 +263,7 @@ public class Cell implements StrAble {
 			}
 			r.sb().append(segment.getClass().getSimpleName().substring(0, 1));
 			r.sb().append("@");
-			r.sb().append(segment.toStr());
+			r.sb().append(segment.toStr().sb());
 		}
 		return r;
 	}
