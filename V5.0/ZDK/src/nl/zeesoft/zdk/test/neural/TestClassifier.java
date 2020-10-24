@@ -27,8 +27,43 @@ public class TestClassifier extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not included in the ZDK test set");
+		System.out.println("This test shows how to use a *Classifier* to classify and/or predict future input values based on SDR sequences.");
+		System.out.println("A *ClassifierConfig* can be used to configure the *TemporalMemory* before initialization.");
+		System.out.println("A *Classifier* will combine all input SDRs that match the specified dimension into a single footprint to associate with a certain input value.");
+		System.out.println("The input value can be provided by using a *KeyValueSDR* with a key/value pair with a configurable key.");
+		System.out.println("The classifications and/or predictions will be attached to the output *KeyValueSDR* using *Classification* objects.");
+		TestSpatialPooler.printSDRProcessorInfo();
+		System.out.println();
+		System.out.println("**Example implementation**  ");
+		System.out.println("~~~~");
+		System.out.println("// Create the classifier");
+		System.out.println("Classifier cl = new Classifier();");
+		System.out.println("// Initialize the classifier");
+		System.out.println("cl.initialize();");
+		System.out.println("// Create and build the processor chain");
+		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
+		System.out.println("cl.buildProcessorChain(processorChain, true);");
+		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
+		System.out.println("sp.setInput(new SDR());");
+		System.out.println("// Run the processor chain");
+		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
+		System.out.println("    // Get the output");
+		System.out.println("    SDR output = cl.getOutput();");
+		System.out.println("}");
+		System.out.println("// Get a Str containing the data");
+		System.out.println("Str data = cl.toStr();");
+		System.out.println("~~~~");
+		System.out.println();
+		System.out.println("Class references;  ");
+		System.out.println(" * " + getTester().getLinkForClass(TestClassifier.class));
+		System.out.println(" * " + getTester().getLinkForClass(Classifier.class));
+		System.out.println(" * " + getTester().getLinkForClass(ClassifierConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(KeyValueSDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(Classification.class));
+		System.out.println();
+		System.out.println("**Test output**  ");
+		System.out.println("The output of this test shows an example classifier input and output SDR.  ");
+		System.out.println("In this case the value is passed to the classifier using a separate key value SDR which is not shown here.  ");
 	}
 
 	@Override
@@ -50,6 +85,7 @@ public class TestClassifier extends TestObject {
 		List<KeyValueSDR> valueList = getValueSDRList(100);
 		List<SDR> outputList = new ArrayList<SDR>();
 		
+		System.out.println();
 		int num = 0;
 		for (SDR input: inputList) {
 			KeyValueSDR value = valueList.get(num);
@@ -71,6 +107,13 @@ public class TestClassifier extends TestObject {
 		cls2.fromStr(cls.toStr());
 		assertEqual((Integer)cls.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
 		assertEqual(cls.valueCounts.get(0),96,"Predicted value count does not match expectation");
+		
+		Str str = cl.toStr();
+		Classifier cl2 = new Classifier();
+		cl2.initialize(null);
+		cl2.fromStr(str);
+		Str str2 = cl2.toStr();
+		assertEqual(str2,str,"Classifier Str does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

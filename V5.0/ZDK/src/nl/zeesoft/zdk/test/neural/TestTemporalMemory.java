@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
 import nl.zeesoft.zdk.neural.processors.TemporalMemory;
+import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -24,8 +25,39 @@ public class TestTemporalMemory extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not included in the ZDK test set");
+		System.out.println("This test shows how to use a *TemporalMemory* to learn SDR sequences.");
+		System.out.println("A *TemporalMemoryConfig* can be used to configure the *TemporalMemory* before initialization.");
+		TestSpatialPooler.printSDRProcessorInfo();
+		System.out.println();
+		System.out.println("**Example implementation**  ");
+		System.out.println("~~~~");
+		System.out.println("// Create the temporal memory");
+		System.out.println("TemporalMemory tm = new TemporalMemory();");
+		System.out.println("// Initialize the temporal memory");
+		System.out.println("tm.initialize();");
+		System.out.println("// Initialize the temporal memory connections (optional)");
+		System.out.println("tm.resetConnections();");
+		System.out.println("// Create and build the processor chain");
+		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
+		System.out.println("tm.buildProcessorChain(processorChain, true);");
+		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
+		System.out.println("sp.setInput(new SDR());");
+		System.out.println("// Run the processor chain");
+		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
+		System.out.println("    // Get the output");
+		System.out.println("    SDR output = tm.getOutput();");
+		System.out.println("}");
+		System.out.println("// Get a Str containing the data");
+		System.out.println("Str data = tm.toStr();");
+		System.out.println("~~~~");
+		System.out.println();
+		System.out.println("Class references;  ");
+		System.out.println(" * " + getTester().getLinkForClass(TestTemporalMemory.class));
+		System.out.println(" * " + getTester().getLinkForClass(TemporalMemory.class));
+		System.out.println(" * " + getTester().getLinkForClass(TemporalMemoryConfig.class));
+		System.out.println();
+		System.out.println("**Test output**  ");
+		System.out.println("The output of this test shows an example temporal memory learning a sequence of SDRs.  ");
 	}
 
 	@Override

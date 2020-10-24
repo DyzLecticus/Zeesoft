@@ -152,6 +152,43 @@ public class Classifier extends SDRProcessor {
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 
+	@Override
+	public Str toStr() {
+		Str r = super.toStr();
+		r.sb().append(processed);
+		r.sb().append(OBJECT_SEPARATOR);
+		int i = 0;
+		for (ClassifierStep step: classifierSteps) {
+			if (i>0) {
+				r.sb().append("\n");
+			}
+			r.sb().append(step.toStr().sb());
+			i++;
+		}
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(activationHistory.toStr());
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> objects = str.split(OBJECT_SEPARATOR);
+		if (objects.size()>=3) {
+			processed = Integer.parseInt(objects.get(0).toString());
+			
+			classifierSteps.clear();
+			List<Str> steps = objects.get(1).split("\n");
+			for (Str step: steps) {
+				ClassifierStep cs = new ClassifierStep(0,valueKey,maxCount,activationHistory);
+				cs.fromStr(step);
+				classifierSteps.add(cs);
+			}
+			
+			activationHistory.clear();
+			activationHistory.fromStr(objects.get(2));
+		}
+	}
+
 	protected void generatePrediction(ClassifierStep step) {
 		Classification classification = step.generatePrediction(inputs.get(0));
 		lock.lock(this);

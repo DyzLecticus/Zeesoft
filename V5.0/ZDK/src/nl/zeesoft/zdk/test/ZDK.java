@@ -6,8 +6,10 @@ import nl.zeesoft.zdk.test.collection.TestCollections;
 import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
 import nl.zeesoft.zdk.test.neural.TestCellGrid;
+import nl.zeesoft.zdk.test.neural.TestClassifier;
 import nl.zeesoft.zdk.test.neural.TestSDR;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
+import nl.zeesoft.zdk.test.neural.TestTemporalMemory;
 import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
 import nl.zeesoft.zdk.test.thread.TestRunCode;
 import nl.zeesoft.zdk.test.util.LibraryObject;
@@ -52,10 +54,8 @@ public class ZDK extends LibraryObject {
 		System.out.println("   * Sparse distributed representations  ");
 		System.out.println("   * Detailed neural cell modeling  ");
 		System.out.println("   * Spatial pooling  ");
-		//System.out.println("   * Temporal memory  ");
-		// TODO: Develop algorithms
-		//System.out.println("   * Anomaly detection  ");
-		//System.out.println("   * Value classification and prediction  ");
+		System.out.println("   * Temporal memory  ");
+		System.out.println("   * Value classification and prediction  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -74,5 +74,7 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestSDR(getTester()));
 		tests.add(new TestCellGrid(getTester()));
 		tests.add(new TestSpatialPooler(getTester()));
+		tests.add(new TestTemporalMemory(getTester()));
+		tests.add(new TestClassifier(getTester()));
 	}
 }

@@ -1,11 +1,14 @@
 package nl.zeesoft.zdk.neural.processors;
 
 import java.util.HashMap;
+import java.util.List;
 
+import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
 
-public class ClassifierStep {
+public class ClassifierStep implements StrAble {
 	// Configuration
 	protected int								step				= 0;
 	protected String							valueKey			= "";
@@ -21,6 +24,34 @@ public class ClassifierStep {
 		this.maxCount = maxCount;
 		this.activationHistory = activationHistory;
 	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		r.sb().append(step);
+		for (ClassifierBit bit: bits.values()) {
+			r.sb().append("@");
+			r.sb().append(bit.toStr().sb());
+		}
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> elems = str.split("@");
+		int i = 0;
+		bits.clear();
+		for (Str elem: elems) {
+			if (i==0) {
+				step = Integer.parseInt(elem.toString());
+			} else {
+				ClassifierBit bit = new ClassifierBit(0,maxCount);
+				bit.fromStr(elem);
+				bits.put(bit.index, bit);
+			}
+			i++;
+		}
+	}
 	
 	protected void associateBits(Object value) {
 		if (value!=null && activationHistory.size()>step) {
@@ -30,7 +61,7 @@ public class ClassifierStep {
 				for (Integer onBit: histActivationSDR.getOnBits()) {
 					ClassifierBit bit = bits.get(onBit);
 					if (bit==null) {
-						bit = new ClassifierBit(onBit,valueKey,maxCount);
+						bit = new ClassifierBit(onBit,maxCount);
 						bits.put(onBit,bit);
 					}
 					if (bit.associate(value)) {

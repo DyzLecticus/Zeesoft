@@ -26,12 +26,9 @@ public class TestSpatialPooler extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not included in the ZDK test set");
 		System.out.println("This test shows how to use a *SpatialPooler* to create consistent sparse representations of less sparse and/or smaller SDRs.");
-		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler*.");
-		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads.");
-		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe outside the specified life cycle.");
+		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler* before initialization.");
+		printSDRProcessorInfo();
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -61,8 +58,8 @@ public class TestSpatialPooler extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(SpatialPoolerConfig.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows an example SpatialPooler and the input/output for similar inputs among a certain input variation.  ");
-		System.out.println("It then shows the average overlap for similar inputs and the average overall overlap.");
+		System.out.println("The output of this test shows an example spatial pooler and the input/output for similar inputs among a certain input variation.  ");
+		System.out.println("It also shows the average overlap for similar inputs and the average overall overlap.  ");
 	}
 
 	@Override
@@ -159,5 +156,11 @@ public class TestSpatialPooler extends TestObject {
 			r.add(encoder.getEncodedValue(i));
 		}
 		return r;
+	}
+	
+	protected static void printSDRProcessorInfo() {
+		System.out.println();
+		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads.");
+		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe outside the specified life cycle.");
 	}
 }
