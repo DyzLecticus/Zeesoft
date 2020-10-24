@@ -70,7 +70,7 @@ public class TestProcessorFactory extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Processor.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows an example temporal memory learning a sequence of SDRs.  ");
+		System.out.println("The output of this test shows an example SDR processing chain and a subsample of some of its temporal memory outputs.  ");
 	}
 
 	@Override
@@ -87,6 +87,7 @@ public class TestProcessorFactory extends TestObject {
 		long started = System.currentTimeMillis();
 		
 		System.out.println();
+		System.out.println("Processing ...");
 		int i = 0;
 		for (SDR input: inputList) {
 			ProcessorIO io1 = new ProcessorIO();
@@ -112,7 +113,7 @@ public class TestProcessorFactory extends TestObject {
 			
 			output.sort();
 			outputList.add(output);
-			if (i % 100 == 0) {
+			if (i > 0 && i % 100 == 0) {
 				Logger.dbg(this, output.toStr());
 			}
 			
