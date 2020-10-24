@@ -20,7 +20,7 @@ public class ProcessorManager {
 		processor.buildProcessorChain(processingOnlyChain, false);
 	}
 	
-	public void handleIO(ProcessorIO io) {
+	public void processIO(ProcessorIO io) {
 		lock.lock(this);
 		processor.setInput(io.inputs);
 		boolean timedOut = false;

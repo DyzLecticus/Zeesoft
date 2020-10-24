@@ -40,7 +40,7 @@ public class SDRProcessor implements StrAble {
 		// Override to implement
 	}
 	
-	public void setInput(List<SDR> sdrs) {
+	public final void setInput(List<SDR> sdrs) {
 		SDR[] in = new SDR[sdrs.size()];
 		int i = 0;
 		for (SDR sdr: sdrs) {

@@ -110,6 +110,25 @@ public class TemporalMemory extends CellGridProcessor {
 		r.sb().append(sizeY);
 		r.sb().append("*");
 		r.sb().append(sizeZ);
+
+		r.sb().append(" > ");
+		
+		r.sb().append((sizeX * sizeZ));
+		r.sb().append("*");
+		r.sb().append(sizeY);
+
+		r.sb().append(", ");
+
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+
+		r.sb().append(", ");
+
+		r.sb().append((sizeX * sizeZ));
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		
 		r.sb().append(")");
 		return r;
 	}
