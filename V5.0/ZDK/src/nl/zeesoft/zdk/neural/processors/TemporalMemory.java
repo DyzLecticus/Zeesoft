@@ -302,7 +302,7 @@ public class TemporalMemory extends CellGridProcessor {
 	}
 	
 	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain) {
-		addDebugToProcesssorChain(runnerChain, 40);
+		addDebugToProcesssorChain(runnerChain, 20);
 	}
 	
 	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain, int mod) {
@@ -321,13 +321,13 @@ public class TemporalMemory extends CellGridProcessor {
 	public void debug() {
 		Str msg = new Str();
 		msg.sb().append(processed);
-		msg.sb().append(" > burstingColumns: "); 
+		msg.sb().append(" > bursting: "); 
 		msg.sb().append(burstingColumns.getActiveColumns().size()); 
-		msg.sb().append(", activeCellPositions: "); 
+		msg.sb().append(", active: "); 
 		msg.sb().append(activeCellPositions.size()); 
-		msg.sb().append(", winnerCellPositions: "); 
+		msg.sb().append(", winners: "); 
 		msg.sb().append(winnerCellPositions.size()); 
-		msg.sb().append(", predictiveCellPositions: ");
+		msg.sb().append(", predictive: ");
 		msg.sb().append(predictiveCellPositions.size());
 		Logger.dbg(this, msg);
 	}

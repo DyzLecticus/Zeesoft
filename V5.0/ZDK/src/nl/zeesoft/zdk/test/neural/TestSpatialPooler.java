@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
 import nl.zeesoft.zdk.neural.model.CellGrid;
 import nl.zeesoft.zdk.neural.processors.SpatialPooler;
+import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -27,6 +28,41 @@ public class TestSpatialPooler extends TestObject {
 	protected void describe() {
 		// TODO: Describe
 		//System.out.println("This test is not included in the ZDK test set");
+		System.out.println("This test shows how to use a *SpatialPooler* to create consistent sparse representations of less sparse and/or smaller SDRs.");
+		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler*.");
+		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads.");
+		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe outside the specified life cycle.");
+		System.out.println();
+		System.out.println("**Example implementation**  ");
+		System.out.println("~~~~");
+		System.out.println("// Create the spatial pooler");
+		System.out.println("SpatialPooler sp = new SpatialPooler();");
+		System.out.println("// Initialize the spatial pooler");
+		System.out.println("sp.initialize();");
+		System.out.println("// Initialize the spatial pooler connections");
+		System.out.println("sp.resetConnections();");
+		System.out.println("// Create and build the processor chain");
+		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
+		System.out.println("sp.buildProcessorChain(processorChain, true);");
+		System.out.println("// Set the input (dimensions should match configured input dimensions)");
+		System.out.println("sp.setInput(new SDR());");
+		System.out.println("// Run the processor chain");
+		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
+		System.out.println("    // Get the output");
+		System.out.println("    SDR output = sp.getOutput();");
+		System.out.println("}");
+		System.out.println("// Get a Str containing the data");
+		System.out.println("Str data = sp.toStr();");
+		System.out.println("~~~~");
+		System.out.println();
+		System.out.println("Class references;  ");
+		System.out.println(" * " + getTester().getLinkForClass(TestSpatialPooler.class));
+		System.out.println(" * " + getTester().getLinkForClass(SpatialPooler.class));
+		System.out.println(" * " + getTester().getLinkForClass(SpatialPoolerConfig.class));
+		System.out.println();
+		System.out.println("**Test output**  ");
+		System.out.println("The output of this test shows an example SpatialPooler and the input/output for similar inputs among a certain input variation.  ");
+		System.out.println("It then shows the average overlap for similar inputs and the average overall overlap.");
 	}
 
 	@Override
@@ -37,6 +73,7 @@ public class TestSpatialPooler extends TestObject {
 		sp.initialize();
 		sp.resetConnections();
 
+		System.out.println();
 		sp = new SpatialPooler();
 		Logger.dbg(this, new Str("Initializing spatial pooler (asynchronous) ..."));
 		CodeRunnerChain initializeChain = new CodeRunnerChain();
@@ -50,6 +87,7 @@ public class TestSpatialPooler extends TestObject {
 		List<SDR> inputList = getInputSDRList(100);
 		List<SDR> outputList = new ArrayList<SDR>();
 		
+		System.out.println();
 		int num = 0;
 		for (SDR input: inputList) {
 			sp.setInput(input);
@@ -86,6 +124,7 @@ public class TestSpatialPooler extends TestObject {
 		}
 		float averageOverall = overlap / num;
 		
+		System.out.println();
 		System.out.println("Average overlap for similar inputs: " + averageSimilar + ", overall: " + averageOverall);
 		assertEqual(averageSimilar>=44F,true,"Average overlap for similar inputs is below expectation");
 		assertEqual(averageOverall<=3F,true,"Average overlap for overall inputs is above expectation");

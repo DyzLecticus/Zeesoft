@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
 import nl.zeesoft.zdk.test.neural.TestCellGrid;
 import nl.zeesoft.zdk.test.neural.TestSDR;
+import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 import nl.zeesoft.zdk.test.thread.TestCodeRunnerChain;
 import nl.zeesoft.zdk.test.thread.TestRunCode;
 import nl.zeesoft.zdk.test.util.LibraryObject;
@@ -50,8 +51,7 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * [Hierarchical Temporal Memory](https://numenta.com/)  ");
 		System.out.println("   * Sparse distributed representations  ");
 		System.out.println("   * Detailed neural cell modeling  ");
-		// TODO: Finish tests
-		//System.out.println("   * Spatial pooling  ");
+		System.out.println("   * Spatial pooling  ");
 		//System.out.println("   * Temporal memory  ");
 		// TODO: Develop algorithms
 		//System.out.println("   * Anomaly detection  ");
@@ -73,5 +73,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestGrid(getTester()));
 		tests.add(new TestSDR(getTester()));
 		tests.add(new TestCellGrid(getTester()));
+		tests.add(new TestSpatialPooler(getTester()));
 	}
 }
