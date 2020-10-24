@@ -23,16 +23,17 @@ public class SDRProcessor implements StrAble {
 	}
 	
 	public Str getDescription() {
-		return new Str();
+		return new Str(this.getClass().getSimpleName());
 	}
 	
 	public void initialize() {
-		Str msg = new Str("Initializing " + this.getClass().getSimpleName());
+		Str msg = new Str("Initializing ");
 		msg.sb().append(getDescription());
 		msg.sb().append(" ...");
 		Logger.dbg(this, msg);
 		initialize(null);
-		Logger.dbg(this, new Str("Initialized " + this.getClass().getSimpleName()));
+		msg = new Str("Initialized");
+		Logger.dbg(this, msg);
 	}
 
 	public void initialize(CodeRunnerList runnerList) {

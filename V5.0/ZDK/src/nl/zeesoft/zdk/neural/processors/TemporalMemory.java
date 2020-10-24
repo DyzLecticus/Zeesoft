@@ -103,7 +103,7 @@ public class TemporalMemory extends CellGridProcessor {
 		
 	@Override
 	public Str getDescription() {
-		Str r = new Str();
+		Str r = super.getDescription();
 		r.sb().append(" (");
 		r.sb().append(sizeX);
 		r.sb().append("*");
@@ -157,6 +157,8 @@ public class TemporalMemory extends CellGridProcessor {
 	
 	@Override
 	public void setInput(SDR... sdrs) {
+		outputs.clear();
+		
 		if (sdrs.length>0) {
 			SDR input = sdrs[0];
 			if (input.sizeY()==1) {

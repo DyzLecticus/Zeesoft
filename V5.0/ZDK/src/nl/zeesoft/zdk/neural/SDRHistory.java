@@ -57,6 +57,18 @@ public class SDRHistory implements StrAble {
 	public int sizeZ() {
 		return sizeZ;
 	}
+	
+	public int size() {
+		return history.size();
+	}
+	
+	public SDR get(int index) {
+		SDR r = null;
+		if (history.size()>index) {
+			r = history.get(index);
+		}
+		return r;
+	}
 
 	@Override
 	public Str toStr() {
@@ -111,7 +123,7 @@ public class SDRHistory implements StrAble {
 	
 	public void addSDR(SDR sdr) {
 		if (sdr.sizeX==sizeX && sdr.sizeY==sizeY) {
-			history.add(sdr);
+			history.add(0, sdr);
 			for (Integer onBit: sdr.onBits) {
 				totals[onBit]++;
 			}

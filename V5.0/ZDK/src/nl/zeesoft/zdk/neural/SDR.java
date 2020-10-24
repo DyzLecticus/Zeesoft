@@ -20,6 +20,15 @@ public class SDR implements StrAble {
 		setDimensions(sizeX, sizeY);
 	}
 	
+	public SDR(SDR sdr) {
+		sizeX = sdr.sizeX;
+		sizeY = sdr.sizeY;
+		onBits.clear();
+		for (Integer onBit: sdr.onBits) {
+			onBits.add(onBit);
+		}
+	}
+	
 	public void setDimensions(int sizeX, int sizeY) {
 		if (sizeX < 1) {
 			sizeX = 1;
@@ -68,7 +77,7 @@ public class SDR implements StrAble {
 	
 	public void setBit(Integer bit, boolean value) {
 		if (value) {
-			if (!onBits.contains(bit)) {
+			if (!onBits.contains(bit) && bit < sizeX * sizeY) {
 				onBits.add(bit);
 			}
 		} else {
@@ -80,6 +89,12 @@ public class SDR implements StrAble {
 	
 	public void setBit(int posX, int posY, boolean value) {
 		setBit(getBitIndexForPosition(posX, posY), value);
+	}
+	
+	public void and(SDR sdr) {
+		for (Integer onBit: sdr.onBits) {
+			setBit(onBit,true);
+		}
 	}
 	
 	public List<Integer> getOnBits() {

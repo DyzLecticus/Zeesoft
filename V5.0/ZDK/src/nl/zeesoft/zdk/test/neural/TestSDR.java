@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
@@ -123,5 +124,13 @@ public class TestSDR extends TestObject {
 		
 		err = encoder.testNoOverlap();
 		assertEqual(err, new Str(), "Error message does not match expectation (3)");
+		
+		KeyValueSDR kvSDR = new KeyValueSDR(sdr);
+		kvSDR.put("test", 2);
+		Str kvStr = kvSDR.toStr();
+		KeyValueSDR kvSDR2 = new KeyValueSDR();
+		kvSDR2.fromStr(kvStr);
+		Str kvStr2 = kvSDR2.toStr();
+		assertEqual(kvStr2,kvStr,"Key value Str not match expectation");
 	}
 }
