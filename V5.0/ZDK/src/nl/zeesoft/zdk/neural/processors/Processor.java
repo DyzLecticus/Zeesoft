@@ -1,11 +1,12 @@
 package nl.zeesoft.zdk.neural.processors;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class ProcessorManager {
+public class Processor implements StrAble {
 	private Lock			lock						= new Lock();
 	private String			name						= "";
 	private SDRProcessor	processor					= null;
@@ -13,7 +14,7 @@ public class ProcessorManager {
 	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
 	private	CodeRunnerChain	processingOnlyChain			= new CodeRunnerChain();
 	
-	public ProcessorManager(String name, SDRProcessor processor) {
+	public Processor(String name, SDRProcessor processor) {
 		this.name = name;
 		this.processor = processor;
 		processor.buildProcessorChain(processingAndLearningChain, true);
@@ -37,9 +38,7 @@ public class ProcessorManager {
 	}
 	
 	public void save(String path) {
-		lock.lock(this);
-		Str str = processor.toStr();
-		lock.unlock(this);
+		Str str = toStr();
 		str.toFile(path);
 	}
 	
@@ -47,9 +46,22 @@ public class ProcessorManager {
 		Str str = new Str();
 		Str err = str.fromFile(path);
 		if (err.length()==0) {
-			lock.lock(this);
-			processor.fromStr(str);
-			lock.unlock(this);
+			fromStr(str);
 		}
+	}
+
+	@Override
+	public Str toStr() {
+		lock.lock(this);
+		Str r = processor.toStr();
+		lock.unlock(this);
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		lock.lock(this);
+		processor.fromStr(str);
+		lock.unlock(this);
 	}
 }

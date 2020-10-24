@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.neural.processors;
 import nl.zeesoft.zdk.Instantiator;
 
 public class ProcessorFactory {
-	public static SDRProcessor getNewProcessor(SDRProcessorConfig config, boolean initialize) {
+	public static SDRProcessor getNewSDRProcessor(SDRProcessorConfig config, boolean initialize) {
 		SDRProcessor r = null;
 		String className = config.getClass().getName();
 		if (className.endsWith("Config")) {
@@ -15,27 +15,27 @@ public class ProcessorFactory {
 	}
 	
 	public static SpatialPooler getNewSpatialPooler(SpatialPoolerConfig config) {
-		return (SpatialPooler) getNewProcessor(config, true);
+		return (SpatialPooler) getNewSDRProcessor(config, true);
 	}
 	
 	public static TemporalMemory getNewTemporalMemory(TemporalMemoryConfig config) {
-		return (TemporalMemory) getNewProcessor(config, true);
+		return (TemporalMemory) getNewSDRProcessor(config, true);
 	}
 	
 	public static Classifier getNewClassifier(ClassifierConfig config) {
-		return (Classifier) getNewProcessor(config, true);
+		return (Classifier) getNewSDRProcessor(config, true);
 	}
 	
-	public static ProcessorManager getNewProcessorManager(String name, SDRProcessorConfig config, boolean resetConnections) {
-		SDRProcessor processor = getNewProcessor(config, true);
+	public static Processor getNewProcessor(String name, SDRProcessorConfig config, boolean resetConnections) {
+		SDRProcessor processor = getNewSDRProcessor(config, true);
 		if (processor instanceof CellGridProcessor && resetConnections) {
 			CellGridProcessor cgp = (CellGridProcessor) processor;
 			cgp.resetConnections();
 		}
-		return new ProcessorManager(name,processor);
+		return new Processor(name,processor);
 	}
 	
-	public static ProcessorManager getNewProcessorManager(String name, SDRProcessorConfig config) {
-		return getNewProcessorManager(name, config, false);
+	public static Processor getNewProcessor(String name, SDRProcessorConfig config) {
+		return getNewProcessor(name, config, false);
 	}
 }

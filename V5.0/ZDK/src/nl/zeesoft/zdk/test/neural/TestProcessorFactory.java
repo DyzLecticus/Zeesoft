@@ -12,7 +12,7 @@ import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
-import nl.zeesoft.zdk.neural.processors.ProcessorManager;
+import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.processors.TemporalMemory;
@@ -72,9 +72,9 @@ public class TestProcessorFactory extends TestObject {
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		ProcessorManager sp = ProcessorFactory.getNewProcessorManager("SP", new SpatialPoolerConfig(), true);
-		ProcessorManager tm = ProcessorFactory.getNewProcessorManager("TM", new TemporalMemoryConfig());
-		ProcessorManager cl = ProcessorFactory.getNewProcessorManager("CL", new ClassifierConfig());
+		Processor sp = ProcessorFactory.getNewProcessor("SP", new SpatialPoolerConfig(), true);
+		Processor tm = ProcessorFactory.getNewProcessor("TM", new TemporalMemoryConfig());
+		Processor cl = ProcessorFactory.getNewProcessor("CL", new ClassifierConfig());
 		
 		List<SDR> inputList = getInputSDRList(1000);
 		List<SDR> outputList = new ArrayList<SDR>();
