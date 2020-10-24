@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
@@ -38,6 +39,10 @@ public class SDR implements StrAble {
 		}
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
+	}
+	
+	public void sort() {
+		Collections.sort(onBits);
 	}
 	
 	public void flatten() {

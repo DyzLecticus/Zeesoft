@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
@@ -31,41 +32,45 @@ public class TestProcessorFactory extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *TemporalMemory* to learn SDR sequences.");
-		System.out.println("A *TemporalMemoryConfig* can be used to configure the *TemporalMemory* before initialization.");
-		TestSpatialPooler.printSDRProcessorInfo();
+		System.out.println("This test shows how to use a *ProcessorFactory* to create a basic chain of default *Processor* instances that can make predictions.");
+		System.out.println("*Processor* instances are thread safe wrappers around *SDRProcessor* instances.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the temporal memory");
-		System.out.println("TemporalMemory tm = new TemporalMemory();");
-		System.out.println("// Initialize the temporal memory");
-		System.out.println("tm.initialize();");
-		System.out.println("// Initialize the temporal memory connections (optional)");
-		System.out.println("tm.resetConnections();");
-		System.out.println("// Create and build the processor chain");
-		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("tm.buildProcessorChain(processorChain, true);");
-		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
-		System.out.println("sp.setInput(new SDR());");
-		System.out.println("// Run the processor chain");
-		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
-		System.out.println("    // Get the output");
-		System.out.println("    SDR output = tm.getOutput();");
-		System.out.println("}");
-		System.out.println("// Get a Str containing the data");
-		System.out.println("Str data = tm.toStr();");
+		System.out.println("// Create the processors");
+		System.out.println("Processor sp = ProcessorFactory.getNewProcessor(\"SP\", new SpatialPoolerConfig(), true);");
+		System.out.println("Processor tm = ProcessorFactory.getNewProcessor(\"TM\", new TemporalMemoryConfig());");
+		System.out.println("Processor cl = ProcessorFactory.getNewProcessor(\"CL\", new ClassifierConfig());");
+
+		System.out.println("// Use the spatial pooler");
+		System.out.println("ProcessorIO io1 = new ProcessorIO();");
+		System.out.println("io1.inputs.add(new SDR());");
+		System.out.println("sp.processIO(io1);");
+
+		System.out.println("// Use the spatial pooler");
+		System.out.println("ProcessorIO io1 = new ProcessorIO();");
+		System.out.println("io1.inputs.add(new SDR());");
+		System.out.println("sp.processIO(io1);");
+
+		System.out.println("// Use the classifier");
+		System.out.println("KeyValueSDR kvSdr = new KeyValueSDR(io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT));");
+		System.out.println("kvSdr.put(Classifier.DEFAULT_VALUE_KEY, i % 4);");
+		System.out.println("ProcessorIO io3 = new ProcessorIO();");
+		System.out.println("io3.inputs.add(kvSdr);");
+		System.out.println("cl.processIO(io3);");
+		
+		System.out.println("// Get the classification");
+		System.out.println("KeyValueSDR kvSdr = (KeyValueSDR) outputList.get(outputList.size() - 1);");
+		System.out.println("Classification cls = (Classification) kvSdr.get(Classifier.CLASSIFICATION_VALUE_KEY + \":1\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestProcessorFactory.class));
-		System.out.println(" * " + getTester().getLinkForClass(TemporalMemory.class));
-		System.out.println(" * " + getTester().getLinkForClass(TemporalMemoryConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(ProcessorFactory.class));
+		System.out.println(" * " + getTester().getLinkForClass(Processor.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows an example temporal memory learning a sequence of SDRs.  ");
-		*/
 	}
 
 	@Override
@@ -79,6 +84,9 @@ public class TestProcessorFactory extends TestObject {
 		List<SDR> inputList = getInputSDRList(1000);
 		List<SDR> outputList = new ArrayList<SDR>();
 		
+		long started = System.currentTimeMillis();
+		
+		System.out.println();
 		int i = 0;
 		for (SDR input: inputList) {
 			ProcessorIO io1 = new ProcessorIO();
@@ -87,11 +95,13 @@ public class TestProcessorFactory extends TestObject {
 			SDR output = io1.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT);
 			
 			ProcessorIO io2 = new ProcessorIO();
-			io2.inputs.add(io1.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT));
-			tm.processIO(io2);
-			output = io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT);
+			if (i >= 40) {
+				io2.inputs.add(io1.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT));
+				tm.processIO(io2);
+				output = io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT);
+			}
 			
-			if (i > 950) {
+			if (i >= 940) {
 				KeyValueSDR kvSdr = new KeyValueSDR(io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT));
 				kvSdr.put(Classifier.DEFAULT_VALUE_KEY, i % 4);
 				ProcessorIO io3 = new ProcessorIO();
@@ -100,15 +110,23 @@ public class TestProcessorFactory extends TestObject {
 				output = io3.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
 			}
 			
+			output.sort();
 			outputList.add(output);
 			if (i % 100 == 0) {
-				System.out.println(output);
+				Logger.dbg(this, output.toStr());
 			}
 			
 			i++;
 		}
 		
-		System.out.println(outputList.get(outputList.size() - 1));
+		long duration = System.currentTimeMillis() - started;
+		System.out.println("Processing " + inputList.size() + " SDRs took: " + duration + " ms (" + (duration / inputList.size()) + " ms/SDR)");
+		
+		KeyValueSDR kvSdr = (KeyValueSDR) outputList.get(outputList.size() - 1);
+		Classification cls = (Classification) kvSdr.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
+		
+		assertEqual((Integer)cls.getMostCountedValues().size(),1,"Predicted values size does not match expectation");
+		assertEqual((Integer)cls.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

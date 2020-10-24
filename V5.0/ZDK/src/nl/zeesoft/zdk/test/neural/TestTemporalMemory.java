@@ -80,6 +80,7 @@ public class TestTemporalMemory extends TestObject {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
 			SDR output = tm.getOutput();
+			output.sort();
 			outputList.add(output);
 			SDR bursting = tm.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
 			burstingList.add(bursting);

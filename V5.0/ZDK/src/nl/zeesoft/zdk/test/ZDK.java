@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
 import nl.zeesoft.zdk.test.neural.TestCellGrid;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
+import nl.zeesoft.zdk.test.neural.TestProcessorFactory;
 import nl.zeesoft.zdk.test.neural.TestSDR;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 import nl.zeesoft.zdk.test.neural.TestTemporalMemory;
@@ -76,5 +77,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestSpatialPooler(getTester()));
 		tests.add(new TestTemporalMemory(getTester()));
 		tests.add(new TestClassifier(getTester()));
+		tests.add(new TestProcessorFactory(getTester()));
 	}
 }

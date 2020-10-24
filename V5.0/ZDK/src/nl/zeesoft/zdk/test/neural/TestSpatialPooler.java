@@ -90,6 +90,7 @@ public class TestSpatialPooler extends TestObject {
 			sp.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 1000);
 			SDR output = sp.getOutput();
+			output.sort();
 			outputList.add(output);
 			
 			if (num % 20 == 0) {
@@ -161,6 +162,6 @@ public class TestSpatialPooler extends TestObject {
 	protected static void printSDRProcessorInfo() {
 		System.out.println();
 		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads.");
-		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe outside the specified life cycle.");
+		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe beyond the specified life cycle.");
 	}
 }

@@ -92,6 +92,7 @@ public class TestClassifier extends TestObject {
 			cl.setInput(input,value);
 			Waiter.startAndWaitFor(processorChain, 1000);
 			SDR output = cl.getOutput();
+			output.sort();
 			outputList.add(output);
 			if (num == 99) {
 				System.out.println("Input SDR: " + input.toStr());
@@ -105,8 +106,8 @@ public class TestClassifier extends TestObject {
 		Classification cls2 = new Classification();
 		
 		cls2.fromStr(cls.toStr());
-		assertEqual((Integer)cls.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
-		assertEqual(cls.valueCounts.get(0),96,"Predicted value count does not match expectation");
+		assertEqual((Integer)cls2.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
+		assertEqual(cls2.valueCounts.get(0),96,"Predicted value count does not match expectation");
 		
 		Str str = cl.toStr();
 		Classifier cl2 = new Classifier();

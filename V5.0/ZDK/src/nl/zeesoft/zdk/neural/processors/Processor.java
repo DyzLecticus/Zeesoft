@@ -10,6 +10,7 @@ public class Processor implements StrAble {
 	private Lock			lock						= new Lock();
 	private String			name						= "";
 	private SDRProcessor	processor					= null;
+	private Str				description					= null;
 	
 	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
 	private	CodeRunnerChain	processingOnlyChain			= new CodeRunnerChain();
@@ -19,6 +20,13 @@ public class Processor implements StrAble {
 		this.processor = processor;
 		processor.buildProcessorChain(processingAndLearningChain, true);
 		processor.buildProcessorChain(processingOnlyChain, false);
+		description = processor.getDescription();
+		description.sb().insert(0,":");
+		description.sb().insert(0,name);
+	}
+
+	public Str getDescription() {
+		return description;
 	}
 	
 	public void processIO(ProcessorIO io) {
@@ -35,6 +43,13 @@ public class Processor implements StrAble {
 		}
 		io.outputs = processor.getOutputs();
 		lock.unlock(this);
+	}
+	
+	public int getProcessed() {
+		lock.lock(this);
+		int r = processor.getProcessed();
+		lock.unlock(this);
+		return r;
 	}
 	
 	public void save(String path) {
