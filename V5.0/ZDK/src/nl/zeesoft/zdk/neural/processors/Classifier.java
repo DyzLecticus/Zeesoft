@@ -106,65 +106,14 @@ public class Classifier extends SDRProcessor {
 		
 		outputs.add(new KeyValueSDR());
 	}
-
+	
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		CodeRunnerList processInputs = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				SDR combinedInput = new SDR(sizeX, sizeY);
-				for (SDR input: inputs) {
-					if (input instanceof KeyValueSDR) {
-						value = ((KeyValueSDR) input).get(valueKey); 
-					}
-					if (input.sizeX()==sizeX && input.sizeY()==sizeY) {
-						combinedInput.or(input);
-					}
-				}
-				if (maxOnBits>0) {
-					combinedInput.subsample(maxOnBits);
-				}
-				activationHistory.addSDR(combinedInput);
-				return true;
-			}
-		});
-		
-		CodeRunnerList associateBits = new CodeRunnerList();
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+		runnerChain.add(getProcessInputsRunnerList());
 		if (learn) {
-			for (ClassifierStep classifierStep: classifierSteps) {
-				RunCode code = new RunCode() {
-					@Override
-					protected boolean run() {
-						if (value!=null) {
-							ClassifierStep step = (ClassifierStep) params[0];
-							step.associateBits(value);
-						}
-						return true;
-					}
-				};
-				code.params[0] = classifierStep;
-				associateBits.add(code);
-			}
+			runnerChain.add(getAssociateBitsRunnerList());
 		}
-
-		CodeRunnerList generatePredictions = new CodeRunnerList();
-		for (ClassifierStep classifierStep: classifierSteps) {
-			RunCode code = new RunCode() {
-				@Override
-				protected boolean run() {
-					generatePrediction((ClassifierStep) params[0]);
-					return true;
-				}
-			};
-			code.params[0] = classifierStep;
-			generatePredictions.add(code);
-		}
-		
-		runnerChain.add(processInputs);
-		if (learn) {
-			runnerChain.add(associateBits);
-		}
-		runnerChain.add(generatePredictions);
+		runnerChain.add(getGeneratePredictionsRunnerList());
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 
@@ -203,6 +152,64 @@ public class Classifier extends SDRProcessor {
 			activationHistory.clear();
 			activationHistory.fromStr(objects.get(2));
 		}
+	}
+
+	protected CodeRunnerList getProcessInputsRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				SDR combinedInput = new SDR(sizeX, sizeY);
+				for (SDR input: inputs) {
+					if (input instanceof KeyValueSDR) {
+						value = ((KeyValueSDR) input).get(valueKey); 
+					}
+					if (input.sizeX()==sizeX && input.sizeY()==sizeY) {
+						combinedInput.or(input);
+					}
+				}
+				if (maxOnBits>0) {
+					combinedInput.subsample(maxOnBits);
+				}
+				activationHistory.addSDR(combinedInput);
+				return true;
+			}
+		});
+		return r;
+	}
+
+	protected CodeRunnerList getAssociateBitsRunnerList() {
+		CodeRunnerList r = new CodeRunnerList();
+		for (ClassifierStep classifierStep: classifierSteps) {
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					if (value!=null) {
+						ClassifierStep step = (ClassifierStep) params[0];
+						step.associateBits(value);
+					}
+					return true;
+				}
+			};
+			code.params[0] = classifierStep;
+			r.add(code);
+		}
+		return r;
+	}
+
+	protected CodeRunnerList getGeneratePredictionsRunnerList() {
+		CodeRunnerList r = new CodeRunnerList();
+		for (ClassifierStep classifierStep: classifierSteps) {
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					generatePrediction((ClassifierStep) params[0]);
+					return true;
+				}
+			};
+			code.params[0] = classifierStep;
+			r.add(code);
+		}
+		return r;
 	}
 
 	protected void generatePrediction(ClassifierStep step) {

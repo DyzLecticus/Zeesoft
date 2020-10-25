@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
+import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -26,7 +27,7 @@ public class SDRProcessor implements StrAble {
 		return new Str(this.getClass().getSimpleName());
 	}
 	
-	public void initialize() {
+	public final void initialize() {
 		Str msg = new Str("Initializing ");
 		msg.sb().append(getDescription());
 		msg.sb().append(" ...");
@@ -57,8 +58,12 @@ public class SDRProcessor implements StrAble {
 		}
 		outputs.clear();
 	}
-	
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
+
+	public final void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
+		buildProcessorChain(runnerChain, learn, Grid.THREADS);
+	}
+
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
 		// Override to implement
 	}
 	

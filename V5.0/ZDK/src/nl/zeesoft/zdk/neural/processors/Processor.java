@@ -15,11 +15,11 @@ public class Processor implements StrAble {
 	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
 	private	CodeRunnerChain	processingOnlyChain			= new CodeRunnerChain();
 	
-	public Processor(String name, SDRProcessor processor) {
+	public Processor(String name, SDRProcessor processor, int threads) {
 		this.name = name;
 		this.processor = processor;
-		processor.buildProcessorChain(processingAndLearningChain, true);
-		processor.buildProcessorChain(processingOnlyChain, false);
+		processor.buildProcessorChain(processingAndLearningChain, true, threads);
+		processor.buildProcessorChain(processingOnlyChain, false, threads);
 		description = processor.getDescription();
 		description.sb().insert(0,":");
 		description.sb().insert(0,name);

@@ -20,7 +20,6 @@ public class Merger extends SDRProcessor {
 	public void configure(SDRProcessorConfig config) {
 		if (config instanceof MergerConfig) {
 			MergerConfig cfg = (MergerConfig) config;
-			
 			this.sizeX = cfg.sizeX;
 			this.sizeY = cfg.sizeY;
 			this.maxOnBits = cfg.maxOnBits;
@@ -52,18 +51,16 @@ public class Merger extends SDRProcessor {
 	@Override
 	public void setInput(SDR... sdrs) {
 		outputs.clear();
-		
 		if (sdrs.length>0) {
 			super.setInput(sdrs);
 		} else {
 			Logger.err(this, new Str("At least one input SDR is required"));
 		}
-		
 		outputs.add(new SDR(sizeX, sizeY));
 	}
 
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
 		CodeRunnerList mergeInputs = new CodeRunnerList(
 			new RunCode() {
 				@Override

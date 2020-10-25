@@ -26,6 +26,7 @@ public class TemporalMemory extends CellGridProcessor {
 	public static final int		ACTIVE_CELLS_OUTPUT				= 0;
 	public static final int		BURSTING_COLUMNS_OUTPUT			= 1;
 	public static final int		PREDICTIVE_CELLS_OUTPUT			= 2;
+	public static final int		WINNER_CELLS_OUTPUT				= 3;
 	
 	protected Lock				lock							= new Lock();
 	
@@ -218,137 +219,19 @@ public class TemporalMemory extends CellGridProcessor {
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 		outputs.add(new SDR(sizeX, sizeY));
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
+		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 	}
-	
+
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		CodeRunnerList activateColumns = new CodeRunnerList();
-		ColumnFunction function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				if (Position.posXYIsInList(column.posX(), column.posY(), activeInputColumnPositions)) {
-					boolean predicted = false;
-					for (Position pos: predictiveCellPositions) {
-						if (pos.x==column.posX() && pos.y==column.posY()) {
-							activatePredictedColumn(pos);
-							predicted = true;
-							break;
-						}
-					}
-					if (!predicted) {
-						value = true;
-						burstColumn(column);
-					}
-				}
-				return value;
-			}
-		};
-		burstingColumns.applyFunction(function, activateColumns);
-		
-		CodeRunnerList adaptColumnSegmentsAndSynapses = new CodeRunnerList();
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+		runnerChain.add(getActivateColumnsRunnerList(threads));
 		if (learn) {
-			function = new ColumnFunction() {
-				@Override
-				public Object[] applyFunction(GridColumn column, Object[] values) {
-					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
-						//if (burstingColumnsOnBits>0) {
-						adaptColumn(column);
-					} else if (
-						(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
-						Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
-						) {
-						if (distalSegmentDecrement > 0F) {
-							punishPredictedColumn(column, distalSegmentDecrement, false);
-						}
-						if (apicalSegmentDecrement > 0F) {
-							punishPredictedColumn(column, apicalSegmentDecrement, true);
-						}
-					}
-					return values;
-				}
-			};
-			cellGrid.applyFunction(function, adaptColumnSegmentsAndSynapses);
+			runnerChain.add(getAdaptColumnsRunnerList(threads));
 		}
-		
-		CodeRunnerList clearPrediction = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				predictiveCellPositions.clear();
-				return true;
-			}
-		});
-		
-		CodeRunnerList predictActiveCells = new CodeRunnerList();
-		function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				Cell cell = (Cell) value;
-				if (cell.distalSegments.size()>0) {
-					cell.calculateDistalSegmentActivity(activeCellPositions, permanenceThreshold);
-					cell.calculateApicalSegmentActivity(activeApicalCellPositions, permanenceThreshold);
-					cell.classifySegmentActivity(activationThreshold, matchingThreshold);
-					if ((activeApicalCellPositions.size()==0 && cell.activeDistalSegments.size()>0) ||
-						(activeApicalCellPositions.size()>0 && cell.activeDistalSegments.size()>0 && cell.activeApicalSegments.size()>0)
-						) {
-						lock.lock(this);
-						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
-						lock.unlock(this);
-					}
-				}
-				return value;
-			}
-		};
-		cellGrid.applyFunction(function, predictActiveCells);
-
-		CodeRunnerList generateOutput = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				outputs.get(ACTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
-				outputs.get(BURSTING_COLUMNS_OUTPUT).fromPositions(burstingColumns.getValuePositions(true));
-				outputs.get(PREDICTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, predictiveCellPositions));
-				return true;
-			}
-		});
-
-		runnerChain.add(activateColumns);
-		if (learn) {
-			runnerChain.add(adaptColumnSegmentsAndSynapses);
-		}
-		runnerChain.add(clearPrediction);
-		runnerChain.add(predictActiveCells);
-		runnerChain.add(generateOutput);
+		runnerChain.add(getClearPredictionRunnerList());
+		runnerChain.add(getPredictActiveCellsRunnerList(threads));
+		runnerChain.add(getGenerateOutputsRunnerList(threads));
 		addIncrementProcessedToProcessorChain(runnerChain);
-	}
-	
-	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain) {
-		addDebugToProcesssorChain(runnerChain, 20);
-	}
-	
-	public void addDebugToProcesssorChain(CodeRunnerChain runnerChain, int mod) {
-		CodeRunnerList debug = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				if (processed < mod || processed % mod == 0) {
-					debug();
-				}
-				return true;
-			}
-		});
-		runnerChain.add(debug);
-	}
-	
-	public void debug() {
-		Str msg = new Str();
-		msg.sb().append(processed);
-		msg.sb().append(" > bursting: "); 
-		msg.sb().append(burstingColumns.getActiveColumns().size()); 
-		msg.sb().append(", active: "); 
-		msg.sb().append(activeCellPositions.size()); 
-		msg.sb().append(", winners: "); 
-		msg.sb().append(winnerCellPositions.size()); 
-		msg.sb().append(", predictive: ");
-		msg.sb().append(predictiveCellPositions.size());
-		Logger.dbg(this, msg);
 	}
 	
 	public void setCellGrid(CellGrid cellGrid) {
@@ -382,6 +265,156 @@ public class TemporalMemory extends CellGridProcessor {
 			cellGrid.fromStr(objects.get(1));
 			setCellGrid(cellGrid);
 		}
+	}
+
+	protected CodeRunnerList getActivateColumnsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				if (Position.posXYIsInList(column.posX(), column.posY(), activeInputColumnPositions)) {
+					boolean predicted = false;
+					for (Position pos: predictiveCellPositions) {
+						if (pos.x==column.posX() && pos.y==column.posY()) {
+							activatePredictedColumn(pos);
+							predicted = true;
+							break;
+						}
+					}
+					if (!predicted) {
+						value = true;
+						burstColumn(column);
+					}
+				}
+				return value;
+			}
+		};
+		burstingColumns.applyFunction(function, r, threads);
+		return r;
+	}
+
+	protected CodeRunnerList getAdaptColumnsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object[] applyFunction(GridColumn column, Object[] values) {
+				if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
+					adaptColumn(column);
+				} else if (
+					(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
+					Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
+					) {
+					if (distalSegmentDecrement > 0F) {
+						punishPredictedColumn(column, distalSegmentDecrement, false);
+					}
+					if (apicalSegmentDecrement > 0F) {
+						punishPredictedColumn(column, apicalSegmentDecrement, true);
+					}
+				}
+				return values;
+			}
+		};
+		cellGrid.applyFunction(function, r, threads);
+		return r;
+	}
+
+	protected CodeRunnerList getClearPredictionRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				predictiveCellPositions.clear();
+				return true;
+			}
+		});
+		return r;
+	}
+	
+	protected CodeRunnerList getPredictActiveCellsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				Cell cell = (Cell) value;
+				if (cell.distalSegments.size()>0) {
+					cell.calculateDistalSegmentActivity(activeCellPositions, permanenceThreshold);
+					cell.calculateApicalSegmentActivity(activeApicalCellPositions, permanenceThreshold);
+					cell.classifySegmentActivity(activationThreshold, matchingThreshold);
+					if ((activeApicalCellPositions.size()==0 && cell.activeDistalSegments.size()>0) ||
+						(activeApicalCellPositions.size()>0 && cell.activeDistalSegments.size()>0 && cell.activeApicalSegments.size()>0)
+						) {
+						lock.lock(this);
+						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
+						lock.unlock(this);
+					}
+				}
+				return value;
+			}
+		};
+		cellGrid.applyFunction(function, r, threads);
+		return r;
+	}
+
+	protected CodeRunnerList getGenerateOutputsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		if (threads>=4) {
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(ACTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
+					return true;
+				}
+			});
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(BURSTING_COLUMNS_OUTPUT).fromPositions(burstingColumns.getValuePositions(true));
+					return true;
+				}
+			});
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(PREDICTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, predictiveCellPositions));
+					return true;
+				}
+			});
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(WINNER_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, winnerCellPositions));
+					return true;
+				}
+			});
+		} else if (threads>=2) {
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(ACTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
+					outputs.get(BURSTING_COLUMNS_OUTPUT).fromPositions(burstingColumns.getValuePositions(true));
+					return true;
+				}
+			});
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(PREDICTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, predictiveCellPositions));
+					outputs.get(WINNER_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, winnerCellPositions));
+					return true;
+				}
+			});
+		} else {
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					outputs.get(ACTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, activeCellPositions));
+					outputs.get(BURSTING_COLUMNS_OUTPUT).fromPositions(burstingColumns.getValuePositions(true));
+					outputs.get(PREDICTIVE_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, predictiveCellPositions));
+					outputs.get(WINNER_CELLS_OUTPUT).fromPositions(Position.flattenTo2D(sizeZ, winnerCellPositions));
+					return true;
+				}
+			});
+		}
+		return r;
 	}
 	
 	protected void activatePredictedColumn(Position pos) {

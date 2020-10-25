@@ -70,12 +70,12 @@ public class TestTemporalMemory extends TestObject {
 
 		CodeRunnerChain processorChain = new CodeRunnerChain();
 		tm.buildProcessorChain(processorChain, true);
-		tm.addDebugToProcesssorChain(processorChain);
 
 		List<SDR> inputList = getInputSDRList(500);
 		List<SDR> outputList = new ArrayList<SDR>();
 		List<SDR> burstingList = new ArrayList<SDR>();
 
+		int i = 0;
 		for (SDR input: inputList) {
 			tm.setInput(input);
 			Waiter.startAndWaitFor(processorChain, 10000);
@@ -84,6 +84,21 @@ public class TestTemporalMemory extends TestObject {
 			outputList.add(output);
 			SDR bursting = tm.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
 			burstingList.add(bursting);
+			
+			i++;
+			if (i < 50 || i % 50 == 0) {
+				Str msg = new Str();
+				msg.sb().append(tm.getProcessed());
+				msg.sb().append(" > bursting: "); 
+				msg.sb().append(tm.getOutput(TemporalMemory.BURSTING_COLUMNS_OUTPUT).onBits()); 
+				msg.sb().append(", active: "); 
+				msg.sb().append(tm.getOutput(TemporalMemory.ACTIVE_CELLS_OUTPUT).onBits()); 
+				msg.sb().append(", winners: "); 
+				msg.sb().append(tm.getOutput(TemporalMemory.WINNER_CELLS_OUTPUT).onBits()); 
+				msg.sb().append(", predictive: ");
+				msg.sb().append(tm.getOutput(TemporalMemory.PREDICTIVE_CELLS_OUTPUT).onBits()); 
+				Logger.dbg(this, msg);
+			}
 		}
 		
 		TemporalMemory tm2 = new TemporalMemory();

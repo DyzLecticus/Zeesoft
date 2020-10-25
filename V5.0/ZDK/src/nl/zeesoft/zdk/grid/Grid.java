@@ -12,6 +12,8 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Grid {
+	public static final int		THREADS			= 4;
+	
 	protected int 				sizeX			= 2;
 	protected int 				sizeY			= 2;
 	protected int 				sizeZ			= 1;
@@ -227,42 +229,70 @@ public class Grid {
 	public void applyFunction(ColumnFunction function) {
 		applyFunction(function, null);
 	}
-	
+
 	public void applyFunction(ColumnFunction function, CodeRunnerList runnerList) {
+		applyFunction(function, runnerList, THREADS);
+	}
+
+	public void applyFunction(ColumnFunction function, CodeRunnerList runnerList, int threads) {
 		if (runnerList!=null) {
-			int axis = 0;
-			if (sizeY > sizeX) {
-				axis = 1;
-			}
-			if (axis==0) {
-				for (int x = 0; x < sizeX; x++) {
+			if (threads>=0) {
+				for (int i = 0; i < threads; i++) {
 					RunCode code = new RunCode() {
 						@Override
 						protected boolean run() {
-							int x = (int) params[0];
-							for (int y = 0; y < sizeY; y++) {
-								columnsByPos[x][y].applyFunction(function);
+							@SuppressWarnings("unchecked")
+							List<Integer> cols = (List<Integer>) params[0];
+							for (Integer index: cols) {
+								columns.get(index).applyFunction(function);
 							}
 							return true;
 						}
 					};
-					code.params[0] = x;
+					List<Integer> cols = new ArrayList<Integer>();
+					for (int c = 0; c < columns.size(); c++) {
+						if (c % threads==i) {
+							cols.add(c);
+						}
+					}
+					code.params[0] = cols;
 					runnerList.add(code);
 				}
 			} else {
-				for (int y = 0; y < sizeY; y++) {
-					RunCode code = new RunCode() {
-						@Override
-						protected boolean run() {
-							int y = (int) params[0];
-							for (int x = 0; x < sizeX; x++) {
-								columnsByPos[x][y].applyFunction(function);
+				int axis = 0;
+				if (sizeY < sizeX) {
+					axis = 1;
+				}
+				if (axis==0) {
+					for (int x = 0; x < sizeX; x++) {
+						RunCode code = new RunCode() {
+							@Override
+							protected boolean run() {
+								int x = (int) params[0];
+								for (int y = 0; y < sizeY; y++) {
+									columnsByPos[x][y].applyFunction(function);
+								}
+								return true;
 							}
-							return true;
-						}
-					};
-					code.params[0] = y;
-					runnerList.add(code);
+						};
+						code.params[0] = x;
+						runnerList.add(code);
+					}
+				} else {
+					for (int y = 0; y < sizeY; y++) {
+						RunCode code = new RunCode() {
+							@Override
+							protected boolean run() {
+								int y = (int) params[0];
+								for (int x = 0; x < sizeX; x++) {
+									columnsByPos[x][y].applyFunction(function);
+								}
+								return true;
+							}
+						};
+						code.params[0] = y;
+						runnerList.add(code);
+					}
 				}
 			}
 		} else {

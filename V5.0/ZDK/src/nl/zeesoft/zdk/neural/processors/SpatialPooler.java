@@ -172,111 +172,17 @@ public class SpatialPooler extends CellGridProcessor {
 		
 		outputs.add(new SDR(outputSizeX, outputSizeY));
 	}
-
+	
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		CodeRunnerList activateColumns = new CodeRunnerList();
-		ColumnFunction function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				Grid inputPermanences = (Grid) connections.getColumn(column.index()).getValue();
-				float newValue = (float) value;
-				for (Position pos: activeInputPositions) {
-					float permanence = (float) inputPermanences.getValue(pos.x, pos.y);
-					if (permanence>permanenceThreshold) {
-						newValue = newValue + 1F; 
-					}
-				}
-				float factor = (float)boostFactors.getValue(column.posX(),column.posY());
-				if (factor!=1F) {
-					newValue = newValue * factor;
-				}
-				return newValue;
-			}
-		};
-		activations.applyFunction(function, activateColumns);
-		
-		CodeRunnerList selectWinners = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				List<GridColumn> winners = activations.getColumnsByValue(false,outputOnBits);
-				for (GridColumn winner: winners) {
-					outputs.get(ACTIVE_COLUMNS_OUTPUT).setBit(winner.posX(), winner.posY(), true);
-				}
-				return true;
-			}
-		});
-		
-		CodeRunnerList adjustPermanences = new CodeRunnerList();
+	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+		runnerChain.add(getActivateColumnsRunnerList(threads));
+		runnerChain.add(getSelectWinnersRunnerList());
 		if (learn) {
-			function = new ColumnFunction() {
-				@Override
-				public Object applyFunction(GridColumn column, int posZ, Object value) {
-					if (outputs.get(ACTIVE_COLUMNS_OUTPUT).getBit(column.posX(), column.posY())) {
-						Grid winnerPermanences = (Grid) value;
-						for (GridColumn pColumn: winnerPermanences.getColumns()) {
-							float permanence = (float)pColumn.getValue();
-							if (permanence>=0) {
-								if (inputs.get(0).getBit(pColumn.posX(), pColumn.posY())) {
-									pColumn.setValue(permanence + permanenceIncrement);
-									if ((float)pColumn.getValue()>1F) {
-										pColumn.setValue(1F);
-									}
-								} else {
-									pColumn.setValue(permanence - permanenceDecrement);
-									if ((float)pColumn.getValue()<0F) {
-										pColumn.setValue(0F);
-									}
-								}
-							}
-						}
-					}
-					return value;
-				}
-			};
-			connections.applyFunction(function, adjustPermanences);
+			runnerChain.add(getAdjustPermanencesRunnerList(threads));
 		}
-		
-		CodeRunnerList updateHistory = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				activationHistory.addSDR(outputs.get(ACTIVE_COLUMNS_OUTPUT));
-				return true;
-			}
-		});
-		
-		CodeRunnerList calculateHistoricActivation = new CodeRunnerList(new RunCode() {
-			@Override
-			protected boolean run() {
-				averageGlobalActivation = activationHistory.getTotalAverage();
-				return true;
-			}
-		});
-		
-		CodeRunnerList updateBoostFactors = new CodeRunnerList();
-		function = new ColumnFunction() {
-			@Override
-			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				float average = activationHistory.getAverage(column.posX(),column.posY());
-				float factor = 0F;
-				if (average!=averageGlobalActivation && boostStrength>1) {
-					factor = (float) Math.exp((float)boostStrength * - 1 * (average - averageGlobalActivation));
-				} else {
-					factor = 1;
-				}
-				return factor;
-			}
-		};
-		boostFactors.applyFunction(function, updateBoostFactors);
-		
-		runnerChain.add(activateColumns);
-		runnerChain.add(selectWinners);
-		if (learn) {
-			runnerChain.add(adjustPermanences);
-		}
-		runnerChain.add(updateHistory);
-		runnerChain.add(calculateHistoricActivation);
-		runnerChain.add(updateBoostFactors);
+		runnerChain.add(getUpdateHistoryRunnerList());
+		runnerChain.add(getCalculateActivationRunnerList());
+		runnerChain.add(getUpdateBoostFactorsRunnerList(threads));
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 	
@@ -389,5 +295,115 @@ public class SpatialPooler extends CellGridProcessor {
 				inputColumn.setValue(-1F);
 			}
 		}
+	}
+
+	protected CodeRunnerList getActivateColumnsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				Grid inputPermanences = (Grid) connections.getColumn(column.index()).getValue();
+				float newValue = (float) value;
+				for (Position pos: activeInputPositions) {
+					float permanence = (float) inputPermanences.getValue(pos.x, pos.y);
+					if (permanence>permanenceThreshold) {
+						newValue = newValue + 1F; 
+					}
+				}
+				float factor = (float)boostFactors.getValue(column.posX(),column.posY());
+				if (factor!=1F) {
+					newValue = newValue * factor;
+				}
+				return newValue;
+			}
+		};
+		activations.applyFunction(function, r, threads);
+		return r;
+	}
+
+	protected CodeRunnerList getSelectWinnersRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				List<GridColumn> winners = activations.getColumnsByValue(false,outputOnBits);
+				for (GridColumn winner: winners) {
+					outputs.get(ACTIVE_COLUMNS_OUTPUT).setBit(winner.posX(), winner.posY(), true);
+				}
+				return true;
+			}
+		});
+		return r;
+	}
+
+	protected CodeRunnerList getAdjustPermanencesRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				if (outputs.get(ACTIVE_COLUMNS_OUTPUT).getBit(column.posX(), column.posY())) {
+					Grid winnerPermanences = (Grid) value;
+					for (GridColumn pColumn: winnerPermanences.getColumns()) {
+						float permanence = (float)pColumn.getValue();
+						if (permanence>=0) {
+							if (inputs.get(0).getBit(pColumn.posX(), pColumn.posY())) {
+								pColumn.setValue(permanence + permanenceIncrement);
+								if ((float)pColumn.getValue()>1F) {
+									pColumn.setValue(1F);
+								}
+							} else {
+								pColumn.setValue(permanence - permanenceDecrement);
+								if ((float)pColumn.getValue()<0F) {
+									pColumn.setValue(0F);
+								}
+							}
+						}
+					}
+				}
+				return value;
+			}
+		};
+		connections.applyFunction(function, r, threads);
+		return r;
+	}
+
+	protected CodeRunnerList getUpdateHistoryRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				activationHistory.addSDR(outputs.get(ACTIVE_COLUMNS_OUTPUT));
+				return true;
+			}
+		});
+		return r;
+	}
+
+	protected CodeRunnerList getCalculateActivationRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				averageGlobalActivation = activationHistory.getTotalAverage();
+				return true;
+			}
+		});
+		return r;
+	}
+	
+	protected CodeRunnerList getUpdateBoostFactorsRunnerList(int threads) {
+		CodeRunnerList r = new CodeRunnerList();
+		ColumnFunction function = new ColumnFunction() {
+			@Override
+			public Object applyFunction(GridColumn column, int posZ, Object value) {
+				float average = activationHistory.getAverage(column.posX(),column.posY());
+				float factor = 0F;
+				if (average!=averageGlobalActivation && boostStrength>1) {
+					factor = (float) Math.exp((float)boostStrength * - 1 * (average - averageGlobalActivation));
+				} else {
+					factor = 1;
+				}
+				return factor;
+			}
+		};
+		boostFactors.applyFunction(function, r, threads);
+		return r;
 	}
 }
