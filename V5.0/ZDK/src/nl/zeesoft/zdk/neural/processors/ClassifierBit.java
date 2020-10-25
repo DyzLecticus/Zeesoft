@@ -91,7 +91,7 @@ public class ClassifierBit implements StrAble {
 		if (value!=null) {
 			Integer count = valueCounts.get(value);
 			if (count==null) {
-				count = new Integer(0);
+				count = new Integer(4);
 			}
 			count++;
 			valueCounts.put(value,count);

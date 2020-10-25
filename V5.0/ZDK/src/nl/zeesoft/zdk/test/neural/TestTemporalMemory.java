@@ -41,7 +41,7 @@ public class TestTemporalMemory extends TestObject {
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
 		System.out.println("tm.buildProcessorChain(processorChain, true);");
 		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
-		System.out.println("sp.setInput(new SDR());");
+		System.out.println("tm.setInput(new SDR());");
 		System.out.println("// Run the processor chain");
 		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
 		System.out.println("    // Get the output");

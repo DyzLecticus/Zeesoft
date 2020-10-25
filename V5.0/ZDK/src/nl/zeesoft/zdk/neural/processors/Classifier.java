@@ -49,6 +49,10 @@ public class Classifier extends SDRProcessor {
 			this.valueKey = cfg.valueKey;
 			this.predictSteps.addAll(cfg.predictSteps);
 			this.maxCount = cfg.maxCount;
+			
+			if (maxCount<8) {
+				maxCount = 8;
+			}
 		}
 	}
 		
@@ -105,8 +109,7 @@ public class Classifier extends SDRProcessor {
 
 	@Override
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		
-		CodeRunnerList mergeInputs = new CodeRunnerList(new RunCode() {
+		CodeRunnerList processInputs = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
 				SDR combinedInput = new SDR(sizeX, sizeY);
@@ -115,7 +118,7 @@ public class Classifier extends SDRProcessor {
 						value = ((KeyValueSDR) input).get(valueKey); 
 					}
 					if (input.sizeX()==sizeX && input.sizeY()==sizeY) {
-						combinedInput.and(input);
+						combinedInput.or(input);
 					}
 				}
 				if (maxOnBits>0) {
@@ -125,7 +128,6 @@ public class Classifier extends SDRProcessor {
 				return true;
 			}
 		});
-
 		
 		CodeRunnerList associateBits = new CodeRunnerList();
 		if (learn) {
@@ -145,7 +147,7 @@ public class Classifier extends SDRProcessor {
 			}
 		}
 
-		CodeRunnerList generatePrediction = new CodeRunnerList();
+		CodeRunnerList generatePredictions = new CodeRunnerList();
 		for (ClassifierStep classifierStep: classifierSteps) {
 			RunCode code = new RunCode() {
 				@Override
@@ -155,14 +157,14 @@ public class Classifier extends SDRProcessor {
 				}
 			};
 			code.params[0] = classifierStep;
-			generatePrediction.add(code);
+			generatePredictions.add(code);
 		}
 		
-		runnerChain.add(mergeInputs);
+		runnerChain.add(processInputs);
 		if (learn) {
 			runnerChain.add(associateBits);
 		}
-		runnerChain.add(generatePrediction);
+		runnerChain.add(generatePredictions);
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 

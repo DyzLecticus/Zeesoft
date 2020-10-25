@@ -28,7 +28,7 @@ public class TestClassifier extends TestObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to use a *Classifier* to classify and/or predict future input values based on SDR sequences.");
-		System.out.println("A *ClassifierConfig* can be used to configure the *TemporalMemory* before initialization.");
+		System.out.println("A *ClassifierConfig* can be used to configure the *Classifier* before initialization.");
 		System.out.println("A *Classifier* will combine all input SDRs that match the specified dimension into a single footprint to associate with a certain input value.");
 		System.out.println("The input value can be provided by using a *KeyValueSDR* with a key/value pair with a configurable key.");
 		System.out.println("The classifications and/or predictions will be attached to the output *KeyValueSDR* using *Classification* objects.");
@@ -44,7 +44,7 @@ public class TestClassifier extends TestObject {
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
 		System.out.println("cl.buildProcessorChain(processorChain, true);");
 		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
-		System.out.println("sp.setInput(new SDR());");
+		System.out.println("cl.setInput(new SDR());");
 		System.out.println("// Run the processor chain");
 		System.out.println("if (Waiter.startAndWaitFor(processorChain, 1000)) {");
 		System.out.println("    // Get the output");
@@ -108,7 +108,10 @@ public class TestClassifier extends TestObject {
 		cls2.fromStr(cls.toStr());
 		assertEqual((Integer)cls2.getMostCountedValues().size(),1,"Predicted values size does not match expectation");
 		assertEqual((Integer)cls2.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
-		assertEqual(cls2.valueCounts.get(0),96,"Predicted value count does not match expectation");
+		assertEqual(cls2.valueCounts.get(0),160,"Predicted value count does not match expectation");
+		
+		cls2.valueCounts.put(1, 156);
+		assertEqual(cls2.getStandardDeviation(),2.828427F,"Standard deviation does not match expectation");
 		
 		Str str = cl.toStr();
 		Classifier cl2 = new Classifier();

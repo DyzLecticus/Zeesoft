@@ -97,15 +97,41 @@ public class SDR implements StrAble {
 		setBit(getBitIndexForPosition(posX, posY), value);
 	}
 	
-	public void and(SDR sdr) {
+	public void or(SDR sdr) {
 		for (Integer onBit: sdr.onBits) {
 			setBit(onBit,true);
 		}
 	}
 	
 	public void subsample(int maxOnBits) {
-		while (onBits.size()>maxOnBits) {
-			onBits.remove(Rand.getRandomInt(0, onBits.size()-1));
+		if (maxOnBits<=0) {
+			onBits.clear();
+		} else {
+			while (onBits.size()>maxOnBits) {
+				onBits.remove(Rand.getRandomInt(0, onBits.size()-1));
+			}
+		}
+	}
+	
+	public void distort(float distortion) {
+		if (distortion>0.0F && distortion<=1.0F) {
+			int remove = (int) ((float) onBits.size() * distortion);
+			List<Integer> notBits = getOnBits();
+			subsample(onBits.size() - remove);
+			int max = (sizeX * sizeY) - 1;
+			for (int i = 0; i < remove; i++) {
+				boolean set = false;
+				int attempts = 0;
+				while(!set && attempts<(sizeX * sizeY)) {
+					int onBit = Rand.getRandomInt(0, max);
+					if (!notBits.contains(onBit)) {
+						onBits.add(onBit);
+						set = true;
+					} else {
+						attempts++;
+					}
+				}
+			}
 		}
 	}
 	

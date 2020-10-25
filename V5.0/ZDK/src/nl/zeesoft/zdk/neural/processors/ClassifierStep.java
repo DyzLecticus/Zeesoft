@@ -1,8 +1,10 @@
 package nl.zeesoft.zdk.neural.processors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.neural.SDR;
@@ -69,8 +71,20 @@ public class ClassifierStep implements StrAble {
 					}
 				}
 				if (divide) {
+					Str msg = new Str();
+					msg.sb().append("Dividing step "); 
+					msg.sb().append(step); 
+					msg.sb().append(" classifier value counts by two ...");
+					Logger.dbg(this, msg);
+					List<Integer> remove = new ArrayList<Integer>();
 					for (ClassifierBit bit: bits.values()) {
 						bit.divideValueCountsBy(2);
+						if (bit.valueCounts.size()==0) {
+							remove.add(bit.index);
+						}
+					}
+					for (Integer index: remove) {
+						bits.remove(index);
 					}
 				}
 			}

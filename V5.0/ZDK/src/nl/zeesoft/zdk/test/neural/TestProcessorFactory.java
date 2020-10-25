@@ -34,6 +34,7 @@ public class TestProcessorFactory extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use a *ProcessorFactory* to create a basic chain of default *Processor* instances that can make predictions.");
 		System.out.println("*Processor* instances are thread safe wrappers around *SDRProcessor* instances.");
+		System.out.println("*ProcessorIO* instances are used to specify *Processor* input/output and more.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -68,6 +69,7 @@ public class TestProcessorFactory extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(TestProcessorFactory.class));
 		System.out.println(" * " + getTester().getLinkForClass(ProcessorFactory.class));
 		System.out.println(" * " + getTester().getLinkForClass(Processor.class));
+		System.out.println(" * " + getTester().getLinkForClass(ProcessorIO.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows an example SDR processing chain and a subsample of some of its temporal memory outputs.  ");

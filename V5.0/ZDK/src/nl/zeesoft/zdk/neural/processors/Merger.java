@@ -14,6 +14,7 @@ public class Merger extends SDRProcessor {
 	protected int					sizeX			= 768;
 	protected int					sizeY			= 48;
 	protected int					maxOnBits		= 184;
+	protected float					distortion		= 0.0F;
 	
 	@Override
 	public void configure(SDRProcessorConfig config) {
@@ -23,13 +24,14 @@ public class Merger extends SDRProcessor {
 			this.sizeX = cfg.sizeX;
 			this.sizeY = cfg.sizeY;
 			this.maxOnBits = cfg.maxOnBits;
+			this.distortion = cfg.distortion;
 		}
 	}
 		
 	@Override
 	public Str getDescription() {
 		Str r = super.getDescription();
-		r.sb().append(" (> ");
+		r.sb().append(" (?*? > ");
 		r.sb().append(sizeX);
 		r.sb().append("*");
 		r.sb().append(sizeY);
@@ -67,11 +69,12 @@ public class Merger extends SDRProcessor {
 				@Override
 				protected boolean run() {
 					for (SDR input: inputs) {
-						outputs.get(MERGED_OUTPUT).and(input);
+						outputs.get(MERGED_OUTPUT).or(input);
 					}
 					if (maxOnBits>0) {
 						outputs.get(MERGED_OUTPUT).subsample(maxOnBits);
 					}
+					outputs.get(MERGED_OUTPUT).distort(distortion);
 					return true;
 				}
 			}

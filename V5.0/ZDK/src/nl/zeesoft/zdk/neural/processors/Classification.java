@@ -94,4 +94,24 @@ public class Classification implements StrAble {
 		}
 		return mostCountedValues;
 	}
-}
+	
+	public float getStandardDeviation() {
+		float r = 0.0F;
+		if (valueCounts.size()>1) {
+			float sum = 0.0F;
+			float dev = 0.0F;
+			int size = valueCounts.size();
+	
+			for(Integer count: valueCounts.values()) {
+				sum += (float)count;
+			}
+	
+			float mean = sum / size;
+	
+			for(Integer count: valueCounts.values()) {
+				dev += Math.pow((float)count - mean, 2);
+			}
+			r = (float) Math.sqrt(dev/(size - 1));
+		}
+		return r;
+	}}
