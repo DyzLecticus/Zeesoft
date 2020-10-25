@@ -13,7 +13,7 @@ public class Merger extends SDRProcessor {
 	// Configuration
 	protected int					sizeX			= 768;
 	protected int					sizeY			= 48;
-	protected int					maxOnBits		= 184;
+	protected int					maxOnBits		= 256;
 	protected float					distortion		= 0.0F;
 	
 	@Override

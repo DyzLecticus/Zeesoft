@@ -111,9 +111,9 @@ public class Classifier extends SDRProcessor {
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
 		runnerChain.add(getProcessInputsRunnerList());
 		if (learn) {
-			runnerChain.add(getAssociateBitsRunnerList());
+			runnerChain.add(getAssociateBitsRunnerList(threads));
 		}
-		runnerChain.add(getGeneratePredictionsRunnerList());
+		runnerChain.add(getGeneratePredictionsRunnerList(threads));
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
 
@@ -176,37 +176,72 @@ public class Classifier extends SDRProcessor {
 		});
 		return r;
 	}
-
-	protected CodeRunnerList getAssociateBitsRunnerList() {
+	
+	protected CodeRunnerList getAssociateBitsRunnerList(int threads) {
 		CodeRunnerList r = new CodeRunnerList();
-		for (ClassifierStep classifierStep: classifierSteps) {
+		if (threads <= 0) {
+			threads = 1;
+		}
+		if (threads>classifierSteps.size()) {
+			threads = classifierSteps.size();
+		}
+		for (int t = 0; t < threads; t++) {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
 					if (value!=null) {
-						ClassifierStep step = (ClassifierStep) params[0];
-						step.associateBits(value);
+						@SuppressWarnings("unchecked")
+						List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
+						for (ClassifierStep step: steps) {
+							step.associateBits(value);
+						}
 					}
 					return true;
 				}
 			};
-			code.params[0] = classifierStep;
+			List<ClassifierStep> steps = new ArrayList<ClassifierStep>();
+			int s = 0;
+			for (ClassifierStep step: classifierSteps) {
+				if (s % threads==t) {
+					steps.add(step);
+				}
+				s++;
+			}
+			code.params[0] = steps;
 			r.add(code);
 		}
 		return r;
 	}
 
-	protected CodeRunnerList getGeneratePredictionsRunnerList() {
+	protected CodeRunnerList getGeneratePredictionsRunnerList(int threads) {
 		CodeRunnerList r = new CodeRunnerList();
-		for (ClassifierStep classifierStep: classifierSteps) {
+		if (threads <= 0) {
+			threads = 1;
+		}
+		if (threads>classifierSteps.size()) {
+			threads = classifierSteps.size();
+		}
+		for (int t = 0; t < threads; t++) {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
-					generatePrediction((ClassifierStep) params[0]);
+					@SuppressWarnings("unchecked")
+					List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
+					for (ClassifierStep step: steps) {
+						generatePrediction(step);
+					}
 					return true;
 				}
 			};
-			code.params[0] = classifierStep;
+			List<ClassifierStep> steps = new ArrayList<ClassifierStep>();
+			int s = 0;
+			for (ClassifierStep step: classifierSteps) {
+				if (s % threads==t) {
+					steps.add(step);
+				}
+				s++;
+			}
+			code.params[0] = steps;
 			r.add(code);
 		}
 		return r;

@@ -237,7 +237,7 @@ public class Grid {
 	public void applyFunction(ColumnFunction function, CodeRunnerList runnerList, int threads) {
 		if (runnerList!=null) {
 			if (threads>=0) {
-				for (int i = 0; i < threads; i++) {
+				for (int t = 0; t < threads; t++) {
 					RunCode code = new RunCode() {
 						@Override
 						protected boolean run() {
@@ -251,7 +251,7 @@ public class Grid {
 					};
 					List<Integer> cols = new ArrayList<Integer>();
 					for (int c = 0; c < columns.size(); c++) {
-						if (c % threads==i) {
+						if (c % threads==t) {
 							cols.add(c);
 						}
 					}

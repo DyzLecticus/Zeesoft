@@ -32,7 +32,7 @@ public class SpatialPooler extends CellGridProcessor {
 	protected int				outputOnBits				= 46;
 	
 	protected float				potentialConnections		= 0.85F;
-	protected int				potentialRadius				= 500;
+	protected int				potentialRadius				= 16;
 	
 	protected float				permanenceThreshold			= 0.1F;
 	protected float				permanenceIncrement			= 0.05F;

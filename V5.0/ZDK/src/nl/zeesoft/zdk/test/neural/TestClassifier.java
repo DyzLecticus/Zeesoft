@@ -95,6 +95,7 @@ public class TestClassifier extends TestObject {
 			output.sort();
 			outputList.add(output);
 			if (num == 99) {
+				System.out.println();
 				System.out.println("Input SDR: " + input.toStr());
 				System.out.println("Output SDR: " + output.toStr());
 			}
