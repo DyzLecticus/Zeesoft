@@ -24,6 +24,7 @@ public class Classifier extends SDRProcessor {
 	// Configuration
 	protected int					sizeX						= 768;
 	protected int					sizeY						= 48;
+	protected int					maxOnBits					= 256;
 
 	protected String				valueKey					= DEFAULT_VALUE_KEY;
 	protected List<Integer>			predictSteps				= new ArrayList<Integer>();
@@ -43,6 +44,7 @@ public class Classifier extends SDRProcessor {
 			
 			this.sizeX = cfg.sizeX;
 			this.sizeY = cfg.sizeY;
+			this.maxOnBits = cfg.maxOnBits;
 			
 			this.valueKey = cfg.valueKey;
 			this.predictSteps.addAll(cfg.predictSteps);
@@ -93,17 +95,7 @@ public class Classifier extends SDRProcessor {
 		value = null;
 		
 		if (sdrs.length>0) {
-			SDR combinedInput = new SDR(sizeX, sizeY);
-			for (int i = 0; i < sdrs.length; i++) {
-				if (sdrs[i] instanceof KeyValueSDR) {
-					value = ((KeyValueSDR) sdrs[i]).get(valueKey); 
-				}
-				if (sdrs[i].sizeX()==sizeX && sdrs[i].sizeY()==sizeY) {
-					combinedInput.and(sdrs[i]);
-				}
-			}
-			super.setInput(combinedInput);
-			activationHistory.addSDR(combinedInput);
+			super.setInput(sdrs);
 		} else {
 			Logger.err(this, new Str("At least one input SDR is required"));
 		}
@@ -113,6 +105,27 @@ public class Classifier extends SDRProcessor {
 
 	@Override
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
+		
+		CodeRunnerList mergeInputs = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				SDR combinedInput = new SDR(sizeX, sizeY);
+				for (SDR input: inputs) {
+					if (input instanceof KeyValueSDR) {
+						value = ((KeyValueSDR) input).get(valueKey); 
+					}
+					if (input.sizeX()==sizeX && input.sizeY()==sizeY) {
+						combinedInput.and(input);
+					}
+				}
+				if (maxOnBits>0) {
+					combinedInput.subsample(maxOnBits);
+				}
+				activationHistory.addSDR(combinedInput);
+				return true;
+			}
+		});
+
 		
 		CodeRunnerList associateBits = new CodeRunnerList();
 		if (learn) {
@@ -145,6 +158,7 @@ public class Classifier extends SDRProcessor {
 			generatePrediction.add(code);
 		}
 		
+		runnerChain.add(mergeInputs);
 		if (learn) {
 			runnerChain.add(associateBits);
 		}

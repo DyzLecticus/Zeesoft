@@ -106,6 +106,7 @@ public class TestClassifier extends TestObject {
 		Classification cls2 = new Classification();
 		
 		cls2.fromStr(cls.toStr());
+		assertEqual((Integer)cls2.getMostCountedValues().size(),1,"Predicted values size does not match expectation");
 		assertEqual((Integer)cls2.getMostCountedValues().get(0),0,"Predicted value does not match expectation");
 		assertEqual(cls2.valueCounts.get(0),96,"Predicted value count does not match expectation");
 		

@@ -22,6 +22,10 @@ public class ProcessorFactory {
 		return (TemporalMemory) getNewSDRProcessor(config, true);
 	}
 	
+	public static Merger getNewMerger(MergerConfig config) {
+		return (Merger) getNewSDRProcessor(config, true);
+	}
+	
 	public static Classifier getNewClassifier(ClassifierConfig config) {
 		return (Classifier) getNewSDRProcessor(config, true);
 	}

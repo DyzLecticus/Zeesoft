@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.grid.Position;
@@ -99,6 +100,12 @@ public class SDR implements StrAble {
 	public void and(SDR sdr) {
 		for (Integer onBit: sdr.onBits) {
 			setBit(onBit,true);
+		}
+	}
+	
+	public void subsample(int maxOnBits) {
+		while (onBits.size()>maxOnBits) {
+			onBits.remove(Rand.getRandomInt(0, onBits.size()-1));
 		}
 	}
 	
