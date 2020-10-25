@@ -26,8 +26,6 @@ public class ClassifierBit implements StrAble {
 		Str r = new Str();
 		r.sb().append(index);
 		r.sb().append(";");
-		r.sb().append(maxCount);
-		r.sb().append(";");
 		if (valueCounts!=null && valueCounts.size()>0) {
 			Str valCounts = new Str();
 			String className = "";
@@ -58,9 +56,8 @@ public class ClassifierBit implements StrAble {
 			valueCounts.clear();
 		}
 		index = Integer.parseInt(elems.get(0).toString());
-		maxCount = Integer.parseInt(elems.get(1).toString());
-		String className = elems.get(2).toString();
-		List<Str> valCounts = elems.get(3).split("%");
+		String className = elems.get(1).toString();
+		List<Str> valCounts = elems.get(2).split("%");
 		for (Str valCount: valCounts) {
 			List<Str> vc = valCount.split(",");
 			Integer count = Integer.parseInt(vc.get(1).toString());

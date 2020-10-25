@@ -50,7 +50,7 @@ public class Classifier extends SDRProcessor {
 			this.predictSteps.addAll(cfg.predictSteps);
 			this.maxCount = cfg.maxCount;
 			
-			if (maxCount<8) {
+			if (maxCount < 8) {
 				maxCount = 8;
 			}
 		}

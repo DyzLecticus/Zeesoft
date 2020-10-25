@@ -13,7 +13,7 @@ import java.util.List;
  * - maxOnBits; Optional maximum number of on bits in the merged output (uses sub sampling) 
  * - valueKey; Value key to look for in the input KeyValueSDRs
  * - predictSteps; List of steps to classify/predict (step 0 = classify, step > 0 = predict)
- * - maxCount; Optional maximum count of a step bit value count
+ * - maxCount; Maximum count of a step bit value count (a minimum of 8 is enforced)
  *     If a step bit reaches this maximum, all bit value counts of the step are divided by two.
  *     When when a value has only a single count it will be removed.
  *     When a step bit has no value counts it will be removed.  
