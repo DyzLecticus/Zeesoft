@@ -117,6 +117,24 @@ public class CodeRunnerChain implements Waitable {
 		lock.unlock(this);
 		return r;
 	}
+	
+	public void runSequential() {
+		Exception exception = null;
+		lock.lock(this);
+		List<RunCode> codes = getCodesNoLock();
+		for (RunCode code: codes) {
+			code.tryRunCatch();
+			exception = code.getException();
+			if (exception!=null) {
+				break;
+			}
+		}
+		lock.unlock(this);
+		if (exception!=null) {
+			caughtException(exception);
+		}
+		doneCallback();
+	}
 
 	protected CodeRunnerList getNewCodeRunnerList(List<RunCode> code) {
 		CodeRunnerList r = new CodeRunnerList() {

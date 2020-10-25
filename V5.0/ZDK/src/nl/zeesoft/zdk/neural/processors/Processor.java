@@ -34,9 +34,17 @@ public class Processor implements StrAble {
 		processor.setInput(io.inputs);
 		boolean timedOut = false;
 		if (io.learn) {
-			timedOut = !Waiter.startAndWaitFor(processingAndLearningChain, io.timeoutMs);
+			if (io.sequential) {
+				processingAndLearningChain.runSequential();
+			} else {
+				timedOut = !Waiter.startAndWaitFor(processingAndLearningChain, io.timeoutMs);
+			}
 		} else {
-			timedOut = !Waiter.startAndWaitFor(processingOnlyChain, io.timeoutMs);
+			if (io.sequential) {
+				processingAndLearningChain.runSequential();
+			} else {
+				timedOut = !Waiter.startAndWaitFor(processingOnlyChain, io.timeoutMs);
+			}
 		}
 		if (timedOut) {
 			io.error.sb().append("Processing " + name + " input timed out");

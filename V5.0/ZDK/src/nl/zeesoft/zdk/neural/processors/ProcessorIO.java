@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.neural.SDR;
 
 public class ProcessorIO {
 	public String				id							= "";
+	public boolean				sequential					= true; // TODO: Improve multi threading performance
 	public boolean				learn						= true;
 	public int					timeoutMs					= 1000;
 	public List<SDR>			inputs						= new ArrayList<SDR>();
