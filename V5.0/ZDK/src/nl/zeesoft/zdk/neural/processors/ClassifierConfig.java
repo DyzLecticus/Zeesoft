@@ -10,7 +10,7 @@ import java.util.List;
  * 
  * Configurable properties;
  * - sizeX, sizeY; Merged output SDR dimensions (input SDRs that do not match are ignored for merge) 
- * - maxOnBits; Optional maximum number of on bits in the merged output (uses sub sampling) 
+ * - maxOnBits; Optional maximum number of on bits in the merged input (uses sub sampling) 
  * - valueKey; Value key to look for in the input KeyValueSDRs
  * - predictSteps; List of steps to classify/predict (step 0 = classify, step > 0 = predict)
  * - maxCount; Maximum count of a step bit value count (a minimum of 8 is enforced)
