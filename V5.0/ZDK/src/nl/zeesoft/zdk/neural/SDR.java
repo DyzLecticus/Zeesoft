@@ -148,6 +148,20 @@ public class SDR implements StrAble {
 	}
 	
 	@Override
+	public boolean equals(Object other) {
+		boolean r = false;
+		if (other!=null && other instanceof SDR) {
+			SDR sdr = (SDR) other;
+			if (sdr.sizeX==sizeX && sdr.sizeY==sizeY) {
+				if (getOverlap(sdr)==onBits.size()) {
+					r = true;
+				}
+			}
+		}
+		return r;
+	}
+	
+	@Override
 	public String toString() {
 		return toStr().toString();
 	}

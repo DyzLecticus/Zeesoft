@@ -16,7 +16,6 @@ import nl.zeesoft.zdk.thread.RunCode;
 public class Classifier extends SDRProcessor {
 	public static final int			CLASSIFICATION_OUTPUT		= 0;
 	
-	public static final String		DEFAULT_VALUE_KEY			= "value";
 	public static final String		CLASSIFICATION_VALUE_KEY	= "classification";
 	
 	protected Lock					lock						= new Lock();
@@ -26,7 +25,7 @@ public class Classifier extends SDRProcessor {
 	protected int					sizeY						= 48;
 	protected int					maxOnBits					= 256;
 
-	protected String				valueKey					= DEFAULT_VALUE_KEY;
+	protected String				valueKey					= KeyValueSDR.DEFAULT_VALUE_KEY;
 	protected List<Integer>			predictSteps				= new ArrayList<Integer>();
 	protected int					maxCount					= 40;
 	

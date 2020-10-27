@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 
 public class KeyValueSDR extends SDR {
+	public static final String				DEFAULT_VALUE_KEY	= "value";
+	
 	protected SortedMap<String,Object>		keyValues			= new TreeMap<String,Object>();
 
 	public KeyValueSDR() {
@@ -31,6 +33,14 @@ public class KeyValueSDR extends SDR {
 		}
 	}
 
+	public void setValue(Object value) {
+		keyValues.put(DEFAULT_VALUE_KEY, value);
+	}
+
+	public Object getValue() {
+		return keyValues.get(DEFAULT_VALUE_KEY);
+	}
+
 	public void put(String key, Object value) {
 		keyValues.put(key, value);
 	}
@@ -50,7 +60,7 @@ public class KeyValueSDR extends SDR {
 	public int size() {
 		return keyValues.size();
 	}
-	
+
 	@Override
 	public Str toStr() {
 		Str r = new Str();

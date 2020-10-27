@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
-public class Encoder {
+public class SDREncoder {
 	protected int	encodeSizeX		= 16;
 	protected int	encodeSizeY		= 16;
 	protected int	onBits			= 16;

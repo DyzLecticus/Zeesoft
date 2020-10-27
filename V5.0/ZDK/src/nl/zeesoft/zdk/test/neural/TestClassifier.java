@@ -142,7 +142,7 @@ public class TestClassifier extends TestObject {
 		List<KeyValueSDR> r = new ArrayList<KeyValueSDR>();
 		for (int i = 0; i < num; i++) {
 			KeyValueSDR sdr = new KeyValueSDR();
-			sdr.put(Classifier.DEFAULT_VALUE_KEY, i%4);
+			sdr.setValue(i%4);
 			r.add(sdr);
 		}
 		return r;

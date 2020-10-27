@@ -106,7 +106,7 @@ public class TestProcessorFactory extends TestObject {
 			
 			if (i >= 940) {
 				KeyValueSDR kvSdr = new KeyValueSDR(io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT));
-				kvSdr.put(Classifier.DEFAULT_VALUE_KEY, i % 4);
+				kvSdr.setValue(i%4);
 				ProcessorIO io3 = new ProcessorIO();
 				io3.inputs.add(kvSdr);
 				cl.processIO(io3);

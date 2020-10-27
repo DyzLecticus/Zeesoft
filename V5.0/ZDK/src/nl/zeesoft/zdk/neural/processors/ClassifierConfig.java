@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.neural.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.neural.KeyValueSDR;
+
 /**
  * This class can be used to configure a Classifier before initialization.
  * 
@@ -23,7 +25,7 @@ public class ClassifierConfig extends SDRProcessorConfig{
 	public int				sizeY			= 48;
 	public int				maxOnBits		= 256;
 
-	public String			valueKey		= Classifier.DEFAULT_VALUE_KEY;
+	public String			valueKey		= KeyValueSDR.DEFAULT_VALUE_KEY;
 	public List<Integer>	predictSteps	= new ArrayList<Integer>();
 	public int				maxCount		= 40;
 }
