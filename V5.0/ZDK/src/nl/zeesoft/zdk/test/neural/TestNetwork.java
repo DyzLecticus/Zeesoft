@@ -73,12 +73,13 @@ public class TestNetwork extends TestObject {
 		config.addLink("EN", 0, "SP", 0);
 		config.addLink("SP", 0, "TM", 0);
 		config.addLink("TM", 0, "CL", 0);
-		config.addLink("value", 0, "CL", 1);
+		config.addLink(KeyValueSDR.DEFAULT_VALUE_KEY, 0, "CL", 1);
 
 		Str err = config.testConfiguration();
 		assertEqual(err,new Str(),"Error does not match expectation");
 		
-		Network network = new Network(config);
+		Network network = new Network();
+		network.configure(config);
 		network.initialize(true);
 	}
 }

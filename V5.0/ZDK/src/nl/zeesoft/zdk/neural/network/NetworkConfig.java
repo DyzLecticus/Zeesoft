@@ -16,6 +16,28 @@ public class NetworkConfig {
 	public List<NetworkProcessorConfig>		processorConfigs	= new ArrayList<NetworkProcessorConfig>();
 	public List<NetworkLink>				links				= new ArrayList<NetworkLink>();
 
+	public NetworkConfig() {
+		
+	}
+
+	public NetworkConfig(NetworkConfig config) {
+		copyFrom(config);
+	}
+	
+	public void copyFrom(NetworkConfig config) {
+		inputNames.clear();
+		processorConfigs.clear();
+		links.clear();
+		
+		inputNames.addAll(config.inputNames);
+		for (NetworkProcessorConfig cfg: config.processorConfigs) {
+			processorConfigs.add(new NetworkProcessorConfig(cfg));
+		}
+		for (NetworkLink link: config.links) {
+			links.add(new NetworkLink(link));
+		}
+	}
+	
 	public void addInput(String name) {
 		inputNames.add(name);
 	}
@@ -80,6 +102,7 @@ public class NetworkConfig {
 	
 	public Str testConfiguration() {
 		Str r = new Str();
+		// TODO: Check unique names and links
 		for (NetworkLink link: links) {
 			checkNameExists(link.fromName, r);
 			checkNameExists(link.toName, r);

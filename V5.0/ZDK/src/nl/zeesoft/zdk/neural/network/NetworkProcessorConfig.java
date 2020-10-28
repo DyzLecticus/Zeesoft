@@ -12,9 +12,19 @@ public class NetworkProcessorConfig {
 		
 	}
 	
+	public NetworkProcessorConfig(NetworkProcessorConfig config) {
+		copyFrom(config);
+	}
+	
 	public NetworkProcessorConfig(int layer, String name, SDRProcessorConfig config) {
 		this.layer = layer;
 		this.name = name;
 		this.processorConfig = config;
+	}
+	
+	public void copyFrom(NetworkProcessorConfig config) {
+		this.layer = config.layer;
+		this.name = config.name;
+		this.processorConfig = config.processorConfig;
 	}
 }
