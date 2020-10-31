@@ -39,7 +39,9 @@ public class NetworkConfig {
 	}
 	
 	public void addInput(String name) {
-		inputNames.add(name);
+		if (!inputNames.contains(name)) {
+			inputNames.add(name);
+		}
 	}
 	
 	public EncoderConfig addEncoder(String name) {
@@ -103,6 +105,36 @@ public class NetworkConfig {
 	public Str testConfiguration() {
 		Str r = new Str();
 		// TODO: Check unique names and links
+		for (NetworkProcessorConfig config: processorConfigs) {
+			if (inputNames.contains(config.name)) {
+				if (r.sb().length()>0) {
+					r.sb().append("\n");
+				}
+				r.sb().append("Processor name may not match an input name: " + config.name);
+			}
+			for (NetworkProcessorConfig compare: processorConfigs) {
+				if (compare!=config && compare.name.equals(config.name)) {
+					if (r.sb().length()>0) {
+						r.sb().append("\n");
+					}
+					r.sb().append("Processor name must be unique: ");
+					r.sb().append(config.name);
+				}
+			}
+		}
+		for (NetworkLink link: links) {
+			for (NetworkLink compare: links) {
+				if (compare!=link && compare.toName.equals(link.toName) && compare.toIndex==link.toIndex) {
+					if (r.sb().length()>0) {
+						r.sb().append("\n");
+					}
+					r.sb().append("Link target must be unique: ");
+					r.sb().append(link.toName);
+					r.sb().append("/");
+					r.sb().append(link.toIndex);
+				}
+			}
+		}
 		for (NetworkLink link: links) {
 			checkNameExists(link.fromName, r);
 			checkNameExists(link.toName, r);

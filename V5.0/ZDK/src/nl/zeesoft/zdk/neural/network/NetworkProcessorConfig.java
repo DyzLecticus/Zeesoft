@@ -26,5 +26,6 @@ public class NetworkProcessorConfig {
 		this.layer = config.layer;
 		this.name = config.name;
 		this.processorConfig = config.processorConfig;
+		this.threads = config.threads;
 	}
 }

@@ -1,9 +1,13 @@
 package nl.zeesoft.zdk.test.neural;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -61,6 +65,8 @@ public class TestNetwork extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		NetworkConfig config = new NetworkConfig();
 		config.inputNames.add(KeyValueSDR.DEFAULT_VALUE_KEY);
 		
@@ -81,5 +87,19 @@ public class TestNetwork extends TestObject {
 		Network network = new Network();
 		network.configure(config);
 		network.initialize(true);
+		
+		NetworkIO io = new NetworkIO();
+		io.setValue(KeyValueSDR.DEFAULT_VALUE_KEY, 0);
+		
+		network.processIO(io);
+		assertEqual(io.hasErrors(),false,"Network IO has unexpected errors");
+		
+		for (String name: io.getProcessorNames()) {
+			System.out.println("Processor: " + name);
+			ProcessorIO pIO = io.getProcessorIO(name);
+			for (SDR output: pIO.outputs) {
+				System.out.println(" > " + output);
+			}
+		}
 	}
 }

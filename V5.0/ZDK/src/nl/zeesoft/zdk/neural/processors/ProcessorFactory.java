@@ -10,8 +10,13 @@ public class ProcessorFactory {
 		String className = config.getClass().getName();
 		if (className.endsWith("Config")) {
 			className = className.replace("Config","");
-			r = (SDRProcessor) Instantiator.getNewClassInstanceForName(className);
-			r.initialize();
+			Object obj = Instantiator.getNewClassInstanceForName(className);
+			if (obj!=null && obj instanceof SDRProcessor) {
+				r = (SDRProcessor) Instantiator.getNewClassInstanceForName(className);
+				if (initialize) {
+					r.initialize();
+				}
+			}
 		}
 		return r;
 	}

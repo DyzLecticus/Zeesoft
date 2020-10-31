@@ -3,14 +3,16 @@ package nl.zeesoft.zdk.neural.processors;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class Processor implements StrAble {
 	private Lock			lock						= new Lock();
+	
 	private String			name						= "";
-	private SDRProcessor	processor					= null;
 	private Str				description					= null;
+	private SDRProcessor	processor					= null;
 	
 	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
 	private	CodeRunnerChain	processingOnlyChain			= new CodeRunnerChain();
@@ -25,8 +27,20 @@ public class Processor implements StrAble {
 		description.sb().insert(0,name);
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public Str getDescription() {
 		return description;
+	}
+	
+	public void resetState(CodeRunnerList runnerList) {
+		lock.lock(this);
+		if (processor instanceof TemporalMemory) {
+			((TemporalMemory)processor).resetState(runnerList);
+		}
+		lock.unlock(this);
 	}
 	
 	public void processIO(ProcessorIO io) {
