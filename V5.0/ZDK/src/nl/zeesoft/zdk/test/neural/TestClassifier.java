@@ -34,6 +34,7 @@ public class TestClassifier extends TestObject {
 		System.out.println("The classifications and/or predictions will be attached to the output *KeyValueSDR* using *Classification* objects.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
+		System.out.println(ClassifierConfig.DESCRIPTION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the classifier");

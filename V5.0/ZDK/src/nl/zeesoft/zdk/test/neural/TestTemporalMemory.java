@@ -5,8 +5,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.BasicScalarEncoder;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -29,6 +29,7 @@ public class TestTemporalMemory extends TestObject {
 		System.out.println("A *TemporalMemoryConfig* can be used to configure the *TemporalMemory* before initialization.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
+		System.out.println(TemporalMemoryConfig.DESCRIPTION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the temporal memory");

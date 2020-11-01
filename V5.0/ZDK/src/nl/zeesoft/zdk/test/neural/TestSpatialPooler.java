@@ -5,8 +5,8 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.BasicScalarEncoder;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.model.CellGrid;
 import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
@@ -30,6 +30,7 @@ public class TestSpatialPooler extends TestObject {
 		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler* before initialization.");
 		printSDRProcessorInfo();
 		System.out.println();
+		System.out.println(SpatialPoolerConfig.DESCRIPTION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the spatial pooler");

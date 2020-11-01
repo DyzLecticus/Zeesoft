@@ -45,6 +45,7 @@ public class TestSDR extends TestObject {
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestSDR.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(BasicScalarEncoder.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows an example SDR in its compressed and visualized form.");

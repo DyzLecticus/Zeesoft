@@ -47,7 +47,7 @@ public class SDR implements StrAble {
 	}
 	
 	public void flatten() {
-		sizeX = sizeX * sizeY;
+		sizeX = length();
 		sizeY = 1;
 	}
 	
@@ -56,10 +56,10 @@ public class SDR implements StrAble {
 		if (sizeY==1) {
 			sizeX = (int) Math.sqrt(sizeX);
 			sizeY = sizeX;
-			if (sizeX * sizeY < oriSizeX) {
+			if (length() < oriSizeX) {
 				sizeX++;
 			}
-			if (sizeX * sizeY < oriSizeX) {
+			if (length() < oriSizeX) {
 				sizeY++;
 			}
 		}
@@ -72,6 +72,10 @@ public class SDR implements StrAble {
 	public int sizeY() {
 		return sizeY;
 	}
+
+	public int length() {
+		return sizeX * sizeY;
+	}
 	
 	public boolean getBit(Integer bit) {
 		return onBits.contains(bit);
@@ -83,7 +87,7 @@ public class SDR implements StrAble {
 	
 	public void setBit(Integer bit, boolean value) {
 		if (value) {
-			if (!onBits.contains(bit) && bit < sizeX * sizeY) {
+			if (!onBits.contains(bit) && bit < length()) {
 				onBits.add(bit);
 			}
 		} else {
@@ -103,6 +107,12 @@ public class SDR implements StrAble {
 		}
 	}
 	
+	public void concat(SDR sdr,int offset) {
+		for (Integer onBit: sdr.onBits) {
+			setBit(offset + onBit,true);
+		}
+	}
+	
 	public void subsample(int maxOnBits) {
 		if (maxOnBits<=0) {
 			onBits.clear();
@@ -118,11 +128,11 @@ public class SDR implements StrAble {
 			int remove = (int) ((float) onBits.size() * distortion);
 			List<Integer> notBits = getOnBits();
 			subsample(onBits.size() - remove);
-			int max = (sizeX * sizeY) - 1;
+			int max = length() - 1;
 			for (int i = 0; i < remove; i++) {
 				boolean set = false;
 				int attempts = 0;
-				while(!set && attempts<(sizeX * sizeY)) {
+				while(!set && attempts<length()) {
 					int onBit = Rand.getRandomInt(0, max);
 					if (!notBits.contains(onBit)) {
 						onBits.add(onBit);

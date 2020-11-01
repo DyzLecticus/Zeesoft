@@ -114,7 +114,17 @@ public class NetworkConfig {
 	
 	public Str testConfiguration() {
 		Str r = new Str();
-		// TODO: Check unique names and links
+		int i = 0;
+		for (String name: inputNames) {
+			if (inputNames.lastIndexOf(name)>i) {
+				if (r.sb().length()>0) {
+					r.sb().append("\n");
+				}
+				r.sb().append("Input name must be unique: ");
+				r.sb().append(name);
+			}
+			i++;
+		}
 		for (NetworkProcessorConfig config: processorConfigs) {
 			if (inputNames.contains(config.name)) {
 				if (r.sb().length()>0) {

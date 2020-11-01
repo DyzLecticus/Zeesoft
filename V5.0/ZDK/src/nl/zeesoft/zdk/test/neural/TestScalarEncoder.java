@@ -24,6 +24,7 @@ public class TestScalarEncoder extends TestObject {
 		System.out.println("A *ScalarEncoderConfig* can be used to configure the *ScalarEncoder* before initialization.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
+		System.out.println(ScalarEncoderConfig.DESCRIPTION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the encoder");

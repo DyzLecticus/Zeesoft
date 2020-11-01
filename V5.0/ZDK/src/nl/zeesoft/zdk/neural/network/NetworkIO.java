@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -32,14 +31,11 @@ public class NetworkIO {
 		values.clear();
 		processorIO.clear();
 		errors.clear();
-		for (Entry<String,Object> entry: io.values.entrySet()) {
-			this.values.put(entry.getKey(), entry.getValue());
-		}
+		
+		this.values.putAll(io.values);
 		this.timeoutMs = io.timeoutMs;
-		for (Entry<String,ProcessorIO> entry: io.processorIO.entrySet()) {
-			this.processorIO.put(entry.getKey(), entry.getValue());
-		}
-		errors.addAll(io.errors);
+		this.processorIO.putAll(io.processorIO);
+		this.errors.addAll(io.errors);
 		lock.unlock(this);
 		io.lock.unlock(this);
 	}

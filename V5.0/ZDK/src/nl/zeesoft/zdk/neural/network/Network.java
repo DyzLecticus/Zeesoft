@@ -262,9 +262,13 @@ public class Network {
 			for (NetworkLink link: linksTo) {
 				if (config.inputNames.contains(link.fromName)) {
 					Object value = currentIO.getValue(link.fromName);
-					KeyValueSDR sdr = new KeyValueSDR();
-					sdr.setValue(value);
-					inputs[link.toIndex] = sdr;
+					if (value instanceof SDR) {
+						inputs[link.toIndex] = (SDR) value;
+					} else {
+						KeyValueSDR sdr = new KeyValueSDR();
+						sdr.setValue(value);
+						inputs[link.toIndex] = sdr;
+					}
 				} else {
 					NetworkProcessorConfig cfg = config.getNetworkProcessorConfig(link.fromName);
 					NetworkIO sourceIO = currentIO;

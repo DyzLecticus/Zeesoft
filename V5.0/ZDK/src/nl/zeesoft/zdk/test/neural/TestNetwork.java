@@ -29,6 +29,7 @@ public class TestNetwork extends TestObject {
 		System.out.println("This test shows how to use a *Network* to link *Processor* instances together. ");
 		System.out.println("A *NetworkConfig* instance can be used to configure the *Network* before initialization. ");
 		System.out.println("A *NetworkIO* instances can be used to feed input to the network and gather all the processor output. ");
+		System.out.println("Non-SDR network input values will be wrapped in a *KeyValueSDR* before being passed to a processor. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

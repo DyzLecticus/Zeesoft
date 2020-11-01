@@ -62,6 +62,15 @@ public class ZDK extends LibraryObject {
 		System.out.println("   * Value classification and prediction  ");
 		System.out.println("   * Neural networks  ");
 		System.out.println();
+		System.out.println("**HTM implementation notes**  ");
+		System.out.println(" * SDRs have two dimensions by default in order to retain topographical properties throughout networks  ");
+		System.out.println(" * Individual SDR processors and networks use multi threading to maximize performance  ");
+		System.out.println(" * The spatial pooler does not support local inhibition  ");
+		System.out.println(" * The temporal memory does not generate any initial segments/synapses  ");
+		System.out.println(" * The temporal memory supports optional apical feedback  ");
+		System.out.println(" * The classifier can be configured to slowly forget old SDR associations  ");
+		System.out.println(" * The implementation allows for SDR processor and network customization via configuration and/or code extension   ");
+		System.out.println();
 		describeRelease();
 		System.out.println();
 		describeTesting(ZDK.class);

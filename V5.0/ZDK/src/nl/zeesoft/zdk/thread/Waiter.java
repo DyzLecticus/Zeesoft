@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.thread;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Waiter {	
+public class Waiter {
 	public static boolean waitFor(Waitable waitable, int waitMs) {
 		boolean r = false;
 		int sleepMs = 1;
