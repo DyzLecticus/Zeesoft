@@ -6,10 +6,10 @@ package nl.zeesoft.zdk.neural.processors;
 public class ScalarEncoderConfig extends AbstractEncoderConfig{
 	public static String 	DESCRIPTION 	=
 		"Configurable properties;  \n" + 
-		" * sizeX, sizeY; Encoded output SDR dimensions.  \n" + 
-		" * onBits; The number of on bits in the encoded output.  \n" +
-		" * minValue, maxValue; The value range this encoder will encode.  \n" +
-		" * periodic; Indicates the encoder should wrap the on bits over the value range.  \n" +
+		" * *sizeX*, *sizeY*; Encoded output SDR dimensions.  \n" + 
+		" * *onBits*; The number of on bits in the encoded output.  \n" +
+		" * *minValue*, *maxValue*; The value range this encoder will encode.  \n" +
+		" * *periodic*; Indicates the encoder should wrap the on bits over the value range.  \n" +
 		"";
 	
 	public float	minValue	= 0;

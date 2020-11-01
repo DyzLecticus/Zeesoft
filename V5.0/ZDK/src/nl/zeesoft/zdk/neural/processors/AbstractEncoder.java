@@ -12,7 +12,7 @@ import nl.zeesoft.zdk.thread.RunCode;
 
 public abstract class AbstractEncoder extends SDRProcessor {
 	public static final int			SDR_OUTPUT		= 0;
-	public static final int			VALUE_OUTPUT	= 0;
+	public static final int			VALUE_OUTPUT	= 1;
 	
 	// Configuration
 	protected int					sizeX			= 16;

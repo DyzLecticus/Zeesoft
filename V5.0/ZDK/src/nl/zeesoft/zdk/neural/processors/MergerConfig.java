@@ -6,10 +6,10 @@ package nl.zeesoft.zdk.neural.processors;
 public class MergerConfig extends SDRProcessorConfig{
 	public static String 	DESCRIPTION 	=
 		"Configurable properties;  \n" + 
-		" * sizeX, sizeY; Merged output SDR dimensions (input SDR dimensions are not restricted).  \n" + 
-		" * concatenate; Indicates the input SDRs should be concatenated.  \n" +
-		" * maxOnBits; Optional maximum number of on bits in the merged output (uses sub sampling).  \n" +
-		" * pdistortion; Optional on bit distortion to the output SDR.  \n" +
+		" * *sizeX*, *sizeY*; Merged output SDR dimensions (input SDR dimensions are not restricted).  \n" + 
+		" * *concatenate*; Indicates the input SDRs should be concatenated.  \n" +
+		" * *maxOnBits*; Optional maximum number of on bits in the merged output (uses sub sampling).  \n" +
+		" * *pdistortion*; Optional on bit distortion to the output SDR.  \n" +
 		"";
 
 	public int		sizeX		= 768;

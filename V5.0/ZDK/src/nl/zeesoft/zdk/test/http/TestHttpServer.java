@@ -33,7 +33,7 @@ public class TestHttpServer extends TestObject {
 		System.out.println("This test shows how to configure, start and stop an *HttpServer*. ");
 		System.out.println("It also shows how an *HttpClient* can be used to send HTTP requests and process the responses. ");
 		System.out.println("The *HttpServer* provided by this library does not support HTTPS. ");
-		System.out.println("The behavior of the *HttpServer can be customized by overriding and/or extending the *HttpServerConfig* and *HttpRequestHandler*. ");
+		System.out.println("The behavior of the *HttpServer* can be customized by overriding and/or extending the *HttpServerConfig* and *HttpRequestHandler*. ");
 		System.out.println("An example of such customization is the *ProxyServerConfig* and *ProxyRequestHandler* which will make the *HttpServer* function as a proxy server. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");

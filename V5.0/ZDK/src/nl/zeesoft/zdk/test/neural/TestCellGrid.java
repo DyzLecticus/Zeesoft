@@ -58,7 +58,7 @@ public class TestCellGrid extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Synapse.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the *Str* form of an example 8*2*1 cell grid.  ");
+		System.out.println("The output of this test shows the *Str* form of an example 8 by 2 by 1 cell grid.  ");
 	}
 
 	@Override

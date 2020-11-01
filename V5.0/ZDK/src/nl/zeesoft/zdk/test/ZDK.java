@@ -42,7 +42,6 @@ public class ZDK extends LibraryObject {
 		System.out.println("Zeesoft Development Kit");
 		System.out.println("=======================");
 		System.out.println("The Zeesoft Development Kit (ZDK) is an open source library for Java application development.  ");
-		System.out.println();
 		System.out.println("It provides support for;  ");
 		System.out.println(" * Self documenting and testing libraries  ");
 		System.out.println(" * (Mock) File writing and reading  ");
@@ -61,8 +60,8 @@ public class ZDK extends LibraryObject {
 		System.out.println("   * Temporal memory  ");
 		System.out.println("   * Value classification and prediction  ");
 		System.out.println("   * Neural networks  ");
-		System.out.println();
-		System.out.println("**HTM implementation notes**  ");
+		System.out.println("  ");
+		System.out.println("HTM implementation notes;  ");
 		System.out.println(" * SDRs have two dimensions by default in order to retain topographical properties throughout networks  ");
 		System.out.println(" * Individual SDR processors and networks use multi threading to maximize performance  ");
 		System.out.println(" * The spatial pooler does not support local inhibition  ");
@@ -70,7 +69,7 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * The temporal memory supports optional apical feedback  ");
 		System.out.println(" * The classifier can be configured to slowly forget old SDR associations  ");
 		System.out.println(" * The implementation allows for SDR processor and network customization via configuration and/or code extension   ");
-		System.out.println();
+		System.out.println("  ");
 		describeRelease();
 		System.out.println();
 		describeTesting(ZDK.class);

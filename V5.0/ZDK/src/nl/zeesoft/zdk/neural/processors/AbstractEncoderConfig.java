@@ -10,8 +10,8 @@ package nl.zeesoft.zdk.neural.processors;
 public abstract class AbstractEncoderConfig extends SDRProcessorConfig{
 	public static String 	DESCRIPTION 	=
 		"Configurable properties;  \n" + 
-		" * sizeX, sizeY; Encoded output SDR dimensions.  \n" + 
-		" * onBits; The number of on bits in the encoded output.  \n" +
+		" * *sizeX*, *sizeY*; Encoded output SDR dimensions.  \n" + 
+		" * *onBits*; The number of on bits in the encoded output.  \n" +
 		"";
 
 	public int	sizeX	= 16;

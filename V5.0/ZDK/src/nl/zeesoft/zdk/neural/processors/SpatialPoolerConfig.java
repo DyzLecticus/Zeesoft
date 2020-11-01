@@ -19,14 +19,13 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 		"Please note; The current implementation does not support local inhibition.  \n" +
 	    "  \n" + 
 		"Configurable properties;  \n" + 
-		" * inputSizeX, inputSizeY; Input SDR dimensions.  \n" + 
-		" * outputSizeX, outputSizeY; Output SDR dimensions (mini column dimensions).  \n" +
-		" * outputOnBits; Maximum number of on bits in the output.  \n" +
-		" * potentialConnections, potentialRadius; Number and optional radius of potential connections relative to the input space.  \n" +
-		" * permanenceThreshold, permanenceIncrement, permanenceDecrement; Potential synapse adaptation control .  \n" +
-		" * activationHistorySize; Historic column activation buffer size (used to calculate boost factors).  \n" +
-		" * Historic column activation buffer size (used to calculate boost factors).  \n" +
-		" * boostStrength; Boost strength.  \n" +
+		" * *inputSizeX*, *inputSizeY*; Input SDR dimensions.  \n" + 
+		" * *outputSizeX*, *outputSizeY*; Output SDR dimensions (mini column dimensions).  \n" +
+		" * *outputOnBits*; Maximum number of on bits in the output.  \n" +
+		" * *potentialConnections*, *potentialRadius*; Number and optional radius of potential connections relative to the input space.  \n" +
+		" * *permanenceThreshold*, *permanenceIncrement*, *permanenceDecrement*; Potential synapse adaptation control.  \n" +
+		" * *activationHistorySize*; Historic column activation buffer size (used to calculate boost factors).  \n" +
+		" * *boostStrength*; Boost strength.  \n" +
 		"";
 
 	public int		inputSizeX					= 16;

@@ -38,10 +38,10 @@ public class TestGrid extends TestObject {
 		System.out.println("grid.setValue(1, 2, 3, 0.5F);");
 		System.out.println("// Create a column function");
 		System.out.println("ColumnFunction increment1 = new ColumnFunction() {");
-		System.out.println("	@Override");
-		System.out.println("	public Object applyFunction(GridColumn column, int posZ, Object value) {");
-		System.out.println("		return (float)value + 1F;");
-		System.out.println("	}");
+		System.out.println("    @Override");
+		System.out.println("    public Object applyFunction(GridColumn column, int posZ, Object value) {");
+		System.out.println("        return (float)value + 1F;");
+		System.out.println("    }");
 		System.out.println("};");
 		System.out.println("// Apply the column function (specify a *CodeRunnerList* for multi threaded application)");
 		System.out.println("grid.applyFunction(increment1);");
@@ -56,7 +56,7 @@ public class TestGrid extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(CodeRunnerList.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the number of columns for a 48*48*16 grid and some column value manipulations.  ");
+		System.out.println("The output of this test shows the number of columns for a 48 by 48 by 16 grid and some column value manipulations.  ");
 	}
 
 	@Override

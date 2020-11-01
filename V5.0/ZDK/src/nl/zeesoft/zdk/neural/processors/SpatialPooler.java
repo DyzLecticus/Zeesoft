@@ -163,7 +163,6 @@ public class SpatialPooler extends CellGridProcessor {
 				msg.sb().append(inputSizeX);
 				msg.sb().append("*");
 				msg.sb().append(inputSizeY);
-				msg.sb().append("*1");
 				Logger.err(this, msg);
 			}
 		} else {
