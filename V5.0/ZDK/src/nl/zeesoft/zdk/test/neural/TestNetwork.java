@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.test.neural;
 
+import java.util.List;
+
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
@@ -7,6 +10,7 @@ import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
@@ -22,45 +26,47 @@ public class TestNetwork extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how to use a *CellGrid* grid to model a multi dimensional set of neural cells. ");
-		System.out.println("The *Cell* instances in the grid are designed to support the Numenta HTM cell model. ");
-		System.out.println("This allows the Numenta HTM algorithms to be implemented on these grids. ");
+		System.out.println("This test shows how to use a *Network* link *Processor* instances together. ");
+		System.out.println("A *NetworkConfig* instance can be used to configure a *Network* before initialization. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the grid");
-		System.out.println("CellGrid grid = new CellGrid();");
-		System.out.println("// Initialize the grid");
-		System.out.println("grid.initialize(8, 2);");
-		System.out.println("// Get a cell");
-		System.out.println("Cell cell = (Cell)grid.getValue(1, 0, 0);");
-		System.out.println("// Create a segment (proximal/distal/apical)");
-		System.out.println("DistalSegment segment = new DistalSegment();");
-		System.out.println("// Attach the segment to the cell");
-		System.out.println("cell.distalSegments.add(segment);");
-		System.out.println("// Create a synapse");
-		System.out.println("Synapse syn = new Synapse();");
-		System.out.println("syn.connectTo.x = 1;");
-		System.out.println("syn.connectTo.y = 1;");
-		System.out.println("syn.connectTo.z = 1;");
-		System.out.println("syn.permanence = 0.1F;");
-		System.out.println("// Attach the synapse to the segment");
-		System.out.println("segment.synapses.add(syn);");
+		System.out.println("// Create the configuration");
+		System.out.println("NetworkConfig config = new NetworkConfig();");
+		System.out.println("// Define a network input");
+		System.out.println("config.inputNames.add(\"input1\");");
+		System.out.println("// Add some processors");
+		System.out.println("config.addEncoder(\"EN\");");
+		System.out.println("config.addSpatialPooler(\"SP\");");
+		System.out.println("config.addTemporalMemory(\"TM\");");
+		System.out.println("config.addClassifier(\"CL\");");
+		System.out.println("// Link the network inputs and processors");
+		System.out.println("config.addLink(\"input1\", 0, \"EN\", 0);");
+		System.out.println("config.addLink(\"EN\", 0, \"SP\", 0);");
+		System.out.println("config.addLink(\"SP\", 0, \"TM\", 0);");
+		System.out.println("config.addLink(\"TM\", 0, \"CL\", 0);");
+		System.out.println("config.addLink(\"input1\", 0, \"CL\", 1);");
+		System.out.println("// Create the network");
+		System.out.println("Network network = new Network();");
+		System.out.println("network.configure(config);");
+		System.out.println("network.initialize(true);");
+		System.out.println("// Use the network");
+		System.out.println("NetworkIO io = new NetworkIO();");
+		System.out.println("io.setValue(\"input1\", 1);");
+		System.out.println("network.processIO(io);");
+		System.out.println("// Save the network");
+		System.out.println("network.save(\"data/\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
 		System.out.println(" * " + getTester().getLinkForClass(TestNetwork.class));
-		System.out.println(" * " + getTester().getLinkForClass(CellGrid.class));
-		System.out.println(" * " + getTester().getLinkForClass(Cell.class));
-		System.out.println(" * " + getTester().getLinkForClass(ProximalSegment.class));
-		System.out.println(" * " + getTester().getLinkForClass(DistalSegment.class));
-		System.out.println(" * " + getTester().getLinkForClass(ApicalSegment.class));
-		System.out.println(" * " + getTester().getLinkForClass(Synapse.class));
+		System.out.println(" * " + getTester().getLinkForClass(Network.class));
+		System.out.println(" * " + getTester().getLinkForClass(Processor.class));
+		System.out.println(" * " + getTester().getLinkForClass(NetworkConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(NetworkIO.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the *Str* form of an example 8*2*1 cell grid.  ");
-		*/
+		System.out.println("The output of this test shows some network debug logging and an example output.  ");
 	}
 
 	@Override
@@ -88,12 +94,28 @@ public class TestNetwork extends TestObject {
 		network.configure(config);
 		network.initialize(true);
 		
-		NetworkIO io = new NetworkIO();
-		io.setValue(KeyValueSDR.DEFAULT_VALUE_KEY, 0);
+		System.out.println();
+		Logger.dbg(this, new Str("Processing 100 SDRs ..."));
+		NetworkIO io = null;
+		for (int i = 0; i < 100; i++) {
+			io = new NetworkIO();
+			io.setValue(KeyValueSDR.DEFAULT_VALUE_KEY, i%2);
+			network.processIO(io);
+			assertEqual(io.hasErrors(),false,"Network IO has unexpected errors");
+		}
+		Logger.dbg(this, new Str("Processed 100 SDRs"));
 		
-		network.processIO(io);
-		assertEqual(io.hasErrors(),false,"Network IO has unexpected errors");
+		System.out.println();
 		
+		network.save("dist");
+		List<Str> actionLog = FileIO.getActionLog();
+		assertEqual(actionLog.size(),4,"Number of actions does not match expectation");
+		
+		network.load("dist");
+		actionLog = FileIO.getActionLog();
+		assertEqual(actionLog.size(),8,"Number of actions does not match expectation");
+
+		System.out.println();
 		for (String name: io.getProcessorNames()) {
 			System.out.println("Processor: " + name);
 			ProcessorIO pIO = io.getProcessorIO(name);

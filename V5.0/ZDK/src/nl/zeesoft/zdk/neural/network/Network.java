@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
@@ -25,6 +26,7 @@ public class Network {
 	// Configuration
 	private NetworkConfig		config					= new NetworkConfig();
 	
+	private Lock				initLocker				= new Lock();
 	private List<Processor>		processors				= new ArrayList<Processor>();
 	private List<String>		learningProcessorNames	= new ArrayList<String>();
 	private CodeRunnerChain		processorChain			= null;
@@ -32,9 +34,6 @@ public class Network {
 	// State
 	private NetworkIO			currentIO				= null;
 	private NetworkIO			previousIO				= null;
-	
-	// TODO: Multi thread initialize and state reset
-	// TODO: Add multi threaded save and load
 	
 	public Str configure(NetworkConfig config) {
 		Str err = config.testConfiguration();
@@ -44,37 +43,30 @@ public class Network {
 			lock.lock(this);
 			this.config.copyFrom(config);
 			processors.clear();
-			processorChain = new CodeRunnerChain();
 			learningProcessorNames.clear();
+			processorChain = new CodeRunnerChain();
 			lock.unlock(this);
 		}
 		return err;
 	}
 	
 	public Str initialize(boolean resetConnections) {
+		lock.lock(this);
 		Str err = config.testConfiguration();
+		lock.unlock(this);
 		if (err.length()>0) {
 			Logger.err(this, err);
 		} else {
 			err = new Str();
 			Logger.dbg(this, new Str("Initializing network ..."));
+
 			lock.lock(this);
-			for (NetworkProcessorConfig cfg: config.processorConfigs) {
-				Processor processor = ProcessorFactory.getNewProcessor(cfg.name, cfg.processorConfig, cfg.threads, resetConnections);
-				if (processor!=null) {
-					processors.add(
-						ProcessorFactory.getNewProcessor(
-							cfg.name, cfg.processorConfig, cfg.threads, resetConnections
-						)
-					);
-					learningProcessorNames.add(cfg.name);
-				} else {
-					if (err.length()>0) {
-						err.sb().append("\n");
-					}
-					err.sb().append("Failed to initialize processor: ");
-					err.sb().append(cfg.name);
-				}
+			CodeRunnerList runnerList = buildInitializeRunnerListNoLock(resetConnections);
+			if (!Waiter.startAndWaitFor(runnerList, config.initializeTimeoutMs)) {
+				err.sb().append("Network initialization timed out");
+			}
+			if (processors.size() < config.processorConfigs.size()) {
+				err.sb().append("Failed to initialize one or more processors");
 			}
 			if (err.length()==0) {
 				buildProcessorChainNoLock(processorChain);
@@ -83,6 +75,7 @@ public class Network {
 				learningProcessorNames.clear();
 			}
 			lock.unlock(this);
+			
 			if (err.length()==0) {
 				Logger.dbg(this, new Str("Initialized network"));
 			} else {
@@ -95,28 +88,50 @@ public class Network {
 	public void setProcessorLearning(String name, boolean learning) {
 		lock.lock(this);
 		if (learning) {
-			if (!learningProcessorNames.contains(name)) {
+			if (name.equals("*")) {
+				learningProcessorNames.clear();
+				for (NetworkProcessorConfig cfg: config.processorConfigs) {
+					learningProcessorNames.add(cfg.name);
+				}
+			} else if (!learningProcessorNames.contains(name)) {
 				learningProcessorNames.add(name);
 			}
 		} else {
-			learningProcessorNames.remove(name);
+			if (name.equals("*")) {
+				learningProcessorNames.clear();
+			} else {
+				learningProcessorNames.remove(name);
+			}
 		}
 		lock.unlock(this);
 	}
 	
-	public boolean resetState() {
-		return resetState(1000);
+	public boolean resetConnections() {
+		boolean r = false;
+		lock.lock(this);
+		if (processors.size()>0) {
+			CodeRunnerList runnerList = new CodeRunnerList();
+			for (Processor processor: processors) {
+				processor.resetConnections(runnerList);
+			}
+			r = Waiter.startAndWaitFor(runnerList, config.resetStateTimeoutMs);
+		}
+		lock.unlock(this);
+		return r;
 	}
 	
-	public boolean resetState(int timeoutMs) {
+	public boolean resetState() {
+		boolean r = false;
 		lock.lock(this);
-		CodeRunnerList runnerList = new CodeRunnerList();
-		for (Processor processor: processors) {
-			processor.resetState(runnerList);
+		if (processors.size()>0) {
+			CodeRunnerList runnerList = new CodeRunnerList();
+			for (Processor processor: processors) {
+				processor.resetState(runnerList);
+			}
+			r = Waiter.startAndWaitFor(runnerList, config.resetStateTimeoutMs);
+			currentIO = null;
+			previousIO = null;
 		}
-		boolean r = Waiter.startAndWaitFor(runnerList, timeoutMs);
-		currentIO = null;
-		previousIO = null;
 		lock.unlock(this);
 		return r;
 	}
@@ -149,6 +164,40 @@ public class Network {
 		return !networkIO.hasErrors();
 	}
 
+	public Str save(String directory) {
+		return saveLoad(true, directory);
+	}
+
+	public Str load(String directory) {
+		return saveLoad(false, directory);
+	}
+
+	protected CodeRunnerList buildInitializeRunnerListNoLock(boolean resetConnections) {
+		CodeRunnerList r = new CodeRunnerList();
+		for (NetworkProcessorConfig cfg: config.processorConfigs) {
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					initializeNetworkProcessor((NetworkProcessorConfig) params[0], resetConnections);
+					return true;
+				}
+			};
+			code.params[0] = cfg;
+			r.add(code);
+		}
+		return r;
+	}
+	
+	protected void initializeNetworkProcessor(NetworkProcessorConfig cfg, boolean resetConnections) {
+		Processor processor = ProcessorFactory.getNewProcessor(cfg.name, cfg.processorConfig, cfg.threads, resetConnections);
+		if (processor!=null) {
+			initLocker.lock(this);
+			processors.add(processor);
+			learningProcessorNames.add(cfg.name);
+			initLocker.unlock(this);
+		}
+	}
+	
 	protected void buildProcessorChainNoLock(CodeRunnerChain chain) {
 		SortedMap<Integer,List<Processor>> processorsByLayer = getLayerProcessorsNoLock();
 		for (Entry<Integer,List<Processor>> entry: processorsByLayer.entrySet()) {
@@ -237,5 +286,60 @@ public class Network {
 				currentIO.setProcessorIO(processor.getName(),io);
 			}
 		}
+	}
+	
+	protected Str saveLoad(boolean save, String directory) {
+		Str err = new Str();
+		if (save) {
+			Logger.dbg(this, new Str("Saving network ..."));
+		} else {
+			Logger.dbg(this, new Str("Loading network ..."));
+		}
+		lock.lock(this);
+		int timeoutMs = config.saveTimeoutMs;
+		if (!save) {
+			timeoutMs = config.loadTimeoutMs;
+		}
+		CodeRunnerList runnerList = buildSaveLoadRunnerList(save,directory);
+		if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
+			if (save) {
+				err.sb().append("Saving network timed out");
+			} else {
+				err.sb().append("Loading network timed out");
+			}
+		}
+		lock.unlock(this);
+		if (err.length()==0) {
+			if (save) {
+				Logger.dbg(this, new Str("Saved network"));
+			} else {
+				Logger.dbg(this, new Str("Loaded network"));
+			}
+		} else {
+			Logger.err(this, err);
+		}
+		return err;
+	}
+	
+	protected CodeRunnerList buildSaveLoadRunnerList(boolean save, String directory) {
+		CodeRunnerList r = new CodeRunnerList();
+		for (Processor processor: processors) {
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					Processor processor = (Processor) params[0];
+					String path = FileIO.addSlash(directory) + processor.getName();
+					if (save) {
+						processor.save(path);
+					} else {
+						processor.load(path);
+					}
+					return true;
+				}
+			};
+			code.params[0] = processor;
+			r.add(code);
+		}
+		return r;
 	}
 }

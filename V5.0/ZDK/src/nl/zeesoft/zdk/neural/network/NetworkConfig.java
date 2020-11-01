@@ -12,6 +12,11 @@ import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfig {
+	public int								initializeTimeoutMs	= 3000;
+	public int								resetStateTimeoutMs	= 1000;
+	public int								saveTimeoutMs		= 30000;
+	public int								loadTimeoutMs		= 30000;
+	
 	public List<String>						inputNames			= new ArrayList<String>();
 	public List<NetworkProcessorConfig>		processorConfigs	= new ArrayList<NetworkProcessorConfig>();
 	public List<NetworkLink>				links				= new ArrayList<NetworkLink>();
@@ -28,6 +33,11 @@ public class NetworkConfig {
 		inputNames.clear();
 		processorConfigs.clear();
 		links.clear();
+		
+		this.initializeTimeoutMs = config.initializeTimeoutMs;
+		this.resetStateTimeoutMs = config.resetStateTimeoutMs;
+		this.saveTimeoutMs = config.saveTimeoutMs;
+		this.loadTimeoutMs = config.loadTimeoutMs;
 		
 		inputNames.addAll(config.inputNames);
 		for (NetworkProcessorConfig cfg: config.processorConfigs) {

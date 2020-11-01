@@ -22,7 +22,7 @@ public class TestCellGrid extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *CellGrid* grid to model a multi dimensional set of neural cells. ");
+		System.out.println("This test shows how to use a *CellGrid* to model a multi dimensional set of neural cells. ");
 		System.out.println("The *Cell* instances in the grid are designed to support the Numenta HTM cell model. ");
 		System.out.println("This allows the Numenta HTM algorithms to be implemented on these grids. ");
 		System.out.println();

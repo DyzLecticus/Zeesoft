@@ -12,11 +12,7 @@ public class Waiter {
 			try {
 				Thread.sleep(sleepMs);
 				waitedMs += sleepMs;
-				if (waitedMs >= 100) {
-					sleepMs = 50;
-				} else if (waitedMs >= 25) {
-					sleepMs = 10;
-				}
+				sleepMs = getSleepMs(waitedMs);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
@@ -58,11 +54,7 @@ public class Waiter {
 			try {
 				Thread.sleep(sleepMs);
 				waitedMs += sleepMs;
-				if (waitedMs >= 100) {
-					sleepMs = 50;
-				} else if (waitedMs >= 25) {
-					sleepMs = 10;
-				}
+				sleepMs = getSleepMs(waitedMs);
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
@@ -80,6 +72,16 @@ public class Waiter {
 				r = true;
 				break;
 			}
+		}
+		return r;
+	}
+	
+	private static int getSleepMs(int waitedMs) {
+		int r = 1;
+		if (waitedMs >= 500) {
+			r = 50;
+		} else if (waitedMs >= 100) {
+			r = 10;
 		}
 		return r;
 	}

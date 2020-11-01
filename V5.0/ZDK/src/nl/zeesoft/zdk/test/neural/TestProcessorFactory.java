@@ -48,10 +48,10 @@ public class TestProcessorFactory extends TestObject {
 		System.out.println("io1.inputs.add(new SDR());");
 		System.out.println("sp.processIO(io1);");
 
-		System.out.println("// Use the spatial pooler");
-		System.out.println("ProcessorIO io1 = new ProcessorIO();");
-		System.out.println("io1.inputs.add(new SDR());");
-		System.out.println("sp.processIO(io1);");
+		System.out.println("// Use the temporal memory");
+		System.out.println("ProcessorIO io2 = new ProcessorIO();");
+		System.out.println("io2.inputs.add(io1.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT);");
+		System.out.println("tm.processIO(io2);");
 
 		System.out.println("// Use the classifier");
 		System.out.println("KeyValueSDR kvSdr = new KeyValueSDR(io2.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT));");
@@ -63,6 +63,11 @@ public class TestProcessorFactory extends TestObject {
 		System.out.println("// Get the classification");
 		System.out.println("KeyValueSDR kvSdr = (KeyValueSDR) outputList.get(outputList.size() - 1);");
 		System.out.println("Classification cls = (Classification) kvSdr.get(Classifier.CLASSIFICATION_VALUE_KEY + \":1\");");
+		
+		System.out.println("// Save the processor data to files");
+		System.out.println("sp.save(\"data/sp.txt\");");
+		System.out.println("tm.save(\"data/tm.txt\");");
+		System.out.println("cl.save(\"data/cl.txt\");");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");

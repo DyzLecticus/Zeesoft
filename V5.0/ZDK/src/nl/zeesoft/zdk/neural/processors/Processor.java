@@ -35,12 +35,36 @@ public class Processor implements StrAble {
 		return description;
 	}
 	
+	public void resetConnections() {
+		resetConnections(null);
+	}
+	
+	public void resetConnections(CodeRunnerList runnerList) {
+		if (runnerList==null) {
+			lock.lock(this);
+		}
+		if (processor instanceof CellGridProcessor) {
+			((CellGridProcessor)processor).resetConnections(runnerList);
+		}
+		if (runnerList==null) {
+			lock.unlock(this);
+		}
+	}
+	
+	public void resetState() {
+		resetState(null);
+	}
+	
 	public void resetState(CodeRunnerList runnerList) {
-		lock.lock(this);
+		if (runnerList==null) {
+			lock.lock(this);
+		}
 		if (processor instanceof TemporalMemory) {
 			((TemporalMemory)processor).resetState(runnerList);
 		}
-		lock.unlock(this);
+		if (runnerList==null) {
+			lock.unlock(this);
+		}
 	}
 	
 	public void processIO(ProcessorIO io) {

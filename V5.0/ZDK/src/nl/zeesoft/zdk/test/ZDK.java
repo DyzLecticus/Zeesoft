@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.test.neural.TestCellGrid;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
 import nl.zeesoft.zdk.test.neural.TestEncoder;
 import nl.zeesoft.zdk.test.neural.TestMerger;
+import nl.zeesoft.zdk.test.neural.TestNetwork;
 import nl.zeesoft.zdk.test.neural.TestProcessorFactory;
 import nl.zeesoft.zdk.test.neural.TestSDR;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
@@ -59,6 +60,7 @@ public class ZDK extends LibraryObject {
 		System.out.println("   * Spatial pooling  ");
 		System.out.println("   * Temporal memory  ");
 		System.out.println("   * Value classification and prediction  ");
+		System.out.println("   * Neural networks  ");
 		System.out.println();
 		describeRelease();
 		System.out.println();
@@ -82,5 +84,6 @@ public class ZDK extends LibraryObject {
 		tests.add(new TestClassifier(getTester()));
 		tests.add(new TestMerger(getTester()));
 		tests.add(new TestProcessorFactory(getTester()));
+		tests.add(new TestNetwork(getTester()));
 	}
 }
