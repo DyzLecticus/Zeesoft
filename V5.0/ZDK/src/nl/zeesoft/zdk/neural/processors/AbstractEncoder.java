@@ -2,14 +2,15 @@ package nl.zeesoft.zdk.neural.processors;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.SDREncoder;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class Encoder extends SDRProcessor {
+public abstract class AbstractEncoder extends SDRProcessor {
 	public static final int			SDR_OUTPUT		= 0;
 	public static final int			VALUE_OUTPUT	= 0;
 	
@@ -18,25 +19,17 @@ public class Encoder extends SDRProcessor {
 	protected int					sizeY			= 16;
 	protected int					onBits			= 16;
 	
-	protected float					minValue		= 0;
-	protected float					maxValue		= 200;
-	protected boolean				periodic		= false;
-	
 	// State
 	protected Object				value			= null;
-	protected ScalarEncoder			encoder			= null;
+	protected SDREncoder			encoder			= null;
 	
 	@Override
 	public void configure(SDRProcessorConfig config) {
-		if (config instanceof EncoderConfig) {
-			EncoderConfig cfg = (EncoderConfig) config;
+		if (config instanceof AbstractEncoderConfig) {
+			AbstractEncoderConfig cfg = (AbstractEncoderConfig) config;
 			this.sizeX = cfg.sizeX;
 			this.sizeY = cfg.sizeY;
 			this.onBits = cfg.onBits;
-			
-			this.minValue = cfg.minValue;
-			this.maxValue = cfg.maxValue;
-			this.periodic = cfg.periodic;
 		}
 	}
 		
@@ -59,12 +52,9 @@ public class Encoder extends SDRProcessor {
 		if (sizeY < 2) {
 			sizeY = 2;
 		}
-		encoder = new ScalarEncoder();
+		encoder = getNewEncoder();
 		encoder.setEncodeDimensions(sizeX, sizeY);
 		encoder.setOnBits(onBits);
-		encoder.setMinValue(minValue);
-		encoder.setMaxValue(maxValue);
-		encoder.setPeriodic(periodic);
 	}
 	
 	public void setValue(Object value) {
@@ -113,5 +103,9 @@ public class Encoder extends SDRProcessor {
 		);
 		runnerChain.add(encodeValue);
 		addIncrementProcessedToProcessorChain(runnerChain);
+	}
+	
+	protected SDREncoder getNewEncoder() {
+		return new BasicScalarEncoder();
 	}
 }

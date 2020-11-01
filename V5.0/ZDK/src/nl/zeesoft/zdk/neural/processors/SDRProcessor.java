@@ -12,7 +12,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class SDRProcessor implements StrAble {
+public abstract class SDRProcessor implements StrAble {
 	protected final static String	OBJECT_SEPARATOR	= "@OBJECT@\n";
 	
 	protected int					processed			= 0;

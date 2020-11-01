@@ -9,8 +9,8 @@ package nl.zeesoft.zdk.neural.processors;
  * - distortion; Optional on bit distortion to the output SDR
  */
 public class MergerConfig extends SDRProcessorConfig{
-	public int				sizeX			= 768;
-	public int				sizeY			= 48;
-	public int				maxOnBits		= 256;
-	public float			distortion		= 0.0F;
+	public int		sizeX		= 768;
+	public int		sizeY		= 48;
+	public int		maxOnBits	= 256;
+	public float	distortion	= 0.0F;
 }

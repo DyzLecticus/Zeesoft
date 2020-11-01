@@ -39,32 +39,8 @@ public class Processor implements StrAble {
 		resetConnections(null);
 	}
 	
-	public void resetConnections(CodeRunnerList runnerList) {
-		if (runnerList==null) {
-			lock.lock(this);
-		}
-		if (processor instanceof CellGridProcessor) {
-			((CellGridProcessor)processor).resetConnections(runnerList);
-		}
-		if (runnerList==null) {
-			lock.unlock(this);
-		}
-	}
-	
 	public void resetState() {
 		resetState(null);
-	}
-	
-	public void resetState(CodeRunnerList runnerList) {
-		if (runnerList==null) {
-			lock.lock(this);
-		}
-		if (processor instanceof TemporalMemory) {
-			((TemporalMemory)processor).resetState(runnerList);
-		}
-		if (runnerList==null) {
-			lock.unlock(this);
-		}
 	}
 	
 	public void processIO(ProcessorIO io) {
@@ -124,5 +100,29 @@ public class Processor implements StrAble {
 		lock.lock(this);
 		processor.fromStr(str);
 		lock.unlock(this);
+	}
+	
+	protected void resetConnections(CodeRunnerList runnerList) {
+		if (runnerList==null) {
+			lock.lock(this);
+		}
+		if (processor instanceof CellGridProcessor) {
+			((CellGridProcessor)processor).resetConnections(runnerList);
+		}
+		if (runnerList==null) {
+			lock.unlock(this);
+		}
+	}
+	
+	protected void resetState(CodeRunnerList runnerList) {
+		if (runnerList==null) {
+			lock.lock(this);
+		}
+		if (processor instanceof TemporalMemory) {
+			((TemporalMemory)processor).resetState(runnerList);
+		}
+		if (runnerList==null) {
+			lock.unlock(this);
+		}
 	}
 }

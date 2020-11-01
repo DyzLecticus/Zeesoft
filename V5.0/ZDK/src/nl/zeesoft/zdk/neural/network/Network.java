@@ -11,9 +11,11 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
+import nl.zeesoft.zdk.neural.processors.CellGridProcessor;
 import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
+import nl.zeesoft.zdk.neural.processors.SDRProcessor;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
@@ -21,19 +23,19 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class Network {
-	private Lock				lock					= new Lock();
+	private Lock					lock					= new Lock();
 	
 	// Configuration
-	private NetworkConfig		config					= new NetworkConfig();
+	private NetworkConfig			config					= new NetworkConfig();
 	
-	private Lock				initLocker				= new Lock();
-	private List<Processor>		processors				= new ArrayList<Processor>();
-	private List<String>		learningProcessorNames	= new ArrayList<String>();
-	private CodeRunnerChain		processorChain			= null;
+	private Lock					initLocker				= new Lock();
+	private List<NetworkProcessor>	processors				= new ArrayList<NetworkProcessor>();
+	private List<String>			learningProcessorNames	= new ArrayList<String>();
+	private CodeRunnerChain			processorChain			= null;
 	
 	// State
-	private NetworkIO			currentIO				= null;
-	private NetworkIO			previousIO				= null;
+	private NetworkIO				currentIO				= null;
+	private NetworkIO				previousIO				= null;
 	
 	public Str configure(NetworkConfig config) {
 		Str err = config.testConfiguration();
@@ -111,7 +113,7 @@ public class Network {
 		lock.lock(this);
 		if (processors.size()>0) {
 			CodeRunnerList runnerList = new CodeRunnerList();
-			for (Processor processor: processors) {
+			for (NetworkProcessor processor: processors) {
 				processor.resetConnections(runnerList);
 			}
 			r = Waiter.startAndWaitFor(runnerList, config.resetStateTimeoutMs);
@@ -125,7 +127,7 @@ public class Network {
 		lock.lock(this);
 		if (processors.size()>0) {
 			CodeRunnerList runnerList = new CodeRunnerList();
-			for (Processor processor: processors) {
+			for (NetworkProcessor processor: processors) {
 				processor.resetState(runnerList);
 			}
 			r = Waiter.startAndWaitFor(runnerList, config.resetStateTimeoutMs);
@@ -189,8 +191,13 @@ public class Network {
 	}
 	
 	protected void initializeNetworkProcessor(NetworkProcessorConfig cfg, boolean resetConnections) {
-		Processor processor = ProcessorFactory.getNewProcessor(cfg.name, cfg.processorConfig, cfg.threads, resetConnections);
-		if (processor!=null) {
+		SDRProcessor sdrProcessor = ProcessorFactory.getNewSDRProcessor(cfg.processorConfig, true);
+		if (sdrProcessor!=null) {
+			if (sdrProcessor instanceof CellGridProcessor && resetConnections) {
+				CellGridProcessor cgp = (CellGridProcessor) sdrProcessor;
+				cgp.resetConnections();
+			}
+			NetworkProcessor processor = new NetworkProcessor(cfg.name,sdrProcessor,cfg.threads);
 			initLocker.lock(this);
 			processors.add(processor);
 			learningProcessorNames.add(cfg.name);
@@ -231,7 +238,7 @@ public class Network {
 					names = new ArrayList<Processor>();
 					r.put(cfg.layer, names);
 				}
-				names.add(getProcessorNoLock(cfg.name));
+				names.add(processor);
 			}
 		}
 		return r;

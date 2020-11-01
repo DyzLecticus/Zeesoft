@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.grid.ColumnFunction;
 import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.grid.GridColumn;
 import nl.zeesoft.zdk.grid.Position;
+import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 
 public class CellGrid extends Grid implements StrAble {
@@ -19,17 +20,17 @@ public class CellGrid extends Grid implements StrAble {
 		super(grid);
 	}
 	
-	public void initializeCells(CodeRunnerList runnerList) {
+	public void initializeCells(CodeRunnerList runnerList, int threads) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				return new Cell(new Position(column.posX(), column.posY(), posZ));
 			}
 		};
-		applyFunction(function, runnerList);
+		applyFunction(function, runnerList, threads);
 	}
 	
-	public void resetConnections(CodeRunnerList runnerList) {
+	public void resetConnections(CodeRunnerList runnerList, int threads) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
@@ -38,10 +39,10 @@ public class CellGrid extends Grid implements StrAble {
 				return value;
 			}
 		};
-		applyFunction(function, runnerList);
+		applyFunction(function, runnerList, threads);
 	}
 	
-	public void resetState(CodeRunnerList runnerList) {
+	public void resetState(CodeRunnerList runnerList, int threads) {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
@@ -50,7 +51,7 @@ public class CellGrid extends Grid implements StrAble {
 				return value;
 			}
 		};
-		applyFunction(function, runnerList);
+		applyFunction(function, runnerList, threads);
 	}
 	
 	@Override
@@ -61,7 +62,7 @@ public class CellGrid extends Grid implements StrAble {
 			if (value!=null) {
 				runnerList = (CodeRunnerList) value;
 			}
-			initializeCells(runnerList);
+			initializeCells(runnerList, ProcessorFactory.THREADS);
 		}
 	}
 

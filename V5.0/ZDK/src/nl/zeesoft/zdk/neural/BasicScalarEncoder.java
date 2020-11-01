@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.Str;
 
-public class ScalarEncoder extends SDREncoder {
+public class BasicScalarEncoder extends SDREncoder {
 	protected float		minValue	= 0;
 	protected float		maxValue	= 200;
 	

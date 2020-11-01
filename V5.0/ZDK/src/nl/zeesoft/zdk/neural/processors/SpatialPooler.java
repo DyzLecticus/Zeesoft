@@ -126,7 +126,7 @@ public class SpatialPooler extends CellGridProcessor {
 				return inputPermanences;
 			}
 		};
-		connections.applyFunction(function, runnerList);
+		connections.applyFunction(function, runnerList, ProcessorFactory.THREADS);
 	}
 	
 	@Override
@@ -138,7 +138,7 @@ public class SpatialPooler extends CellGridProcessor {
 				return values;
 			}
 		};
-		connections.applyFunction(function, runnerList);
+		connections.applyFunction(function, runnerList, ProcessorFactory.THREADS);
 	}
 	
 	@Override
@@ -203,7 +203,7 @@ public class SpatialPooler extends CellGridProcessor {
 					return value;
 				}
 			};
-			cellGrid.applyFunction(function, runnerList);
+			cellGrid.applyFunction(function, runnerList, ProcessorFactory.THREADS);
 		}
 	}
 	
@@ -234,7 +234,7 @@ public class SpatialPooler extends CellGridProcessor {
 				return value;
 			}
 		};
-		connections.applyFunction(function, runnerList);
+		connections.applyFunction(function, runnerList, ProcessorFactory.THREADS);
 		return cellGrid;
 	}
 	

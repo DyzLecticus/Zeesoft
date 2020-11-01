@@ -26,8 +26,9 @@ public class TestNetwork extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use a *Network* link *Processor* instances together. ");
-		System.out.println("A *NetworkConfig* instance can be used to configure a *Network* before initialization. ");
+		System.out.println("This test shows how to use a *Network* to link *Processor* instances together. ");
+		System.out.println("A *NetworkConfig* instance can be used to configure the *Network* before initialization. ");
+		System.out.println("A *NetworkIO* instances can be used to feed input to the network and gather all the processor output. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -36,7 +37,7 @@ public class TestNetwork extends TestObject {
 		System.out.println("// Define a network input");
 		System.out.println("config.inputNames.add(\"input1\");");
 		System.out.println("// Add some processors");
-		System.out.println("config.addEncoder(\"EN\");");
+		System.out.println("config.addScalarEncoder(\"EN\");");
 		System.out.println("config.addSpatialPooler(\"SP\");");
 		System.out.println("config.addTemporalMemory(\"TM\");");
 		System.out.println("config.addClassifier(\"CL\");");
@@ -76,7 +77,7 @@ public class TestNetwork extends TestObject {
 		NetworkConfig config = new NetworkConfig();
 		config.inputNames.add(KeyValueSDR.DEFAULT_VALUE_KEY);
 		
-		config.addEncoder("EN");
+		config.addScalarEncoder("EN");
 		config.addSpatialPooler("SP");
 		config.addTemporalMemory("TM");
 		config.addClassifier("CL");

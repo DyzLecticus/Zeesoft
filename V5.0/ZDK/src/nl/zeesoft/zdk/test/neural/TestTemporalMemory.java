@@ -6,7 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -115,7 +115,7 @@ public class TestTemporalMemory extends TestObject {
 	}
 	
 	private List<SDR> getInputSDRList(int num) {
-		ScalarEncoder encoder = new ScalarEncoder();
+		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(48, 48);
 		encoder.setOnBits(46);
 		encoder.setMaxValue(50);

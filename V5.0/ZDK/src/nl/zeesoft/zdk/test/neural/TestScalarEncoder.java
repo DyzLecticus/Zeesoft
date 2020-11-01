@@ -2,32 +2,32 @@ package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.processors.Encoder;
-import nl.zeesoft.zdk.neural.processors.EncoderConfig;
+import nl.zeesoft.zdk.neural.processors.ScalarEncoder;
+import nl.zeesoft.zdk.neural.processors.ScalarEncoderConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestEncoder extends TestObject {
-	public TestEncoder(Tester tester) {
+public class TestScalarEncoder extends TestObject {
+	public TestScalarEncoder(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestEncoder(new Tester())).runTest(args);
+		(new TestScalarEncoder(new Tester())).runTest(args);
 	}
 
 	@Override
 	protected void describe() {
-		System.out.println("This test shows how to use an *Encoder* to generate scalar SDRs.");
-		System.out.println("An *EncoderConfig* can be used to configure the *Encoder* before initialization.");
+		System.out.println("This test shows how to use a *ScalarEncoder* to generate scalar SDRs.");
+		System.out.println("A *ScalarEncoderConfig* can be used to configure the *ScalarEncoder* before initialization.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the encoder");
-		System.out.println("Encoder en = new Encoder();");
+		System.out.println("ScalarEncoder en = new ScalarEncoder();");
 		System.out.println("// Initialize the encoder");
 		System.out.println("en.initialize();");
 		System.out.println("// Create and build the processor chain");
@@ -43,19 +43,19 @@ public class TestEncoder extends TestObject {
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestEncoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(Encoder.class));
-		System.out.println(" * " + getTester().getLinkForClass(EncoderConfig.class));
+		System.out.println(" * " + getTester().getLinkForClass(TestScalarEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(ScalarEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(ScalarEncoderConfig.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows an *Encoder* and 2 example output SDRs.  ");
+		System.out.println("The output of this test shows a scalar encoder beeing used to encode 2 example values into SDRs.  ");
 	}
 
 	@Override
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		Encoder en = new Encoder();
+		ScalarEncoder en = new ScalarEncoder();
 		en.initialize();
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();

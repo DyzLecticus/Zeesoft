@@ -21,8 +21,8 @@ public class ProcessorFactory {
 		return r;
 	}
 	
-	public static Encoder getNewEncoder(EncoderConfig config) {
-		return (Encoder) getNewSDRProcessor(config, true);
+	public static ScalarEncoder getNewScalarEncoder(ScalarEncoderConfig config) {
+		return (ScalarEncoder) getNewSDRProcessor(config, true);
 	}
 	
 	public static SpatialPooler getNewSpatialPooler(SpatialPoolerConfig config) {

@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -20,7 +20,7 @@ public class TestSDR extends TestObject {
 	@Override
 	protected void describe() {
 		System.out.println("This test shows how to create and compare sparse distributed representations using *SDR* instances.");
-		System.out.println("It also shows how to us a *ScalarEncoder* to encode integer (or float) values into *SDR* instances.");
+		System.out.println("It also shows how to us a *BasicScalarEncoder* to encode integer (or float) values into *SDR* instances.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -38,7 +38,7 @@ public class TestSDR extends TestObject {
 		System.out.println("int overlap = sdrA.getOverlap(sdrB);");
 		System.out.println();
 		System.out.println("// Create the scalar encoder");
-		System.out.println("ScalarEncoder encoder = new ScalarEncoder();");
+		System.out.println("BasicScalarEncoder encoder = new BasicScalarEncoder();");
 		System.out.println("SDR sdr = encoder.getEncodedValue(0)");
 		System.out.println("~~~~");
 		System.out.println();
@@ -104,7 +104,7 @@ public class TestSDR extends TestObject {
 		assertEqual(hist2.toStr(),histStr, "History Str does not match expectation");
 		
 		// Encoder
-		ScalarEncoder encoder = new ScalarEncoder();
+		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(8, 8);
 		encoder.setOnBits(8);
 		encoder.setMaxValue(56);

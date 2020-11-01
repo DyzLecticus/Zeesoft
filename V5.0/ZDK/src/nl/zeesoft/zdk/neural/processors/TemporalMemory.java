@@ -157,11 +157,11 @@ public class TemporalMemory extends CellGridProcessor {
 	
 	@Override
 	public void resetConnections(CodeRunnerList runnerList) {
-		cellGrid.resetConnections(runnerList);
+		cellGrid.resetConnections(runnerList, ProcessorFactory.THREADS);
 	}
 	
 	public void resetState(CodeRunnerList runnerList) {
-		cellGrid.resetState(runnerList);
+		cellGrid.resetState(runnerList, ProcessorFactory.THREADS);
 		if (runnerList!=null) {
 			runnerList.add(new RunCode() {
 				@Override

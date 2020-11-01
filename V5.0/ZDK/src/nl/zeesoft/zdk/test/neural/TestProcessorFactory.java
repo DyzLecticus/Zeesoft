@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
@@ -138,7 +138,7 @@ public class TestProcessorFactory extends TestObject {
 	}
 	
 	private List<SDR> getInputSDRList(int num) {
-		ScalarEncoder encoder = new ScalarEncoder();
+		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		
 		Str err = encoder.testMinimalOverlap();
 		assertEqual(err, new Str(), "Error message does not match expectation");

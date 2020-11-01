@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
@@ -123,7 +123,7 @@ public class TestClassifier extends TestObject {
 	}
 	
 	private List<SDR> getInputSDRList(int num) {
-		ScalarEncoder encoder = new ScalarEncoder();
+		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(10, 10);
 		encoder.setMaxValue(4);
 		encoder.setPeriodic(true);

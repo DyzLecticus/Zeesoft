@@ -6,7 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.model.CellGrid;
 import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
@@ -145,7 +145,7 @@ public class TestSpatialPooler extends TestObject {
 	}
 	
 	private List<SDR> getInputSDRList(int num) {
-		ScalarEncoder encoder = new ScalarEncoder();
+		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setMaxValue(20);
 		encoder.setPeriodic(true);
 		

@@ -1,5 +1,5 @@
 package nl.zeesoft.zdk.neural.processors;
 
-public class SDRProcessorConfig {
+public abstract class SDRProcessorConfig {
 	
 }

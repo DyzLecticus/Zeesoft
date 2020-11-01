@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
-import nl.zeesoft.zdk.neural.processors.EncoderConfig;
+import nl.zeesoft.zdk.neural.processors.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.processors.MergerConfig;
 import nl.zeesoft.zdk.neural.processors.SDRProcessorConfig;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
@@ -54,12 +54,12 @@ public class NetworkConfig {
 		}
 	}
 	
-	public EncoderConfig addEncoder(String name) {
-		return addEncoder(name, processorConfigs.size());
+	public ScalarEncoderConfig addScalarEncoder(String name) {
+		return addScalarEncoder(name, processorConfigs.size());
 	}
 
-	public EncoderConfig addEncoder(String name, int layer) {
-		EncoderConfig config = new EncoderConfig();
+	public ScalarEncoderConfig addScalarEncoder(String name, int layer) {
+		ScalarEncoderConfig config = new ScalarEncoderConfig();
 		addProcessorConfig(name, config, layer);
 		return config;
 	}
@@ -157,8 +157,8 @@ public class NetworkConfig {
 			int toSizeX = 0;
 			int toSizeY = 0;
 
-			if (link.fromIndex == 0 && fromConfig instanceof EncoderConfig) {
-				EncoderConfig cfg = (EncoderConfig) fromConfig;
+			if (link.fromIndex == 0 && fromConfig instanceof ScalarEncoderConfig) {
+				ScalarEncoderConfig cfg = (ScalarEncoderConfig) fromConfig;
 				fromSizeX = cfg.sizeX;
 				fromSizeY = cfg.sizeY;
 			}
