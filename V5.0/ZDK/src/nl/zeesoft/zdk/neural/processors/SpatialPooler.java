@@ -76,21 +76,6 @@ public class SpatialPooler extends CellGridProcessor {
 			}
 		}
 	}
-		
-	@Override
-	public Str getDescription() {
-		Str r = super.getDescription();
-		r.sb().append(" (");
-		r.sb().append(inputSizeX);
-		r.sb().append("*");
-		r.sb().append(inputSizeY);
-		r.sb().append(" > ");
-		r.sb().append(outputSizeX);
-		r.sb().append("*");
-		r.sb().append(outputSizeY);
-		r.sb().append(")");
-		return r;
-	}
 	
 	@Override
 	public void initialize(CodeRunnerList runnerList) {

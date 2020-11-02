@@ -24,7 +24,7 @@ public class TestMerger extends TestObject {
 		System.out.println("A *MergerConfig* can be used to configure the *Merger* before initialization.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(MergerConfig.DESCRIPTION);
+		System.out.println(MergerConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the merger");

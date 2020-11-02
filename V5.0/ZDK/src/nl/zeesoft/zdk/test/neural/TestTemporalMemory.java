@@ -29,7 +29,7 @@ public class TestTemporalMemory extends TestObject {
 		System.out.println("A *TemporalMemoryConfig* can be used to configure the *TemporalMemory* before initialization.");
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(TemporalMemoryConfig.DESCRIPTION);
+		System.out.println(TemporalMemoryConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the temporal memory");

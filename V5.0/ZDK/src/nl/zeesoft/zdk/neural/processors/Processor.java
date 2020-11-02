@@ -11,7 +11,6 @@ public class Processor implements StrAble {
 	private Lock			lock						= new Lock();
 	
 	private String			name						= "";
-	private Str				description					= null;
 	private SDRProcessor	processor					= null;
 	
 	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
@@ -22,17 +21,10 @@ public class Processor implements StrAble {
 		this.processor = processor;
 		processor.buildProcessorChain(processingAndLearningChain, true, threads);
 		processor.buildProcessorChain(processingOnlyChain, false, threads);
-		description = processor.getDescription();
-		description.sb().insert(0,":");
-		description.sb().insert(0,name);
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public Str getDescription() {
-		return description;
 	}
 	
 	public void resetConnections() {

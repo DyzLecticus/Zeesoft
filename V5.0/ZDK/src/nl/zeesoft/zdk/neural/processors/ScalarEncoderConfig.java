@@ -4,7 +4,7 @@ package nl.zeesoft.zdk.neural.processors;
  * This class can be used to configure a ScalarEncoder before initialization.
  */
 public class ScalarEncoderConfig extends AbstractEncoderConfig{
-	public static String 	DESCRIPTION 	=
+	public static String 	DOCUMENTATION 	=
 		"Configurable properties;  \n" + 
 		" * *sizeX*, *sizeY*; Encoded output SDR dimensions.  \n" + 
 		" * *onBits*; The number of on bits in the encoded output.  \n" +

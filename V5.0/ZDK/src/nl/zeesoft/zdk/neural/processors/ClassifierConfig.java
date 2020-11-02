@@ -3,13 +3,14 @@ package nl.zeesoft.zdk.neural.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 
 /**
  * This class can be used to configure a Classifier before initialization.
  */
 public class ClassifierConfig extends SDRProcessorConfig{
-	public static String 	DESCRIPTION 	=
+	public static String 	DOCUMENTATION 	=
 		"Please note; This implementation will 'forget' old classifications by default (see maxCount)  \n" +
 		"  \n" +
 		"Configurable properties;  \n" + 
@@ -33,4 +34,18 @@ public class ClassifierConfig extends SDRProcessorConfig{
 	public String			valueKey		= KeyValueSDR.DEFAULT_VALUE_KEY;
 	public List<Integer>	predictSteps	= new ArrayList<Integer>();
 	public int				maxCount		= 40;
+
+	@Override
+	public Str getDescription() {
+		Str r = super.getDescription();
+		
+		r.sb().append(": ");
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+
+		r.sb().append("\n");
+		r.sb().append("-> 0 = Classifications: 1*1");
+		return r;
+	}
 }

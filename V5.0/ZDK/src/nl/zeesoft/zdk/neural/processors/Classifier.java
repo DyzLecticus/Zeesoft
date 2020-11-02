@@ -54,17 +54,6 @@ public class Classifier extends SDRProcessor {
 			}
 		}
 	}
-		
-	@Override
-	public Str getDescription() {
-		Str r = super.getDescription();
-		r.sb().append(" (");
-		r.sb().append(sizeX);
-		r.sb().append("*");
-		r.sb().append(sizeY);
-		r.sb().append(")");
-		return r;
-	}
 
 	@Override
 	public void initialize(CodeRunnerList runnerList) {

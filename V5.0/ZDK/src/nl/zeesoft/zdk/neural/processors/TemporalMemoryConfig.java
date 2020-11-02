@@ -1,10 +1,12 @@
 package nl.zeesoft.zdk.neural.processors;
 
+import nl.zeesoft.zdk.Str;
+
 /**
  * This class can be used to configure a TemporalMemory before initialization.
  */
 public class TemporalMemoryConfig extends SDRProcessorConfig{
-	public static String 	DESCRIPTION 	=
+	public static String 	DOCUMENTATION 		=
 		"Please note: The current implementation does not generate any initial segments/synapses.  \n" + 
 		"  \n" + 
 		"Configurable properties;  \n" + 
@@ -41,4 +43,41 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public int		activationThreshold			= 13;
 	public int		matchingThreshold			= 10;
 	public int		maxNewSynapseCount			= 20;
+
+	@Override
+	public Str getDescription() {
+		Str r = super.getDescription();
+		
+		r.sb().append(": ");
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		r.sb().append("*");
+		r.sb().append(sizeZ);
+
+		r.sb().append("\n");
+		r.sb().append("-> 0 = Active cells: ");
+		r.sb().append((sizeX * sizeZ));
+		r.sb().append("*");
+		r.sb().append(sizeY);
+
+		r.sb().append("\n");
+		r.sb().append("-> 1 = Bursting columns: ");
+		r.sb().append(sizeX);
+		r.sb().append("*");
+		r.sb().append(sizeY);
+
+		r.sb().append("\n");
+		r.sb().append("-> 2 = Predictive cells: ");
+		r.sb().append((sizeX * sizeZ));
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		
+		r.sb().append("\n");
+		r.sb().append("-> 3 = Winner cells: ");
+		r.sb().append((sizeX * sizeZ));
+		r.sb().append("*");
+		r.sb().append(sizeY);
+		return r;
+	}
 }

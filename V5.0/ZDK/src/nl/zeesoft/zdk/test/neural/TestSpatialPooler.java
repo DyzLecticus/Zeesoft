@@ -30,7 +30,7 @@ public class TestSpatialPooler extends TestObject {
 		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler* before initialization.");
 		printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(SpatialPoolerConfig.DESCRIPTION);
+		System.out.println(SpatialPoolerConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the spatial pooler");

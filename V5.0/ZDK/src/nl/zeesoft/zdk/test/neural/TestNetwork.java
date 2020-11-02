@@ -68,7 +68,10 @@ public class TestNetwork extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(NetworkIO.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows some network debug logging and an example output.  ");
+		System.out.println("The output of this test shows;  \n");
+		System.out.println(" * The network configuration description  \n");
+		System.out.println(" * Some network debug logging  \n");
+		System.out.println(" * An example output  \n");
 	}
 
 	@Override
@@ -92,6 +95,9 @@ public class TestNetwork extends TestObject {
 		Str err = config.testConfiguration();
 		assertEqual(err,new Str(),"Error does not match expectation");
 		
+		System.out.println(config.getDescription());
+		
+		System.out.println();
 		Network network = new Network();
 		network.configure(config);
 		network.initialize(true);
@@ -118,11 +124,12 @@ public class TestNetwork extends TestObject {
 		assertEqual(actionLog.size(),8,"Number of actions does not match expectation");
 
 		System.out.println();
-		for (String name: io.getProcessorNames()) {
+		String[] names = {"EN", "SP", "TM", "CL"};
+		for (String name: names) {
 			System.out.println("Processor: " + name);
 			ProcessorIO pIO = io.getProcessorIO(name);
 			for (SDR output: pIO.outputs) {
-				System.out.println(" > " + output);
+				System.out.println("-> " + output);
 			}
 		}
 	}

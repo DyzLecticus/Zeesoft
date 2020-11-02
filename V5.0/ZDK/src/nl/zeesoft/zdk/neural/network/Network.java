@@ -173,7 +173,7 @@ public class Network {
 	public Str load(String directory) {
 		return saveLoad(false, directory);
 	}
-
+	
 	protected CodeRunnerList buildInitializeRunnerListNoLock(boolean resetConnections) {
 		CodeRunnerList r = new CodeRunnerList();
 		for (NetworkProcessorConfig cfg: config.processorConfigs) {
@@ -230,16 +230,16 @@ public class Network {
 	
 	protected SortedMap<Integer,List<Processor>> getLayerProcessorsNoLock() {
 		SortedMap<Integer,List<Processor>> r = new TreeMap<Integer,List<Processor>>();
-		for (NetworkProcessorConfig cfg: config.processorConfigs) {
-			Processor processor = getProcessorNoLock(cfg.name);
-			if (processor!=null) {
-				List<Processor> names = r.get(cfg.layer);
-				if (names==null) {
-					names = new ArrayList<Processor>();
-					r.put(cfg.layer, names);
+		SortedMap<Integer,List<NetworkProcessorConfig>> configs = config.getLayerProcessorConfigs();
+		for (Entry<Integer,List<NetworkProcessorConfig>> entry: configs.entrySet()) {
+			List<Processor> processors = new ArrayList<Processor>();
+			for (NetworkProcessorConfig cfg: entry.getValue()) {
+				Processor processor = getProcessorNoLock(cfg.name);
+				if (processor!=null) {
+					processors.add(processor);
 				}
-				names.add(processor);
 			}
+			r.put(entry.getKey(),processors);
 		}
 		return r;
 	}

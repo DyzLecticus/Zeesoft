@@ -28,17 +28,6 @@ public class Merger extends SDRProcessor {
 			this.concatenate = cfg.concatenate;
 		}
 	}
-		
-	@Override
-	public Str getDescription() {
-		Str r = super.getDescription();
-		r.sb().append(" (?*? > ");
-		r.sb().append(sizeX);
-		r.sb().append("*");
-		r.sb().append(sizeY);
-		r.sb().append(")");
-		return r;
-	}
 
 	@Override
 	public void initialize(CodeRunnerList runnerList) {

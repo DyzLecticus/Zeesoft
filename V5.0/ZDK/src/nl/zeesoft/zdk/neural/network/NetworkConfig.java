@@ -2,12 +2,15 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
-import nl.zeesoft.zdk.neural.processors.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.processors.MergerConfig;
 import nl.zeesoft.zdk.neural.processors.SDRProcessorConfig;
+import nl.zeesoft.zdk.neural.processors.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
@@ -46,6 +49,56 @@ public class NetworkConfig {
 		for (NetworkLink link: config.links) {
 			links.add(new NetworkLink(link));
 		}
+	}
+	
+	public Str getDescription() {
+		Str r = new Str();
+		r.sb().append("Inputs: ");
+		for (String name: inputNames) {
+			r.sb().append("\n");
+			r.sb().append("<- ");
+			r.sb().append(name);
+		}
+		SortedMap<Integer,List<NetworkProcessorConfig>> configs = getLayerProcessorConfigs();
+		for (Entry<Integer,List<NetworkProcessorConfig>> entry: configs.entrySet()) {
+			if (r.length()>0) {
+				r.sb().append("\n");
+			}
+			r.sb().append("Layer: ");
+			r.sb().append(entry.getKey());
+			for (NetworkProcessorConfig cfg: entry.getValue()) {
+				Str cfgDesc = cfg.processorConfig.getDescription();
+				cfgDesc.replace("\n", "\n  ");
+				cfgDesc.sb().insert(0, ": ");
+				cfgDesc.sb().insert(0, cfg.name);
+				cfgDesc.sb().insert(0, "  ");
+				
+				List<Str> split = cfgDesc.split("\n");
+				
+				// Merge inputs
+				int i = 1;
+				List<NetworkLink> links = this.getNetworkLinksTo(cfg.name);
+				for (NetworkLink link: links) {
+					Str linkStr = new Str("  <- ");
+					linkStr.sb().append(link.toIndex);
+					linkStr.sb().append(" = ");
+					linkStr.sb().append(link.fromName);
+					if (!inputNames.contains(link.fromName)) {
+						linkStr.sb().append("/");
+						linkStr.sb().append(link.fromIndex);
+					}
+					split.add(i, linkStr);
+					i++;
+				}
+				
+				cfgDesc.merge(split,"\n");
+				
+				
+				r.sb().append("\n");
+				r.sb().append(cfgDesc);
+			}
+		}
+		return r;
 	}
 	
 	public void addInput(String name) {
@@ -213,10 +266,14 @@ public class NetworkConfig {
 				if (r.sb().length()>0) {
 					r.sb().append("\n");
 				}
-				r.sb().append("Spatial pooler outnput dimensions do not match temporal memory input dimensions: ");
+				r.sb().append("Processor output dimensions do not match required input dimensions: ");
 				r.sb().append(link.fromName);
-				r.sb().append(" > ");
+				r.sb().append("/");
+				r.sb().append(link.fromIndex);
+				r.sb().append(" -> ");
 				r.sb().append(link.toName);
+				r.sb().append("/");
+				r.sb().append(link.toIndex);
 			}
 		}
 		return r;
@@ -312,6 +369,19 @@ public class NetworkConfig {
 		boolean r = false;
 		if (inputNames.contains(name) || getNetworkProcessorConfig(name)!=null) {
 			r = true;
+		}
+		return r;
+	}
+	
+	public SortedMap<Integer,List<NetworkProcessorConfig>> getLayerProcessorConfigs() {
+		SortedMap<Integer,List<NetworkProcessorConfig>> r = new TreeMap<Integer,List<NetworkProcessorConfig>>();
+		for (NetworkProcessorConfig cfg: processorConfigs) {
+			List<NetworkProcessorConfig> configs = r.get(cfg.layer);
+			if (configs==null) {
+				configs = new ArrayList<NetworkProcessorConfig>();
+				r.put(cfg.layer, configs);
+			}
+			configs.add(cfg);
 		}
 		return r;
 	}

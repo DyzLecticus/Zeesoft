@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 public class CellGridProcessor extends SDRProcessor {
 	public final void resetConnections() {
 		Str msg = new Str("Resetting ");
-		msg.sb().append(getDescription());
+		msg.sb().append(getName());
 		msg.sb().append(" connections ...");
 		Logger.dbg(this, msg);
 		resetConnections(null);

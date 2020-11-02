@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.neural.processors;
 
+import nl.zeesoft.zdk.Str;
+
 /**
  * This class can be used to configure a SpatialPooler before initialization.
  * 
@@ -15,7 +17,7 @@ package nl.zeesoft.zdk.neural.processors;
  * - boostStrength; Boost strength
  */
 public class SpatialPoolerConfig extends SDRProcessorConfig{
-	public static String 	DESCRIPTION 	=
+	public static String 	DOCUMENTATION 		=
 		"Please note; The current implementation does not support local inhibition.  \n" +
 	    "  \n" + 
 		"Configurable properties;  \n" + 
@@ -44,4 +46,24 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 	
 	public int		activationHistorySize		= 1000;
 	public int		boostStrength				= 2;
+	
+	@Override
+	public Str getDescription() {
+		Str r = super.getDescription();
+		
+		r.sb().append(": ");
+		r.sb().append(inputSizeX);
+		r.sb().append("*");
+		r.sb().append(inputSizeY);
+		r.sb().append("*1");
+
+		r.sb().append("\n");
+		r.sb().append("-> 0 = Active columns: ");
+		r.sb().append(outputSizeX);
+		r.sb().append("*");
+		r.sb().append(outputSizeY);
+		r.sb().append(", on bits: ");
+		r.sb().append(outputOnBits);
+		return r;
+	}
 }

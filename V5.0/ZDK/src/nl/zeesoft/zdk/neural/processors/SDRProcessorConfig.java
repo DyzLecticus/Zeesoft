@@ -1,5 +1,9 @@
 package nl.zeesoft.zdk.neural.processors;
 
-public abstract class SDRProcessorConfig {
+import nl.zeesoft.zdk.Str;
 
+public abstract class SDRProcessorConfig {
+	public Str getDescription() {
+		return new Str(this.getClass().getSimpleName());
+	}
 }

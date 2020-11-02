@@ -23,13 +23,13 @@ public abstract class SDRProcessor implements StrAble {
 		// Override to implement
 	}
 	
-	public Str getDescription() {
+	public Str getName() {
 		return new Str(this.getClass().getSimpleName());
 	}
 	
 	public final void initialize() {
 		Str msg = new Str("Initializing ");
-		msg.sb().append(getDescription());
+		msg.sb().append(getName());
 		msg.sb().append(" ...");
 		Logger.dbg(this, msg);
 		initialize(null);
