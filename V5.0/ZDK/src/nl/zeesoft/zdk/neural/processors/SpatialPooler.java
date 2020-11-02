@@ -354,7 +354,7 @@ public class SpatialPooler extends CellGridProcessor {
 		CodeRunnerList r = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
-				activationHistory.addSDR(outputs.get(ACTIVE_COLUMNS_OUTPUT));
+				activationHistory.addSDR(new SDR(outputs.get(ACTIVE_COLUMNS_OUTPUT)));
 				return true;
 			}
 		});

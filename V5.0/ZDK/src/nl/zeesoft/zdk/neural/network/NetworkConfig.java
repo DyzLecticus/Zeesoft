@@ -73,9 +73,8 @@ public class NetworkConfig {
 				cfgDesc.sb().insert(0, cfg.name);
 				cfgDesc.sb().insert(0, "  ");
 				
-				List<Str> split = cfgDesc.split("\n");
-				
 				// Merge inputs
+				List<Str> split = cfgDesc.split("\n");
 				int i = 1;
 				List<NetworkLink> links = this.getNetworkLinksTo(cfg.name);
 				for (NetworkLink link: links) {
@@ -90,9 +89,7 @@ public class NetworkConfig {
 					split.add(i, linkStr);
 					i++;
 				}
-				
 				cfgDesc.merge(split,"\n");
-				
 				
 				r.sb().append("\n");
 				r.sb().append(cfgDesc);
