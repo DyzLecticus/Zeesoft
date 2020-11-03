@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.neural.KeyValueSDR;
  */
 public class ClassifierConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 	=
-		"Please note; This implementation will 'forget' old classifications by default (see maxCount)  \n" +
+		"Please note that this classifier implementation will 'forget' old classifications by default (see maxCount).  \n" +
 		"  \n" +
 		"Configurable properties;  \n" + 
 		" * *sizeX*, *sizeY*; Merged output SDR dimensions (input SDRs that do not match are ignored for merge).  \n" + 

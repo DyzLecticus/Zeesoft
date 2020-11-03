@@ -22,9 +22,10 @@ public class TestMerger extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use a *Merger* to merge, concatenate, subsample and/or distort SDRs.");
 		System.out.println("A *MergerConfig* can be used to configure the *Merger* before initialization.");
+		System.out.println();
+		System.out.print(MergerConfig.DOCUMENTATION);
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(MergerConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the merger");

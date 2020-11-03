@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Str;
  */
 public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 		=
-		"Please note: The current implementation does not generate any initial segments/synapses.  \n" + 
+		"Please note that this temporal memory implementation does not generate any initial segments/synapses.  \n" + 
 		"  \n" + 
 		"Configurable properties;  \n" + 
 		" * *sizeX*, *sizeY*, *sizeZ*; Cell grid dimensions (sizeX, sizeY specify input SDR dimensions).  \n" + 

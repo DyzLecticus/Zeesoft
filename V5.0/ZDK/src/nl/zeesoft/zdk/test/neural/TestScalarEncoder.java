@@ -22,9 +22,10 @@ public class TestScalarEncoder extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use a *ScalarEncoder* to generate scalar SDRs.");
 		System.out.println("A *ScalarEncoderConfig* can be used to configure the *ScalarEncoder* before initialization.");
+		System.out.println();
+		System.out.print(ScalarEncoderConfig.DOCUMENTATION);
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(ScalarEncoderConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the encoder");

@@ -4,21 +4,10 @@ import nl.zeesoft.zdk.Str;
 
 /**
  * This class can be used to configure a SpatialPooler before initialization.
- * 
- * Please note; The current implementation does not support local inhibition. 
- * 
- * Configurable properties;
- * - inputSizeX, inputSizeY; Input SDR dimensions
- * - outputSizeX, outputSizeY; Output SDR dimensions (mini column dimensions)
- * - outputOnBits; Maximum number of on bits in the output
- * - potentialConnections, potentialRadius; Number and optional radius of potential connections relative to the input space 
- * - permanenceThreshold, permanenceIncrement, permanenceDecrement; Potential synapse adaptation control 
- * - activationHistorySize; Historic column activation buffer size (used to calculate boost factors) 
- * - boostStrength; Boost strength
  */
 public class SpatialPoolerConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 		=
-		"Please note; The current implementation does not support local inhibition.  \n" +
+		"Please note that this spatial pooler implementation does not support local inhibition.  \n" +
 	    "  \n" + 
 		"Configurable properties;  \n" + 
 		" * *inputSizeX*, *inputSizeY*; Input SDR dimensions.  \n" + 

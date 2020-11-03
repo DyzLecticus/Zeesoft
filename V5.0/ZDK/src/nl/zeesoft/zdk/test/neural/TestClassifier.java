@@ -32,9 +32,9 @@ public class TestClassifier extends TestObject {
 		System.out.println("A *Classifier* will combine all input SDRs that match the specified dimension into a single footprint to associate with a certain input value.");
 		System.out.println("The input value can be provided by using a *KeyValueSDR* with a key/value pair with a configurable key.");
 		System.out.println("The classifications and/or predictions will be attached to the output *KeyValueSDR* using *Classification* objects.");
+		System.out.println(ClassifierConfig.DOCUMENTATION);
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(ClassifierConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the classifier");

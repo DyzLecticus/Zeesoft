@@ -27,9 +27,9 @@ public class TestTemporalMemory extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use a *TemporalMemory* to learn SDR sequences.");
 		System.out.println("A *TemporalMemoryConfig* can be used to configure the *TemporalMemory* before initialization.");
+		System.out.println(TemporalMemoryConfig.DOCUMENTATION);
 		TestSpatialPooler.printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(TemporalMemoryConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the temporal memory");

@@ -28,9 +28,9 @@ public class TestSpatialPooler extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to use a *SpatialPooler* to create consistent sparse representations of less sparse and/or smaller SDRs.");
 		System.out.println("A *SpatialPoolerConfig* can be used to configure the *SpatialPooler* before initialization.");
+		System.out.println(SpatialPoolerConfig.DOCUMENTATION);
 		printSDRProcessorInfo();
 		System.out.println();
-		System.out.println(SpatialPoolerConfig.DOCUMENTATION);
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the spatial pooler");
@@ -162,7 +162,8 @@ public class TestSpatialPooler extends TestObject {
 	
 	protected static void printSDRProcessorInfo() {
 		System.out.println();
-		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads.");
-		System.out.println("Please note that bare *SDRProcessor* instances are not thread safe beyond the specified life cycle.");
+		System.out.println("All *SDRProcessor* instances implement the same pattern/life cycle to ensure the processing is done using multiple threads. ");
+		System.out.println("Bare *SDRProcessor* instances are not thread safe beyond the specified life cycle. ");
+		System.out.println("Use the *ProcessorFactory* for thread safe *Processor* instantiation and interaction. ");
 	}
 }

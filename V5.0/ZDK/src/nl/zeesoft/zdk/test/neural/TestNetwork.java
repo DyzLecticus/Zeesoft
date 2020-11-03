@@ -68,10 +68,10 @@ public class TestNetwork extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(NetworkIO.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows;  \n");
-		System.out.println(" * The network configuration description  \n");
-		System.out.println(" * Some network debug logging  \n");
-		System.out.println(" * An example output  \n");
+		System.out.println("The output of this test shows;  ");
+		System.out.println(" * The network configuration description  ");
+		System.out.println(" * Some network debug logging  ");
+		System.out.println(" * An example output  ");
 	}
 
 	@Override
