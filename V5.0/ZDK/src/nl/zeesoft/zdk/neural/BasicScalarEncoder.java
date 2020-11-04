@@ -97,7 +97,7 @@ public class BasicScalarEncoder extends SDREncoder {
 	}
 	
 	public Str testNoOverlap() {
-		return testOverlap(0, 1, 1);
+		return testOverlap(0, 0, 1);
 	}
 	
 	public Str testOverlap(int minOverlap, int maxOverlap, float resolution) {
@@ -114,13 +114,13 @@ public class BasicScalarEncoder extends SDREncoder {
 				r.sb().append(", minimum: ");
 				r.sb().append(minOverlap);
 				break;
-			} else if (maxOverlap > 0 && overlap > maxOverlap) {
+			} else if (maxOverlap >= 0 && overlap > maxOverlap) {
 				r.sb().append("Invalid bucket value overlap for value: ");
 				r.sb().append(val);
 				r.sb().append(", overlap: ");
 				r.sb().append(overlap);
-				r.sb().append(", minimum: ");
-				r.sb().append(minOverlap);
+				r.sb().append(", maximum: ");
+				r.sb().append(maxOverlap);
 				break;
 			}
 			curr = next;

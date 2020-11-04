@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.grid.ColumnFunction;
@@ -144,7 +143,8 @@ public class TemporalMemory extends CellGridProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR... sdrs) {
+	public Str setInput(SDR... sdrs) {
+		Str err = new Str();
 		outputs.clear();
 		
 		if (sdrs.length>0) {
@@ -170,24 +170,24 @@ public class TemporalMemory extends CellGridProcessor {
 				
 				Position.randomizeList(predictiveCellPositions);
 			} else {
-				Str msg = new Str("Input dimensions do not match expectation: ");
-				msg.sb().append(input.sizeX());
-				msg.sb().append("*");
-				msg.sb().append(input.sizeY());
-				msg.sb().append(" <> ");
-				msg.sb().append(sizeX);
-				msg.sb().append("*");
-				msg.sb().append(sizeY);
-				Logger.err(this, msg);
+				err.sb().append("Input dimensions do not match expectation: ");
+				err.sb().append(input.sizeX());
+				err.sb().append("*");
+				err.sb().append(input.sizeY());
+				err.sb().append(" <> ");
+				err.sb().append(sizeX);
+				err.sb().append("*");
+				err.sb().append(sizeY);
 			}
 		} else {
-			Logger.err(this, new Str("At least one input SDR is required"));
+			err.sb().append("At least one input SDR is required");
 		}
 		
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 		outputs.add(new SDR(sizeX, sizeY));
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
 		outputs.add(new SDR(sizeX * sizeZ, sizeY));
+		return err;
 	}
 
 	@Override

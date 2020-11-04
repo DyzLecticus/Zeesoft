@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.neural.processors;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
@@ -82,17 +81,19 @@ public class Classifier extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR... sdrs) {
+	public Str setInput(SDR... sdrs) {
+		Str err = new Str();
 		outputs.clear();
 		value = null;
 		
 		if (sdrs.length>0) {
 			super.setInput(sdrs);
 		} else {
-			Logger.err(this, new Str("At least one input SDR is required"));
+			err.sb().append("At least one input SDR is required");
 		}
 		
 		outputs.add(new KeyValueSDR());
+		return err;
 	}
 	
 	@Override

@@ -119,7 +119,7 @@ public class TestTemporalMemory extends TestObject {
 		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(48, 48);
 		encoder.setOnBits(46);
-		encoder.setMaxValue(50);
+		encoder.setMaxValue(40);
 		
 		Str err = encoder.testNoOverlap();
 		assertEqual(err, new Str(), "Error message does not match expectation");

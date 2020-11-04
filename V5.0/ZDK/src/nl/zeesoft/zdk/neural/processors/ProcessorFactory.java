@@ -13,6 +13,7 @@ public class ProcessorFactory {
 			Object obj = Instantiator.getNewClassInstanceForName(className);
 			if (obj!=null && obj instanceof SDRProcessor) {
 				r = (SDRProcessor) Instantiator.getNewClassInstanceForName(className);
+				r.configure(config);
 				if (initialize) {
 					r.initialize();
 				}

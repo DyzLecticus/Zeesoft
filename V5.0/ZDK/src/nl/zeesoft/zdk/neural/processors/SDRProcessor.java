@@ -41,22 +41,24 @@ public abstract class SDRProcessor implements StrAble {
 		// Override to implement
 	}
 	
-	public final void setInput(List<SDR> sdrs) {
+	public final Str setInput(List<SDR> sdrs) {
 		SDR[] in = new SDR[sdrs.size()];
 		int i = 0;
 		for (SDR sdr: sdrs) {
 			in[i] = sdr;
 			i++;
 		}
-		setInput(in);
+		return setInput(in);
 	}
 	
-	public void setInput(SDR... sdrs) {
+	public Str setInput(SDR... sdrs) {
+		Str err = new Str();
 		inputs.clear();
 		for (SDR sdr: sdrs) {
 			inputs.add(sdr);
 		}
 		outputs.clear();
+		return err;
 	}
 
 	public final void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {

@@ -125,7 +125,13 @@ public class TestSDR extends TestObject {
 		
 		err = encoder.testNoOverlap();
 		assertEqual(err, new Str(), "Error message does not match expectation (3)");
-		
+
+		encoder.setEncodeDimensions(16, 8);
+		encoder.setOnBits(4);
+		encoder.setMaxValue(32);
+		err = encoder.testNoOverlap();
+		assertEqual(err, new Str("Invalid bucket value overlap for value: 1.0, overlap: 1, maximum: 0"), "Error message does not match expectation (4)");
+
 		KeyValueSDR kvSDR = new KeyValueSDR(sdr);
 		kvSDR.put("test", 2);
 		Str kvStr = kvSDR.toStr();

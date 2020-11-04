@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.neural.processors;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -40,14 +39,16 @@ public class Merger extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR... sdrs) {
+	public Str setInput(SDR... sdrs) {
+		Str err = new Str();
 		outputs.clear();
 		if (sdrs.length>0) {
 			super.setInput(sdrs);
 		} else {
-			Logger.err(this, new Str("At least one input SDR is required"));
+			err.sb().append("At least one input SDR is required");
 		}
 		outputs.add(new SDR(sizeX, sizeY));
+		return err;
 	}
 
 	@Override

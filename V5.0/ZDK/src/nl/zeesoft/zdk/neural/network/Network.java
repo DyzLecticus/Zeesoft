@@ -23,19 +23,20 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class Network {
-	private Lock					lock					= new Lock();
+	private Lock					lock						= new Lock();
 	
 	// Configuration
-	private NetworkConfig			config					= new NetworkConfig();
+	private NetworkConfig			config						= new NetworkConfig();
 	
-	private Lock					initLocker				= new Lock();
-	private List<NetworkProcessor>	processors				= new ArrayList<NetworkProcessor>();
-	private List<String>			learningProcessorNames	= new ArrayList<String>();
-	private CodeRunnerChain			processorChain			= null;
+	private Lock					initLocker					= new Lock();
+	private List<NetworkProcessor>	processors					= new ArrayList<NetworkProcessor>();
+	private List<String>			learnProcessorNames			= new ArrayList<String>();
+	private List<String>			sequentialProcessorNames	= new ArrayList<String>();
+	private CodeRunnerChain			processorChain				= null;
 	
 	// State
-	private NetworkIO				currentIO				= null;
-	private NetworkIO				previousIO				= null;
+	private NetworkIO				currentIO					= null;
+	private NetworkIO				previousIO					= null;
 	
 	public Str configure(NetworkConfig config) {
 		Str err = config.testConfiguration();
@@ -45,7 +46,8 @@ public class Network {
 			lock.lock(this);
 			this.config.copyFrom(config);
 			processors.clear();
-			learningProcessorNames.clear();
+			learnProcessorNames.clear();
+			sequentialProcessorNames.clear();
 			processorChain = new CodeRunnerChain();
 			lock.unlock(this);
 		}
@@ -74,7 +76,8 @@ public class Network {
 				buildProcessorChainNoLock(processorChain);
 			} else {
 				processors.clear();
-				learningProcessorNames.clear();
+				learnProcessorNames.clear();
+				sequentialProcessorNames.clear();
 			}
 			lock.unlock(this);
 			
@@ -87,22 +90,43 @@ public class Network {
 		return err;
 	}
 	
-	public void setProcessorLearning(String name, boolean learning) {
+	public void setProcessorLearn(String name, boolean learn) {
 		lock.lock(this);
-		if (learning) {
+		if (learn) {
 			if (name.equals("*")) {
-				learningProcessorNames.clear();
+				learnProcessorNames.clear();
 				for (NetworkProcessorConfig cfg: config.processorConfigs) {
-					learningProcessorNames.add(cfg.name);
+					learnProcessorNames.add(cfg.name);
 				}
-			} else if (!learningProcessorNames.contains(name)) {
-				learningProcessorNames.add(name);
+			} else if (!learnProcessorNames.contains(name)) {
+				learnProcessorNames.add(name);
 			}
 		} else {
 			if (name.equals("*")) {
-				learningProcessorNames.clear();
+				learnProcessorNames.clear();
 			} else {
-				learningProcessorNames.remove(name);
+				learnProcessorNames.remove(name);
+			}
+		}
+		lock.unlock(this);
+	}
+	
+	public void setProcessorSequential(String name, boolean sequential) {
+		lock.lock(this);
+		if (sequential) {
+			if (name.equals("*")) {
+				sequentialProcessorNames.clear();
+				for (NetworkProcessorConfig cfg: config.processorConfigs) {
+					sequentialProcessorNames.add(cfg.name);
+				}
+			} else if (!sequentialProcessorNames.contains(name)) {
+				sequentialProcessorNames.add(name);
+			}
+		} else {
+			if (name.equals("*")) {
+				sequentialProcessorNames.clear();
+			} else {
+				sequentialProcessorNames.remove(name);
 			}
 		}
 		lock.unlock(this);
@@ -200,7 +224,7 @@ public class Network {
 			NetworkProcessor processor = new NetworkProcessor(cfg.name,sdrProcessor,cfg.threads);
 			initLocker.lock(this);
 			processors.add(processor);
-			learningProcessorNames.add(cfg.name);
+			learnProcessorNames.add(cfg.name);
 			initLocker.unlock(this);
 		}
 	}
@@ -289,7 +313,8 @@ public class Network {
 			}
 			if (inputs[0]!=null) {
 				ProcessorIO io = new ProcessorIO();
-				io.learn = learningProcessorNames.contains(processor.getName());
+				io.learn = learnProcessorNames.contains(processor.getName());
+				io.sequential = sequentialProcessorNames.contains(processor.getName());
 				for (int i = 0; i < inputs.length; i++) {
 					io.inputs.add(inputs[i]);
 				}

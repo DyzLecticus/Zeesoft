@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.neural.processors;
 
-import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
@@ -53,7 +52,8 @@ public abstract class AbstractEncoder extends SDRProcessor {
 	}
 	
 	@Override
-	public void setInput(SDR... sdrs) {
+	public Str setInput(SDR... sdrs) {
+		Str err = new Str();
 		outputs.clear();
 		if (sdrs.length>0) {
 			value = null;
@@ -63,13 +63,14 @@ public abstract class AbstractEncoder extends SDRProcessor {
 			if (value!=null) {
 				super.setInput(sdrs);
 			} else {
-				Logger.err(this, new Str("A KeyValueSDR with a value to encode is required"));
+				err.sb().append("A KeyValueSDR with a value to encode is required");
 			}
 		} else {
-			Logger.err(this, new Str("At least one input SDR is required"));
+			err.sb().append("At least one input SDR is required");
 		}
 		outputs.add(new SDR(sizeX, sizeY));
 		outputs.add(new KeyValueSDR());
+		return err;
 	}
 
 	@Override
