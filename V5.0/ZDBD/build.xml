@@ -1,0 +1,136 @@
+<!DOCTYPE project>
+<project name="ZDBD" default="dist" basedir=".">
+	<description>ZDBD build file</description>
+
+	<!-- Release version -->
+	<property name="version" value="0.9.0"/>
+	
+	<!-- ZDK version -->
+	<property name="versionZDK" value="0.9.0"/>
+	<property name="releasesZDK" location="../ZDK/releases"/>
+
+	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
+	
+	<property name="releases" location="releases"/>
+	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+
+	<property name="classpath" value="nl/zeesoft/zdbd nl/zeesoft/zdbd/gui zdk.jar"/>
+	<property name="packagenames" value="nl.zeesoft.zdbd,nl.zeesoft.zdbd.gui"/>
+
+	<target name="copyZDK" description="Copy the ZDK release">
+		<mkdir dir="${lib}"/>
+		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
+		    <patternset>
+		        <include name="**/*.jar"/>
+		        <include name="**/*.zip"/>
+		    </patternset>
+		</unzip>
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${build}"/>
+		<path id="libraries">
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<javac srcdir="${src}" destdir="${build}" debug="on" classpathref="libraries" includeantruntime="false">
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZDBD distribution">
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>		
+		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<!-- Create distribution directory -->
+		<mkdir dir="${dist}"/>
+		<!-- Copy dependencies -->
+		<copy file="${lib}/zdk.jar" tofile="${dist}/zdk.jar"/>
+		<!-- Generate manifest -->
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="${classpath}"/>
+			<attribute name="Main-Class" value="nl.zeesoft.zdbd.test.ZDBD"/>
+		</manifest>		
+		<!-- Build jar file -->
+		<jar jarfile="${dist}/zdbd.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Run tests and generate README.md -->
+		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
+			<arg line="/c java -jar zdbd.jar ${version}"/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="One or more tests failed"/>		
+		<!-- Rebuild jar file (include README.md) -->
+		<copy file="${dist}/README.md" tofile="${build}/README.md"/>
+		<jar jarfile="${dist}/zdbd.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+
+	<target name="release" description="Release the ZDBD">
+		<antcall target="failIfReleaseExists"/>
+		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>
+		<condition property="_abort">
+			<equals arg1="n" arg2="${_release}"/>
+		</condition>
+		<fail if="_abort" message="Aborted release"/>		
+		<antcall target="releaseConfirmed"/>
+	</target>
+	
+	<target name="releaseConfirmed">
+		<antcall target="failIfReleaseExists"/>
+		<antcall target="clean"/>
+		<antcall target="dist"/>
+		<antcall target="javadoc"/>
+		<mkdir dir="${releases}"/>
+		<mkdir dir="${releases}/${version}"/>
+		<copy file="${dist}/zdk.jar" tofile="${releases}/${version}/zdk.jar"/>
+		<copy file="${lib}/zdk-javadoc.zip" tofile="${releases}/${version}/zdk-javadoc.zip"/>
+		<copy file="${dist}/zdbd.jar" tofile="${releases}/${version}/zdbd.jar"/>
+		<copy file="${dist}/zdbd-javadoc.zip" tofile="${releases}/${version}/zdbd-javadoc.zip"/>
+		<copy file="${dist}/README.md" tofile="${releases}/${version}/README.md"/>
+		<zip destfile="${releases}/zdbd-${version}.zip" basedir="${releases}/${version}"/>
+		<delete dir="${releases}/${version}"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
+	
+	<target name="javadoc" description="Generate the ZDBD documentation">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${dist}/src"/>
+		<unzip src="${lib}/zdk.jar" dest="${dist}/src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		<copy todir="${dist}/src">
+            <fileset dir="${src}" />
+        </copy>		
+		<mkdir dir="${dist}/javadoc"/>
+		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="${packagenames}"/>
+		<zip destfile="${dist}/zsc-javadoc.zip" basedir="${dist}/javadoc"/>
+		<delete dir="${dist}/javadoc"/>
+		<delete dir="${dist}/src"/>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+	<target name="failIfReleaseExists">
+		<condition property="_released">
+			<available file="${releases}/zdbd-${version}.zip"/>
+		</condition>
+		<fail if="_released" message="Version ${version} has already been released"/>		
+	</target>
+</project>
+
