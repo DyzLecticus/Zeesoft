@@ -2,10 +2,12 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -112,6 +114,44 @@ public class NetworkIO {
 		lock.lock(this);
 		List<Str> r = new ArrayList<Str>(errors);
 		lock.unlock(this);
+		return r;
+	}
+	
+	public List<Classification> getClassifications() {
+		List<Classification> r = new ArrayList<Classification>();
+		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
+			r.addAll(entry.getValue().getClassifications());
+		}
+		return r;
+	}
+	
+	public SortedMap<String,Float> getClassifierAccuracies(boolean trend) {
+		SortedMap<String,Float> r = new TreeMap<String,Float>();
+		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
+			Float accuracy = entry.getValue().getClassifierAccuracy(trend);
+			if (accuracy!=null) {
+				r.put(entry.getKey(), accuracy);
+			}
+		}
+		return r;
+	}
+
+	public boolean isAccurate() {
+		return isAccurate(1.0F);
+	}
+
+	public boolean isAccurate(float minimumAverageAccuracy) {
+		boolean r = false;
+		SortedMap<String,Float> accuracies = getClassifierAccuracies(false);
+		if (accuracies.size()>0) {
+			r = true;
+			for (Float accuracy: accuracies.values()) {
+				if (accuracy<minimumAverageAccuracy) {
+					r = false;
+					break;
+				}
+			}
+		}
 		return r;
 	}
 }

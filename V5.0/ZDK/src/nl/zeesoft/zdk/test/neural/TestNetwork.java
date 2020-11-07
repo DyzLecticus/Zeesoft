@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
@@ -10,6 +11,7 @@ import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -84,7 +86,8 @@ public class TestNetwork extends TestObject {
 		config.addScalarEncoder("EN");
 		config.addSpatialPooler("SP");
 		config.addTemporalMemory("TM");
-		config.addClassifier("CL");
+		ClassifierConfig classifierConfig = config.addClassifier("CL");
+		classifierConfig.logPredictionAccuracy = true;
 		
 		config.addLink(KeyValueSDR.DEFAULT_VALUE_KEY, 0, "EN", 0);
 		config.addLink("EN", 0, "SP", 0);
@@ -110,6 +113,19 @@ public class TestNetwork extends TestObject {
 			io.setValue(KeyValueSDR.DEFAULT_VALUE_KEY, i%2);
 			network.processIO(io);
 			assertEqual(io.hasErrors(),false,"Network IO has unexpected errors");
+			if (io.hasErrors()) {
+				SortedMap<String,Float> accuracy = io.getClassifierAccuracies(false);
+				if (accuracy.containsKey("CL")) {
+					float accuracyTrend = accuracy.get("CL");
+					System.out.println("Accuracy: " + accuracyTrend);
+				}
+				SortedMap<String,Float> accuracyTrends = io.getClassifierAccuracies(true);
+				if (accuracyTrends.containsKey("CL")) {
+					float accuracyTrend = accuracyTrends.get("CL");
+					System.out.println("Accuracy trend: " + accuracyTrend);
+				}
+				break;
+			}
 		}
 		Logger.dbg(this, new Str("Processed 100 SDRs"));
 		
@@ -132,5 +148,6 @@ public class TestNetwork extends TestObject {
 				System.out.println("-> " + output);
 			}
 		}
+		assertEqual(io.isAccurate(0.95F), true, "Network did not achieve expected accuracy");
 	}
 }

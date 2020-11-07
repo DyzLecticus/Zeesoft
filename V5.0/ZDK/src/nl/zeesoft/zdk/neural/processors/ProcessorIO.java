@@ -43,4 +43,42 @@ public class ProcessorIO {
 		}
 		this.error = new Str(io.error);
 	}
+	
+	public List<Classification> getClassifications() {
+		List<Classification> r = new ArrayList<Classification>();
+		for (SDR output: outputs) {
+			if (output instanceof KeyValueSDR) {
+				KeyValueSDR kvSdr = (KeyValueSDR) output;
+				List<String> valueKeys = kvSdr.getValueKeys();
+				for (String key: valueKeys) {
+					if (key.startsWith(Classifier.CLASSIFICATION_VALUE_KEY)) {
+						Object value = kvSdr.get(key);
+						if (value instanceof Classification) {
+							r.add((Classification)value);
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	public Float getClassifierAccuracy(boolean trend) {
+		Float r = null;
+		for (SDR output: outputs) {
+			if (output instanceof KeyValueSDR) {
+				KeyValueSDR kvSdr = (KeyValueSDR) output;
+				if (kvSdr.containsKey(Classifier.ACCURACY_VALUE_KEY)) {
+					float accuracy = 0F;
+					if (trend) {
+						accuracy = (float) kvSdr.get(Classifier.ACCURACY_TREND_VALUE_KEY);
+					} else {
+						accuracy = (float) kvSdr.get(Classifier.ACCURACY_VALUE_KEY);
+					}
+					r = accuracy;
+				}
+			}
+		}
+		return r;
+	}
 }

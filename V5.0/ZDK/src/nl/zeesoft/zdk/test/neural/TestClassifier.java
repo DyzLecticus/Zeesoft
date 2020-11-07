@@ -76,6 +76,7 @@ public class TestClassifier extends TestObject {
 		config.sizeX = 10;
 		config.sizeY = 10;
 		config.maxCount = 12;
+		config.logPredictionAccuracy = true;
 		cl.configure(config);
 		cl.initialize();
 		
@@ -114,6 +115,11 @@ public class TestClassifier extends TestObject {
 		
 		cls2.valueCounts.put(1, 156);
 		assertEqual(cls2.getStandardDeviation(),2.828427F,"Standard deviation does not match expectation");
+		
+		float accuracy = (float) kvSdr.get(Classifier.ACCURACY_VALUE_KEY);
+		float accuracyTrend = (float) kvSdr.get(Classifier.ACCURACY_TREND_VALUE_KEY);
+		assertEqual(accuracy, 1.0F, "Accuracy does not match expectation");
+		assertEqual(accuracyTrend, 1.0F, "Accuracy trend does not match expectation");
 		
 		Str str = cl.toStr();
 		Classifier cl2 = new Classifier();

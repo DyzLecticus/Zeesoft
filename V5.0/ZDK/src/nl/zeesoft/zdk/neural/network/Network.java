@@ -89,7 +89,29 @@ public class Network {
 		}
 		return err;
 	}
-	
+
+	public void setLayerLearn(int layer, boolean learn) {
+		lock.lock(this);
+		if (learn) {
+			for (NetworkProcessorConfig cfg: config.processorConfigs) {
+				if (cfg.layer==layer) {
+					if (!learnProcessorNames.contains(cfg.name)) {
+						learnProcessorNames.add(cfg.name);
+					}
+				}
+			}
+		} else {
+			for (NetworkProcessorConfig cfg: config.processorConfigs) {
+				if (cfg.layer==layer) {
+					if (learnProcessorNames.contains(cfg.name)) {
+						learnProcessorNames.remove( cfg.name);
+					}
+				}
+			}
+		}
+		lock.unlock(this);
+	}
+
 	public void setProcessorLearn(String name, boolean learn) {
 		lock.lock(this);
 		if (learn) {

@@ -16,6 +16,8 @@ public class Classifier extends SDRProcessor {
 	public static final int			CLASSIFICATION_OUTPUT		= 0;
 	
 	public static final String		CLASSIFICATION_VALUE_KEY	= "classification";
+	public static final String		ACCURACY_VALUE_KEY			= "accuracy";
+	public static final String		ACCURACY_TREND_VALUE_KEY	= "accuracyTrend";
 	
 	protected Lock					lock						= new Lock();
 	
@@ -28,10 +30,17 @@ public class Classifier extends SDRProcessor {
 	protected List<Integer>			predictSteps				= new ArrayList<Integer>();
 	protected int					maxCount					= 40;
 	
+	protected boolean				logPredictionAccuracy		= false;
+	protected int					accuracyHistorySize			= 100;
+	protected int					accuracyTrendSize			= 10;
+	
 	// State
 	protected List<ClassifierStep>	classifierSteps				= new ArrayList<ClassifierStep>();
 	protected SDRHistory			activationHistory			= null;
 	protected Object				value						= null;
+
+	protected Object				predictedValue				= null;
+	protected List<Float>			accuracyHistory				= new ArrayList<Float>();
 	
 	@Override
 	public void configure(SDRProcessorConfig config) {
@@ -47,6 +56,9 @@ public class Classifier extends SDRProcessor {
 			this.valueKey = cfg.valueKey;
 			this.predictSteps.addAll(cfg.predictSteps);
 			this.maxCount = cfg.maxCount;
+			
+			this.logPredictionAccuracy = cfg.logPredictionAccuracy;
+			this.accuracyHistorySize = cfg.accuracyHistorySize;
 			
 			if (maxCount < 8) {
 				maxCount = 8;
@@ -65,6 +77,20 @@ public class Classifier extends SDRProcessor {
 		
 		if (predictSteps.size()==0) {
 			predictSteps.add(1);
+		}
+		
+		if (logPredictionAccuracy && !predictSteps.contains(1)) {
+			logPredictionAccuracy = false;
+		}
+		if (logPredictionAccuracy) {
+			if (accuracyHistorySize<10) {
+				accuracyHistorySize = 10;
+			}
+			if (accuracyTrendSize<0) {
+				accuracyTrendSize = 1;
+			} else if (accuracyTrendSize > accuracyHistorySize) {
+				accuracyTrendSize = accuracyHistorySize / 2;
+			}
 		}
 		
 		int maxSteps = 0;
@@ -99,6 +125,9 @@ public class Classifier extends SDRProcessor {
 	@Override
 	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
 		runnerChain.add(getProcessInputsRunnerList());
+		if (logPredictionAccuracy) {
+			runnerChain.add(getLogPredictionAccuracyRunnerList());
+		}
 		if (learn) {
 			runnerChain.add(getAssociateBitsRunnerList(threads));
 		}
@@ -202,6 +231,45 @@ public class Classifier extends SDRProcessor {
 		return r;
 	}
 
+	protected CodeRunnerList getLogPredictionAccuracyRunnerList() {
+		CodeRunnerList r = new CodeRunnerList(new RunCode() {
+			@Override
+			protected boolean run() {
+				if (value!=null && predictedValue!=null) {
+					float accuracy = 0F;
+					if (value==predictedValue || value.equals(predictedValue)) {
+						accuracy = 1F;
+					}
+					accuracyHistory.add(0,accuracy);
+					if (accuracyHistory.size()>accuracyHistorySize) {
+						int remove = accuracyHistory.size() - accuracyHistorySize; 
+						for (int i = 0; i < remove; i++) {
+							accuracyHistory.remove(accuracyHistorySize);
+						}
+					}
+					float total = 0F;
+					float totalTrend = 0F;
+					float totalTrendNum = 0F;
+					int i = 0;
+					for (Float acc: accuracyHistory) {
+						total += acc;
+						if (i < accuracyTrendSize) {
+							totalTrend += acc;
+							totalTrendNum += 1F;
+						}
+						i++;
+					}
+					float avg = total / (float) accuracyHistory.size();
+					float avgTrend = totalTrend / totalTrendNum;
+					((KeyValueSDR)outputs.get(CLASSIFICATION_OUTPUT)).put(ACCURACY_VALUE_KEY, avg);
+					((KeyValueSDR)outputs.get(CLASSIFICATION_OUTPUT)).put(ACCURACY_TREND_VALUE_KEY, avgTrend);
+				}
+				return true;
+			}
+		});
+		return r;
+	}
+
 	protected CodeRunnerList getGeneratePredictionsRunnerList(int threads) {
 		CodeRunnerList r = new CodeRunnerList();
 		if (threads <= 0) {
@@ -240,6 +308,10 @@ public class Classifier extends SDRProcessor {
 		Classification classification = step.generatePrediction(inputs.get(0));
 		lock.lock(this);
 		((KeyValueSDR)outputs.get(CLASSIFICATION_OUTPUT)).put(CLASSIFICATION_VALUE_KEY + ":" + classification.step, classification);
+		predictedValue = null;
+		if (logPredictionAccuracy && classification.step==1 && classification.getMostCountedValues().size()==1) {
+			predictedValue = classification.getMostCountedValues().get(0);
+		}
 		lock.unlock(this);
 	}
 }

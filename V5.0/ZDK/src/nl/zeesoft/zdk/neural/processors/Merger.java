@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.processors;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -57,21 +58,39 @@ public class Merger extends SDRProcessor {
 			new RunCode() {
 				@Override
 				protected boolean run() {
-					if (concatenate) {
-						int offset = 0;
-						for (SDR input: inputs) {
-							outputs.get(MERGED_OUTPUT).concat(input,offset);
-							offset += input.length();
+					boolean keyValue = false;
+					
+					int offset = 0;
+					for (SDR input: inputs) {
+						if (input.onBits()>0) {
+							if (concatenate) {
+								outputs.get(MERGED_OUTPUT).concat(input,offset);
+								offset += input.length();
+							} else {
+								outputs.get(MERGED_OUTPUT).or(input);
+							}
 						}
-					} else {
-						for (SDR input: inputs) {
-							outputs.get(MERGED_OUTPUT).or(input);
+						if (input instanceof KeyValueSDR) {
+							keyValue = true;
 						}
 					}
 					if (maxOnBits>0) {
 						outputs.get(MERGED_OUTPUT).subsample(maxOnBits);
 					}
 					outputs.get(MERGED_OUTPUT).distort(distortion);
+					
+					if (keyValue) {
+						KeyValueSDR output = new KeyValueSDR(outputs.get(MERGED_OUTPUT));
+						for (SDR input: inputs) {
+							if (input instanceof KeyValueSDR) {
+								KeyValueSDR kvSdr = (KeyValueSDR) input;
+								for (String key: kvSdr.getValueKeys()) {
+									output.put(key, kvSdr.get(key));
+								}
+							}
+						}
+						outputs.set(MERGED_OUTPUT, output);
+					}
 					return true;
 				}
 			}

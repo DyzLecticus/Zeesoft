@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -37,12 +38,24 @@ public class KeyValueSDR extends SDR {
 		keyValues.put(DEFAULT_VALUE_KEY, value);
 	}
 
+	public boolean containsValue() {
+		return keyValues.containsKey(DEFAULT_VALUE_KEY);
+	}
+
 	public Object getValue() {
 		return keyValues.get(DEFAULT_VALUE_KEY);
 	}
 
 	public void put(String key, Object value) {
 		keyValues.put(key, value);
+	}
+
+	public boolean containsKey(String key) {
+		return keyValues.containsKey(key);
+	}
+	
+	public List<String> getValueKeys() {
+		return new ArrayList<String>(keyValues.keySet());
 	}
 	
 	public Object get(String key) {
