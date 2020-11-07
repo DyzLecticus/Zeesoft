@@ -41,7 +41,7 @@ public class TestSpatialPooler extends TestObject {
 		System.out.println("sp.resetConnections();");
 		System.out.println("// Create and build the processor chain");
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("sp.buildProcessorChain(processorChain, true);");
+		System.out.println("sp.buildProcessorChain(processorChain);");
 		System.out.println("// Set the input (dimensions should match configured input dimensions)");
 		System.out.println("sp.setInput(new SDR());");
 		System.out.println("// Run the processor chain");
@@ -80,7 +80,7 @@ public class TestSpatialPooler extends TestObject {
 		Logger.dbg(this, new Str("Initialized spatial pooler (asynchronous)"));
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();
-		sp.buildProcessorChain(processorChain, true);
+		sp.buildProcessorChain(processorChain);
 		
 		List<SDR> inputList = getInputSDRList(100);
 		List<SDR> outputList = new ArrayList<SDR>();
@@ -136,7 +136,7 @@ public class TestSpatialPooler extends TestObject {
 		assertEqual(cellGrid2.toStr(),cellGrid.toStr(),"Cell grid Str does not match expectation");
 		
 		CodeRunnerChain processorChain2 = new CodeRunnerChain();
-		sp2.buildProcessorChain(processorChain2, true);
+		sp2.buildProcessorChain(processorChain2);
 		sp2.fromStr(sp.toStr());
 		sp2.setInput(inputList.get(inputList.size()-1));
 		Waiter.startAndWaitFor(processorChain2, 1000);

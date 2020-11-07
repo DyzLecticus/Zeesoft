@@ -74,7 +74,7 @@ public abstract class AbstractEncoder extends SDRProcessor {
 	}
 
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		CodeRunnerList encodeValue = new CodeRunnerList(
 			new RunCode() {
 				@Override

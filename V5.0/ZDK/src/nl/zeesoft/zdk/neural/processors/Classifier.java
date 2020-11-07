@@ -65,6 +65,17 @@ public class Classifier extends SDRProcessor {
 			}
 		}
 	}
+	
+	@Override
+	public void setProperty(String property, Object value) {
+		if (property.equals("maxOnBits") && value instanceof Integer) {
+			maxOnBits = (Integer) value;
+		} else if (property.equals("logPredictionAccuracy") && value instanceof Boolean) {
+			logPredictionAccuracy = (Boolean) value;
+		} else {
+			super.setProperty(property, value);
+		}
+	}
 
 	@Override
 	public void initialize(CodeRunnerList runnerList) {
@@ -123,14 +134,10 @@ public class Classifier extends SDRProcessor {
 	}
 	
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		runnerChain.add(getProcessInputsRunnerList());
-		if (logPredictionAccuracy) {
-			runnerChain.add(getLogPredictionAccuracyRunnerList());
-		}
-		if (learn) {
-			runnerChain.add(getAssociateBitsRunnerList(threads));
-		}
+		runnerChain.add(getLogPredictionAccuracyRunnerList());
+		runnerChain.add(getAssociateBitsRunnerList(threads));
 		runnerChain.add(getGeneratePredictionsRunnerList(threads));
 		addIncrementProcessedToProcessorChain(runnerChain);
 	}
@@ -138,6 +145,8 @@ public class Classifier extends SDRProcessor {
 	@Override
 	public Str toStr() {
 		Str r = super.toStr();
+		r.sb().append(learn);
+		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
 		int i = 0;
@@ -156,11 +165,12 @@ public class Classifier extends SDRProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=3) {
-			processed = Integer.parseInt(objects.get(0).toString());
+		if (objects.size()>=4) {
+			learn = Boolean.parseBoolean(objects.get(0).toString());
+			processed = Integer.parseInt(objects.get(1).toString());
 			
 			classifierSteps.clear();
-			List<Str> steps = objects.get(1).split("\n");
+			List<Str> steps = objects.get(2).split("\n");
 			for (Str step: steps) {
 				ClassifierStep cs = new ClassifierStep(0,valueKey,maxCount,activationHistory);
 				cs.fromStr(step);
@@ -168,7 +178,7 @@ public class Classifier extends SDRProcessor {
 			}
 			
 			activationHistory.clear();
-			activationHistory.fromStr(objects.get(2));
+			activationHistory.fromStr(objects.get(3));
 		}
 	}
 
@@ -207,7 +217,7 @@ public class Classifier extends SDRProcessor {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
-					if (value!=null) {
+					if (learn && value!=null) {
 						@SuppressWarnings("unchecked")
 						List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
 						for (ClassifierStep step: steps) {
@@ -235,7 +245,7 @@ public class Classifier extends SDRProcessor {
 		CodeRunnerList r = new CodeRunnerList(new RunCode() {
 			@Override
 			protected boolean run() {
-				if (value!=null && predictedValue!=null) {
+				if (logPredictionAccuracy && value!=null && predictedValue!=null) {
 					float accuracy = 0F;
 					if (value==predictedValue || value.equals(predictedValue)) {
 						accuracy = 1F;
@@ -261,8 +271,9 @@ public class Classifier extends SDRProcessor {
 					}
 					float avg = total / (float) accuracyHistory.size();
 					float avgTrend = totalTrend / totalTrendNum;
-					((KeyValueSDR)outputs.get(CLASSIFICATION_OUTPUT)).put(ACCURACY_VALUE_KEY, avg);
-					((KeyValueSDR)outputs.get(CLASSIFICATION_OUTPUT)).put(ACCURACY_TREND_VALUE_KEY, avgTrend);
+					KeyValueSDR output = (KeyValueSDR) outputs.get(CLASSIFICATION_OUTPUT);
+					output.put(ACCURACY_VALUE_KEY, avg);
+					output.put(ACCURACY_TREND_VALUE_KEY, avgTrend);
 				}
 				return true;
 			}

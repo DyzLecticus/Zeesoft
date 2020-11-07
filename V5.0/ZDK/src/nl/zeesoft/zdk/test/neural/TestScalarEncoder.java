@@ -34,7 +34,7 @@ public class TestScalarEncoder extends TestObject {
 		System.out.println("en.initialize();");
 		System.out.println("// Create and build the processor chain");
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("en.buildProcessorChain(processorChain, true);");
+		System.out.println("en.buildProcessorChain(processorChain);");
 		System.out.println("// Set the input");
 		System.out.println("en.setValue(20);");
 		System.out.println("// Run the processor chain");
@@ -61,7 +61,7 @@ public class TestScalarEncoder extends TestObject {
 		en.initialize();
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();
-		en.buildProcessorChain(processorChain, true);
+		en.buildProcessorChain(processorChain);
 		
 		en.setValue(20);
 		Waiter.startAndWaitFor(processorChain, 1000);

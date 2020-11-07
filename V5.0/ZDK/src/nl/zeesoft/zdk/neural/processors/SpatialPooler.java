@@ -77,6 +77,15 @@ public class SpatialPooler extends CellGridProcessor {
 	}
 	
 	@Override
+	public void setProperty(String property, Object value) {
+		if (property.equals("boostStrength") && value instanceof Integer) {
+			boostStrength = (Integer) value;
+		} else {
+			super.setProperty(property, value);
+		}
+	}
+	
+	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (inputSizeX < 2) {
 			inputSizeX = 2;
@@ -158,12 +167,10 @@ public class SpatialPooler extends CellGridProcessor {
 	}
 	
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		runnerChain.add(getActivateColumnsRunnerList(threads));
 		runnerChain.add(getSelectWinnersRunnerList());
-		if (learn) {
-			runnerChain.add(getAdjustPermanencesRunnerList(threads));
-		}
+		runnerChain.add(getAdjustPermanencesRunnerList(threads));
 		runnerChain.add(getUpdateHistoryRunnerList());
 		runnerChain.add(getCalculateActivationRunnerList());
 		runnerChain.add(getUpdateBoostFactorsRunnerList(threads));
@@ -237,6 +244,8 @@ public class SpatialPooler extends CellGridProcessor {
 	@Override
 	public Str toStr() {
 		Str r = super.toStr();
+		r.sb().append(learn);
+		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(toCellGrid(null).toStr().sb());
@@ -248,13 +257,14 @@ public class SpatialPooler extends CellGridProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=3) {
-			processed = Integer.parseInt(objects.get(0).toString());
+		if (objects.size()>=4) {
+			learn = Boolean.parseBoolean(objects.get(0).toString());
+			processed = Integer.parseInt(objects.get(1).toString());
 			CellGrid cellGrid = new CellGrid();
-			cellGrid.fromStr(objects.get(1));
+			cellGrid.fromStr(objects.get(2));
 			fromCellGrid(cellGrid,null);
 			SDRHistory hist = new SDRHistory();
-			hist.fromStr(objects.get(2));
+			hist.fromStr(objects.get(3));
 			setActivationHistory(hist);
 		}
 	}
@@ -324,7 +334,7 @@ public class SpatialPooler extends CellGridProcessor {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				if (outputs.get(ACTIVE_COLUMNS_OUTPUT).getBit(column.posX(), column.posY())) {
+				if (learn && outputs.get(ACTIVE_COLUMNS_OUTPUT).getBit(column.posX(), column.posY())) {
 					Grid winnerPermanences = (Grid) value;
 					for (GridColumn pColumn: winnerPermanences.getColumns()) {
 						float permanence = (float)pColumn.getValue();

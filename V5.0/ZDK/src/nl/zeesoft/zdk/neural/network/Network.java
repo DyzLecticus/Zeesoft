@@ -30,8 +30,6 @@ public class Network {
 	
 	private Lock					initLocker					= new Lock();
 	private List<NetworkProcessor>	processors					= new ArrayList<NetworkProcessor>();
-	private List<String>			learnProcessorNames			= new ArrayList<String>();
-	private List<String>			sequentialProcessorNames	= new ArrayList<String>();
 	private CodeRunnerChain			processorChain				= null;
 	
 	// State
@@ -46,8 +44,6 @@ public class Network {
 			lock.lock(this);
 			this.config.copyFrom(config);
 			processors.clear();
-			learnProcessorNames.clear();
-			sequentialProcessorNames.clear();
 			processorChain = new CodeRunnerChain();
 			lock.unlock(this);
 		}
@@ -76,8 +72,6 @@ public class Network {
 				buildProcessorChainNoLock(processorChain);
 			} else {
 				processors.clear();
-				learnProcessorNames.clear();
-				sequentialProcessorNames.clear();
 			}
 			lock.unlock(this);
 			
@@ -91,69 +85,25 @@ public class Network {
 	}
 
 	public void setLayerLearn(int layer, boolean learn) {
-		lock.lock(this);
-		if (learn) {
-			for (NetworkProcessorConfig cfg: config.processorConfigs) {
-				if (cfg.layer==layer) {
-					if (!learnProcessorNames.contains(cfg.name)) {
-						learnProcessorNames.add(cfg.name);
-					}
-				}
-			}
-		} else {
-			for (NetworkProcessorConfig cfg: config.processorConfigs) {
-				if (cfg.layer==layer) {
-					if (learnProcessorNames.contains(cfg.name)) {
-						learnProcessorNames.remove( cfg.name);
-					}
-				}
-			}
-		}
-		lock.unlock(this);
+		setLayerProperty(layer, "learn", learn);
 	}
 
 	public void setProcessorLearn(String name, boolean learn) {
+		setProcessorProperty(name, "learn", learn);
+	}
+	
+	public void setLayerProperty(int layer, String property, Object value) {
 		lock.lock(this);
-		if (learn) {
-			if (name.equals("*")) {
-				learnProcessorNames.clear();
-				for (NetworkProcessorConfig cfg: config.processorConfigs) {
-					learnProcessorNames.add(cfg.name);
-				}
-			} else if (!learnProcessorNames.contains(name)) {
-				learnProcessorNames.add(name);
-			}
-		} else {
-			if (name.equals("*")) {
-				learnProcessorNames.clear();
-			} else {
-				learnProcessorNames.remove(name);
-			}
-		}
+		setLayerPropertyNoLock(layer, property, value);
 		lock.unlock(this);
 	}
 	
-	public void setProcessorSequential(String name, boolean sequential) {
+	public void setProcessorProperty(String name, String property, Object value) {
 		lock.lock(this);
-		if (sequential) {
-			if (name.equals("*")) {
-				sequentialProcessorNames.clear();
-				for (NetworkProcessorConfig cfg: config.processorConfigs) {
-					sequentialProcessorNames.add(cfg.name);
-				}
-			} else if (!sequentialProcessorNames.contains(name)) {
-				sequentialProcessorNames.add(name);
-			}
-		} else {
-			if (name.equals("*")) {
-				sequentialProcessorNames.clear();
-			} else {
-				sequentialProcessorNames.remove(name);
-			}
-		}
+		setProcessorPropertyNoLock(name, property, value);
 		lock.unlock(this);
 	}
-	
+
 	public boolean resetConnections() {
 		boolean r = false;
 		lock.lock(this);
@@ -246,7 +196,6 @@ public class Network {
 			NetworkProcessor processor = new NetworkProcessor(cfg.name,sdrProcessor,cfg.threads);
 			initLocker.lock(this);
 			processors.add(processor);
-			learnProcessorNames.add(cfg.name);
 			initLocker.unlock(this);
 		}
 	}
@@ -300,6 +249,27 @@ public class Network {
 		}
 		return r;
 	}
+
+	protected void setLayerPropertyNoLock(int layer, String property, Object value) {
+		for (NetworkProcessorConfig cfg: config.processorConfigs) {
+			if (cfg.layer==layer) {
+				setProcessorPropertyNoLock(cfg.name, property, value);
+			}
+		}
+	}
+	
+	protected void setProcessorPropertyNoLock(String name, String property, Object value) {
+		if (name.equals("*")) {
+			for (Processor processor: processors) {
+				processor.setProperty(property, value);
+			}
+		} else {
+			Processor processor = getProcessorNoLock(name);
+			if (processor!=null) {
+				processor.setProperty(property, value);
+			}
+		}
+	}
 	
 	protected void processIONoLock(int layer, Processor processor) {
 		List<NetworkLink> linksTo = config.getNetworkLinksTo(processor.getName());
@@ -335,8 +305,6 @@ public class Network {
 			}
 			if (inputs[0]!=null) {
 				ProcessorIO io = new ProcessorIO();
-				io.learn = learnProcessorNames.contains(processor.getName());
-				io.sequential = sequentialProcessorNames.contains(processor.getName());
 				for (int i = 0; i < inputs.length; i++) {
 					io.inputs.add(inputs[i]);
 				}

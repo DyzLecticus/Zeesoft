@@ -40,7 +40,7 @@ public class TestTemporalMemory extends TestObject {
 		System.out.println("tm.resetConnections();");
 		System.out.println("// Create and build the processor chain");
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("tm.buildProcessorChain(processorChain, true);");
+		System.out.println("tm.buildProcessorChain(processorChain);");
 		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
 		System.out.println("tm.setInput(new SDR());");
 		System.out.println("// Run the processor chain");
@@ -70,7 +70,7 @@ public class TestTemporalMemory extends TestObject {
 		tm.resetConnections();
 
 		CodeRunnerChain processorChain = new CodeRunnerChain();
-		tm.buildProcessorChain(processorChain, true);
+		tm.buildProcessorChain(processorChain);
 
 		List<SDR> inputList = getInputSDRList(500);
 		List<SDR> outputList = new ArrayList<SDR>();
@@ -106,7 +106,7 @@ public class TestTemporalMemory extends TestObject {
 		tm2.initialize(null);
 		tm2.fromStr(tm.toStr());
 		CodeRunnerChain processorChain2 = new CodeRunnerChain();
-		tm2.buildProcessorChain(processorChain2, true);
+		tm2.buildProcessorChain(processorChain2);
 		tm2.setInput(inputList.get(0));
 		Waiter.startAndWaitFor(processorChain2, 1000);
 		tm2.setInput(inputList.get(1));

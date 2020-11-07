@@ -43,7 +43,7 @@ public class TestClassifier extends TestObject {
 		System.out.println("cl.initialize();");
 		System.out.println("// Create and build the processor chain");
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("cl.buildProcessorChain(processorChain, true);");
+		System.out.println("cl.buildProcessorChain(processorChain);");
 		System.out.println("// Set the input (dimensions should match configured X/Y dimensions)");
 		System.out.println("cl.setInput(new SDR());");
 		System.out.println("// Run the processor chain");
@@ -81,7 +81,7 @@ public class TestClassifier extends TestObject {
 		cl.initialize();
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();
-		cl.buildProcessorChain(processorChain, true);
+		cl.buildProcessorChain(processorChain);
 		
 		List<SDR> inputList = getInputSDRList(100);
 		List<KeyValueSDR> valueList = getValueSDRList(100);

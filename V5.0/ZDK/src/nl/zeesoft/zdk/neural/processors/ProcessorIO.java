@@ -8,8 +8,6 @@ import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
 public class ProcessorIO {
-	public boolean				sequential					= false;
-	public boolean				learn						= true;
 	public int					timeoutMs					= 1000;
 	public List<SDR>			inputs						= new ArrayList<SDR>();
 	public List<SDR>			outputs						= null;
@@ -24,8 +22,6 @@ public class ProcessorIO {
 	}
 	
 	public void copyFrom(ProcessorIO io) {
-		this.sequential = io.sequential;
-		this.learn = io.learn;
 		this.timeoutMs = io.timeoutMs;
 		for (SDR sdr: io.inputs) {
 			if (sdr instanceof KeyValueSDR) {

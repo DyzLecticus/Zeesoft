@@ -30,6 +30,17 @@ public class Merger extends SDRProcessor {
 	}
 
 	@Override
+	public void setProperty(String property, Object value) {
+		if (property.equals("maxOnBits") && value instanceof Integer) {
+			maxOnBits = (Integer) value;
+		} else if (property.equals("distortion") && value instanceof Float) {
+			distortion = (Float) value;
+		} else {
+			super.setProperty(property, value);
+		}
+	}
+	
+	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (sizeX < 2) {
 			sizeX = 2;
@@ -53,7 +64,7 @@ public class Merger extends SDRProcessor {
 	}
 
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		CodeRunnerList mergeInputs = new CodeRunnerList(
 			new RunCode() {
 				@Override

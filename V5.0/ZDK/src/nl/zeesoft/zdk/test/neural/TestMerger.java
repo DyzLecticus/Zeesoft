@@ -34,7 +34,7 @@ public class TestMerger extends TestObject {
 		System.out.println("mr.initialize();");
 		System.out.println("// Create and build the processor chain");
 		System.out.println("CodeRunnerChain processorChain = new CodeRunnerChain();");
-		System.out.println("mr.buildProcessorChain(processorChain, true);");
+		System.out.println("mr.buildProcessorChain(processorChain);");
 		System.out.println("// Set the input");
 		System.out.println("mr.setInput(new SDR(), new SDR());");
 		System.out.println("// Run the processor chain");
@@ -68,7 +68,7 @@ public class TestMerger extends TestObject {
 		mr.initialize();
 		
 		CodeRunnerChain processorChain = new CodeRunnerChain();
-		mr.buildProcessorChain(processorChain, true);
+		mr.buildProcessorChain(processorChain);
 		
 		SDR sdr1 = new SDR(8,8);
 		SDR sdr2 = new SDR(8,8);
@@ -101,7 +101,7 @@ public class TestMerger extends TestObject {
 		mr2.initialize();
 		
 		CodeRunnerChain processorChain2 = new CodeRunnerChain();
-		mr2.buildProcessorChain(processorChain2, true);
+		mr2.buildProcessorChain(processorChain2);
 		
 		sdr1 = new SDR(8,4);
 		sdr2 = new SDR(8,4);

@@ -15,12 +15,21 @@ import nl.zeesoft.zdk.thread.RunCode;
 public abstract class SDRProcessor implements StrAble {
 	protected final static String	OBJECT_SEPARATOR	= "@OBJECT@\n";
 	
+	protected boolean				learn				= true;
 	protected int					processed			= 0;
 	protected List<SDR>				inputs				= new ArrayList<SDR>();
 	protected List<SDR>				outputs				= new ArrayList<SDR>();
 	
 	public void configure(SDRProcessorConfig config) {
 		// Override to implement
+	}
+	
+	public void setProperty(String property, Object value) {
+		if (property.equals("learn") && value instanceof Boolean) {
+			learn = (Boolean) value;
+		} else if (property.equals("processed") && value instanceof Integer) {
+			processed = (Integer) value;
+		}
 	}
 	
 	public Str getName() {
@@ -61,11 +70,11 @@ public abstract class SDRProcessor implements StrAble {
 		return err;
 	}
 
-	public final void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn) {
-		buildProcessorChain(runnerChain, learn, Grid.THREADS);
+	public final void buildProcessorChain(CodeRunnerChain runnerChain) {
+		buildProcessorChain(runnerChain, Grid.THREADS);
 	}
 
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		// Override to implement
 	}
 	

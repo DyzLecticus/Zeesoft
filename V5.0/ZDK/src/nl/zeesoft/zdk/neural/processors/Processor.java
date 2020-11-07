@@ -12,19 +12,28 @@ public class Processor implements StrAble {
 	
 	private String			name						= "";
 	private SDRProcessor	processor					= null;
+	private	CodeRunnerChain	processingChain				= new CodeRunnerChain();
 	
-	private	CodeRunnerChain	processingAndLearningChain	= new CodeRunnerChain();
-	private	CodeRunnerChain	processingOnlyChain			= new CodeRunnerChain();
+	private boolean			sequential					= false;
 	
 	public Processor(String name, SDRProcessor processor, int threads) {
 		this.name = name;
 		this.processor = processor;
-		processor.buildProcessorChain(processingAndLearningChain, true, threads);
-		processor.buildProcessorChain(processingOnlyChain, false, threads);
+		processor.buildProcessorChain(processingChain, threads);
 	}
 
 	public String getName() {
 		return name;
+	}
+	
+	public void setProperty(String property, Object value) {
+		lock.lock(this);
+		if (property.equals("sequential") && value instanceof Boolean) {
+			sequential = (Boolean) value;
+		} else {
+			processor.setProperty(property, value);
+		}
+		lock.unlock(this);
 	}
 	
 	public void resetConnections() {
@@ -39,22 +48,12 @@ public class Processor implements StrAble {
 		lock.lock(this);
 		io.error = processor.setInput(io.inputs);
 		if (io.error.length()==0) {
-			boolean timedOut = false;
-			if (io.learn) {
-				if (io.sequential) {
-					processingAndLearningChain.runSequential();
-				} else {
-					timedOut = !Waiter.startAndWaitFor(processingAndLearningChain, io.timeoutMs);
-				}
+			if (sequential) {
+				processingChain.runSequential();
 			} else {
-				if (io.sequential) {
-					processingAndLearningChain.runSequential();
-				} else {
-					timedOut = !Waiter.startAndWaitFor(processingOnlyChain, io.timeoutMs);
+				if (!Waiter.startAndWaitFor(processingChain, io.timeoutMs)) {
+					io.error.sb().append("Processing " + name + " input timed out");
 				}
-			}
-			if (timedOut) {
-				io.error.sb().append("Processing " + name + " input timed out");
 			}
 		}
 		io.outputs = processor.getOutputs();

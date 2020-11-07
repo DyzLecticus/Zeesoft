@@ -191,11 +191,9 @@ public class TemporalMemory extends CellGridProcessor {
 	}
 
 	@Override
-	public void buildProcessorChain(CodeRunnerChain runnerChain, boolean learn, int threads) {
+	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {
 		runnerChain.add(getActivateColumnsRunnerList(threads));
-		if (learn) {
-			runnerChain.add(getAdaptColumnsRunnerList(threads));
-		}
+		runnerChain.add(getAdaptColumnsRunnerList(threads));
 		runnerChain.add(getClearPredictionRunnerList());
 		runnerChain.add(getPredictActiveCellsRunnerList(threads));
 		runnerChain.add(getGenerateOutputsRunnerList(threads));
@@ -218,6 +216,8 @@ public class TemporalMemory extends CellGridProcessor {
 	@Override
 	public Str toStr() {
 		Str r = super.toStr();
+		r.sb().append(learn);
+		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(getCellGrid().toStr().sb());
@@ -227,10 +227,11 @@ public class TemporalMemory extends CellGridProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=2) {
-			processed = Integer.parseInt(objects.get(0).toString());
+		if (objects.size()>=3) {
+			learn = Boolean.parseBoolean(objects.get(0).toString());
+			processed = Integer.parseInt(objects.get(1).toString());
 			CellGrid cellGrid = new CellGrid();
-			cellGrid.fromStr(objects.get(1));
+			cellGrid.fromStr(objects.get(2));
 			setCellGrid(cellGrid);
 		}
 	}
@@ -266,17 +267,19 @@ public class TemporalMemory extends CellGridProcessor {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object[] applyFunction(GridColumn column, Object[] values) {
-				if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
-					adaptColumn(column);
-				} else if (
-					(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
-					Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
-					) {
-					if (distalSegmentDecrement > 0F) {
-						punishPredictedColumn(column, distalSegmentDecrement, false);
-					}
-					if (apicalSegmentDecrement > 0F) {
-						punishPredictedColumn(column, apicalSegmentDecrement, true);
+				if (learn) {
+					if (Position.posXYIsInList(column.posX(), column.posY(), activeCellPositions)) {
+						adaptColumn(column);
+					} else if (
+						(distalSegmentDecrement > 0F || apicalSegmentDecrement > 0F) &&
+						Position.posXYIsInList(column.posX(), column.posY(), predictiveCellPositions)
+						) {
+						if (distalSegmentDecrement > 0F) {
+							punishPredictedColumn(column, distalSegmentDecrement, false);
+						}
+						if (apicalSegmentDecrement > 0F) {
+							punishPredictedColumn(column, apicalSegmentDecrement, true);
+						}
 					}
 				}
 				return values;
