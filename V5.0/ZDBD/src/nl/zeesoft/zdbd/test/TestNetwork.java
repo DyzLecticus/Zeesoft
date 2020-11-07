@@ -65,7 +65,6 @@ public class TestNetwork extends TestObject {
 		network.initialize(true);
 		System.out.println("Initialized network");
 		
-		//network.setProcessorSequential("*", true);
 		network.setProcessorLearn("*", false);
 		network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
 		
