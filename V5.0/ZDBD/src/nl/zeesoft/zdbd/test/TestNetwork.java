@@ -2,6 +2,7 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -10,7 +11,6 @@ import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
-import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -65,14 +65,22 @@ public class TestNetwork extends TestObject {
 		network.initialize(true);
 		System.out.println("Initialized network");
 		
-		network.setProcessorSequential("*", true);
+		//network.setProcessorSequential("*", true);
+		network.setProcessorLearn("*", false);
+		network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
 		
 		System.out.println();
 		List<NetworkIO> results = new ArrayList<NetworkIO>();
 		List<NetworkIO> ioList = PatternFactory.getFourOnFloorIO();
-		int cycles = 20;
+		int cycles = 32;
 		for (int i = 0; i < cycles; i++) {
 			System.out.println("Training " + (i + 1) + "/" + cycles + " ...");
+			if (i == 4) {
+				network.setLayerLearn(NetworkConfigFactory.MEMORY_LAYER, true);
+			}
+			if (i == 8) {
+				network.setLayerLearn(NetworkConfigFactory.CLASSIFIER_LAYER, true);
+			}
 			for (NetworkIO io: ioList) {
 				NetworkIO result = new NetworkIO(io);
 				network.processIO(result);
@@ -82,6 +90,16 @@ public class TestNetwork extends TestObject {
 					break;
 				}
 			}
+			
+			NetworkIO lastIO = results.get(results.size() - 1);
+			SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
+			if (accuracies.size()>0) {
+				SortedMap<String,Float> accuracyTrends = lastIO.getClassifierAccuracies(true);
+				System.out.println("Accuracies / trends: " + accuracies.values() + " / " + accuracyTrends.values());
+			}
+			if (lastIO.isAccurate()) {
+				break;
+			}
 		}
 		
 		System.out.println();
@@ -89,9 +107,8 @@ public class TestNetwork extends TestObject {
 		NetworkIO lastIO = results.get(results.size() - 1);
 		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
 		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
-		for (int i = 1; i < 5; i++) {
-			Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":" + i);
-			System.out.println(classification.toStr());
-		}
+		System.out.println(keyValueSDR);
+		//Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
+		//System.out.println(classification.toStr());
 	}
 }

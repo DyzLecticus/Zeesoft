@@ -51,18 +51,15 @@ public class TestEncoders extends TestObject {
 		Str err = EncoderFactory.testEncoders();
 		assertEqual(err, new Str(), "Encoder factory error does not match expectation");
 		
-		Rythm rythm = new Rythm();
-		
 		DrumPattern pattern = PatternFactory.getFourOnFloor(0);
-		pattern.initialize(rythm);
 		
-		List<SDR> sdrs = rythm.getSDRsForPattern(pattern.num);
-		System.out.println("Rythm (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
+		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
+		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
 		displaySDRList(sdrs);
 		
-		sdrs = pattern.getSDRsForDrum(DrumPattern.CLOSED_HIHAT);
+		sdrs = pattern.getSDRsForPattern();
 		System.out.println();
-		System.out.println("Drum pattern (" + EncoderFactory.drumEncoder.getEncodeSizeX() + "*" + EncoderFactory.drumEncoder.getEncodeSizeY() + ");");
+		System.out.println("Drum pattern (" + DrumPattern.sizeX() + "*" + DrumPattern.sizeY() + ");");
 		displaySDRList(sdrs);
 	}
 	

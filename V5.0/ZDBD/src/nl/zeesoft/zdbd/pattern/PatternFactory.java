@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
@@ -72,26 +73,23 @@ public class PatternFactory {
 			}
 			
 			int start = p * rythm.getStepsPerPattern();
-			List<SDR> rythmSDRs = rythm.getSDRsForPattern(patternNum);
 			
+			List<SDR> rythmSDRs = rythm.getSDRsForPattern(patternNum);
 			int ps = 0;
 			for (int s = start; s < start + rythm.getStepsPerPattern(); s++) {
 				NetworkIO io = r.get(s);
-				io.setValue("Context", rythmSDRs.get(ps));
+				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythmSDRs.get(ps));
 				ps++;
 			}
 			
 			DrumPattern pattern = getFourOnFloor(patternNum);
-			for (int d = 0; d < DrumPattern.DRUM_NAMES.length; d++) {
-				List<SDR> drumSDRs = pattern.getSDRsForDrum(d);
-				ps = 0;
-				for (int s = start; s < start + rythm.getStepsPerPattern(); s++) {
-					NetworkIO io = r.get(s);
-					io.setValue(DrumPattern.DRUM_NAMES[d], drumSDRs.get(ps));
-					ps++;
-				}
+			List<SDR> patternSDRs = pattern.getSDRsForPattern();
+			ps = 0;
+			for (int s = start; s < start + rythm.getStepsPerPattern(); s++) {
+				NetworkIO io = r.get(s);
+				io.setValue(NetworkConfigFactory.DRUM_INPUT, patternSDRs.get(ps));
+				ps++;
 			}
-			
 		}
 		return r;
 	}

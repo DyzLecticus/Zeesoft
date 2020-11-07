@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.neural.encoders.DrumEncoder;
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
@@ -30,7 +31,7 @@ public class DrumPattern {
 	
 	public void initialize(Rythm rythm) {
 		this.rythm.copyFrom(rythm);
-		drums = new int[rythm.getStepsPerPattern()][6];
+		drums = new int[rythm.getStepsPerPattern()][DRUM_NAMES.length];
 		for (int s = 0; s < rythm.getStepsPerPattern(); s++) {
 			for (int d = 0; d < DRUM_NAMES.length; d++) {
 				drums[s][d] = OFF;
@@ -38,14 +39,45 @@ public class DrumPattern {
 		}
 	}
 	
-	public List<SDR> getSDRsForDrum(int drum) {
+	public List<SDR> getSDRsForPattern() {
 		List<SDR> r = new ArrayList<SDR>();
 		int stepsPerPattern = rythm.getStepsPerPattern();
 		for (int s = 0; s < stepsPerPattern; s++) {
-			KeyValueSDR sdr = new KeyValueSDR(EncoderFactory.drumEncoder.getEncodedValue(drums[s][drum]));
-			sdr.put(DRUM_NAMES[drum], drums[s][drum]);
-			r.add(sdr);
+			r.add(getSDRForPatternStep(s, drums[s], stepsPerPattern));
 		}
 		return r;
+	}
+	
+	public static SDR getSDRForPatternStep(int step, int[] values, int stepsPerPattern) {
+		SDR r = null;
+		if (step < stepsPerPattern) {
+			DrumEncoder enc = EncoderFactory.drumEncoder;
+			KeyValueSDR kvSdr = new KeyValueSDR(enc.getEncodeSizeX() * DRUM_NAMES.length, enc.getEncodeSizeY());
+			for (int d = 0; d < DRUM_NAMES.length; d++) {
+				kvSdr.concat(enc.getEncodedValue(values[d]), d * enc.getEncodeLength());
+				kvSdr.put(DRUM_NAMES[d], values[d]);
+			}
+			r = kvSdr;
+		}
+		return r;
+	}
+	
+	public static int sizeX() {
+		return getExampleSDR().sizeX();
+	}
+	
+	public static int sizeY() {
+		return getExampleSDR().sizeY();
+	}
+	
+	private static SDR getExampleSDR() {
+		int[] values = new int[DRUM_NAMES.length];
+		for (int d = 0; d < DRUM_NAMES.length; d++) {
+			values[d] = OFF;
+		}
+		SDR sdr = getSDRForPatternStep(0, values, 1);
+		sdr.flatten();
+		sdr.square();
+		return sdr;
 	}
 }
