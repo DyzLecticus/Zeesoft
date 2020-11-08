@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.Str;
 public class BasicScalarEncoder extends SDREncoder {
 	protected float		minValue	= 0;
 	protected float		maxValue	= 200;
+	protected float		resolution	= 1;
 	
 	protected boolean	periodic	= false;
 
@@ -24,6 +25,14 @@ public class BasicScalarEncoder extends SDREncoder {
 		this.maxValue = maxValue;
 	}
 
+	public float getResolution() {
+		return resolution;
+	}
+
+	public void setResolution(float resolution) {
+		this.resolution = resolution;
+	}
+
 	public boolean isPeriodic() {
 		return periodic;
 	}
@@ -41,8 +50,9 @@ public class BasicScalarEncoder extends SDREncoder {
 		} else if (value instanceof Integer) {
 			val = (int) value;
 		}
+		
 		if (periodic) {
-			val = getCorrectedValue(val) % getCorrectedMaxValue();
+			val = getCorrectedValue(val) % (getCorrectedMaxValue() + resolution);
 		} else {
 			if (val < minValue) {
 				val = minValue;
@@ -50,7 +60,9 @@ public class BasicScalarEncoder extends SDREncoder {
 			if (val > maxValue) {
 				val = maxValue;
 			}
+			val = getCorrectedValue(val);
 		}
+		
 		float percentage = val / getCorrectedMaxValue();
 		int sBit = (int) (percentage * getBuckets());
 		int eBit = sBit + onBits;
@@ -69,15 +81,7 @@ public class BasicScalarEncoder extends SDREncoder {
 	}
 	
 	protected float getCorrectedMaxValue() {
-		float r = maxValue;
-		if (minValue!=0) {
-			if (minValue > 0) {
-				r = r - minValue;
-			} else {
-				r = r + (minValue * -1);
-			}
-		}
-		return r;
+		return getCorrectedValue(maxValue);
 	}
 	
 	protected float getCorrectedValue(float value) {
@@ -92,19 +96,37 @@ public class BasicScalarEncoder extends SDREncoder {
 		return r;
 	}
 	
+	public Str testOnBits() {
+		Str r = new Str();
+		for (float val = minValue; val <= maxValue; val+=resolution) {
+			SDR sdr = getEncodedValue(val);
+			if (sdr.onBits()!=onBits) {
+				r.sb().append("Invalid on bits for value: ");
+				r.sb().append(val);
+				r.sb().append(", on bits: ");
+				r.sb().append(sdr.onBits());
+				r.sb().append(", required: ");
+				r.sb().append(onBits);
+				break;
+			}
+		}
+		return r;
+	}
+	
 	public Str testMinimalOverlap() {
-		return testOverlap(1, onBits, 1);
+		return testOverlap(1, (onBits - 1));
 	}
 	
 	public Str testNoOverlap() {
-		return testOverlap(0, 0, 1);
+		return testOverlap(0, 0);
 	}
 	
-	public Str testOverlap(int minOverlap, int maxOverlap, float resolution) {
+	public Str testOverlap(int minOverlap, int maxOverlap) {
 		Str r = new Str();
 		SDR curr = getEncodedValue(minValue);
-		for (float val = (minValue + resolution); val < maxValue; val+=resolution) {
+		for (float val = (minValue + resolution); val <= maxValue; val+=resolution) {
 			SDR next = getEncodedValue(val);
+			next.flatten();
 			int overlap = curr.getOverlap(next);
 			if (minOverlap > 0 && overlap < minOverlap) {
 				r.sb().append("Invalid bucket value overlap for value: ");

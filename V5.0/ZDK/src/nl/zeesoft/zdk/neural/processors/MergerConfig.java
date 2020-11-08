@@ -18,7 +18,7 @@ public class MergerConfig extends SDRProcessorConfig{
 	public int		sizeY		= 48;
 	public boolean	concatenate	= false;
 	public int		maxOnBits	= 256;
-	public float	distortion	= 0.0F;
+	public float	distortion	= 0F;
 
 	@Override
 	public Str getDescription() {
@@ -27,7 +27,7 @@ public class MergerConfig extends SDRProcessorConfig{
 		r.sb().append(": ?");
 
 		r.sb().append("\n");
-		r.sb().append("-> Encoded value: ");
+		r.sb().append("-> SDR: ");
 		r.sb().append(sizeX);
 		r.sb().append("*");
 		r.sb().append(sizeY);

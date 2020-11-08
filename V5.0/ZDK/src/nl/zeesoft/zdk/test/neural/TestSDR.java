@@ -106,32 +106,36 @@ public class TestSDR extends TestObject {
 		
 		// Encoder
 		BasicScalarEncoder encoder = new BasicScalarEncoder();
-		encoder.setEncodeDimensions(8, 8);
-		encoder.setOnBits(8);
-		encoder.setMaxValue(56);
+		encoder.setEncodeDimensions(4, 4);
+		encoder.setOnBits(4);
+		encoder.setMaxValue(12);
 		
-		assertEqual(encoder.getEncodedValue(0).toStr(),new Str("8;8;0,1,2,3,4,5,6,7"),"Encoded SDR does not match expectation (1)");
-		assertEqual(encoder.getEncodedValue(28).toStr(),new Str("8;8;28,29,30,31,32,33,34,35"),"Encoded SDR does not match expectation (2)");
-		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;56,57,58,59,60,61,62,63"),"Encoded SDR does not match expectation (3)");
-		encoder.setPeriodic(true);
-		assertEqual(encoder.getEncodedValue(200).toStr(),new Str("8;8;32,33,34,35,36,37,38,39"),"Encoded SDR does not match expectation (4)");
+		assertEqual(encoder.getEncodedValue(8).toStr(),new Str("4;4;8,9,10,11"),"Encoded SDR does not match expectation");
+		assertEqual(encoder.testMinimalOverlap(),new Str(),"Minimal overlap error does not match expectation");
+		assertEqual(encoder.testOnBits(),new Str(),"On bits error does not match expectation");
 		
-		Str err = encoder.testMinimalOverlap();
-		assertEqual(err, new Str(), "Error message does not match expectation (1)");
+		encoder.setMaxValue(3);
+		assertEqual(encoder.testNoOverlap(),new Str(),"No overlap error does not match expectation (1)");
 		
 		encoder.setMaxValue(4);
-		err = encoder.testMinimalOverlap();
-		assertEqual(err, new Str("Invalid bucket value overlap for value: 1.0, overlap: 0, minimum: 1"), "Error message does not match expectation (2)");
+		assertEqual(encoder.testNoOverlap(),new Str("Invalid bucket value overlap for value: 1.0, overlap: 1, maximum: 0"),"No overlap error does not match expectation (2)");
+
+		encoder.setMaxValue(12);
 		
-		err = encoder.testNoOverlap();
-		assertEqual(err, new Str(), "Error message does not match expectation (3)");
-
-		encoder.setEncodeDimensions(16, 8);
-		encoder.setOnBits(4);
-		encoder.setMaxValue(32);
-		err = encoder.testNoOverlap();
-		assertEqual(err, new Str("Invalid bucket value overlap for value: 1.0, overlap: 1, maximum: 0"), "Error message does not match expectation (4)");
-
+		BasicScalarEncoder encoder2 = new BasicScalarEncoder();
+		encoder2.setEncodeDimensions(4, 4);
+		encoder2.setOnBits(4);
+		encoder2.setMinValue(1);
+		encoder2.setMaxValue(13);
+		
+		for (int i = 0; i <= encoder.getMaxValue(); i++) {
+			SDR sdrA = encoder.getEncodedValue(i);
+			SDR sdrB = encoder2.getEncodedValue(i+1);
+			if (!assertEqual(sdrB.toStr(),sdrA.toStr(),"Encoded SDR does not match expectation (" + (i+1) + ")")) {
+				break;
+			}
+		}
+		
 		KeyValueSDR kvSDR = new KeyValueSDR(sdr);
 		kvSDR.put("test", 2);
 		Str kvStr = kvSDR.toStr();

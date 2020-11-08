@@ -147,7 +147,7 @@ public class TestSpatialPooler extends TestObject {
 	
 	private List<SDR> getInputSDRList(int num) {
 		BasicScalarEncoder encoder = new BasicScalarEncoder();
-		encoder.setMaxValue(20);
+		encoder.setMaxValue(19);
 		encoder.setPeriodic(true);
 		
 		Str err = encoder.testMinimalOverlap();

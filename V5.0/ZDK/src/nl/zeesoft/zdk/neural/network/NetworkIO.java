@@ -137,20 +137,40 @@ public class NetworkIO {
 	}
 
 	public boolean isAccurate() {
-		return isAccurate(1.0F);
+		return isAccurate(false,1.0F);
+	}
+	
+	public boolean isAccurate(float minimumAverageAccuracy) {
+		return isAccurate(true,minimumAverageAccuracy);
 	}
 
-	public boolean isAccurate(float minimumAverageAccuracy) {
+	public boolean isAccurate(boolean average, float minimumAverageAccuracy) {
 		boolean r = false;
-		SortedMap<String,Float> accuracies = getClassifierAccuracies(false);
-		if (accuracies.size()>0) {
-			r = true;
-			for (Float accuracy: accuracies.values()) {
-				if (accuracy<minimumAverageAccuracy) {
-					r = false;
-					break;
+		if (average) {
+			r = getAverageClassifierAccuracy(false) >= minimumAverageAccuracy;
+		} else {
+			SortedMap<String,Float> accuracies = getClassifierAccuracies(false);
+			if (accuracies.size()>0) {
+				r = true;
+				for (Float accuracy: accuracies.values()) {
+					if (accuracy<minimumAverageAccuracy) {
+						r = false;
+						break;
+					}
 				}
 			}
+		}
+		return r;
+	}
+	
+	public float getAverageClassifierAccuracy(boolean trend) {
+		float r = 0;
+		SortedMap<String,Float> accuracies = getClassifierAccuracies(trend);
+		if (accuracies.size()>0) {
+			for (Float accuracy: accuracies.values()) {
+				r += accuracy;
+			}
+			r = r / (float) accuracies.size();
 		}
 		return r;
 	}

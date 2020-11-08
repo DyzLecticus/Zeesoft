@@ -291,15 +291,17 @@ public class Network {
 					if (cfg.layer>=layer) {
 						sourceIO = previousIO;
 					}
-					ProcessorIO sourcePIO = sourceIO.getProcessorIO(link.fromName);
-					if (sourcePIO.outputs.size()>link.fromIndex) {
-						inputs[link.toIndex] = sourcePIO.outputs.get(link.fromIndex);
-					} else {
-						Str err = new Str("Missing source processor output: ");
-						err.sb().append(link.fromName);
-						err.sb().append("/");
-						err.sb().append(link.fromIndex);
-						currentIO.addError(err);
+					if (sourceIO!=null) {
+						ProcessorIO sourcePIO = sourceIO.getProcessorIO(link.fromName);
+						if (sourcePIO.outputs.size()>link.fromIndex) {
+							inputs[link.toIndex] = sourcePIO.outputs.get(link.fromIndex);
+						} else {
+							Str err = new Str("Missing source processor output: ");
+							err.sb().append(link.fromName);
+							err.sb().append("/");
+							err.sb().append(link.fromIndex);
+							currentIO.addError(err);
+						}
 					}
 				}
 			}

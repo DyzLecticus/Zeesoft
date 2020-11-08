@@ -132,7 +132,7 @@ public class TestClassifier extends TestObject {
 	private List<SDR> getInputSDRList(int num) {
 		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(10, 10);
-		encoder.setMaxValue(4);
+		encoder.setMaxValue(3);
 		encoder.setPeriodic(true);
 		
 		Str err = encoder.testNoOverlap();

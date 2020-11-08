@@ -15,7 +15,7 @@ public class Merger extends SDRProcessor {
 	protected int					sizeY			= 48;
 	protected boolean				concatenate		= false;
 	protected int					maxOnBits		= 256;
-	protected float					distortion		= 0.0F;
+	protected float					distortion		= 0F;
 	
 	@Override
 	public void configure(SDRProcessorConfig config) {
@@ -85,10 +85,12 @@ public class Merger extends SDRProcessor {
 							keyValue = true;
 						}
 					}
-					if (maxOnBits>0) {
+					if (outputs.get(MERGED_OUTPUT).onBits()>maxOnBits) {
 						outputs.get(MERGED_OUTPUT).subsample(maxOnBits);
 					}
-					outputs.get(MERGED_OUTPUT).distort(distortion);
+					if (distortion>0F) {
+						outputs.get(MERGED_OUTPUT).distort(distortion);
+					}
 					
 					if (keyValue) {
 						KeyValueSDR output = new KeyValueSDR(outputs.get(MERGED_OUTPUT));

@@ -195,7 +195,7 @@ public class Classifier extends SDRProcessor {
 						combinedInput.or(input);
 					}
 				}
-				if (maxOnBits>0) {
+				if (combinedInput.onBits()>maxOnBits) {
 					combinedInput.subsample(maxOnBits);
 				}
 				activationHistory.addSDR(combinedInput);
@@ -259,18 +259,18 @@ public class Classifier extends SDRProcessor {
 					}
 					float total = 0F;
 					float totalTrend = 0F;
-					float totalTrendNum = 0F;
+					int totalTrendNum = 0;
 					int i = 0;
 					for (Float acc: accuracyHistory) {
 						total += acc;
 						if (i < accuracyTrendSize) {
 							totalTrend += acc;
-							totalTrendNum += 1F;
+							totalTrendNum++;
 						}
 						i++;
 					}
 					float avg = total / (float) accuracyHistory.size();
-					float avgTrend = totalTrend / totalTrendNum;
+					float avgTrend = totalTrend / (float) totalTrendNum;
 					KeyValueSDR output = (KeyValueSDR) outputs.get(CLASSIFICATION_OUTPUT);
 					output.put(ACCURACY_VALUE_KEY, avg);
 					output.put(ACCURACY_TREND_VALUE_KEY, avgTrend);

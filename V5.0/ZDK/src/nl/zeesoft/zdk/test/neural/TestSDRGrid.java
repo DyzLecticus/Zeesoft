@@ -16,8 +16,7 @@ public class TestSDRGrid extends TestObject {
 
 	@Override
 	protected void describe() {
-		// TODO: Describe
-		//System.out.println("This test is not yet included in the ZDK test set");
+		System.out.println("This test is not included in the ZDK test set");
 	}
 
 	@Override
