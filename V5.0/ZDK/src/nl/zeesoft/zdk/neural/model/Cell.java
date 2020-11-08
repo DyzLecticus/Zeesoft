@@ -242,12 +242,14 @@ public class Cell implements StrAble {
 		}
 		activeDistalSegments.clear();
 		matchingDistalSegments.clear();
+		matchingDistalSegment = null;
 		
 		for (ApicalSegment segment: apicalSegments) {
 			segment.reset();
 		}
 		activeDistalSegments.clear();
 		matchingDistalSegments.clear();
+		matchingApicalSegment = null;
 	}
 
 	@Override

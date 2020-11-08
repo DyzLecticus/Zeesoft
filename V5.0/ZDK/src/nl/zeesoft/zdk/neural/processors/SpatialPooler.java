@@ -80,6 +80,12 @@ public class SpatialPooler extends CellGridProcessor {
 	public void setProperty(String property, Object value) {
 		if (property.equals("boostStrength") && value instanceof Integer) {
 			boostStrength = (Integer) value;
+		} else if (property.equals("permanenceThreshold") && value instanceof Float) {
+			permanenceThreshold = (Float) value;
+		} else if (property.equals("permanenceIncrement") && value instanceof Float) {
+			permanenceIncrement = (Float) value;
+		} else if (property.equals("permanenceDecrement") && value instanceof Float) {
+			permanenceDecrement = (Float) value;
 		} else {
 			super.setProperty(property, value);
 		}

@@ -102,6 +102,25 @@ public class TemporalMemory extends CellGridProcessor {
 	}
 	
 	@Override
+	public void setProperty(String property, Object value) {
+		if (property.equals("initialPermanence") && value instanceof Float) {
+			initialPermanence = (Float) value;
+		} else if (property.equals("permanenceThreshold") && value instanceof Float) {
+			permanenceThreshold = (Float) value;
+		} else if (property.equals("permanenceIncrement") && value instanceof Float) {
+			permanenceIncrement = (Float) value;
+		} else if (property.equals("permanenceDecrement") && value instanceof Float) {
+			permanenceDecrement = (Float) value;
+		} else if (property.equals("distalSegmentDecrement") && value instanceof Float) {
+			distalSegmentDecrement = (Float) value;
+		} else if (property.equals("apicalSegmentDecrement") && value instanceof Float) {
+			apicalSegmentDecrement = (Float) value;
+		} else {
+			super.setProperty(property, value);
+		}
+	}
+	
+	@Override
 	public void initialize(CodeRunnerList runnerList) {
 		if (sizeX < 4) {
 			sizeX = 4;
@@ -307,15 +326,19 @@ public class TemporalMemory extends CellGridProcessor {
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Cell cell = (Cell) value;
 				if (cell.distalSegments.size()>0) {
-					cell.calculateDistalSegmentActivity(activeCellPositions, permanenceThreshold);
-					cell.calculateApicalSegmentActivity(activeApicalCellPositions, permanenceThreshold);
-					cell.classifySegmentActivity(activationThreshold, matchingThreshold);
-					if ((activeApicalCellPositions.size()==0 && cell.activeDistalSegments.size()>0) ||
-						(activeApicalCellPositions.size()>0 && cell.activeDistalSegments.size()>0 && cell.activeApicalSegments.size()>0)
-						) {
-						lock.lock(this);
-						predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
-						lock.unlock(this);
+					if (activeCellPositions.size()>0) {
+						cell.calculateDistalSegmentActivity(activeCellPositions, permanenceThreshold);
+						cell.calculateApicalSegmentActivity(activeApicalCellPositions, permanenceThreshold);
+						cell.classifySegmentActivity(activationThreshold, matchingThreshold);
+						if ((activeApicalCellPositions.size()==0 && cell.activeDistalSegments.size()>0) ||
+							(activeApicalCellPositions.size()>0 && cell.activeDistalSegments.size()>0 && cell.activeApicalSegments.size()>0)
+							) {
+							lock.lock(this);
+							predictiveCellPositions.add(new Position(column.posX(),column.posY(),posZ));
+							lock.unlock(this);
+						}
+					} else {
+						cell.reset();
 					}
 				}
 				return value;

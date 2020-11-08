@@ -198,6 +198,8 @@ public class Classifier extends SDRProcessor {
 				if (combinedInput.onBits()>maxOnBits) {
 					combinedInput.subsample(maxOnBits);
 				}
+				inputs.clear();
+				inputs.add(combinedInput);
 				activationHistory.addSDR(combinedInput);
 				return true;
 			}
@@ -217,7 +219,7 @@ public class Classifier extends SDRProcessor {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
-					if (learn && value!=null) {
+					if (learn && value!=null && inputs.get(0).onBits()>0) {
 						@SuppressWarnings("unchecked")
 						List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
 						for (ClassifierStep step: steps) {
@@ -293,10 +295,12 @@ public class Classifier extends SDRProcessor {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
-					@SuppressWarnings("unchecked")
-					List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
-					for (ClassifierStep step: steps) {
-						generatePrediction(step);
+					if (inputs.get(0).onBits()>0) {
+						@SuppressWarnings("unchecked")
+						List<ClassifierStep> steps = (List<ClassifierStep>) params[0];
+						for (ClassifierStep step: steps) {
+							generatePrediction(step);
+						}
 					}
 					return true;
 				}

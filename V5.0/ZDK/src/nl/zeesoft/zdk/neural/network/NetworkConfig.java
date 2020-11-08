@@ -230,8 +230,8 @@ public class NetworkConfig {
 			}
 			if (link.toIndex == 0 && toConfig instanceof SpatialPoolerConfig) {
 				SpatialPoolerConfig cfg = (SpatialPoolerConfig) toConfig;
-				toSizeX = cfg.outputSizeX;
-				toSizeY = cfg.outputSizeY;
+				toSizeX = cfg.inputSizeX;
+				toSizeY = cfg.inputSizeY;
 			}
 			
 			if (link.fromIndex == 0 && fromConfig instanceof TemporalMemoryConfig) {
@@ -253,8 +253,8 @@ public class NetworkConfig {
 			
 			if (link.fromIndex == 0 && fromConfig instanceof MergerConfig) {
 				MergerConfig cfg = (MergerConfig) fromConfig;
-				toSizeX = cfg.sizeX;
-				toSizeY = cfg.sizeY;
+				fromSizeX = cfg.sizeX;
+				fromSizeY = cfg.sizeY;
 			}
 
 			if (fromSizeX>0 && fromSizeY>0 && toSizeX>0 && toSizeY>0 && 
