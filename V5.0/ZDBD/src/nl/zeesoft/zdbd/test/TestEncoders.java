@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.test;
 import java.util.List;
 
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
+import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
 import nl.zeesoft.zdbd.pattern.DrumPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.Rythm;
@@ -51,7 +52,7 @@ public class TestEncoders extends TestObject {
 		Str err = EncoderFactory.testEncoders();
 		assertEqual(err, new Str(), "Encoder factory error does not match expectation");
 		
-		DrumPattern pattern = PatternFactory.getFourOnFloor(0);
+		DrumAndBassPattern pattern = PatternFactory.getFourOnFloorDrumAndBassPattern(0);
 		
 		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
 		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
@@ -59,8 +60,24 @@ public class TestEncoders extends TestObject {
 		
 		sdrs = pattern.getSDRsForPattern();
 		System.out.println();
-		System.out.println("Drum pattern (" + DrumPattern.sizeX() + "*" + DrumPattern.sizeY() + ");");
+		System.out.println("Pattern (" + DrumPattern.sizeX() + "*" + DrumPattern.sizeY() + ");");
 		displaySDRList(sdrs);
+		
+		assertEqual(DrumAndBassPattern.getNoteForDuration(0,false),0,"Note does not match expectation (1)");
+		assertEqual(DrumAndBassPattern.getNoteForDuration(1,false),1,"Note does not match expectation (2)");
+		assertEqual(DrumAndBassPattern.getNoteForDuration(1,true),2,"Note does not match expectation (3)");
+		assertEqual(DrumAndBassPattern.getNoteForDuration(2,false),3,"Note does not match expectation (4)");
+		assertEqual(DrumAndBassPattern.getNoteForDuration(2,true),4,"Note does not match expectation (5)");
+		
+		assertEqual(DrumAndBassPattern.getDurationForNote(0),0,"Duration does not match expectation (1)");
+		assertEqual(DrumAndBassPattern.getDurationForNote(1),1,"Duration does not match expectation (2)");
+		assertEqual(DrumAndBassPattern.getDurationForNote(2),1,"Duration does not match expectation (3)");
+		assertEqual(DrumAndBassPattern.getDurationForNote(3),2,"Duration does not match expectation (4)");
+		assertEqual(DrumAndBassPattern.getDurationForNote(4),2,"Duration does not match expectation (5)");
+		
+		assertEqual(DrumAndBassPattern.getAccentForNote(0),false,"Accent does not match expectation (1)");
+		assertEqual(DrumAndBassPattern.getAccentForNote(3),false,"Accent does not match expectation (2)");
+		assertEqual(DrumAndBassPattern.getAccentForNote(4),true,"Accent does not match expectation (3)");
 	}
 	
 	private void displaySDRList(List<SDR> sdrs) {

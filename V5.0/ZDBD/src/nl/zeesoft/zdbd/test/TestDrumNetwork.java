@@ -16,13 +16,13 @@ import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
-public class TestNetwork extends TestObject {
-	public TestNetwork(Tester tester) {
+public class TestDrumNetwork extends TestObject {
+	public TestDrumNetwork(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestNetwork(new Tester())).runTest(args);
+		(new TestDrumNetwork(new Tester())).runTest(args);
 	}
 
 	@Override
