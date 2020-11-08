@@ -41,6 +41,8 @@ public class TemporalMemory extends CellGridProcessor {
 	protected float				permanenceThreshold				= 0.5F;
 	protected float				permanenceIncrement				= 0.1F;
 	protected float				permanenceDecrement				= 0.1F;
+
+	protected float				segmentCreationSubsample		= 0.9F;
 	
 	protected float				distalSegmentDecrement			= 0.2F;
 	protected float				apicalSegmentDecrement			= 0.2F;
@@ -81,7 +83,9 @@ public class TemporalMemory extends CellGridProcessor {
 			this.permanenceThreshold = cfg.permanenceThreshold;
 			this.permanenceIncrement = cfg.permanenceIncrement;
 			this.permanenceDecrement = cfg.permanenceDecrement;
-			
+
+			this.segmentCreationSubsample = cfg.segmentCreationSubsample;
+
 			this.distalSegmentDecrement = cfg.distalSegmentDecrement;
 			this.apicalSegmentDecrement	= cfg.apicalSegmentDecrement;
 
@@ -111,6 +115,8 @@ public class TemporalMemory extends CellGridProcessor {
 			permanenceIncrement = (Float) value;
 		} else if (property.equals("permanenceDecrement") && value instanceof Float) {
 			permanenceDecrement = (Float) value;
+		} else if (property.equals("segmentCreationSubsample") && value instanceof Float) {
+			segmentCreationSubsample = (Float) value;
 		} else if (property.equals("distalSegmentDecrement") && value instanceof Float) {
 			distalSegmentDecrement = (Float) value;
 		} else if (property.equals("apicalSegmentDecrement") && value instanceof Float) {
@@ -485,7 +491,8 @@ public class TemporalMemory extends CellGridProcessor {
 							winnerCell.createSegments(
 								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions,
 								initialPermanence, permanenceIncrement, permanenceDecrement, maxNewSynapseCount, maxSegmentsPerCell, maxSynapsesPerSegment,
-								distalPotentialRadius, apicalPotentialRadius);
+								distalPotentialRadius, apicalPotentialRadius,
+								segmentCreationSubsample);
 						}
 					}
 				} else {

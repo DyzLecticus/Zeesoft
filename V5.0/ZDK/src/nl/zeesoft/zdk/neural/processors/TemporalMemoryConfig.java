@@ -14,6 +14,7 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 		" * *maxSegmentsPerCell*; Maximum number of segments per cell.  \n" +
 		" * *maxSynapsesPerSegment*; Maximum number of synapses per segment.  \n" +
 		" * *initialPermanence*, *permanenceThreshold*, *permanenceIncrement*, *permanenceDecrement*; Distal and apical synapse adaptation control.  \n" +
+		" * *segmentCreationSubsample*; Limits the creation of new segments to the specified percentage.  \n" +
 		" * *distalSegmentDecrement*, *apicalSegmentDecrement*; Optional segment decrement for distal/apical segments.  \n" + 
 		" * *distalPotentialRadius*; Optional potential radius for distal segments.  \n" + 
 		" * *apicalPotentialRadius*; Optional potential radius for apical segments (assumes apical input XY dimensions match model XY dimensions).  \n" + 
@@ -33,6 +34,8 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public float	permanenceThreshold			= 0.5F;
 	public float	permanenceIncrement			= 0.1F;
 	public float	permanenceDecrement			= 0.1F;
+	
+	public float	segmentCreationSubsample	= 0.9F;
 	
 	public float	distalSegmentDecrement		= 0.2F;
 	public float	apicalSegmentDecrement		= 0.2F;

@@ -87,7 +87,7 @@ public class TestTemporalMemory extends TestObject {
 			burstingList.add(bursting);
 			
 			i++;
-			if (i < 50 || i % 50 == 0) {
+			if (i < 75 || i % 50 == 0) {
 				Str msg = new Str();
 				msg.sb().append(tm.getProcessed());
 				msg.sb().append(" > bursting: "); 

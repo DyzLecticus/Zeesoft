@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
 import nl.zeesoft.zdk.grid.Position;
@@ -178,7 +179,8 @@ public class Cell implements StrAble {
 	public void createSegments(
 		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions,
 		float initialPermanence, float permanenceIncrement, float permanenceDecrement, int maxNewSynapseCount, int maxSegmentsPerCell, int maxSynapsesPerSegment,
-		int distalPotentialRadius, int apicalPotentialRadius
+		int distalPotentialRadius, int apicalPotentialRadius,
+		float segmentCreationSubsample
 		) {
 		List<Position> growPositions = prevWinnerCellPositions;
 		if (distalPotentialRadius>0) {
@@ -188,7 +190,7 @@ public class Cell implements StrAble {
 		if (growPositions.size()<growNum) {
 			growNum = growPositions.size();
 		}
-		if (growNum>0) {
+		if (growNum>0 && (segmentCreationSubsample==1F || Rand.getRandomFloat(0F, 1F) <= segmentCreationSubsample)) {
 			DistalSegment distalSegment = (DistalSegment) createSegment(false,maxSegmentsPerCell);
 			distalSegment.growSynapses(
 				position, growNum, growPositions, initialPermanence, maxSynapsesPerSegment);								
