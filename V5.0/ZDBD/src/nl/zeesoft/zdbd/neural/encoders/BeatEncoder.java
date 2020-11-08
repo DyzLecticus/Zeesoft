@@ -4,9 +4,9 @@ import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 
 public class BeatEncoder extends BasicScalarEncoder {
 	public BeatEncoder() {
-		encodeSizeX = 8;
+		encodeSizeX = 4;
 		encodeSizeY = 4;
-		onBits = 4;
+		onBits = 2;
 		minValue = 0;
 		maxValue = 7;
 	}

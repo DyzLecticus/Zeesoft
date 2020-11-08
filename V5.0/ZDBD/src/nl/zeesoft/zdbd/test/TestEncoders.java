@@ -4,7 +4,6 @@ import java.util.List;
 
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
-import nl.zeesoft.zdbd.pattern.DrumPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Str;
@@ -60,7 +59,7 @@ public class TestEncoders extends TestObject {
 		
 		sdrs = pattern.getSDRsForPattern();
 		System.out.println();
-		System.out.println("Pattern (" + DrumPattern.sizeX() + "*" + DrumPattern.sizeY() + ");");
+		System.out.println("Pattern (" + DrumAndBassPattern.sizeX() + "*" + DrumAndBassPattern.sizeY() + ");");
 		displaySDRList(sdrs);
 		
 		assertEqual(DrumAndBassPattern.getNoteForDuration(0,false),0,"Note does not match expectation (1)");
