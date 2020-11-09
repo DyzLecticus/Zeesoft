@@ -74,10 +74,10 @@ public class TestDrumAndBassNetwork extends TestObject {
 		int cycles = 64;
 		for (int i = 0; i < cycles; i++) {
 			System.out.println("Training cycle " + (i + 1) + "/" + cycles + " ...");
-			if (i == 8) {
+			if (i == 4) {
 				network.setLayerLearn(NetworkConfigFactory.MEMORY_LAYER, true);
 			}
-			if (i == 16) {
+			if (i == 12) {
 				network.setLayerLearn(NetworkConfigFactory.CLASSIFIER_LAYER, true);
 			}
 			for (NetworkIO io: ioList) {
@@ -94,7 +94,6 @@ public class TestDrumAndBassNetwork extends TestObject {
 			SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
 			if (accuracies.size()>0) {
 				SortedMap<String,Float> accuracyTrends = lastIO.getClassifierAccuracies(true);
-				
 				System.out.println("Accuracies (average) / trends: " + accuracies.values() + " (" + lastIO.getAverageClassifierAccuracy(false) + ") / " + accuracyTrends.values());
 			}
 			if (lastIO.isAccurate(0.99F)) {

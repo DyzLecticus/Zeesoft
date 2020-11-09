@@ -10,6 +10,12 @@ import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfigFactory {
+	public static int		SP_ON_BITS				= 82;
+	public static int		TM_SIZE_X				= 64;
+	public static int		TM_SIZE_Y				= 64;
+	public static int		TM_SIZE_Z				= 32;
+	public static boolean	QUICK_LEARN				= true;
+
 	public static int		INPUT_MERGER_LAYER		= 0;
 	public static int		MAIN_MERGER_LAYER		= 1;
 	public static int		POOLER_LAYER			= 2;
@@ -21,12 +27,6 @@ public class NetworkConfigFactory {
 		
 	public static NetworkConfig getNetworkConfig() {
 		NetworkConfig r = new NetworkConfig();
-		
-		int spOnBits = 82;
-		int tmSizeX = 64;
-		int tmSizeY = 64;
-		int tmSizeZ = 32;
-		boolean quickLearn = true;
 		
 		r.inputNames.add(CONTEXT_INPUT);
 		r.inputNames.add(PATTERN_INPUT);
@@ -54,27 +54,26 @@ public class NetworkConfigFactory {
 		SpatialPoolerConfig contextPoolerConfig = r.addSpatialPooler("Pooler", POOLER_LAYER);
 		contextPoolerConfig.inputSizeX = mergerConfig.sizeX;
 		contextPoolerConfig.inputSizeY = mergerConfig.sizeY;
-		contextPoolerConfig.outputSizeX = tmSizeX;
-		contextPoolerConfig.outputSizeY = tmSizeY;
-		contextPoolerConfig.outputOnBits = spOnBits;
+		contextPoolerConfig.outputSizeX = TM_SIZE_X;
+		contextPoolerConfig.outputSizeY = TM_SIZE_Y;
+		contextPoolerConfig.outputOnBits = SP_ON_BITS;
 		r.addLink("Merger", 0, "Pooler", 0);
 		
 		TemporalMemoryConfig patternMemoryConfig = r.addTemporalMemory("Memory", MEMORY_LAYER);
-		patternMemoryConfig.sizeX = tmSizeX;
-		patternMemoryConfig.sizeY = tmSizeY;
-		patternMemoryConfig.sizeZ = tmSizeZ;
-		if (quickLearn) {
+		patternMemoryConfig.sizeX = TM_SIZE_X;
+		patternMemoryConfig.sizeY = TM_SIZE_Y;
+		patternMemoryConfig.sizeZ = TM_SIZE_Z;
+		if (QUICK_LEARN) {
 			patternMemoryConfig.initialPermanence = patternMemoryConfig.permanenceThreshold + 0.1F;
 		}
 		r.addLink("Pooler", 0, "Memory", 0);
 		
 		for (int d = 0; d < DrumAndBassPattern.INSTRUMENT_NAMES.length; d++) {
 			ClassifierConfig patternClassifierConfig = r.addClassifier(DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", CLASSIFIER_LAYER);
-			patternClassifierConfig.sizeX = tmSizeX * tmSizeZ;
-			patternClassifierConfig.sizeY = tmSizeY;
+			patternClassifierConfig.sizeX = TM_SIZE_X * TM_SIZE_Z;
+			patternClassifierConfig.sizeY = TM_SIZE_Y;
 			patternClassifierConfig.valueKey = DrumAndBassPattern.INSTRUMENT_NAMES[d];
 			patternClassifierConfig.logPredictionAccuracy = true;
-			patternClassifierConfig.maxOnBits = 512;
 			patternClassifierConfig.accuracyHistorySize = 256;
 			patternClassifierConfig.accuracyTrendSize = 32;
 			r.addLink("Memory", 0, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 0);

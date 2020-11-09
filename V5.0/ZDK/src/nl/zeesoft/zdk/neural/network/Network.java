@@ -293,14 +293,18 @@ public class Network {
 					}
 					if (sourceIO!=null) {
 						ProcessorIO sourcePIO = sourceIO.getProcessorIO(link.fromName);
-						if (sourcePIO.outputs.size()>link.fromIndex) {
-							inputs[link.toIndex] = sourcePIO.outputs.get(link.fromIndex);
-						} else {
-							Str err = new Str("Missing source processor output: ");
-							err.sb().append(link.fromName);
-							err.sb().append("/");
-							err.sb().append(link.fromIndex);
-							currentIO.addError(err);
+						if (sourcePIO!=null && sourcePIO.outputs!=null) {
+							if (sourcePIO.outputs.size()>link.fromIndex) {
+								inputs[link.toIndex] = sourcePIO.outputs.get(link.fromIndex);
+							} else {
+								Str err = new Str("Missing source processor output: ");
+								err.sb().append(link.fromName);
+								err.sb().append("/");
+								err.sb().append(link.fromIndex);
+								err.sb().append(" for processor: ");
+								err.sb().append(link.toName);
+								currentIO.addError(err);
+							}
 						}
 					}
 				}
@@ -308,7 +312,9 @@ public class Network {
 			if (inputs[0]!=null) {
 				ProcessorIO io = new ProcessorIO();
 				for (int i = 0; i < inputs.length; i++) {
-					io.inputs.add(inputs[i]);
+					if (inputs[i]!=null) {
+						io.inputs.add(inputs[i]);
+					}
 				}
 				processor.processIO(io);
 				currentIO.setProcessorIO(processor.getName(),io);

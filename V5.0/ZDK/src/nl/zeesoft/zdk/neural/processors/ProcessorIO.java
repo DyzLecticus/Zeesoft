@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.neural.SDR;
 public class ProcessorIO {
 	public int					timeoutMs					= 1000;
 	public List<SDR>			inputs						= new ArrayList<SDR>();
-	public List<SDR>			outputs						= null;
+	public List<SDR>			outputs						= new ArrayList<SDR>();
 	public Str					error						= new Str();
 	
 	public ProcessorIO() {
