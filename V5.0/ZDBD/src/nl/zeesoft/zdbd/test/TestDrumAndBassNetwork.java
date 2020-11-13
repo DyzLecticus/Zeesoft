@@ -1,16 +1,18 @@
 package nl.zeesoft.zdbd.test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
+import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
+import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -53,6 +55,8 @@ public class TestDrumAndBassNetwork extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
 		System.out.println(config.getDescription());
 		
@@ -65,52 +69,20 @@ public class TestDrumAndBassNetwork extends TestObject {
 		network.initialize(true);
 		System.out.println("Initialized network");
 		
-		network.setProcessorLearn("*", false);
-		network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
-		
 		System.out.println();
-		List<NetworkIO> results = new ArrayList<NetworkIO>();
-		List<NetworkIO> ioList = PatternFactory.getFourOnFloorDrumAndBassIO();
-		int cycles = 64;
-		for (int i = 0; i < cycles; i++) {
-			System.out.println("Training cycle " + (i + 1) + "/" + cycles + " ...");
-			if (i == 4) {
-				network.setLayerLearn(NetworkConfigFactory.MEMORY_LAYER, true);
-			}
-			if (i == 12) {
-				network.setLayerLearn(NetworkConfigFactory.CLASSIFIER_LAYER, true);
-			}
-			for (NetworkIO io: ioList) {
-				NetworkIO result = new NetworkIO(io);
-				network.processIO(result);
-				results.add(result);
-				if (result.hasErrors()) {
-					System.err.println(result.getErrors().get(0));
-					break;
-				}
-			}
-			
-			NetworkIO lastIO = results.get(results.size() - 1);
-			SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
-			if (accuracies.size()>0) {
-				SortedMap<String,Float> accuracyTrends = lastIO.getClassifierAccuracies(true);
-				System.out.println("Accuracies (average) / trends: " + accuracies.values() + " (" + lastIO.getAverageClassifierAccuracy(false) + ") / " + accuracyTrends.values());
-			}
-			if (lastIO.isAccurate(0.99F)) {
-				break;
-			}
-		}
+		System.out.println("Training network ...");
+		PatternSequence sequence = PatternFactory.getFourOnFloorDrumAndBassPatternSequence();
+		NetworkTrainer trainer = new NetworkTrainer();
+		List<NetworkIO> results = trainer.trainNetwork(network, sequence);
+		System.out.println("Trained network");
 		
 		NetworkIO lastIO = results.get(results.size() - 1);
-		SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
-		System.out.println("Accuracy keys: " + accuracies.keySet());
-		
 		System.out.println();
 		System.out.println("Basebeat predictions;");
 		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
 		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
-		System.out.println(keyValueSDR);
-		//Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
-		//System.out.println(classification.toStr());
+		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
+		int prediction = (int) classification.getMostCountedValues().get(0);
+		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
 	}
 }

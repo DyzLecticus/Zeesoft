@@ -1,12 +1,5 @@
 package nl.zeesoft.zdbd.pattern;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
-import nl.zeesoft.zdk.neural.SDR;
-import nl.zeesoft.zdk.neural.network.NetworkIO;
-
 public class PatternFactory {
 	public static DrumAndBassPattern getFourOnFloorDrumAndBassPattern(int patternNum) {
 		Rythm rythm = new Rythm();
@@ -73,55 +66,11 @@ public class PatternFactory {
 		return pattern;
 	}
 
-	public static Sequence getFourOnFloorDrumAndBassSequence() {
-		return new Sequence();
-	}
-
-	public static List<DrumAndBassPattern> getFourOnFloorDrumAndBassPatternSequence() {
-		List<DrumAndBassPattern> r = new ArrayList<DrumAndBassPattern>();
-		Sequence seq = getFourOnFloorDrumAndBassSequence();
-		for (int i = 0; i < seq.patterns.length; i++) {
-			r.add(getFourOnFloorDrumAndBassPattern(seq.patterns[i]));
-		}
-		return r;
-	}
-	
-	public static List<NetworkIO> getFourOnFloorDrumAndBassIO() {
-		return getNetworkIOForPatternSequence(getFourOnFloorDrumAndBassPatternSequence());
-	}
-	
-	public static List<NetworkIO> getNetworkIOForPatternSequence(List<DrumAndBassPattern> patterns) {
-		List<NetworkIO> r = new ArrayList<NetworkIO>();
-
-		Rythm rythm = patterns.get(0).rythm;
-		int totalSteps = rythm.getStepsPerPattern() * patterns.size();
-		
-		for (int i = 0; i < totalSteps; i++) {
-			r.add(new NetworkIO());
-		}
-		
-		int p = 0;
-		for (DrumAndBassPattern pattern: patterns) {
-			int start = p * rythm.getStepsPerPattern();
-			
-			List<SDR> rythmSDRs = rythm.getSDRsForPattern(pattern.num);
-			int ps = 0;
-			for (int s = start; s < start + rythm.getStepsPerPattern(); s++) {
-				NetworkIO io = r.get(s);
-				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythmSDRs.get(ps));
-				ps++;
-			}
-			
-			List<SDR> patternSDRs = pattern.getSDRsForPattern();
-			ps = 0;
-			for (int s = start; s < start + rythm.getStepsPerPattern(); s++) {
-				NetworkIO io = r.get(s);
-				io.setValue(NetworkConfigFactory.PATTERN_INPUT, patternSDRs.get(ps));
-				ps++;
-			}
-			
-			p++;
-		}
-		return r;
+	public static PatternSequence getFourOnFloorDrumAndBassPatternSequence() {
+		PatternSequence seq = new PatternSequence();
+		seq.patterns.add(getFourOnFloorDrumAndBassPattern(0));
+		seq.patterns.add(getFourOnFloorDrumAndBassPattern(1));
+		seq.patterns.add(getFourOnFloorDrumAndBassPattern(2));
+		return seq;
 	}
 }

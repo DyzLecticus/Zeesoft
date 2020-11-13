@@ -5,14 +5,17 @@ import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
+import nl.zeesoft.zdk.neural.processors.Merger;
 import nl.zeesoft.zdk.neural.processors.MergerConfig;
+import nl.zeesoft.zdk.neural.processors.SpatialPooler;
 import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfigFactory {
-	public static int		SP_ON_BITS				= 82;
-	public static int		TM_SIZE_X				= 64;
-	public static int		TM_SIZE_Y				= 64;
+	public static int		SP_ON_BITS				= 50;
+	public static int		TM_SIZE_X				= 50;
+	public static int		TM_SIZE_Y				= 50;
 	public static int		TM_SIZE_Z				= 32;
 	public static boolean	QUICK_LEARN				= true;
 
@@ -48,16 +51,17 @@ public class NetworkConfigFactory {
 		mergerConfig.sizeX = sdr.sizeX();
 		mergerConfig.sizeY = sdr.sizeY();
 		mergerConfig.concatenate = true;
-		r.addLink(CONTEXT_INPUT + "InputMerger", 0, "Merger", 0);
-		r.addLink(PATTERN_INPUT + "InputMerger", 0, "Merger", 1);
+		r.addLink(CONTEXT_INPUT + "InputMerger", Merger.MERGED_OUTPUT, "Merger", 0);
+		r.addLink(PATTERN_INPUT + "InputMerger", Merger.MERGED_OUTPUT, "Merger", 1);
 
-		SpatialPoolerConfig contextPoolerConfig = r.addSpatialPooler("Pooler", POOLER_LAYER);
-		contextPoolerConfig.inputSizeX = mergerConfig.sizeX;
-		contextPoolerConfig.inputSizeY = mergerConfig.sizeY;
-		contextPoolerConfig.outputSizeX = TM_SIZE_X;
-		contextPoolerConfig.outputSizeY = TM_SIZE_Y;
-		contextPoolerConfig.outputOnBits = SP_ON_BITS;
-		r.addLink("Merger", 0, "Pooler", 0);
+		SpatialPoolerConfig poolerConfig = r.addSpatialPooler("Pooler", POOLER_LAYER);
+		poolerConfig.inputSizeX = mergerConfig.sizeX;
+		poolerConfig.inputSizeY = mergerConfig.sizeY;
+		poolerConfig.potentialRadius = 0;
+		poolerConfig.outputSizeX = TM_SIZE_X;
+		poolerConfig.outputSizeY = TM_SIZE_Y;
+		poolerConfig.outputOnBits = SP_ON_BITS;
+		r.addLink("Merger", Merger.MERGED_OUTPUT, "Pooler", 0);
 		
 		TemporalMemoryConfig patternMemoryConfig = r.addTemporalMemory("Memory", MEMORY_LAYER);
 		patternMemoryConfig.sizeX = TM_SIZE_X;
@@ -66,17 +70,18 @@ public class NetworkConfigFactory {
 		if (QUICK_LEARN) {
 			patternMemoryConfig.initialPermanence = patternMemoryConfig.permanenceThreshold + 0.1F;
 		}
-		r.addLink("Pooler", 0, "Memory", 0);
+		r.addLink("Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, "Memory", 0);
 		
 		for (int d = 0; d < DrumAndBassPattern.INSTRUMENT_NAMES.length; d++) {
-			ClassifierConfig patternClassifierConfig = r.addClassifier(DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", CLASSIFIER_LAYER);
-			patternClassifierConfig.sizeX = TM_SIZE_X * TM_SIZE_Z;
-			patternClassifierConfig.sizeY = TM_SIZE_Y;
-			patternClassifierConfig.valueKey = DrumAndBassPattern.INSTRUMENT_NAMES[d];
-			patternClassifierConfig.logPredictionAccuracy = true;
-			patternClassifierConfig.accuracyHistorySize = 256;
-			patternClassifierConfig.accuracyTrendSize = 32;
-			r.addLink("Memory", 0, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 0);
+			ClassifierConfig classifierConfig = r.addClassifier(DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", CLASSIFIER_LAYER);
+			classifierConfig.sizeX = TM_SIZE_X * TM_SIZE_Z;
+			classifierConfig.sizeY = TM_SIZE_Y;
+			classifierConfig.valueKey = DrumAndBassPattern.INSTRUMENT_NAMES[d];
+			classifierConfig.logPredictionAccuracy = true;
+			classifierConfig.accuracyHistorySize = 256;
+			classifierConfig.accuracyTrendSize = 32;
+			classifierConfig.maxCount = 512;
+			r.addLink("Memory", TemporalMemory.ACTIVE_CELLS_OUTPUT, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 0);
 			r.addLink(PATTERN_INPUT, 0, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 1);
 		}
 		return r;

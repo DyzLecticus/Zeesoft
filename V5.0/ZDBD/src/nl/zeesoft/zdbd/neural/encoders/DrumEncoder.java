@@ -4,9 +4,9 @@ import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 
 public class DrumEncoder extends BasicScalarEncoder {
 	public DrumEncoder() {
-		encodeSizeX = 2;
+		encodeSizeX = 1;
 		encodeSizeY = 3;
-		onBits = 2;
+		onBits = 1;
 		minValue = 0;
 		maxValue = 2;
 	}

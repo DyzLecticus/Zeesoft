@@ -4,9 +4,9 @@ import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 
 public class BassEncoder extends BasicScalarEncoder {
 	public BassEncoder() {
-		encodeSizeX = 4;
-		encodeSizeY = 9;
-		onBits = 2;
+		encodeSizeX = 3;
+		encodeSizeY = 6;
+		onBits = 1;
 		minValue = 0;
 		maxValue = 17;
 	}

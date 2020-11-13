@@ -4,9 +4,9 @@ import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 
 public class StepEncoder extends BasicScalarEncoder {
 	public StepEncoder() {
-		encodeSizeX = 8;
+		encodeSizeX = 4;
 		encodeSizeY = 8;
-		onBits = 2;
+		onBits = 1;
 		minValue = 0;
 		maxValue = 31;
 	}
