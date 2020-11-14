@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
@@ -121,6 +122,25 @@ public class NetworkIO {
 		List<Classification> r = new ArrayList<Classification>();
 		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
 			r.addAll(entry.getValue().getClassifications());
+		}
+		return r;
+	}
+	
+	public SortedMap<String,Object> getClassificationValues(int step) {
+		SortedMap<String,Object> r = new TreeMap<String,Object>();
+		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
+			for (Classification classification: entry.getValue().getClassifications()) {
+				if (classification.step==step) {
+					List<Object> values = classification.getMostCountedValues();
+					Object value = null;
+					if (values.size()==1) {
+						value = values.get(0);
+					} else if (values.size()>1) {
+						value = values.get(Rand.getRandomInt(0, values.size() - 1));
+					}
+					r.put(entry.getKey(), value);
+				}
+			}
 		}
 		return r;
 	}

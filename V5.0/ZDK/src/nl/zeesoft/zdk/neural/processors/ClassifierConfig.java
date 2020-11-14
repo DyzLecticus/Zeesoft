@@ -36,7 +36,7 @@ public class ClassifierConfig extends SDRProcessorConfig{
 
 	public String			valueKey				= KeyValueSDR.DEFAULT_VALUE_KEY;
 	public List<Integer>	predictSteps			= new ArrayList<Integer>();
-	public int				maxCount				= 40;
+	public int				maxCount				= 512;
 
 	public boolean			logPredictionAccuracy	= false;
 	public int				accuracyHistorySize		= 100;

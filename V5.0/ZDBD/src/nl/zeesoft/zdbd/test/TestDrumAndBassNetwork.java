@@ -4,11 +4,15 @@ import java.util.List;
 
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
+import nl.zeesoft.zdbd.neural.PatternGenerator;
+import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -77,12 +81,29 @@ public class TestDrumAndBassNetwork extends TestObject {
 		System.out.println("Trained network");
 		
 		NetworkIO lastIO = results.get(results.size() - 1);
-		System.out.println();
-		System.out.println("Basebeat predictions;");
 		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
 		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
 		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
 		int prediction = (int) classification.getMostCountedValues().get(0);
 		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
+		
+		System.out.println();
+		System.out.println("Generated pattern;");
+		PatternGenerator generator = new PatternGenerator();
+		generator.prevIO = lastIO;
+		DrumAndBassPattern pattern = generator.generatePattern(network, new Rythm(), 0);
+		for (SDR sdr: pattern.getSDRsForPattern()) {
+			sdr.flatten();
+			System.out.println(sdr.toVisualStr());
+		}
+
+		System.out.println();
+		System.out.println("Generated pattern (distorted);");
+		generator.combinedDistortion = 0.5F;
+		pattern = generator.generatePattern(network, new Rythm(), 0);
+		for (SDR sdr: pattern.getSDRsForPattern()) {
+			sdr.flatten();
+			System.out.println(sdr.toVisualStr());
+		}
 	}
 }

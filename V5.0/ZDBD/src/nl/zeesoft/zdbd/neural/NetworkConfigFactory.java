@@ -18,6 +18,7 @@ public class NetworkConfigFactory {
 	public static int		TM_SIZE_Y				= 50;
 	public static int		TM_SIZE_Z				= 32;
 	public static boolean	QUICK_LEARN				= true;
+	public static boolean	CLASSIFY_RYTHM			= false;
 
 	public static int		INPUT_MERGER_LAYER		= 0;
 	public static int		MAIN_MERGER_LAYER		= 1;
@@ -72,18 +73,26 @@ public class NetworkConfigFactory {
 		}
 		r.addLink("Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, "Memory", 0);
 		
-		for (int d = 0; d < DrumAndBassPattern.INSTRUMENT_NAMES.length; d++) {
-			ClassifierConfig classifierConfig = r.addClassifier(DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", CLASSIFIER_LAYER);
-			classifierConfig.sizeX = TM_SIZE_X * TM_SIZE_Z;
-			classifierConfig.sizeY = TM_SIZE_Y;
-			classifierConfig.valueKey = DrumAndBassPattern.INSTRUMENT_NAMES[d];
-			classifierConfig.logPredictionAccuracy = true;
-			classifierConfig.accuracyHistorySize = 256;
-			classifierConfig.accuracyTrendSize = 32;
-			classifierConfig.maxCount = 512;
-			r.addLink("Memory", TemporalMemory.ACTIVE_CELLS_OUTPUT, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 0);
-			r.addLink(PATTERN_INPUT, 0, DrumAndBassPattern.INSTRUMENT_NAMES[d] + "Classifier", 1);
+		for (int i = 0; i < DrumAndBassPattern.INSTRUMENT_NAMES.length; i++) {
+			addClassifier(r, DrumAndBassPattern.INSTRUMENT_NAMES[i], PATTERN_INPUT);
+		}
+		if (CLASSIFY_RYTHM) {
+			for (int e = 0; e < Rythm.ELEMENT_NAMES.length; e++) {
+				addClassifier(r, Rythm.ELEMENT_NAMES[e], CONTEXT_INPUT);
+			}
 		}
 		return r;
+	}
+	
+	protected static void addClassifier(NetworkConfig r, String name, String inputName) {
+		ClassifierConfig classifierConfig = r.addClassifier(name + "Classifier", CLASSIFIER_LAYER);
+		classifierConfig.sizeX = TM_SIZE_X * TM_SIZE_Z;
+		classifierConfig.sizeY = TM_SIZE_Y;
+		classifierConfig.valueKey = name;
+		classifierConfig.logPredictionAccuracy = true;
+		classifierConfig.accuracyHistorySize = 256;
+		classifierConfig.accuracyTrendSize = 32;
+		r.addLink("Memory", TemporalMemory.ACTIVE_CELLS_OUTPUT, name + "Classifier", 0);
+		r.addLink(inputName, 0, name + "Classifier", 1);
 	}
 }
