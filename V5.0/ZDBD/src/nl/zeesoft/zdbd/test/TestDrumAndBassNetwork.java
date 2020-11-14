@@ -87,20 +87,20 @@ public class TestDrumAndBassNetwork extends TestObject {
 		int prediction = (int) classification.getMostCountedValues().get(0);
 		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
 		
-		System.out.println();
-		System.out.println("Generated pattern;");
 		PatternGenerator generator = new PatternGenerator();
 		generator.prevIO = lastIO;
 		DrumAndBassPattern pattern = generator.generatePattern(network, new Rythm(), 0);
+		System.out.println();
+		System.out.println("Generated pattern;");
 		for (SDR sdr: pattern.getSDRsForPattern()) {
 			sdr.flatten();
 			System.out.println(sdr.toVisualStr());
 		}
 
+		generator.combinedDistortion = 0.3F;
+		pattern = generator.generatePattern(network, new Rythm(), 0);
 		System.out.println();
 		System.out.println("Generated pattern (distorted);");
-		generator.combinedDistortion = 0.5F;
-		pattern = generator.generatePattern(network, new Rythm(), 0);
 		for (SDR sdr: pattern.getSDRsForPattern()) {
 			sdr.flatten();
 			System.out.println(sdr.toVisualStr());

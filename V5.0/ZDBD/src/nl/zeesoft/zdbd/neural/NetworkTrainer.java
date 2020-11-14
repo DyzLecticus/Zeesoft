@@ -14,19 +14,30 @@ import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class NetworkTrainer {
-	public int			maxTrainCycles				= 32;
 	public int			startTrainTemporalMemory	= 8;
 	public int			startTrainClassifiers		= 16;
+	public int			maxTrainCycles				= 32;
 	public float		minimumAverageAccuracy		= 0.950F;
 	public float		minimumClassifierAccuracy	= 0.990F;
 	
 	public List<NetworkIO> trainNetwork(Network network, PatternSequence sequence) {
+		if (maxTrainCycles < 4) {
+			maxTrainCycles = 4;
+		}
+		if (startTrainClassifiers >= maxTrainCycles) {
+			startTrainClassifiers = (maxTrainCycles - 1);
+		}
+		if (startTrainTemporalMemory >= startTrainClassifiers) {
+			startTrainTemporalMemory = (startTrainClassifiers - 1);
+		}
+		
 		List<NetworkIO> r = new ArrayList<NetworkIO>();
 		
 		List<NetworkIO> trainingSet = getNetworkIOForPatternSequence(sequence);
 		
 		network.setProcessorLearn("*", false);
 		network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
+		network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", true);
 		
 		long start = System.currentTimeMillis();
 		
@@ -100,6 +111,7 @@ public class NetworkTrainer {
 		}
 		
 		network.setProcessorLearn("*", false);
+		network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", false);
 		
 		return r;
 	}

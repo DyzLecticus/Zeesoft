@@ -120,14 +120,17 @@ public class NetworkIO {
 	
 	public List<Classification> getClassifications() {
 		List<Classification> r = new ArrayList<Classification>();
+		lock.lock(this);
 		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
 			r.addAll(entry.getValue().getClassifications());
 		}
+		lock.unlock(this);
 		return r;
 	}
 	
 	public SortedMap<String,Object> getClassificationValues(int step) {
 		SortedMap<String,Object> r = new TreeMap<String,Object>();
+		lock.lock(this);
 		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
 			for (Classification classification: entry.getValue().getClassifications()) {
 				if (classification.step==step) {
@@ -142,17 +145,20 @@ public class NetworkIO {
 				}
 			}
 		}
+		lock.unlock(this);
 		return r;
 	}
 	
 	public SortedMap<String,Float> getClassifierAccuracies(boolean trend) {
 		SortedMap<String,Float> r = new TreeMap<String,Float>();
+		lock.lock(this);
 		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
 			Float accuracy = entry.getValue().getClassifierAccuracy(trend);
 			if (accuracy!=null) {
 				r.put(entry.getKey(), accuracy);
 			}
 		}
+		lock.unlock(this);
 		return r;
 	}
 

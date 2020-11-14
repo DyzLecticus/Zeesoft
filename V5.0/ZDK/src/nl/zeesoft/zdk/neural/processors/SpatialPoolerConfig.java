@@ -16,6 +16,7 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 		" * *potentialConnections*, *potentialRadius*; Number and optional radius of potential connections relative to the input space.  \n" +
 		" * *permanenceThreshold*, *permanenceIncrement*, *permanenceDecrement*; Potential synapse adaptation control.  \n" +
 		" * *activationHistorySize*; Historic column activation buffer size (used to calculate boost factors).  \n" +
+		" * *boostFactorPeriod*; Boost factor recalculation period.  \n" +
 		" * *boostStrength*; Boost strength.  \n" +
 		"";
 
@@ -34,6 +35,7 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 	public float	permanenceDecrement			= 0.008F;
 	
 	public int		activationHistorySize		= 1000;
+	public int		boostFactorPeriod			= 10;
 	public int		boostStrength				= 2;
 	
 	@Override

@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
+import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -84,7 +85,8 @@ public class TestNetwork extends TestObject {
 		config.inputNames.add(KeyValueSDR.DEFAULT_VALUE_KEY);
 		
 		config.addScalarEncoder("EN");
-		config.addSpatialPooler("SP");
+		SpatialPoolerConfig poolerConfig = config.addSpatialPooler("SP");
+		poolerConfig.boostFactorPeriod = 1;
 		config.addTemporalMemory("TM");
 		ClassifierConfig classifierConfig = config.addClassifier("CL");
 		classifierConfig.logPredictionAccuracy = true;

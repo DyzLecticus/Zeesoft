@@ -38,6 +38,7 @@ public class SpatialPooler extends CellGridProcessor {
 	protected float				permanenceDecrement			= 0.008F;
 	
 	protected int				activationHistorySize		= 1000;
+	protected int				boostFactorPeriod			= 10;
 	protected int				boostStrength				= 2;
 	
 	// State
@@ -68,6 +69,7 @@ public class SpatialPooler extends CellGridProcessor {
 			this.permanenceDecrement = cfg.permanenceDecrement;
 
 			this.activationHistorySize = cfg.activationHistorySize;
+			this.boostFactorPeriod = cfg.boostFactorPeriod;
 			this.boostStrength = cfg.boostStrength;
 			
 			if (potentialRadius > inputSizeX * inputSizeY) {
@@ -80,6 +82,8 @@ public class SpatialPooler extends CellGridProcessor {
 	public void setProperty(String property, Object value) {
 		if (property.equals("boostStrength") && value instanceof Integer) {
 			boostStrength = (Integer) value;
+		} else if (property.equals("boostFactorPeriod") && value instanceof Integer) {
+			boostFactorPeriod = (Integer) value;
 		} else if (property.equals("permanenceThreshold") && value instanceof Float) {
 			permanenceThreshold = (Float) value;
 		} else if (property.equals("permanenceIncrement") && value instanceof Float) {
@@ -393,14 +397,17 @@ public class SpatialPooler extends CellGridProcessor {
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
-				float average = activationHistory.getAverage(column.posX(),column.posY());
-				float factor = 0F;
-				if (average!=averageGlobalActivation && boostStrength>1) {
-					factor = (float) Math.exp((float)boostStrength * - 1 * (average - averageGlobalActivation));
-				} else {
-					factor = 1;
+				if (processed % boostFactorPeriod == 0) {
+					float average = activationHistory.getAverage(column.posX(),column.posY());
+					float factor = 0F;
+					if (average!=averageGlobalActivation && boostStrength>1) {
+						factor = (float) Math.exp((float)boostStrength * - 1 * (average - averageGlobalActivation));
+					} else {
+						factor = 1;
+					}
+					value = factor;
 				}
-				return factor;
+				return value;
 			}
 		};
 		boostFactors.applyFunction(function, r, threads);
