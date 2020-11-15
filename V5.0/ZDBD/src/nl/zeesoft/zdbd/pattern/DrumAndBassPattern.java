@@ -37,8 +37,8 @@ public class DrumAndBassPattern {
 		this.rythm.copyFrom(rythm);
 		pattern = new int[rythm.getStepsPerPattern()][INSTRUMENT_NAMES.length];
 		for (int s = 0; s < rythm.getStepsPerPattern(); s++) {
-			for (int d = 0; d < INSTRUMENT_NAMES.length; d++) {
-				pattern[s][d] = OFF;
+			for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
+				pattern[s][i] = OFF;
 			}
 		}
 	}

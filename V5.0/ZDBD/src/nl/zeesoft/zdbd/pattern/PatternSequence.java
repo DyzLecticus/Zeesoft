@@ -24,4 +24,12 @@ public class PatternSequence {
 		return r;
 	}
 
+	public int getTotalSteps() {
+		int r = 0;
+		List<DrumAndBassPattern> patterns = getSequencedPatterns();
+		for (DrumAndBassPattern pattern: patterns) {
+			r += pattern.rythm.getStepsPerPattern();
+		}
+		return r;
+	}
 }

@@ -2,6 +2,9 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
+import javax.sound.midi.Sequence;
+
+import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.neural.PatternGenerator;
@@ -21,6 +24,9 @@ import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.ProgressBar;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestDrumAndBassNetwork extends TestObject {
 	public TestDrumAndBassNetwork(Tester tester) {
@@ -61,7 +67,25 @@ public class TestDrumAndBassNetwork extends TestObject {
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
 		
+		MidiSys.initialize();
+		
+		// Load soundbanks
+		CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
+			"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",
+			"../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2"
+		);
+		chain.addProgressListener(new ProgressBar("Loading soundbanks"));
+		Waiter.startAndWaitFor(chain,3000);
+		
+		PatternSequence sequence = PatternFactory.getFourOnFloorDrumAndBassPatternSequence();
+		
+		Sequence midiSequence = null;
+		//midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+		//MidiSys.sequencePlayer.setSequence(midiSequence);
+		//MidiSys.sequencePlayer.start();
+
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
+		System.out.println();
 		System.out.println(config.getDescription());
 		
 		assertEqual(config.testConfiguration(),new Str(),"Network configuration error does not match expectation");
@@ -75,7 +99,6 @@ public class TestDrumAndBassNetwork extends TestObject {
 		
 		System.out.println();
 		System.out.println("Training network ...");
-		PatternSequence sequence = PatternFactory.getFourOnFloorDrumAndBassPatternSequence();
 		NetworkTrainer trainer = new NetworkTrainer();
 		List<NetworkIO> results = trainer.trainNetwork(network, sequence);
 		System.out.println("Trained network");
@@ -97,7 +120,13 @@ public class TestDrumAndBassNetwork extends TestObject {
 			System.out.println(sdr.toVisualStr());
 		}
 
-		generator.combinedDistortion = 0.3F;
+		midiSequence = MidiSys.convertor.generateSequenceForPattern(pattern);
+		MidiSys.sequencePlayer.setSequence(midiSequence);
+		MidiSys.sequencePlayer.start();
+		sleep(5000);
+		MidiSys.sequencePlayer.stop();
+
+		generator.combinedDistortion = 0.4F;
 		pattern = generator.generatePattern(network, new Rythm(), 0);
 		System.out.println();
 		System.out.println("Generated pattern (distorted);");
@@ -105,5 +134,13 @@ public class TestDrumAndBassNetwork extends TestObject {
 			sdr.flatten();
 			System.out.println(sdr.toVisualStr());
 		}
+
+		midiSequence = MidiSys.convertor.generateSequenceForPattern(pattern);
+		MidiSys.sequencePlayer.setNextSequence(midiSequence);
+		MidiSys.sequencePlayer.start();
+		sleep(5000);
+		MidiSys.sequencePlayer.stop();
+		
+		MidiSys.closeDevices();
 	}
 }

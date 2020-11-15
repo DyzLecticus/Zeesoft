@@ -16,7 +16,7 @@ public class PatternFactory {
 			pattern.setDrumNote(14,DrumAndBassPattern.BASEBEAT,DrumAndBassPattern.ON);
 		}
 
-		pattern.setDrumNote(0,DrumAndBassPattern.SNARE,DrumAndBassPattern.ACCENT);
+		pattern.setDrumNote(4,DrumAndBassPattern.SNARE,DrumAndBassPattern.ACCENT);
 		if (patternNum==2) {
 			pattern.setDrumNote(9,DrumAndBassPattern.SNARE,DrumAndBassPattern.ON);
 		}

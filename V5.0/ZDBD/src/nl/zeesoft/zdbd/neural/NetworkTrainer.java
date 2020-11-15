@@ -121,11 +121,7 @@ public class NetworkTrainer {
 		
 		List<DrumAndBassPattern> patterns = sequence.getSequencedPatterns();
 		
-		int totalSteps = 0;
-		for (DrumAndBassPattern pattern: patterns) {
-			totalSteps += pattern.rythm.getStepsPerPattern();
-		}
-		
+		int totalSteps = sequence.getTotalSteps();
 		for (int i = 0; i < totalSteps; i++) {
 			r.add(new NetworkIO());
 		}
