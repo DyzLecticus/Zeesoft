@@ -45,7 +45,6 @@ public class SynthConfig {
 		for (int c = 0; c < channels.length; c++) {
 			SynthChannelConfig config = channels[c];
 			MidiChannel chan = synthesizer.getChannels()[c];
-			System.out.println("Configure channel instrument: " + c + "/" + config.instrument);
 			if (chan.getProgram()!=config.instrument) {
 				chan.programChange(config.instrument);
 			}

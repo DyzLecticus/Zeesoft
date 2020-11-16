@@ -29,15 +29,25 @@ public class MidiSys {
 	public static Sequencer				sequencer			= null;
 	public static MidiSequencePlayer	sequencePlayer		= null;
 	public static MidiSequenceConvertor convertor			= null;
-	
+	public static List<String>			loadedSoundbanks	= new ArrayList<String>();
 	
 	public static void initialize() {
-		Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
-		openDevices();
-		synthConfig = new SynthConfig(synthesizer);
-		sequencePlayer = new MidiSequencePlayer(sequencer);
-		convertor = new MidiSequenceConvertor();
-		Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
+		if (!isInitialized()) {
+			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
+			openDevices();
+			synthConfig = new SynthConfig(synthesizer);
+			sequencePlayer = new MidiSequencePlayer(sequencer);
+			convertor = new MidiSequenceConvertor();
+			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
+		}
+	}
+	
+	public static boolean isInitialized() {
+		boolean r = false;
+		if (synthesizer!=null && sequencer!=null) {
+			r = true;
+		}
+		return r;
 	}
 	
 	public static void openDevices() {
@@ -158,6 +168,11 @@ public class MidiSys {
 				// Ignore
 			} catch (IOException e) {
 				// Ignore
+			}
+		}
+		if (r!=null) {
+			if (!loadedSoundbanks.contains(path)) {
+				loadedSoundbanks.add(path);
 			}
 		}
 		return r;

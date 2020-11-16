@@ -124,9 +124,9 @@ public class TestDrumAndBassNetwork extends TestObject {
 		MidiSys.sequencePlayer.setSequence(midiSequence);
 		MidiSys.sequencePlayer.start();
 		sleep(5000);
-		MidiSys.sequencePlayer.stop();
+		//MidiSys.sequencePlayer.stop();
 
-		generator.combinedDistortion = 0.4F;
+		generator.combinedDistortion = 0.3F;
 		pattern = generator.generatePattern(network, new Rythm(), 0);
 		System.out.println();
 		System.out.println("Generated pattern (distorted);");
@@ -137,8 +137,8 @@ public class TestDrumAndBassNetwork extends TestObject {
 
 		midiSequence = MidiSys.convertor.generateSequenceForPattern(pattern);
 		MidiSys.sequencePlayer.setNextSequence(midiSequence);
-		MidiSys.sequencePlayer.start();
-		sleep(5000);
+		//MidiSys.sequencePlayer.start();
+		sleep(10000);
 		MidiSys.sequencePlayer.stop();
 		
 		MidiSys.closeDevices();

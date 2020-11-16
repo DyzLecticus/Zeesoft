@@ -20,6 +20,7 @@ public class MidiSequencePlayer implements MetaEventListener {
 	
 	protected MidiSequencePlayer(Sequencer sequencer) {
 		this.sequencer = sequencer;
+		sequencer.addMetaEventListener(this);
 		sequencer.setTempoInBPM((float)120);
 		sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
 	}
@@ -37,9 +38,8 @@ public class MidiSequencePlayer implements MetaEventListener {
 	
 	public void setNextSequence(Sequence nextSequence) {
 		lock.lock(this);
-		if (sequence==null) {
-			this.nextSequence = nextSequence;
-		}
+		this.nextSequence = nextSequence;
+		sequencer.setLoopCount(0);
 		lock.unlock(this);
 	}
 	
@@ -74,7 +74,9 @@ public class MidiSequencePlayer implements MetaEventListener {
 				if (nextSequence!=null) {
 					try {
 						sequencer.setSequence(nextSequence);
+						sequence = nextSequence;
 						nextSequence = null;
+						sequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
 					} catch (InvalidMidiDataException e) {
 						Logger.err(this, new Str("Invalid MIDI data"), e);
 					}

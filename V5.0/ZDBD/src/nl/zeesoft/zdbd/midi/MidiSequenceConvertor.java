@@ -150,8 +150,6 @@ public class MidiSequenceConvertor {
 						createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick);
 						long add = (long)(mn.hold * (float)ticksPerStep);
 						long endTick = startTick + add;
-						// TODO: Remove debug
-						//System.out.println("Convertor: " + convertor.name + "/" + s + ", midi notes: " + mns.size() + " start-end: " + startTick + "-" + endTick + ", velocity: " + mn.velocity + ", channel: " + mn.channel);
 						if (endTick>=sequenceEndTick) {
 							endTick = sequenceEndTick - 1;
 						}
