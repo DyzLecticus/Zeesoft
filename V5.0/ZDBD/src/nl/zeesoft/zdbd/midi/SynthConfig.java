@@ -38,7 +38,10 @@ public class SynthConfig {
 		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
 		drumConfig.instrument = 118;
 		SynthChannelConfig bassConfig = channels[BASS_CHANNEL];
-		bassConfig.instrument = 88;
+		bassConfig.instrument = 87;
+		bassConfig.reverb = 0;
+		bassConfig.decay = 32;
+		bassConfig.filter = 16;
 	}
 	
 	public void configureSynthesizer() {

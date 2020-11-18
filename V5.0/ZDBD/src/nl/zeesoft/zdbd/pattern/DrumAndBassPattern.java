@@ -51,11 +51,7 @@ public class DrumAndBassPattern {
 	
 	public void setBassNote(int step, int duration, boolean accent) {
 		if (duration>=1 && duration<=8) {
-			int note = duration * 2;
-			if (accent) {
-				note++;
-			}
-			pattern[step][BASS] = note;
+			pattern[step][BASS] = getNoteForDuration(duration,accent);
 		}
 	}
 	

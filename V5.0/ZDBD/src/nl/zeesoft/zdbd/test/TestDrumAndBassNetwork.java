@@ -11,11 +11,9 @@ import nl.zeesoft.zdbd.neural.PatternGenerator;
 import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
-import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
-import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -112,35 +110,20 @@ public class TestDrumAndBassNetwork extends TestObject {
 		
 		PatternGenerator generator = new PatternGenerator();
 		generator.prevIO = lastIO;
-		DrumAndBassPattern pattern = generator.generatePattern(network, new Rythm(), 0);
-		System.out.println();
-		System.out.println("Generated pattern;");
-		for (SDR sdr: pattern.getSDRsForPattern()) {
-			sdr.flatten();
-			System.out.println(sdr.toVisualStr());
-		}
+		generator.patternDistortion = 0.5F;
+		generator.allowedChunkSizes.add(3);
+		generator.allowedChunkSizes.add(4);
+		generator.skipInstruments.add(DrumAndBassPattern.RIDE);
+		generator.skipInstruments.add(DrumAndBassPattern.CYMBAL);
+		generator.skipInstruments.add(DrumAndBassPattern.BASS);
 
-		midiSequence = MidiSys.convertor.generateSequenceForPattern(pattern);
+		sequence = generator.generatePatternSequence(network, sequence);
+		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
 		MidiSys.sequencePlayer.setSequence(midiSequence);
 		MidiSys.sequencePlayer.start();
-		sleep(5000);
-		//MidiSys.sequencePlayer.stop();
-
-		generator.combinedDistortion = 0.3F;
-		pattern = generator.generatePattern(network, new Rythm(), 0);
-		System.out.println();
-		System.out.println("Generated pattern (distorted);");
-		for (SDR sdr: pattern.getSDRsForPattern()) {
-			sdr.flatten();
-			System.out.println(sdr.toVisualStr());
-		}
-
-		midiSequence = MidiSys.convertor.generateSequenceForPattern(pattern);
-		MidiSys.sequencePlayer.setNextSequence(midiSequence);
-		//MidiSys.sequencePlayer.start();
-		sleep(10000);
+		sleep(30000);
 		MidiSys.sequencePlayer.stop();
-		
+				
 		MidiSys.closeDevices();
 	}
 }
