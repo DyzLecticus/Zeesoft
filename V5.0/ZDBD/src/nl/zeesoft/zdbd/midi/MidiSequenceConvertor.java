@@ -72,6 +72,8 @@ public class MidiSequenceConvertor {
 				DrumSampleConvertor sample = new DrumSampleConvertor();
 				if (i==DrumAndBassPattern.BASEBEAT) {
 					sample.midiNote = 35;
+					sample.accentVelocity = 110;
+					sample.accentVelocity = 127;
 				} else if (i==DrumAndBassPattern.SNARE) {
 					sample.midiNote = 50;
 					sample.velocity = 80;

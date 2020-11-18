@@ -18,10 +18,9 @@ public class PatternGenerator {
 	public NetworkIO		prevIO				= null;
 	
 	public float			contextDistortion	= 0.0F;
-	public float			patternDistortion	= 0.0F;
+	public float			patternDistortion	= 0.5F;
 	public float			combinedDistortion	= 0.0F;
 	
-	public List<Integer>	allowedChunkSizes	= new ArrayList<Integer>();
 	public boolean			getRandomChunks		= true;
 	public List<Integer>	skipInstruments		= new ArrayList<Integer>();
 
@@ -54,11 +53,12 @@ public class PatternGenerator {
 		if (rythm==null && basePattern!=null) {
 			rythm = basePattern.rythm;
 		}
-		List<Integer> chunkSizes = new ArrayList<Integer>(allowedChunkSizes);
-		if (chunkSizes.size()==0) {
-			for (int i = 0; i < rythm.stepsPerBeat; i++) {
-				chunkSizes.add(i);
-			}
+		List<Integer> chunkSizes = new ArrayList<Integer>();
+		chunkSizes.add(rythm.stepsPerBeat);
+		if (rythm.stepsPerBeat<=5) {
+			chunkSizes.add(rythm.stepsPerBeat - 1);
+		} else {
+			chunkSizes.add(rythm.stepsPerBeat - 2);
 		}
 		
 		int stepsPerPattern = rythm.getStepsPerPattern();
@@ -98,7 +98,7 @@ public class PatternGenerator {
 				for (int i = 0; i < values.length; i++) {
 					if (!skipInstruments.contains(i)) {
 						r.pattern[s][i] = values[i];
-					} else if (basePattern!=null) {
+					} else if (basePattern!=null && basePattern.pattern.length>s) {
 						r.pattern[s][i] = basePattern.pattern[s][i];
 					}
 				}

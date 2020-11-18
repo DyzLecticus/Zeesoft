@@ -110,9 +110,6 @@ public class TestDrumAndBassNetwork extends TestObject {
 		
 		PatternGenerator generator = new PatternGenerator();
 		generator.prevIO = lastIO;
-		generator.patternDistortion = 0.5F;
-		generator.allowedChunkSizes.add(3);
-		generator.allowedChunkSizes.add(4);
 		generator.skipInstruments.add(DrumAndBassPattern.RIDE);
 		generator.skipInstruments.add(DrumAndBassPattern.CYMBAL);
 		generator.skipInstruments.add(DrumAndBassPattern.BASS);
