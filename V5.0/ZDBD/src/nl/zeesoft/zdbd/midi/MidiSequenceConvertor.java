@@ -29,12 +29,14 @@ public class MidiSequenceConvertor {
 	}
 	
 	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
-		Sequence r = null;	
+		Sequence r = createSequence();
+		addInitialSynthConfigToControlTrack(r);
+		addTempoMetaEventToSequence(r);
+		
 		List<DrumAndBassPattern> patterns = sequence.getSequencedPatterns();
-		r = createSequence();
 		long startTick = 0;
 		for (DrumAndBassPattern pattern: patterns) {
-			Sequence seq = generateSequenceForPattern(pattern);
+			Sequence seq = generateNoteSequenceForPattern(pattern);
 			for (int t = 0; t < seq.getTracks().length; t++) {
 				Track track = seq.getTracks()[t];
 				for (int e = 0; e < track.size(); e++) {
@@ -49,11 +51,9 @@ public class MidiSequenceConvertor {
 	}
 	
 	public Sequence generateSequenceForPattern(DrumAndBassPattern pattern) {
-		Sequence r = null;
-		r = createSequence();
+		Sequence r = generateNoteSequenceForPattern(pattern);
 		addTempoMetaEventToSequence(r);
-		addNotesToSequence(r,pattern);
-		alignTrackEndings(r,pattern.rythm);
+		addInitialSynthConfigToControlTrack(r);
 		return r;
 	}
 	
@@ -111,16 +111,35 @@ public class MidiSequenceConvertor {
 		}
 	}
 	
+	protected Sequence generateNoteSequenceForPattern(DrumAndBassPattern pattern) {
+		Sequence r = createSequence();
+		addNotesToSequence(r,pattern);
+		alignTrackEndings(r,pattern.rythm);
+		return r;
+	}
+	
 	protected Sequence createSequence() {
 		Sequence r = null;
 		try {
-			r = new Sequence(Sequence.PPQ,RESOLUTION,DrumAndBassPattern.INSTRUMENT_NAMES.length);
+			r = new Sequence(Sequence.PPQ,RESOLUTION,DrumAndBassPattern.INSTRUMENT_NAMES.length + 1);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
 		return r;
 	}
 
+	protected void addInitialSynthConfigToControlTrack(Sequence sequence) {
+		int controlTrack = DrumAndBassPattern.INSTRUMENT_NAMES.length;
+		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
+			for (Integer control: SynthConfig.CONTROLS) {
+				int value = channelConfig.getControlValue(control);
+				createEventOnTrack(
+					sequence.getTracks()[controlTrack],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
+				);
+			}
+		}
+	}
+	
 	protected void addTempoMetaEventToSequence(Sequence sequence) {
 		Track track = sequence.getTracks()[0];
 		int tempo = (60000000 / beatsPerMinute);

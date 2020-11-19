@@ -21,6 +21,22 @@ public class SynthConfig {
 	public static final int			VIB_DEPTH			= 77;
 	public static final int			VIB_DELAY			= 78;
 
+	public static final int[]		CONTROLS			= {
+		VOLUME,
+		ATTACK,
+		DECAY,
+		RELEASE,
+		PAN,
+		MODULATION,
+		CHORUS,
+		FILTER,
+		RESONANCE,
+		REVERB,
+		VIB_RATE,
+		VIB_DEPTH,
+		VIB_DELAY,
+	};
+	
 	public Synthesizer				synthesizer			= null;
 	public SynthChannelConfig[]		channels 			= new SynthChannelConfig[16];
 	

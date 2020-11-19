@@ -80,6 +80,26 @@ public class PatternGenerator {
 		
 		return generatePattern(network, rythm, rythmSDRs, basePattern);
 	}
+
+	protected List<SDR> getRandomBeatChunk(PatternSequence sequence) {
+		List<SDR> r = new ArrayList<SDR>();
+		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
+		DrumAndBassPattern pattern = sequence.patterns.get(num);
+		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
+		int startBeat = 0;
+		if (getRandomChunks) {
+			int lastBeat = ((pattern.rythm.getStepsPerPattern() - pattern.rythm.stepsPerBeat) - 1) / 2;
+			startBeat = Rand.getRandomInt(0, lastBeat);
+			startBeat = startBeat * 2;
+		} else {
+			startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
+			startBeat = startBeat * pattern.rythm.beatsPerPattern;
+		}
+		for (int s = startBeat; s < startBeat + pattern.rythm.stepsPerBeat; s++) {
+			r.add(sdrs.get(s));
+		}
+		return r;
+	}
 	
 	protected DrumAndBassPattern generatePattern(Network network, Rythm rythm, List<SDR> rythmSDRs, DrumAndBassPattern basePattern) {
 		DrumAndBassPattern r = new DrumAndBassPattern();
@@ -121,26 +141,6 @@ public class PatternGenerator {
 			network.setProcessorProperty("Merger", "distortion", 0F);
 		} else {
 			Logger.err(this, new Str("Previous network IO has not been specified"));
-		}
-		return r;
-	}
-
-	protected List<SDR> getRandomBeatChunk(PatternSequence sequence) {
-		List<SDR> r = new ArrayList<SDR>();
-		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
-		DrumAndBassPattern pattern = sequence.patterns.get(num);
-		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
-		int startBeat = 0;
-		if (getRandomChunks) {
-			int lastBeat = ((pattern.rythm.getStepsPerPattern() - pattern.rythm.stepsPerBeat) - 1) / 2;
-			startBeat = Rand.getRandomInt(0, lastBeat);
-			startBeat = startBeat * 2;
-		} else {
-			startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
-			startBeat = startBeat * pattern.rythm.beatsPerPattern;
-		}
-		for (int s = startBeat; s < startBeat + pattern.rythm.stepsPerBeat; s++) {
-			r.add(sdrs.get(s));
 		}
 		return r;
 	}

@@ -77,11 +77,6 @@ public class TestDrumAndBassNetwork extends TestObject {
 		
 		PatternSequence sequence = PatternFactory.getFourOnFloorDrumAndBassPatternSequence();
 		
-		Sequence midiSequence = null;
-		//midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-		//MidiSys.sequencePlayer.setSequence(midiSequence);
-		//MidiSys.sequencePlayer.start();
-
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
 		System.out.println();
 		System.out.println(config.getDescription());
@@ -98,6 +93,10 @@ public class TestDrumAndBassNetwork extends TestObject {
 		System.out.println();
 		System.out.println("Training network ...");
 		NetworkTrainer trainer = new NetworkTrainer();
+		trainer.startTrainTemporalMemory = 4;
+		trainer.startTrainClassifiers = 8;
+		trainer.maxTrainCycles = 16;
+		trainer.minimumClassifierAccuracy = 0.98F;
 		List<NetworkIO> results = trainer.trainNetwork(network, sequence);
 		System.out.println("Trained network");
 		
@@ -107,6 +106,11 @@ public class TestDrumAndBassNetwork extends TestObject {
 		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
 		int prediction = (int) classification.getMostCountedValues().get(0);
 		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
+
+		Sequence midiSequence = null;
+		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+		MidiSys.sequencePlayer.setSequence(midiSequence);
+		MidiSys.sequencePlayer.start();
 		
 		PatternGenerator generator = new PatternGenerator();
 		generator.prevIO = lastIO;
@@ -116,7 +120,7 @@ public class TestDrumAndBassNetwork extends TestObject {
 
 		sequence = generator.generatePatternSequence(network, sequence);
 		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-		MidiSys.sequencePlayer.setSequence(midiSequence);
+		MidiSys.sequencePlayer.setNextSequence(midiSequence);
 		MidiSys.sequencePlayer.start();
 		sleep(30000);
 		MidiSys.sequencePlayer.stop();
