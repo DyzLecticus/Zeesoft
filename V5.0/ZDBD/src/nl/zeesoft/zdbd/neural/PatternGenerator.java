@@ -21,7 +21,9 @@ public class PatternGenerator {
 	public float			patternDistortion	= 0.5F;
 	public float			combinedDistortion	= 0.0F;
 	
-	public boolean			getRandomChunks		= true;
+	public int				smallerChunk		= 1;
+	public int				largerChunk			= 2;
+	public int				randomChunkOffset	= 3;
 	public List<Integer>	skipInstruments		= new ArrayList<Integer>();
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
@@ -55,17 +57,24 @@ public class PatternGenerator {
 		}
 		List<Integer> chunkSizes = new ArrayList<Integer>();
 		chunkSizes.add(rythm.stepsPerBeat);
-		if (rythm.stepsPerBeat<=5) {
-			chunkSizes.add(rythm.stepsPerBeat - 1);
-		} else {
-			chunkSizes.add(rythm.stepsPerBeat - 2);
+		if (smallerChunk>0) {
+			int size = rythm.stepsPerBeat - smallerChunk;
+			if (size<1) {
+				size = 1;
+			}
+			if (size < rythm.stepsPerBeat) {
+				chunkSizes.add(rythm.stepsPerBeat - smallerChunk);
+			}
+		}
+		if (largerChunk>0) {
+			chunkSizes.add(rythm.stepsPerBeat + largerChunk);
 		}
 		
 		int stepsPerPattern = rythm.getStepsPerPattern();
-		int len = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
+		int size = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
 		for (int s = 0; s < stepsPerPattern; s++) {
-			List<SDR> chunk = getRandomBeatChunk(sequence);
-			for (int c = 0; c < len; c++) {
+			List<SDR> chunk = getRandomBeatChunk(sequence, size);
+			for (int c = 0; c < size; c++) {
 				rythmSDRs.add(chunk.get(c));
 				if (rythmSDRs.size()>=stepsPerPattern) {
 					s = stepsPerPattern;
@@ -75,28 +84,28 @@ public class PatternGenerator {
 					s++;
 				}
 			}
-			len = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
+			size = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
 		}
 		
 		return generatePattern(network, rythm, rythmSDRs, basePattern);
 	}
 
-	protected List<SDR> getRandomBeatChunk(PatternSequence sequence) {
+	protected List<SDR> getRandomBeatChunk(PatternSequence sequence, int size) {
 		List<SDR> r = new ArrayList<SDR>();
 		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
 		DrumAndBassPattern pattern = sequence.patterns.get(num);
 		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
-		int startBeat = 0;
-		if (getRandomChunks) {
-			int lastBeat = ((pattern.rythm.getStepsPerPattern() - pattern.rythm.stepsPerBeat) - 1) / 2;
-			startBeat = Rand.getRandomInt(0, lastBeat);
-			startBeat = startBeat * 2;
-		} else {
-			startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
-			startBeat = startBeat * pattern.rythm.beatsPerPattern;
+		int startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
+		int step = startBeat * pattern.rythm.beatsPerPattern;
+		if (randomChunkOffset > 0 && Rand.getRandomInt(0, randomChunkOffset)==randomChunkOffset) {
+			step += (pattern.rythm.stepsPerBeat / 2);
 		}
-		for (int s = startBeat; s < startBeat + pattern.rythm.stepsPerBeat; s++) {
-			r.add(sdrs.get(s));
+		for (int s = 0; s < size; s++) {
+			r.add(sdrs.get(step));
+			step++;
+			if (step>=sdrs.size()) {
+				step = 0;
+			}
 		}
 		return r;
 	}
