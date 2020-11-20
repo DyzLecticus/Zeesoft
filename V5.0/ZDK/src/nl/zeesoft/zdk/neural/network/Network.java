@@ -162,12 +162,12 @@ public class Network {
 		return !networkIO.hasErrors();
 	}
 
-	public Str save(String directory) {
-		return saveLoad(true, directory);
+	public Str save() {
+		return saveLoad(true);
 	}
 
-	public Str load(String directory) {
-		return saveLoad(false, directory);
+	public Str load() {
+		return saveLoad(false);
 	}
 	
 	protected CodeRunnerList buildInitializeRunnerListNoLock(boolean resetConnections) {
@@ -322,7 +322,7 @@ public class Network {
 		}
 	}
 	
-	protected Str saveLoad(boolean save, String directory) {
+	protected Str saveLoad(boolean save) {
 		Str err = new Str();
 		if (save) {
 			Logger.dbg(this, new Str("Saving network ..."));
@@ -334,7 +334,7 @@ public class Network {
 		if (!save) {
 			timeoutMs = config.loadTimeoutMs;
 		}
-		CodeRunnerList runnerList = buildSaveLoadRunnerList(save,directory);
+		CodeRunnerList runnerList = buildSaveLoadRunnerList(save,config.directory);
 		if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
 			if (save) {
 				err.sb().append("Saving network timed out");

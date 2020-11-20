@@ -59,7 +59,9 @@ public class TestStr extends TestObject {
 		assertEqual(strs.get(0).replace("WE","UAZA"),new Str("QUAZAR"),"Replace result does not match expectation");
 		assertEqual(test.merge(strs,","),new Str("QUAZAR,asdf,zxcv"),"Merge result does not match expectation");
 		assertEqual((new Str("")).split(",").get(0).toString(),"".toString().split(",")[0],"Split does not match expectation");
-		
+
+		assertEqual((new Str(",")).split(",").size(),2,"Split size does not match expectation");
+
 		Str longStr = new Str();
 		longStr.sb().append("@PO|nl.zeesoft.zdk.test.collection.CollectionTestChild@2");
 		longStr.sb().append("\n");

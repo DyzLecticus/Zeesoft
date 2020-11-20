@@ -34,6 +34,11 @@ public class HttpConnection {
 			protected void stopped() {
 				stoppedRunner(this);
 			}
+			@Override
+			protected void caughtException(Exception exception) {
+				config.error(this,new Str("HTTP connection request handler caught an exception"),exception);
+				close();
+			}
 		};
 		runner.setSleepMs(0);
 		requestHandler = config.getNewHttpRequestHandler();
@@ -135,8 +140,10 @@ public class HttpConnection {
 			request.protocol = params.get(2).toString();
 			headers.remove(0);
 			for (Str head: headers) {
-				List<Str> h = head.split(": ");
-				request.headers.add(h.get(0).toString(),h.get(1).toString());
+				if (head.length()>0) {
+					List<Str> h = head.split(": ");
+					request.headers.add(h.get(0).toString(),h.get(1).toString());
+				}
 			}
 			int contentLength = request.getContentLength();
 			

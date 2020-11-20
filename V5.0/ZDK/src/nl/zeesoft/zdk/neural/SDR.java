@@ -201,7 +201,9 @@ public class SDR implements StrAble {
 			sizeY = Integer.parseInt(split.get(1).toString());
 			split = split.get(2).split(",");
 			for (Str ob: split) {
-				onBits.add(Integer.parseInt(ob.toString()));
+				if (ob.length()>0) {
+					onBits.add(Integer.parseInt(ob.toString()));
+				}
 			}
 		}
 	}

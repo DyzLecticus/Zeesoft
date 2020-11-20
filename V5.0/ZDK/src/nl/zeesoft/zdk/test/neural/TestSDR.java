@@ -1,10 +1,12 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.BasicFeatureArrayEncoder;
+import nl.zeesoft.zdk.neural.BasicFeatureEncoder;
+import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.SDRHistory;
-import nl.zeesoft.zdk.neural.BasicScalarEncoder;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -104,7 +106,7 @@ public class TestSDR extends TestObject {
 		
 		assertEqual(hist2.toStr(),histStr, "History Str does not match expectation");
 		
-		// Encoder
+		// Scalar encoder
 		BasicScalarEncoder encoder = new BasicScalarEncoder();
 		encoder.setEncodeDimensions(4, 4);
 		encoder.setOnBits(4);
@@ -135,6 +137,28 @@ public class TestSDR extends TestObject {
 				break;
 			}
 		}
+		
+		// Feature encoder
+		BasicFeatureEncoder featEnc = new BasicFeatureEncoder();
+		featEnc.setFeatures(4);
+		SDR featSDR = featEnc.getEncodedValue(3);
+		assertEqual(featSDR.toStr(), new Str("2;4;6,7"), "Feature SDR does not match expectation");
+		
+		// Feature array encoder
+		BasicFeatureArrayEncoder featArrayEnc = new BasicFeatureArrayEncoder();
+		featArrayEnc.setFeatureEncoder3(featEnc);
+		featArrayEnc.setOnBits(1);
+		int[] val1 = {0,1,2};
+		featSDR = featArrayEnc.getEncodedValue(val1);
+		assertEqual(featSDR.toStr(), new Str("1;36;6"), "Feature array SDR does not match expectation");
+		int[] val2 = {2,2,3};
+		featSDR = featArrayEnc.getEncodedValue(val2);
+		assertEqual(featSDR.toStr(), new Str("1;36;35"), "Feature array SDR does not match expectation");
+		int[] val3 = featArrayEnc.getValueForIndex(35);
+		assertEqual(val3.length,3,"Array length does not match expectation");
+		assertEqual(val3[0],2,"Array value 0 does not match expectation");
+		assertEqual(val3[1],2,"Array value 1 does not match expectation");
+		assertEqual(val3[2],3,"Array value 2 does not match expectation");
 		
 		KeyValueSDR kvSDR = new KeyValueSDR(sdr);
 		kvSDR.put("test1", 2);

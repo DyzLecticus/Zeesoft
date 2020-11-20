@@ -251,6 +251,8 @@ public class Str implements Comparable<Str>{
 			}
 			if (offset<sb.length()) {
 				r.add(substring(offset,sb.length()));
+			} else {
+				r.add(new Str());
 			}
 		}
 		if (r.size()==0) {

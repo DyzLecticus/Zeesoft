@@ -330,8 +330,10 @@ public class HttpClient {
 			responseMessage = params.get(2).toString();
 			headers.remove(0);
 			for (Str head: headers) {
-				List<Str> h = head.split(": ");
-				responseHeaders.add(h.get(0).toString(),h.get(1).toString());
+				if (head.length()>0) {
+					List<Str> h = head.split(": ");
+					responseHeaders.add(h.get(0).toString(),h.get(1).toString());
+				}
 			}
 			int contentLength = responseHeaders.getIntegerValue(HttpHeader.CONTENT_LENGTH);
 			lock.unlock(this);
@@ -409,7 +411,17 @@ public class HttpClient {
 	}
 	
 	private CodeRunner getNewResponseReader() {
-		CodeRunner r = new CodeRunner(getResponseReaderCode());
+		CodeRunner r = new CodeRunner(getResponseReaderCode()) {
+			@Override
+			protected void caughtException(Exception exception) {
+				String msg = "HTTP client response reader caught exception";
+				if (lock.isLocked()) {
+					logErrorNoLock(msg,exception);
+				} else {
+					logError(msg,exception);
+				}
+			}
+		};
 		r.setSleepMs(0);
 		return r;
 	}

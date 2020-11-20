@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
@@ -16,8 +17,11 @@ import nl.zeesoft.zdk.neural.processors.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfig {
+	public static String					FILE_NAME			= "Configuration.txt";
+	
 	public int								initializeTimeoutMs	= 3000;
 	public int								resetStateTimeoutMs	= 1000;
+	public String							directory			= "";
 	public int								saveTimeoutMs		= 30000;
 	public int								loadTimeoutMs		= 30000;
 	
@@ -40,6 +44,7 @@ public class NetworkConfig {
 		
 		this.initializeTimeoutMs = config.initializeTimeoutMs;
 		this.resetStateTimeoutMs = config.resetStateTimeoutMs;
+		this.directory = config.directory;
 		this.saveTimeoutMs = config.saveTimeoutMs;
 		this.loadTimeoutMs = config.loadTimeoutMs;
 		
@@ -57,12 +62,16 @@ public class NetworkConfig {
 		}
 	}
 	
-	public Str toFile(String path) {
-		return PersistableCollection.toFile(this, path);
+	public boolean fileExists() {
+		return (FileIO.checkFile(getFileName())).length()==0;
 	}
 	
-	public void fromFile(String path) {
-		Object obj = PersistableCollection.fromFile(path);
+	public Str toFile() {
+		return PersistableCollection.toFile(this, getFileName());
+	}
+	
+	public void fromFile() {
+		Object obj = PersistableCollection.fromFile(getFileName());
 		if (obj!=null && obj instanceof NetworkConfig) {
 			copyFrom((NetworkConfig) obj);
 		}
@@ -420,5 +429,9 @@ public class NetworkConfig {
 			configs.add(cfg);
 		}
 		return r;
+	}
+	
+	protected String getFileName() {
+		return FileIO.addSlash(directory) + FILE_NAME;
 	}
 }

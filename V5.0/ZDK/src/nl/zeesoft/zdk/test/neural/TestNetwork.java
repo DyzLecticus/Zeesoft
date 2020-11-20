@@ -134,19 +134,23 @@ public class TestNetwork extends TestObject {
 		
 		System.out.println();
 		
-		config.toFile("dist/config.txt");
+		config.directory = "dist";
+		config.toFile();
+		assertEqual(config.fileExists(),true,"Configuration file was not written");
+		
 		NetworkConfig config2 = new NetworkConfig();
-		config2.fromFile("dist/config.txt");
+		config2.directory = "dist";
+		config2.fromFile();
 		Str desc2 = config2.getDescription();
 		assertEqual(desc2,desc,"Network description does not match expectation");
 		List<Str> actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),2,"Number of actions does not match expectation(1)");
 		
-		network.save("dist");
+		network.save();
 		actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),6,"Number of actions does not match expectation(2)");
 		
-		network.load("dist");
+		network.load();
 		actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),10,"Number of actions does not match expectation(3)");
 

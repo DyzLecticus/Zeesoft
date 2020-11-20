@@ -80,22 +80,6 @@ public class BasicScalarEncoder extends SDREncoder {
 		return r;
 	}
 	
-	protected float getCorrectedMaxValue() {
-		return getCorrectedValue(maxValue);
-	}
-	
-	protected float getCorrectedValue(float value) {
-		float r = value;
-		if (minValue!=0) {
-			if (minValue > 0) {
-				r = r - minValue;
-			} else {
-				r = r + (minValue * -1);
-			}
-		}
-		return r;
-	}
-	
 	public Str testOnBits() {
 		Str r = new Str();
 		for (float val = minValue; val <= maxValue; val+=resolution) {
@@ -146,6 +130,22 @@ public class BasicScalarEncoder extends SDREncoder {
 				break;
 			}
 			curr = next;
+		}
+		return r;
+	}
+	
+	protected float getCorrectedMaxValue() {
+		return getCorrectedValue(maxValue);
+	}
+	
+	protected float getCorrectedValue(float value) {
+		float r = value;
+		if (minValue!=0) {
+			if (minValue > 0) {
+				r = r - minValue;
+			} else {
+				r = r + (minValue * -1);
+			}
 		}
 		return r;
 	}

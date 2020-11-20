@@ -87,8 +87,8 @@ public class TestHttpServer extends TestObject {
 			
 			HttpClient request = new HttpClient(logger,"GET","http://127.0.0.1:8080/");
 			request.sendRequest();
-			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(request.getResponseBody(),indexHtml,"Response body does not match expectation");
+			assertEqual(request.getResponseCode(),200,"Response code does not match expectation (1)");
+			assertEqual(request.getResponseBody(),indexHtml,"Response body does not match expectation (1)");
 			
 			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/pizza.txt");
 			request.sendRequest();
@@ -97,18 +97,18 @@ public class TestHttpServer extends TestObject {
 			
 			request = new HttpClient(logger,"PUT","http://127.0.0.1:8080/pizza.txt");
 			request.sendRequest(new Str("I like pizza!"));
-			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation");
+			assertEqual(request.getResponseCode(),200,"Response code does not match expectation (2)");
+			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation (2)");
 			
 			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/pizza.txt");
 			request.sendRequest();
-			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(request.getResponseBody(),new Str("I like pizza!"),"Response body does not match expectation");
+			assertEqual(request.getResponseCode(),200,"Response code does not match expectation (3)");
+			assertEqual(request.getResponseBody(),new Str("I like pizza!"),"Response body does not match expectation (3)");
 			
 			request = new HttpClient(logger,"DELETE","http://127.0.0.1:8080/pizza.txt");
 			request.sendRequest();
-			assertEqual(request.getResponseCode(),200,"Response code does not match expectation");
-			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation");
+			assertEqual(request.getResponseCode(),200,"Response code does not match expectation (4)");
+			assertEqual(request.getResponseBody(),new Str(),"Response body does not match expectation (4)");
 			
 			ProxyServerConfig proxyConfig = new ProxyServerConfig(logger);
 			proxyConfig.setDebugLogHeaders(true);
@@ -122,8 +122,8 @@ public class TestHttpServer extends TestObject {
 				headers.addHostHeader("127.0.0.1:8080");
 				client2.setHeaders(headers);
 				client2.sendRequest();
-				assertEqual(client2.getResponseCode(),200,"Proxy response code does not match expectation");
-				assertEqual(client2.getResponseBody(),indexHtml,"Proxy response body does not match expectation");
+				assertEqual(client2.getResponseCode(),200,"Proxy response code does not match expectation (5)");
+				assertEqual(client2.getResponseBody(),indexHtml,"Proxy response body does not match expectation (5)");
 				
 				sleep(10);
 				error = proxy.close();
