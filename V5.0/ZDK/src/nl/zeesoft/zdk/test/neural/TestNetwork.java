@@ -82,7 +82,7 @@ public class TestNetwork extends TestObject {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = new NetworkConfig();
-		config.inputNames.add(KeyValueSDR.DEFAULT_VALUE_KEY);
+		config.addInput(KeyValueSDR.DEFAULT_VALUE_KEY);
 		
 		config.addScalarEncoder("EN");
 		SpatialPoolerConfig poolerConfig = config.addSpatialPooler("SP");
@@ -100,7 +100,8 @@ public class TestNetwork extends TestObject {
 		Str err = config.testConfiguration();
 		assertEqual(err,new Str(),"Error does not match expectation");
 		
-		System.out.println(config.getDescription());
+		Str desc = config.getDescription();
+		System.out.println(desc);
 		
 		System.out.println();
 		Network network = new Network();
@@ -133,13 +134,22 @@ public class TestNetwork extends TestObject {
 		
 		System.out.println();
 		
-		network.save("dist");
+		config.toFile("dist/config.txt");
+		NetworkConfig config2 = new NetworkConfig();
+		config2.fromFile("dist/config.txt");
+		Str desc2 = config2.getDescription();
+		assertEqual(desc2,desc,"Network description does not match expectation");
+		
 		List<Str> actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),4,"Number of actions does not match expectation");
+		assertEqual(actionLog.size(),2,"Number of actions does not match expectation(1)");
+		
+		network.save("dist");
+		actionLog = FileIO.getActionLog();
+		assertEqual(actionLog.size(),6,"Number of actions does not match expectation(2)");
 		
 		network.load("dist");
 		actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),8,"Number of actions does not match expectation");
+		assertEqual(actionLog.size(),10,"Number of actions does not match expectation(3)");
 
 		System.out.println();
 		String[] names = {"EN", "SP", "TM", "CL"};

@@ -241,7 +241,7 @@ public class Str implements Comparable<Str>{
 
 	public List<Str> split(Str concatenator) {
 		List<Str> r = new ArrayList<Str>(); 
-		if (sb.length()>=concatenator.length()) {
+		if (sb.length()>0) {
 			int offset = 0;
 			int i = indexOf(concatenator,offset);
 			while (i>=0) {

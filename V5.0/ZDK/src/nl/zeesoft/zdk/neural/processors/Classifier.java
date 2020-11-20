@@ -54,7 +54,9 @@ public class Classifier extends SDRProcessor {
 			this.maxOnBits = cfg.maxOnBits;
 			
 			this.valueKey = cfg.valueKey;
-			this.predictSteps.addAll(cfg.predictSteps);
+			for (Integer step: cfg.predictSteps) {
+				this.predictSteps.add(step);
+			}
 			this.maxCount = cfg.maxCount;
 			
 			this.logPredictionAccuracy = cfg.logPredictionAccuracy;

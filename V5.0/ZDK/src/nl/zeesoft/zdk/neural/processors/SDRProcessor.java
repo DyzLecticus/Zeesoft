@@ -6,7 +6,6 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
-import nl.zeesoft.zdk.grid.Grid;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
@@ -71,7 +70,7 @@ public abstract class SDRProcessor implements StrAble {
 	}
 
 	public final void buildProcessorChain(CodeRunnerChain runnerChain) {
-		buildProcessorChain(runnerChain, Grid.THREADS);
+		buildProcessorChain(runnerChain, ProcessorFactory.THREADS);
 	}
 
 	public void buildProcessorChain(CodeRunnerChain runnerChain, int threads) {

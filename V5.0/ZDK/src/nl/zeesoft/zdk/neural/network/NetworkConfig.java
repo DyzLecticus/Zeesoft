@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.MergerConfig;
 import nl.zeesoft.zdk.neural.processors.SDRProcessorConfig;
@@ -20,7 +21,7 @@ public class NetworkConfig {
 	public int								saveTimeoutMs		= 30000;
 	public int								loadTimeoutMs		= 30000;
 	
-	public List<String>						inputNames			= new ArrayList<String>();
+	public String[]							inputNames			= null;
 	public List<NetworkProcessorConfig>		processorConfigs	= new ArrayList<NetworkProcessorConfig>();
 	public List<NetworkLink>				links				= new ArrayList<NetworkLink>();
 
@@ -33,7 +34,7 @@ public class NetworkConfig {
 	}
 	
 	public void copyFrom(NetworkConfig config) {
-		inputNames.clear();
+		inputNames = null;
 		processorConfigs.clear();
 		links.clear();
 		
@@ -42,12 +43,28 @@ public class NetworkConfig {
 		this.saveTimeoutMs = config.saveTimeoutMs;
 		this.loadTimeoutMs = config.loadTimeoutMs;
 		
-		inputNames.addAll(config.inputNames);
+		if (config.inputNames!=null) {
+			inputNames = new String[config.inputNames.length];
+			for (int i = 0; i < inputNames.length; i++) {
+				inputNames[i] = config.inputNames[i];
+			}
+		}
 		for (NetworkProcessorConfig cfg: config.processorConfigs) {
 			processorConfigs.add(new NetworkProcessorConfig(cfg));
 		}
 		for (NetworkLink link: config.links) {
 			links.add(new NetworkLink(link));
+		}
+	}
+	
+	public Str toFile(String path) {
+		return PersistableCollection.toFile(this, path);
+	}
+	
+	public void fromFile(String path) {
+		Object obj = PersistableCollection.fromFile(path);
+		if (obj!=null && obj instanceof NetworkConfig) {
+			copyFrom((NetworkConfig) obj);
 		}
 	}
 	
@@ -82,7 +99,7 @@ public class NetworkConfig {
 					linkStr.sb().append(link.toIndex);
 					linkStr.sb().append(" = ");
 					linkStr.sb().append(link.fromName);
-					if (!inputNames.contains(link.fromName)) {
+					if (!getInputNames().contains(link.fromName)) {
 						linkStr.sb().append("/");
 						linkStr.sb().append(link.fromIndex);
 					}
@@ -99,9 +116,30 @@ public class NetworkConfig {
 	}
 	
 	public void addInput(String name) {
-		if (!inputNames.contains(name)) {
-			inputNames.add(name);
+		if (!getInputNames().contains(name)) {
+			String[] n = null;
+			if (inputNames!=null) {
+				n = new String[inputNames.length + 1];
+				for (int i = 0; i < inputNames.length; i++) {
+					n[i] = inputNames[i];
+				}
+				n[inputNames.length] = name;
+			} else {
+				n = new String[1];
+				n[0] = name;
+			}
+			inputNames = n;
 		}
+	}
+	
+	public List<String> getInputNames() {
+		List<String> r = new ArrayList<String>();
+		if (inputNames!=null) {
+			for (int i = 0; i < inputNames.length; i++) {
+				r.add(inputNames[i]);
+			}
+		}
+		return r;
 	}
 	
 	public ScalarEncoderConfig addScalarEncoder(String name) {
@@ -165,8 +203,9 @@ public class NetworkConfig {
 	public Str testConfiguration() {
 		Str r = new Str();
 		int i = 0;
-		for (String name: inputNames) {
-			if (inputNames.lastIndexOf(name)>i) {
+		List<String> names = getInputNames();
+		for (String name: names) {
+			if (names.lastIndexOf(name)>i) {
 				if (r.sb().length()>0) {
 					r.sb().append("\n");
 				}
@@ -176,7 +215,7 @@ public class NetworkConfig {
 			i++;
 		}
 		for (NetworkProcessorConfig config: processorConfigs) {
-			if (inputNames.contains(config.name)) {
+			if (names.contains(config.name)) {
 				if (r.sb().length()>0) {
 					r.sb().append("\n");
 				}
@@ -364,7 +403,7 @@ public class NetworkConfig {
 	
 	private boolean nameExists(String name) {
 		boolean r = false;
-		if (inputNames.contains(name) || getNetworkProcessorConfig(name)!=null) {
+		if (getInputNames().contains(name) || getNetworkProcessorConfig(name)!=null) {
 			r = true;
 		}
 		return r;

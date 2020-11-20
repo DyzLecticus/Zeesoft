@@ -1,8 +1,5 @@
 package nl.zeesoft.zdk.neural.processors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 
@@ -17,10 +14,10 @@ public class ClassifierConfig extends SDRProcessorConfig{
 		" * *sizeX*, *sizeY*; Merged output SDR dimensions (input SDRs that do not match are ignored for merge).  \n" + 
 		" * *maxOnBits*; Optional maximum number of on bits in the merged input (uses sub sampling).  \n" +
 		" * *valueKey*; Value key to look for in the input KeyValueSDRs.  \n" +
-		" * *predictSteps*; List of steps to classify/predict;  \n" +
+		" * *predictSteps*; Array of steps to classify/predict;  \n" +
 		"   Step 0 will classify the current input.  \n" +
 		"   Steps greater than 0 will predict future input.  \n" +
-		"   By default the next step will be predicted (predictSteps equals [1]).  \n" + 
+		"   By default the next step will be predicted (predictSteps[0] equals 1).  \n" + 
 		" * *maxCount*; Maximum count of a step bit value count (a minimum of 8 is enforced);  \n" +
 		"   If a step bit reaches this maximum, all bit value counts of the step are divided by two.  \n" +
 		"   When when a value has only a single count it will be removed.  \n" +
@@ -35,12 +32,16 @@ public class ClassifierConfig extends SDRProcessorConfig{
 	public int				maxOnBits				= 256;
 
 	public String			valueKey				= KeyValueSDR.DEFAULT_VALUE_KEY;
-	public List<Integer>	predictSteps			= new ArrayList<Integer>();
+	public int[]			predictSteps			= new int[1];
 	public int				maxCount				= 512;
 
 	public boolean			logPredictionAccuracy	= false;
 	public int				accuracyHistorySize		= 100;
 	public int				accuracyTrendSize		= 10;
+	
+	public ClassifierConfig() {
+		predictSteps[0] = 1;
+	}
 	
 	@Override
 	public Str getDescription() {

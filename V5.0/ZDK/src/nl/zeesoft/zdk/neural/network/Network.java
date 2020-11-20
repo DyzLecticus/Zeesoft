@@ -276,7 +276,7 @@ public class Network {
 		if (linksTo.size()>0) {
 			SDR[] inputs = new SDR[linksTo.size()];
 			for (NetworkLink link: linksTo) {
-				if (config.inputNames.contains(link.fromName)) {
+				if (config.getInputNames().contains(link.fromName)) {
 					Object value = currentIO.getValue(link.fromName);
 					if (value instanceof SDR) {
 						inputs[link.toIndex] = (SDR) value;
