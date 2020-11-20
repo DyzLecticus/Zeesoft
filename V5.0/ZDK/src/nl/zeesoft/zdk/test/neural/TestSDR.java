@@ -137,11 +137,13 @@ public class TestSDR extends TestObject {
 		}
 		
 		KeyValueSDR kvSDR = new KeyValueSDR(sdr);
-		kvSDR.put("test", 2);
+		kvSDR.put("test1", 2);
+		kvSDR.put("test2", 0.4F);
 		Str kvStr = kvSDR.toStr();
 		KeyValueSDR kvSDR2 = new KeyValueSDR();
 		kvSDR2.fromStr(kvStr);
 		Str kvStr2 = kvSDR2.toStr();
 		assertEqual(kvStr2,kvStr,"Key value Str not match expectation");
+		assertEqual(kvSDR2.getValueKeys().size(),2,"Number of value keys not match expectation");
 	}
 }

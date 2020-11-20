@@ -8,11 +8,14 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.StrAble;
+import nl.zeesoft.zdk.neural.KeyValueSDR;
+import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.thread.Lock;
 
-public class NetworkIO {
+public class NetworkIO implements StrAble {
 	private Lock							lock			= new Lock();
 	
 	private SortedMap<String,Object>		values			= new TreeMap<String,Object>();
@@ -116,6 +119,50 @@ public class NetworkIO {
 		List<Str> r = new ArrayList<Str>(errors);
 		lock.unlock(this);
 		return r;
+	}
+
+	@Override
+	public Str toStr() {
+		Str r = new Str();
+		lock.lock(this);
+		for (Entry<String,ProcessorIO> entry: processorIO.entrySet()) {
+			for (SDR output: entry.getValue().outputs) {
+				Str line = new Str(entry.getKey());
+				line.sb().append(">");
+				line.sb().append(output.toStr().sb());
+				if (r.length()>0) {
+					r.sb().append("\n");
+				}
+				r.sb().append(line.sb());
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+
+	@Override
+	public void fromStr(Str str) {
+		List<Str> elems = str.split("\n");
+		for (Str elem: elems) {
+			List<Str> nameSDR = elem.split(">");
+			if (nameSDR.size()==2) {
+				String name = nameSDR.get(0).toString();
+				ProcessorIO io = processorIO.get(nameSDR.get(0).toString());
+				if (io==null) {
+					io = new ProcessorIO();
+					processorIO.put(name, io);
+				}
+				Str sdrStr = nameSDR.get(1);
+				SDR sdr = null;
+				if (sdrStr.startsWith("SDR")) {
+					sdr = new KeyValueSDR();
+				} else {
+					sdr = new SDR();
+				}
+				sdr.fromStr(sdrStr);
+				io.outputs.add(sdr);
+			}
+		}
 	}
 	
 	public List<Classification> getClassifications() {

@@ -139,7 +139,6 @@ public class TestNetwork extends TestObject {
 		config2.fromFile("dist/config.txt");
 		Str desc2 = config2.getDescription();
 		assertEqual(desc2,desc,"Network description does not match expectation");
-		
 		List<Str> actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),2,"Number of actions does not match expectation(1)");
 		
@@ -151,6 +150,12 @@ public class TestNetwork extends TestObject {
 		actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),10,"Number of actions does not match expectation(3)");
 
+		Str ioStr = io.toStr();
+		NetworkIO io2 = new NetworkIO();
+		io2.fromStr(ioStr);
+		Str ioStr2 = io2.toStr();
+		assertEqual(ioStr2,ioStr,"Network IO Str does not match expectation");
+		
 		System.out.println();
 		String[] names = {"EN", "SP", "TM", "CL"};
 		for (String name: names) {

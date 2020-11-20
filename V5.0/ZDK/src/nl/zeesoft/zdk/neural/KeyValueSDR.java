@@ -120,12 +120,16 @@ public class KeyValueSDR extends SDR {
 					value = Long.parseLong(kcv.get(2).toString());
 				} else if (className.equals(Integer.class.getName())) {
 					value = Integer.parseInt(kcv.get(2).toString());
-				} else if (className.equals(Integer.class.getName())) {
+				} else if (className.equals(Float.class.getName())) {
 					value = Float.parseFloat(kcv.get(2).toString());
 				} else if (className.equals(Double.class.getName())) {
 					value = Double.parseDouble(kcv.get(2).toString());
 				} else if (className.equals(Boolean.class.getName())) {
 					value = Boolean.parseBoolean(kcv.get(2).toString());
+				} else if (className.equals(Byte.class.getName())) {
+					value = Byte.parseByte(kcv.get(2).toString());
+				} else if (className.equals(Short.class.getName())) {
+					value = Short.parseShort(kcv.get(2).toString());
 				} else {
 					value = Instantiator.getNewClassInstanceForName(className);
 					if (value instanceof StrAble) {
