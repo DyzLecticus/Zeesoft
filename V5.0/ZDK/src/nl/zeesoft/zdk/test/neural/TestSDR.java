@@ -23,6 +23,7 @@ public class TestSDR extends TestObject {
 	protected void describe() {
 		System.out.println("This test shows how to create and compare sparse distributed representations using *SDR* instances.");
 		System.out.println("It also shows how to use a *BasicScalarEncoder* to encode integer (or float) values into *SDR* instances.");
+		System.out.println("This library also provides other interesting encoders like the *BasicFeatureEncoder* and the *BasicFeatureArrayEncoder*.");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
@@ -48,6 +49,8 @@ public class TestSDR extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(TestSDR.class));
 		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
 		System.out.println(" * " + getTester().getLinkForClass(BasicScalarEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(BasicFeatureEncoder.class));
+		System.out.println(" * " + getTester().getLinkForClass(BasicFeatureArrayEncoder.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows an example SDR in its compressed and visualized form.");
@@ -146,7 +149,7 @@ public class TestSDR extends TestObject {
 		
 		// Feature array encoder
 		BasicFeatureArrayEncoder featArrayEnc = new BasicFeatureArrayEncoder();
-		featArrayEnc.setFeatureEncoder3(featEnc);
+		featArrayEnc.setFeatures3(4);
 		featArrayEnc.setOnBits(1);
 		int[] val1 = {0,1,2};
 		featSDR = featArrayEnc.getEncodedValue(val1);

@@ -41,8 +41,6 @@ public abstract class AbstractEncoder extends SDRProcessor {
 			sizeY = 2;
 		}
 		encoder = getNewEncoder();
-		encoder.setEncodeDimensions(sizeX, sizeY);
-		encoder.setOnBits(onBits);
 	}
 	
 	public void setValue(Object value) {
@@ -96,6 +94,10 @@ public abstract class AbstractEncoder extends SDRProcessor {
 	}
 	
 	protected SDREncoder getNewEncoder() {
-		return new BasicScalarEncoder();
+		BasicScalarEncoder r = new BasicScalarEncoder();
+		r.setEncodeDimensions(sizeX, sizeY);
+		r.setOnBits(onBits);
+		return r;
+
 	}
 }

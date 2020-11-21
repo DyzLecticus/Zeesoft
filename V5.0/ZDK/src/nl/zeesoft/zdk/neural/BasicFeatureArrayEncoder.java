@@ -5,53 +5,62 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 
-public class BasicFeatureArrayEncoder extends BasicScalarEncoder {
-	protected BasicFeatureEncoder	featureEncoder1	= new BasicFeatureEncoder();
-	protected BasicFeatureEncoder	featureEncoder2	= new BasicFeatureEncoder();
-	protected BasicFeatureEncoder	featureEncoder3	= null;
+public class BasicFeatureArrayEncoder extends AbstractScalarEncoder {
+	protected int 			features1 = 3;
+	protected int 			features2 = 3;
+	protected int 			features3 = 0;
 	
-	protected List<Str>				combinations	= new ArrayList<Str>();
+	protected List<Str>		combinations	= new ArrayList<Str>();
 
 	public BasicFeatureArrayEncoder() {
-		setDerivedArrayValues();
-	}
-	
-	public void setFeatureEncoders(
-		BasicFeatureEncoder featureEncoder1,
-		BasicFeatureEncoder featureEncoder2
-		) {
-		setFeatureEncoders(featureEncoder1,featureEncoder2,null);
-	}
-	
-	public void setFeatureEncoders(
-		BasicFeatureEncoder featureEncoder1,
-		BasicFeatureEncoder featureEncoder2,
-		BasicFeatureEncoder featureEncoder3
-		) {
-		this.featureEncoder1 = featureEncoder1;
-		this.featureEncoder2 = featureEncoder2;
-		this.featureEncoder3 = featureEncoder3;
-		setDerivedArrayValues();
-	}
-	
-	public void setFeatureEncoder3(BasicFeatureEncoder featureEncoder3) {
-		setFeatureEncoders(featureEncoder1,featureEncoder2,featureEncoder3);
-	}
-	
-	public BasicFeatureEncoder getFeatureEncoder1() {
-		return featureEncoder1;
+		onBits = 2;
+		setDerivedValues();
 	}
 
-	public BasicFeatureEncoder getFeatureEncoder2() {
-		return featureEncoder2;
+	public int getFeatures1() {
+		return features1;
 	}
 
-	public BasicFeatureEncoder getFeatureEncoder3() {
-		return featureEncoder3;
+	public void setFeatures1(int features1) {
+		if (features1>1) {
+			this.features1 = features1;
+			setDerivedValues();
+		}
 	}
 
-	public void changedFeatureEncoders() {
-		setDerivedArrayValues();
+	public int getFeatures2() {
+		return features2;
+	}
+
+	public void setFeatures2(int features2) {
+		if (features2>1) {
+			this.features2 = features2;
+			setDerivedValues();
+		}
+	}
+
+	public int getFeatures3() {
+		return features3;
+	}
+
+	public void setFeatures3(int features3) {
+		this.features3 = features3;
+		setDerivedValues();
+	}
+	
+	public void setFeatures(int ... features) {
+		if (features.length>=2) {
+			setFeatures1(features[0]);
+			setFeatures2(features[1]);
+		}
+		if (features.length>=3) {
+			setFeatures3(features[2]);
+		}
+	}
+	
+	public void setOnBits(int onBits) {
+		this.onBits = onBits;
+		setDerivedValues();
 	}
 	
 	public int[] getValueForIndex(int index) {
@@ -68,10 +77,10 @@ public class BasicFeatureArrayEncoder extends BasicScalarEncoder {
 	}
 	
 	public int getIndexForValue(Object value) {
-		int r = 0;
+		int r = -1;
 		if (value instanceof int[]) {
 			int[] combination = (int[]) value;
-			if (combination.length<=3) {
+			if (combination.length>=2 && combination.length<=3) {
 				Str combo = getStrForCombination(combination);
 				if (combinations.contains(combo)) {
 					r = combinations.indexOf(combo);
@@ -84,51 +93,30 @@ public class BasicFeatureArrayEncoder extends BasicScalarEncoder {
 	@Override
 	public SDR getEncodedValue(Object value) {
 		if (value instanceof int[]) {
-			value = getIndexForValue(value);
+			int index = getIndexForValue(value);
+			if (index>=0) {
+				value = index;
+			} else {
+				value = minValue;
+			}
 		}
 		return super.getEncodedValue(value);
 	}
-	
-	@Override
-	public void setEncodeDimensions(int sizeX, int sizeY) {
-		setDerivedArrayValues();
-	}
-	
-	@Override
-	public void setOnBits(int onBits) {
-		super.setOnBits(onBits);
-		setDerivedArrayValues();
-	}
 
-	@Override
-	public void setMinValue(float minValue) {
-		setDerivedArrayValues();
-	}
-
-	@Override
-	public void setMaxValue(float maxValue) {
-		setDerivedArrayValues();
-	}
-
-	@Override
-	public void setResolution(float resolution) {
-		setDerivedArrayValues();
-	}
-
-	protected void setDerivedArrayValues() {
+	protected void setDerivedValues() {
 		combinations.clear();
 		int len = 2;
-		if (featureEncoder3!=null) {
+		if (features3>1) {
 			len = 3;
 		}
 		int[] combination = new int[len];
 		for (int i = 0; i < combination.length; i++) {
 			combination[i] = 0;
 		}
-		for (int i1 = 0; i1 < featureEncoder1.getFeatures(); i1++) {
-			for (int i2 = 0; i2 < featureEncoder2.getFeatures(); i2++) {
-				if (featureEncoder3!=null) {
-					for (int i3 = 0; i3 < featureEncoder3.getFeatures(); i3++) {
+		for (int i1 = 0; i1 < features1; i1++) {
+			for (int i2 = 0; i2 < features2; i2++) {
+				if (features3>1) {
+					for (int i3 = 0; i3 < features3; i3++) {
 						combination[0] = i1;
 						combination[1] = i2;
 						combination[2] = i3;

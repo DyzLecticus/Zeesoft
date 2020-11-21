@@ -2,31 +2,27 @@ package nl.zeesoft.zdk.neural;
 
 import nl.zeesoft.zdk.Str;
 
-public class BasicScalarEncoder extends AbstractScalarEncoder {
+public abstract class AbstractScalarEncoder extends SDREncoder {
+	protected float		minValue	= 0;
+	protected float		maxValue	= 200;
+	protected float		resolution	= 1;
 	
-	public void setEncodeDimensions(int encodeSizeX, int encodeSizeY) {
-		this.encodeSizeX = encodeSizeX;
-		this.encodeSizeY = encodeSizeY;
-	}
-	
-	public void setOnBits(int onBits) {
-		this.onBits = onBits;
+	protected boolean	periodic	= false;
+
+	public float getMinValue() {
+		return minValue;
 	}
 
-	public void setMinValue(float minValue) {
-		this.minValue = minValue;
+	public float getMaxValue() {
+		return maxValue;
 	}
 
-	public void setMaxValue(float maxValue) {
-		this.maxValue = maxValue;
+	public float getResolution() {
+		return resolution;
 	}
 
-	public void setResolution(float resolution) {
-		this.resolution = resolution;
-	}
-
-	public void setPeriodic(boolean periodic) {
-		this.periodic = periodic;
+	public boolean isPeriodic() {
+		return periodic;
 	}
 	
 	@Override

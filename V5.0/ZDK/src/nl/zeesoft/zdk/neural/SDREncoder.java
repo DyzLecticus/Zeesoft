@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
-public class SDREncoder {
+public abstract class SDREncoder {
 	protected int	encodeSizeX		= 16;
 	protected int	encodeSizeY		= 16;
 	protected int	onBits			= 16;
@@ -13,17 +13,8 @@ public class SDREncoder {
 		return encodeSizeY;
 	}
 
-	public void setEncodeDimensions(int encodeSizeX, int encodeSizeY) {
-		this.encodeSizeX = encodeSizeX;
-		this.encodeSizeY = encodeSizeY;
-	}
-
 	public int getOnBits() {
 		return onBits;
-	}
-	
-	public void setOnBits(int onBits) {
-		this.onBits = onBits;
 	}
 	
 	public SDR getEncodedValue(Object value) {

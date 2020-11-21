@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
-public class BasicFeatureEncoder extends BasicScalarEncoder {
+public class BasicFeatureEncoder extends AbstractScalarEncoder {
 	protected int	features = 3;
 
 	public BasicFeatureEncoder() {
@@ -16,30 +16,9 @@ public class BasicFeatureEncoder extends BasicScalarEncoder {
 	public int getFeatures() {
 		return features;
 	}
-	
-	@Override
-	public void setEncodeDimensions(int sizeX, int sizeY) {
-		setDerivedValues();
-	}
-	
-	@Override
+		
 	public void setOnBits(int onBits) {
-		super.setOnBits(onBits);
-		setDerivedValues();
-	}
-
-	@Override
-	public void setMinValue(float minValue) {
-		setDerivedValues();
-	}
-
-	@Override
-	public void setMaxValue(float maxValue) {
-		setDerivedValues();
-	}
-
-	@Override
-	public void setResolution(float resolution) {
+		this.onBits = onBits;
 		setDerivedValues();
 	}
 	
