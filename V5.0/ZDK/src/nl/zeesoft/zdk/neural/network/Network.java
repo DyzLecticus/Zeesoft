@@ -23,6 +23,8 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class Network {
+	private static String			PREVIOUS_IO_FILE_NAME		= "PreviousIO.txt";
+	
 	private Lock					lock						= new Lock();
 	
 	// Configuration
@@ -162,6 +164,16 @@ public class Network {
 		return !networkIO.hasErrors();
 	}
 
+	public NetworkIO getLastIO() {
+		NetworkIO r = null;
+		lock.lock(this);
+		if (previousIO!=null) {
+			r = new NetworkIO(previousIO);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public Str save() {
 		return saveLoad(true);
 	}
@@ -362,10 +374,12 @@ public class Network {
 				@Override
 				protected boolean run() {
 					Processor processor = (Processor) params[0];
-					String path = FileIO.addSlash(directory) + processor.getName();
+					String path = FileIO.addSlash(directory) + processor.getName() + ".txt";
 					if (save) {
+						Logger.dbg(this, new Str("Writing " + path + " ..."));
 						processor.save(path);
 					} else {
+						Logger.dbg(this, new Str("Reading " + path + " ..."));
 						processor.load(path);
 					}
 					return true;
@@ -374,6 +388,29 @@ public class Network {
 			code.params[0] = processor;
 			r.add(code);
 		}
+		RunCode code = new RunCode() {
+			@Override
+			protected boolean run() {
+				Str data = new Str(); 
+				String path = FileIO.addSlash(directory) + PREVIOUS_IO_FILE_NAME;
+				if (save) {
+					if (previousIO!=null) {
+						data = previousIO.toStr();
+					}
+					Logger.dbg(this, new Str("Writing " + path + " ..."));
+					data.toFile(path);
+				} else {
+					Logger.dbg(this, new Str("Reading " + path + " ..."));
+					Str err = data.fromFile(path);
+					if (err.length()==0) {
+						previousIO = new NetworkIO();
+						previousIO.fromStr(data);
+					}
+				}
+				return true;
+			}
+		};
+		r.add(code);
 		return r;
 	}
 }

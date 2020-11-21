@@ -142,6 +142,7 @@ public class NetworkIO implements StrAble {
 
 	@Override
 	public void fromStr(Str str) {
+		lock.lock(this);
 		List<Str> elems = str.split("\n");
 		for (Str elem: elems) {
 			List<Str> nameSDR = elem.split(">");
@@ -163,6 +164,7 @@ public class NetworkIO implements StrAble {
 				io.outputs.add(sdr);
 			}
 		}
+		lock.unlock(this);
 	}
 	
 	public List<Classification> getClassifications() {

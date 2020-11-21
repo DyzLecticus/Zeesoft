@@ -1,7 +1,7 @@
 package nl.zeesoft.zdbd.pattern;
 
 public class PatternFactory {
-	public static InstrumentPattern getFourOnFloorDrumAndBassPattern(int patternNum) {
+	public static InstrumentPattern getFourOnFloorInstrumentPattern(int patternNum) {
 		Rythm rythm = new Rythm();
 		
 		InstrumentPattern pattern = new InstrumentPattern();
@@ -46,7 +46,7 @@ public class PatternFactory {
 		pattern.setDrumNote(0,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
 		pattern.setDrumNote(4,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
 		pattern.setDrumNote(8,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(12,InstrumentPattern.RIDE,InstrumentPattern.RIDE);
+		pattern.setDrumNote(12,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
 		pattern.setDrumNote(14,InstrumentPattern.RIDE,InstrumentPattern.ON);
 
 		if (patternNum==0) {
@@ -66,11 +66,11 @@ public class PatternFactory {
 		return pattern;
 	}
 
-	public static PatternSequence getFourOnFloorDrumAndBassPatternSequence() {
+	public static PatternSequence getFourOnFloorInstrumentPatternSequence() {
 		PatternSequence seq = new PatternSequence();
-		seq.patterns.add(getFourOnFloorDrumAndBassPattern(0));
-		seq.patterns.add(getFourOnFloorDrumAndBassPattern(1));
-		seq.patterns.add(getFourOnFloorDrumAndBassPattern(2));
+		seq.patterns.add(getFourOnFloorInstrumentPattern(0));
+		seq.patterns.add(getFourOnFloorInstrumentPattern(1));
+		seq.patterns.add(getFourOnFloorInstrumentPattern(2));
 		return seq;
 	}
 }

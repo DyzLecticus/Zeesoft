@@ -1,16 +1,10 @@
 package nl.zeesoft.zdbd.test;
 
-import java.util.List;
-
-import javax.sound.midi.Sequence;
-
-import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
-import nl.zeesoft.zdbd.neural.PatternGenerator;
-import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
@@ -22,17 +16,14 @@ import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
-import nl.zeesoft.zdk.thread.CodeRunnerChain;
-import nl.zeesoft.zdk.thread.ProgressBar;
-import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestDrumAndBassNetwork extends TestObject {
-	public TestDrumAndBassNetwork(Tester tester) {
+public class TestInstrumentNetwork extends TestObject {
+	public TestInstrumentNetwork(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestDrumAndBassNetwork(new Tester())).runTest(args);
+		(new TestInstrumentNetwork(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -65,23 +56,26 @@ public class TestDrumAndBassNetwork extends TestObject {
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		MidiSys.initialize();
-		
-		// Load soundbanks
-		CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
-			"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",
-			"../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2"
-		);
-		chain.addProgressListener(new ProgressBar("Loading soundbanks"));
-		Waiter.startAndWaitFor(chain,3000);
-		
-		PatternSequence sequence = PatternFactory.getFourOnFloorDrumAndBassPatternSequence();
-		
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
-		System.out.println();
 		System.out.println(config.getDescription());
 		
 		assertEqual(config.testConfiguration(),new Str(),"Network configuration error does not match expectation");
+		
+		Network network = createAndTrainNetwork();
+		
+		NetworkIO lastIO = network.getLastIO();
+		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
+		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
+		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
+		int prediction = (int) classification.getMostCountedValues().get(0);
+		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
+	}
+	
+	protected static Network createAndTrainNetwork() {
+		PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
+		
+		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
+		config.directory = "dist";
 		
 		System.out.println();
 		Network network = new Network();
@@ -93,40 +87,19 @@ public class TestDrumAndBassNetwork extends TestObject {
 		System.out.println();
 		System.out.println("Training network ...");
 		NetworkTrainer trainer = new NetworkTrainer();
-		/*
-		trainer.startTrainTemporalMemory = 4;
-		trainer.startTrainClassifiers = 8;
-		trainer.maxTrainCycles = 16;
-		trainer.minimumClassifierAccuracy = 0.98F;
-		*/
-		List<NetworkIO> results = trainer.trainNetwork(network, sequence);
+		trainer.trainNetwork(network, sequence);
 		System.out.println("Trained network");
 		
-		NetworkIO lastIO = results.get(results.size() - 1);
-		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
-		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
-		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
-		int prediction = (int) classification.getMostCountedValues().get(0);
-		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
-
-		Sequence midiSequence = null;
-		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-		MidiSys.sequencePlayer.setSequence(midiSequence);
-		MidiSys.sequencePlayer.start();
+		if (FileIO.checkDirectory(config.directory).length()==0 &&
+			network.getLastIO().isAccurate(trainer.minimumAverageAccuracy)
+			) {
+			System.out.println();
+			FileIO.mockIO = false;
+			config.toFile();
+			network.save();
+			FileIO.mockIO = true;
+		}
 		
-		PatternGenerator generator = new PatternGenerator();
-		generator.prevIO = lastIO;
-		generator.skipInstruments.add(InstrumentPattern.RIDE);
-		generator.skipInstruments.add(InstrumentPattern.CYMBAL);
-		generator.skipInstruments.add(InstrumentPattern.BASS);
-
-		sequence = generator.generatePatternSequence(network, sequence);
-		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-		MidiSys.sequencePlayer.setNextSequence(midiSequence);
-		MidiSys.sequencePlayer.start();
-		sleep(30000);
-		MidiSys.sequencePlayer.stop();
-				
-		MidiSys.closeDevices();
+		return network;
 	}
 }

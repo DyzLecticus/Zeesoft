@@ -13,9 +13,9 @@ import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfigFactory {
-	private static int		SP_ON_BITS				= 46;
-	private static int		TM_SIZE_X				= 48;
-	private static int		TM_SIZE_Y				= 48;
+	private static int		SP_ON_BITS				= 20;
+	private static int		TM_SIZE_X				= 32;
+	private static int		TM_SIZE_Y				= 32;
 	private static int		TM_SIZE_Z				= 16;
 	private static boolean	QUICK_LEARN				= true;
 

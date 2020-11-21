@@ -123,10 +123,21 @@ public class TestClassifier extends TestObject {
 		
 		Str str = cl.toStr();
 		Classifier cl2 = new Classifier();
+		cl2.configure(config);
 		cl2.initialize(null);
 		cl2.fromStr(str);
 		Str str2 = cl2.toStr();
 		assertEqual(str2,str,"Classifier Str does not match expectation");
+		
+		int lastIndex = inputList.size() - 4;
+		SDR input = inputList.get(lastIndex);
+		cl2.setInput(input,valueList.get(lastIndex));
+		cl2.buildProcessorChain(processorChain);
+		Waiter.startAndWaitFor(processorChain, 1000);
+		SDR output = cl2.getOutput();
+		kvSdr = (KeyValueSDR) output;
+		cls = (Classification) kvSdr.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
+		assertEqual(cls.valueCounts.get(1),176,"Predicted value count does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

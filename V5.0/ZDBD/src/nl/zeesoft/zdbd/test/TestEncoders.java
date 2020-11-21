@@ -51,7 +51,7 @@ public class TestEncoders extends TestObject {
 		Str err = EncoderFactory.testEncoders();
 		assertEqual(err, new Str(), "Encoder factory error does not match expectation");
 		
-		InstrumentPattern pattern = PatternFactory.getFourOnFloorDrumAndBassPattern(0);
+		InstrumentPattern pattern = PatternFactory.getFourOnFloorInstrumentPattern(0);
 		
 		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
 		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");

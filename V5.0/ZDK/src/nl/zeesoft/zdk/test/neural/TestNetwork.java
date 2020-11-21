@@ -82,6 +82,7 @@ public class TestNetwork extends TestObject {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = new NetworkConfig();
+		config.directory = "dist";
 		config.addInput(KeyValueSDR.DEFAULT_VALUE_KEY);
 		
 		config.addScalarEncoder("EN");
@@ -134,7 +135,6 @@ public class TestNetwork extends TestObject {
 		
 		System.out.println();
 		
-		config.directory = "dist";
 		config.toFile();
 		assertEqual(config.fileExists(),true,"Configuration file was not written");
 		
@@ -148,17 +148,18 @@ public class TestNetwork extends TestObject {
 		
 		network.save();
 		actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),6,"Number of actions does not match expectation(2)");
+		assertEqual(actionLog.size(),7,"Number of actions does not match expectation(2)");
 		
 		network.load();
 		actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),10,"Number of actions does not match expectation(3)");
+		assertEqual(actionLog.size(),12,"Number of actions does not match expectation(3)");
 
 		Str ioStr = io.toStr();
 		NetworkIO io2 = new NetworkIO();
 		io2.fromStr(ioStr);
 		Str ioStr2 = io2.toStr();
 		assertEqual(ioStr2,ioStr,"Network IO Str does not match expectation");
+		assertEqual(network.getLastIO().toStr(),ioStr,"Last network IO does not match expectation");
 		
 		System.out.println();
 		String[] names = {"EN", "SP", "TM", "CL"};
