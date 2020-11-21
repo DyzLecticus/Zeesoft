@@ -12,6 +12,7 @@ public class Processor implements StrAble {
 	
 	private String			name						= "";
 	private SDRProcessor	processor					= null;
+	private int				threads						= 0;
 	private	CodeRunnerChain	processingChain				= new CodeRunnerChain();
 	
 	private boolean			sequential					= false;
@@ -19,6 +20,7 @@ public class Processor implements StrAble {
 	public Processor(String name, SDRProcessor processor, int threads) {
 		this.name = name;
 		this.processor = processor;
+		this.threads = threads;
 		processor.buildProcessorChain(processingChain, threads);
 	}
 
@@ -92,6 +94,8 @@ public class Processor implements StrAble {
 	public void fromStr(Str str) {
 		lock.lock(this);
 		processor.fromStr(str);
+		processingChain = new CodeRunnerChain();
+		processor.buildProcessorChain(processingChain, threads);
 		lock.unlock(this);
 	}
 	

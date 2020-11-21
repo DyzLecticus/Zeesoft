@@ -69,6 +69,7 @@ public class TestPatternGenerator extends TestObject {
 			FileIO.mockIO = false;
 			config.fromFile();
 			System.out.println(config.getDescription());
+			System.out.println();
 			network.configure(config);
 			network.initialize(false);
 			network.load();
@@ -79,11 +80,6 @@ public class TestPatternGenerator extends TestObject {
 		assertNotNull(lastIO,"Last network IO does not match expectation");
 		
 		if (lastIO!=null) {
-			
-			// TODO Remove debug
-			System.out.println();
-			System.out.println(lastIO.toStr());
-			
 			System.out.println();
 			MidiSys.initialize();
 			

@@ -114,9 +114,11 @@ public class Classifier extends SDRProcessor {
 		}
 		
 		activationHistory = new SDRHistory(sizeX, sizeY, maxSteps + 1);
+		classifierSteps.clear();
 		for (Integer predictStep: predictSteps) {
 			classifierSteps.add(new ClassifierStep(predictStep,valueKey,maxCount,activationHistory));
 		}
+		accuracyHistory.clear();
 	}
 	
 	@Override

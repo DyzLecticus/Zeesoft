@@ -23,15 +23,13 @@ public class PatternGenerator {
 	
 	public int				smallerChunk		= 1;
 	public int				largerChunk			= 2;
-	public int				randomChunkOffset	= 3;
+	public int				randomChunkOffset	= 2;
 	public List<Integer>	skipInstruments		= new ArrayList<Integer>();
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
 		PatternSequence r = new PatternSequence();
 		for (InstrumentPattern pattern: sequence.patterns) {
 			r.patterns.add(generatePattern(network,sequence,null,pattern.num));
-			// TODO Remove debug
-			break;
 		}
 		for (int p = 0; p < r.sequence.length; p++) {
 			r.sequence[p] = sequence.sequence[p];
@@ -143,14 +141,6 @@ public class PatternGenerator {
 					break;
 				}
 				prevIO = networkIO;
-				
-				// TODO Remove debug
-				System.out.println("===========================");
-				System.out.println(networkIO.toStr());
-				System.out.println("===========================");
-				if (s==1) {
-					break;
-				}
 			}
 			
 			network.setProcessorProperty(NetworkConfigFactory.CONTEXT_INPUT + "Merger", "distortion", 0F);

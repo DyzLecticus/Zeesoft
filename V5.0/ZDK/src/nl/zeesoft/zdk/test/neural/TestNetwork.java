@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.processors.Classification;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
@@ -146,13 +147,26 @@ public class TestNetwork extends TestObject {
 		List<Str> actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),2,"Number of actions does not match expectation(1)");
 		
+		network.setProcessorLearn("*", false);
 		network.save();
 		actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),7,"Number of actions does not match expectation(2)");
 		
-		network.load();
+		Network network2 = new Network();
+		network2.configure(config2);
+		network2.initialize(false);
+		network2.load();
 		actionLog = FileIO.getActionLog();
 		assertEqual(actionLog.size(),12,"Number of actions does not match expectation(3)");
+		NetworkIO nIO = new NetworkIO();
+		for (String name: io.getValueNames()) {
+			nIO.setValue(name, io.getValue(name));
+		}
+		network2.processIO(nIO);
+		assertEqual(nIO.getClassifications().size(),1,"Number of classifications does not match expectation");
+		for (Classification classification: nIO.getClassifications()) {
+			assertEqual(classification.valueCounts.size()>0,true,"Number of predicted values does not match expectation");
+		}
 
 		Str ioStr = io.toStr();
 		NetworkIO io2 = new NetworkIO();
