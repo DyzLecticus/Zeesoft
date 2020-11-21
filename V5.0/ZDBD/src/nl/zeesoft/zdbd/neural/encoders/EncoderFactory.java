@@ -4,18 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.neural.BasicScalarEncoder;
+import nl.zeesoft.zdk.neural.AbstractScalarEncoder;
 
 public class EncoderFactory {
-	public static PatternEncoder	patternEncoder	= new PatternEncoder();
-	public static StepEncoder		stepEncoder		= new StepEncoder();
-	public static BeatEncoder		beatEncoder		= new BeatEncoder();
-	public static DrumEncoder		drumEncoder		= new DrumEncoder();
-	public static BassEncoder		bassEncoder		= new BassEncoder();
+	private static int				ON_BITS			= 2;
+	public static ContextEncoder	contextEncoder	= new ContextEncoder(ON_BITS);
+	public static DrumEncoder		drumEncoder		= new DrumEncoder(ON_BITS);
+	public static BassEncoder		bassEncoder		= new BassEncoder(ON_BITS);
 	
 	public static Str testEncoders() {
 		Str r = new Str();
-		for (BasicScalarEncoder encoder: getEncoders()) {
+		for (AbstractScalarEncoder encoder: getEncoders()) {
 			r = encoder.testNoOverlap();
 			if (r.length()==0) {
 				r = encoder.testOnBits();
@@ -26,14 +25,12 @@ public class EncoderFactory {
 		}
 		return r;
 	}
-	public static List<BasicScalarEncoder> getEncoders() {
-		List<BasicScalarEncoder> r = new ArrayList<BasicScalarEncoder>();
-		r.add(patternEncoder);
-		r.add(stepEncoder);
-		r.add(beatEncoder);
+	
+	public static List<AbstractScalarEncoder> getEncoders() {
+		List<AbstractScalarEncoder> r = new ArrayList<AbstractScalarEncoder>();
+		r.add(contextEncoder);
 		r.add(drumEncoder);
 		r.add(bassEncoder);
 		return r;
 	}
-
 }

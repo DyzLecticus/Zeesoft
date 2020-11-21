@@ -9,7 +9,7 @@ import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
-public class DrumAndBassPattern {
+public class InstrumentPattern {
 	public static final int			BASEBEAT			= 0;
 	public static final int			SNARE				= 1;
 	public static final int			CLOSED_HIHAT		= 2;
@@ -55,7 +55,6 @@ public class DrumAndBassPattern {
 		}
 	}
 	
-	
 	public static int getNoteForDuration(int duration, boolean accent) {
 		int r = 0;
 		if (duration>=1 && duration<=8) {
@@ -91,47 +90,47 @@ public class DrumAndBassPattern {
 		List<SDR> r = new ArrayList<SDR>();
 		int stepsPerPattern = rythm.getStepsPerPattern();
 		for (int s = 0; s < stepsPerPattern; s++) {
-			r.add(getSDRForPatternStep(s, pattern[s], stepsPerPattern));
+			r.add(getSDRForPatternStep(s));
 		}
 		return r;
 	}
 	
-	public static SDR getSDRForPatternStep(int step, int[] values, int stepsPerPattern) {
+	public SDR getSDRForPatternStep(int step) {
+		return getSDRForPatternStep(step, pattern[step]);
+	}
+	
+	public static SDR getSDRForPatternStep(int step, int values[]) {
 		SDR r = null;
-		if (step < stepsPerPattern) {
-			DrumEncoder dEnc = EncoderFactory.drumEncoder;
-			BassEncoder bEnc = EncoderFactory.bassEncoder;
-			int sizeX = dEnc.getEncodeLength() * (INSTRUMENT_NAMES.length - 1) + bEnc.getEncodeLength();
-			KeyValueSDR kvSdr = new KeyValueSDR(sizeX , 1);
-			for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
-				if (i==BASS) {
-					kvSdr.concat(bEnc.getEncodedValue(values[i]), i * dEnc.getEncodeLength());
-				} else {
-					kvSdr.concat(dEnc.getEncodedValue(values[i]), i * dEnc.getEncodeLength());
-				}
-				kvSdr.put(INSTRUMENT_NAMES[i], values[i]);
+		DrumEncoder dEnc = EncoderFactory.drumEncoder;
+		BassEncoder bEnc = EncoderFactory.bassEncoder;
+		int sizeX = dEnc.getEncodeLength() * (INSTRUMENT_NAMES.length - 1) + bEnc.getEncodeLength();
+		KeyValueSDR kvSdr = new KeyValueSDR(sizeX , 1);
+		for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
+			if (i==BASS) {
+				kvSdr.concat(bEnc.getEncodedValue(values[i]), i * dEnc.getEncodeLength());
+			} else {
+				kvSdr.concat(dEnc.getEncodedValue(values[i]), i * dEnc.getEncodeLength());
 			}
-			r = kvSdr;
+			kvSdr.put(INSTRUMENT_NAMES[i], values[i]);
 		}
+		r = kvSdr;
 		return r;
 	}
-	
+
 	public static int sizeX() {
-		return getExampleSDR().sizeX();
+		return getEmptyPatternSDR().sizeX();
 	}
-	
+
 	public static int sizeY() {
-		return getExampleSDR().sizeY();
+		return getEmptyPatternSDR().sizeY();
 	}
 	
-	private static SDR getExampleSDR() {
-		int[] values = new int[INSTRUMENT_NAMES.length];
-		for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
-			values[i] = OFF;
-		}
-		SDR sdr = getSDRForPatternStep(0, values, 1);
-		sdr.flatten();
-		sdr.square();
-		return sdr;
+	public static SDR getEmptyPatternSDR() {
+		int l = EncoderFactory.drumEncoder.getEncodeLength() * (InstrumentPattern.INSTRUMENT_NAMES.length - 1);
+		l += EncoderFactory.bassEncoder.getEncodeLength();
+		SDR r = new SDR(l,1);
+		r.flatten();
+		r.square();
+		return r;
 	}
 }

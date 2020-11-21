@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Logger;
@@ -28,7 +28,7 @@ public class PatternGenerator {
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
 		PatternSequence r = new PatternSequence();
-		for (DrumAndBassPattern pattern: sequence.patterns) {
+		for (InstrumentPattern pattern: sequence.patterns) {
 			r.patterns.add(generatePattern(network,sequence,null,pattern.num));
 		}
 		for (int p = 0; p < r.sequence.length; p++) {
@@ -37,18 +37,18 @@ public class PatternGenerator {
 		return r;
 	}
 	
-	public DrumAndBassPattern generatePattern(Network network, PatternSequence sequence, int baseSequencePattern) {
+	public InstrumentPattern generatePattern(Network network, PatternSequence sequence, int baseSequencePattern) {
 		return generatePattern(network,sequence,null,baseSequencePattern);
 	}
 	
-	public DrumAndBassPattern generatePattern(Network network, PatternSequence sequence, Rythm rythm) {
+	public InstrumentPattern generatePattern(Network network, PatternSequence sequence, Rythm rythm) {
 		return generatePattern(network,sequence,rythm,-1);
 	}
 
-	protected DrumAndBassPattern generatePattern(Network network, PatternSequence sequence, Rythm rythm, int baseSequencePattern) {
+	protected InstrumentPattern generatePattern(Network network, PatternSequence sequence, Rythm rythm, int baseSequencePattern) {
 		List<SDR> rythmSDRs = new ArrayList<SDR>();
 		
-		DrumAndBassPattern basePattern = null;
+		InstrumentPattern basePattern = null;
 		if (baseSequencePattern>=0) {
 			basePattern = sequence.patterns.get(baseSequencePattern);
 		}
@@ -93,7 +93,7 @@ public class PatternGenerator {
 	protected List<SDR> getRandomBeatChunk(PatternSequence sequence, int size) {
 		List<SDR> r = new ArrayList<SDR>();
 		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
-		DrumAndBassPattern pattern = sequence.patterns.get(num);
+		InstrumentPattern pattern = sequence.patterns.get(num);
 		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
 		int startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
 		int step = startBeat * pattern.rythm.beatsPerPattern;
@@ -110,8 +110,8 @@ public class PatternGenerator {
 		return r;
 	}
 	
-	protected DrumAndBassPattern generatePattern(Network network, Rythm rythm, List<SDR> rythmSDRs, DrumAndBassPattern basePattern) {
-		DrumAndBassPattern r = new DrumAndBassPattern();
+	protected InstrumentPattern generatePattern(Network network, Rythm rythm, List<SDR> rythmSDRs, InstrumentPattern basePattern) {
+		InstrumentPattern r = new InstrumentPattern();
 		r.initialize(rythm);
 		
 		if (prevIO!=null) {
@@ -119,9 +119,8 @@ public class PatternGenerator {
 			network.setProcessorProperty(NetworkConfigFactory.PATTERN_INPUT + "Merger", "distortion", patternDistortion);
 			network.setProcessorProperty("Merger", "distortion", combinedDistortion);
 			
-			int stepsPerPattern = rythm.getStepsPerPattern();
-	
 			// Generate pattern
+			int stepsPerPattern = rythm.getStepsPerPattern();
 			for (int s = 0 ; s < stepsPerPattern; s++) {
 				int values[] = getPredictedValuesFromPreviousIO(prevIO);
 				for (int i = 0; i < values.length; i++) {
@@ -132,7 +131,7 @@ public class PatternGenerator {
 					}
 				}
 				SDR	contextSDR = rythmSDRs.get(s);
-				SDR patternSDR = DrumAndBassPattern.getSDRForPatternStep(s, values, stepsPerPattern);
+				SDR patternSDR = InstrumentPattern.getSDRForPatternStep(s, values);
 				NetworkIO networkIO = new NetworkIO();
 				networkIO.setValue(NetworkConfigFactory.CONTEXT_INPUT, contextSDR);
 				networkIO.setValue(NetworkConfigFactory.PATTERN_INPUT, patternSDR);
@@ -144,7 +143,6 @@ public class PatternGenerator {
 				prevIO = networkIO;
 			}
 			
-			
 			network.setProcessorProperty(NetworkConfigFactory.CONTEXT_INPUT + "Merger", "distortion", 0F);
 			network.setProcessorProperty(NetworkConfigFactory.PATTERN_INPUT + "Merger", "distortion", 0F);
 			network.setProcessorProperty("Merger", "distortion", 0F);
@@ -155,12 +153,12 @@ public class PatternGenerator {
 	}
 	
 	protected int[] getPredictedValuesFromPreviousIO(NetworkIO prevIO) {
-		int r[] = new int[DrumAndBassPattern.INSTRUMENT_NAMES.length];
+		int r[] = new int[InstrumentPattern.INSTRUMENT_NAMES.length];
 		SortedMap<String,Object> predictedValues = prevIO.getClassificationValues(1);
-		for (int i = 0; i < DrumAndBassPattern.INSTRUMENT_NAMES.length; i++) {
-			Object value = predictedValues.get(DrumAndBassPattern.INSTRUMENT_NAMES[i] + "Classifier");
+		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
+			Object value = predictedValues.get(InstrumentPattern.INSTRUMENT_NAMES[i] + "Classifier");
 			if (value==null) {
-				value = DrumAndBassPattern.OFF;
+				value = InstrumentPattern.OFF;
 			}
 			r[i] = (int) value;
 		}

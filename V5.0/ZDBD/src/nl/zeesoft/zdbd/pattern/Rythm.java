@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
-import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
 public class Rythm {
@@ -30,38 +29,33 @@ public class Rythm {
 		List<SDR> r = new ArrayList<SDR>();
 		int stepsPerPattern = getStepsPerPattern();
 		for (int s = 0; s < stepsPerPattern; s++) {
-			r.add(getSDRForPatternStep(pattern, s, stepsPerPattern, stepsPerBeat));
+			r.add(getSDRForPatternStep(pattern, s));
 		}
 		return r;
 	}
 	
-	public static SDR getSDRForPatternStep(int pattern, int step, int stepsPerPattern, int stepsPerBeat) {
-		SDR r = null;
-		if (step <  stepsPerPattern) {
-			KeyValueSDR sdr = new KeyValueSDR(EncoderFactory.patternEncoder.getEncodeLength() + EncoderFactory.stepEncoder.getEncodeLength() + EncoderFactory.beatEncoder.getEncodeLength(), 1);
-			sdr.concat(EncoderFactory.patternEncoder.getEncodedValue(pattern), 0);
-			sdr.concat(EncoderFactory.stepEncoder.getEncodedValue(step), EncoderFactory.patternEncoder.getEncodeLength());
-			sdr.concat(EncoderFactory.beatEncoder.getEncodedValue(step % stepsPerBeat), EncoderFactory.patternEncoder.getEncodeLength() + EncoderFactory.stepEncoder.getEncodeLength());
-			sdr.put(PATTERN, pattern);
-			sdr.put(STEP, pattern);
-			sdr.put(BEAT, pattern);
-			r = sdr;
-		}
-		return r;
+	public SDR getSDRForPatternStep(int pattern, int step) {
+		int[] value = new int[3];
+		int beatStep = step % stepsPerBeat;
+		int beat = (step - beatStep) / stepsPerBeat;
+		value[0] = pattern;
+		value[1] = beat;
+		value[2] = beatStep;
+		return EncoderFactory.contextEncoder.getEncodedValue(value);
 	}
 	
 	public static int sizeX() {
-		return getExampleSDR().sizeX();
+		return getEmptyContextSDR().sizeX();
 	}
-	
+
 	public static int sizeY() {
-		return getExampleSDR().sizeY();
+		return getEmptyContextSDR().sizeY();
 	}
 	
-	private static SDR getExampleSDR() {
-		SDR sdr = getSDRForPatternStep(0, 0, 1, 1);
-		sdr.flatten();
-		sdr.square();
-		return sdr;
+	public static SDR getEmptyContextSDR() {
+		SDR r = new SDR(EncoderFactory.contextEncoder.getEncodeLength(),1);
+		r.flatten();
+		r.square();
+		return r;
 	}
 }

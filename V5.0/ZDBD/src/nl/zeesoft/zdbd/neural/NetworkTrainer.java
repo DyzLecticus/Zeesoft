@@ -5,18 +5,16 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class NetworkTrainer {
-	public int			startTrainTemporalMemory	= 8;
-	public int			startTrainClassifiers		= 16;
-	public int			maxTrainCycles				= 32;
+	public int			startTrainTemporalMemory	= 4;
+	public int			startTrainClassifiers		= 8;
+	public int			maxTrainCycles				= 16;
 	public float		minimumAverageAccuracy		= 0.950F;
 	public float		minimumClassifierAccuracy	= 0.990F;
 	
@@ -33,7 +31,7 @@ public class NetworkTrainer {
 		
 		List<NetworkIO> r = new ArrayList<NetworkIO>();
 		
-		List<NetworkIO> trainingSet = getNetworkIOForPatternSequence(sequence);
+		List<NetworkIO> trainingSet = sequence.getNetworkIO();
 		
 		network.setProcessorLearn("*", false);
 		network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
@@ -112,33 +110,6 @@ public class NetworkTrainer {
 		
 		network.setProcessorLearn("*", false);
 		network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", false);
-		
-		return r;
-	}
-	
-	public static List<NetworkIO> getNetworkIOForPatternSequence(PatternSequence sequence) {
-		List<NetworkIO> r = new ArrayList<NetworkIO>();
-		
-		List<DrumAndBassPattern> patterns = sequence.getSequencedPatterns();
-		
-		int totalSteps = sequence.getTotalSteps();
-		for (int i = 0; i < totalSteps; i++) {
-			r.add(new NetworkIO());
-		}
-		
-		int start = 0;
-		for (DrumAndBassPattern pattern: patterns) {
-			List<SDR> rythmSDRs = pattern.rythm.getSDRsForPattern(pattern.num);
-			List<SDR> patternSDRs = pattern.getSDRsForPattern();
-			int ps = 0;
-			for (int s = start; s < start + pattern.rythm.getStepsPerPattern(); s++) {
-				NetworkIO io = r.get(s);
-				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythmSDRs.get(ps));
-				io.setValue(NetworkConfigFactory.PATTERN_INPUT, patternSDRs.get(ps));
-				ps++;
-			}
-			start += pattern.rythm.getStepsPerPattern();
-		}
 		
 		return r;
 	}

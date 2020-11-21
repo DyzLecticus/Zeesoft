@@ -8,7 +8,7 @@ import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.neural.PatternGenerator;
-import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.Logger;
@@ -93,10 +93,12 @@ public class TestDrumAndBassNetwork extends TestObject {
 		System.out.println();
 		System.out.println("Training network ...");
 		NetworkTrainer trainer = new NetworkTrainer();
+		/*
 		trainer.startTrainTemporalMemory = 4;
 		trainer.startTrainClassifiers = 8;
 		trainer.maxTrainCycles = 16;
 		trainer.minimumClassifierAccuracy = 0.98F;
+		*/
 		List<NetworkIO> results = trainer.trainNetwork(network, sequence);
 		System.out.println("Trained network");
 		
@@ -114,9 +116,9 @@ public class TestDrumAndBassNetwork extends TestObject {
 		
 		PatternGenerator generator = new PatternGenerator();
 		generator.prevIO = lastIO;
-		generator.skipInstruments.add(DrumAndBassPattern.RIDE);
-		generator.skipInstruments.add(DrumAndBassPattern.CYMBAL);
-		generator.skipInstruments.add(DrumAndBassPattern.BASS);
+		generator.skipInstruments.add(InstrumentPattern.RIDE);
+		generator.skipInstruments.add(InstrumentPattern.CYMBAL);
+		generator.skipInstruments.add(InstrumentPattern.BASS);
 
 		sequence = generator.generatePatternSequence(network, sequence);
 		midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);

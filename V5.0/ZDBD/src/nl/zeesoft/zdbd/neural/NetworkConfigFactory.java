@@ -1,6 +1,6 @@
 package nl.zeesoft.zdbd.neural;
 
-import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
@@ -13,12 +13,11 @@ import nl.zeesoft.zdk.neural.processors.TemporalMemory;
 import nl.zeesoft.zdk.neural.processors.TemporalMemoryConfig;
 
 public class NetworkConfigFactory {
-	public static int		SP_ON_BITS				= 50;
-	public static int		TM_SIZE_X				= 50;
-	public static int		TM_SIZE_Y				= 50;
-	public static int		TM_SIZE_Z				= 32;
-	public static boolean	QUICK_LEARN				= true;
-	public static boolean	CLASSIFY_RYTHM			= false;
+	private static int		SP_ON_BITS				= 46;
+	private static int		TM_SIZE_X				= 48;
+	private static int		TM_SIZE_Y				= 48;
+	private static int		TM_SIZE_Z				= 16;
+	private static boolean	QUICK_LEARN				= true;
 
 	public static int		INPUT_MERGER_LAYER		= 0;
 	public static int		MAIN_MERGER_LAYER		= 1;
@@ -32,8 +31,8 @@ public class NetworkConfigFactory {
 	public static NetworkConfig getNetworkConfig() {
 		NetworkConfig r = new NetworkConfig();
 		
-		r.inputNames.add(CONTEXT_INPUT);
-		r.inputNames.add(PATTERN_INPUT);
+		r.addInput(CONTEXT_INPUT);
+		r.addInput(PATTERN_INPUT);
 		
 		MergerConfig inputMergerConfig = r.addMerger(CONTEXT_INPUT + "InputMerger",INPUT_MERGER_LAYER);
 		inputMergerConfig.sizeX = Rythm.sizeX();
@@ -41,11 +40,11 @@ public class NetworkConfigFactory {
 		r.addLink(CONTEXT_INPUT, 0, CONTEXT_INPUT + "InputMerger", 0);
 		
 		inputMergerConfig = r.addMerger(PATTERN_INPUT + "InputMerger",INPUT_MERGER_LAYER);
-		inputMergerConfig.sizeX = DrumAndBassPattern.sizeX();
-		inputMergerConfig.sizeY = DrumAndBassPattern.sizeY();
+		inputMergerConfig.sizeX = InstrumentPattern.sizeX();
+		inputMergerConfig.sizeY = InstrumentPattern.sizeY();
 		r.addLink(PATTERN_INPUT, 0, PATTERN_INPUT + "InputMerger", 0);
 
-		SDR sdr = new SDR((Rythm.sizeX() * Rythm.sizeY()) + (DrumAndBassPattern.sizeX() * DrumAndBassPattern.sizeY()),1);
+		SDR sdr = new SDR((Rythm.sizeX() * Rythm.sizeY()) + (InstrumentPattern.sizeX() * InstrumentPattern.sizeY()),1);
 		sdr.square();
 		
 		MergerConfig mergerConfig = r.addMerger("Merger",MAIN_MERGER_LAYER);
@@ -73,13 +72,8 @@ public class NetworkConfigFactory {
 		}
 		r.addLink("Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, "Memory", 0);
 		
-		for (int i = 0; i < DrumAndBassPattern.INSTRUMENT_NAMES.length; i++) {
-			addClassifier(r, DrumAndBassPattern.INSTRUMENT_NAMES[i], PATTERN_INPUT);
-		}
-		if (CLASSIFY_RYTHM) {
-			for (int e = 0; e < Rythm.ELEMENT_NAMES.length; e++) {
-				addClassifier(r, Rythm.ELEMENT_NAMES[e], CONTEXT_INPUT);
-			}
+		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
+			addClassifier(r, InstrumentPattern.INSTRUMENT_NAMES[i], PATTERN_INPUT);
 		}
 		return r;
 	}

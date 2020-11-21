@@ -11,7 +11,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import nl.zeesoft.zdbd.pattern.DrumAndBassPattern;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
 
@@ -33,9 +33,9 @@ public class MidiSequenceConvertor {
 		addInitialSynthConfigToControlTrack(r);
 		addTempoMetaEventToSequence(r);
 		
-		List<DrumAndBassPattern> patterns = sequence.getSequencedPatterns();
+		List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
 		long startTick = 0;
-		for (DrumAndBassPattern pattern: patterns) {
+		for (InstrumentPattern pattern: patterns) {
 			Sequence seq = generateNoteSequenceForPattern(pattern);
 			for (int t = 0; t < seq.getTracks().length; t++) {
 				Track track = seq.getTracks()[t];
@@ -50,7 +50,7 @@ public class MidiSequenceConvertor {
 		return r;
 	}
 	
-	public Sequence generateSequenceForPattern(DrumAndBassPattern pattern) {
+	public Sequence generateSequenceForPattern(InstrumentPattern pattern) {
 		Sequence r = generateNoteSequenceForPattern(pattern);
 		addTempoMetaEventToSequence(r);
 		addInitialSynthConfigToControlTrack(r);
@@ -59,9 +59,9 @@ public class MidiSequenceConvertor {
 	
 	public void initializeDefaults() {
 		convertors.clear();
-		for (int i = 0; i < DrumAndBassPattern.INSTRUMENT_NAMES.length; i++) {
-			String name = DrumAndBassPattern.INSTRUMENT_NAMES[i];
-			if (i==DrumAndBassPattern.BASS) {
+		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
+			String name = InstrumentPattern.INSTRUMENT_NAMES[i];
+			if (i==InstrumentPattern.BASS) {
 				MonoConvertor bass = new MonoConvertor();
 				bass.name = name;
 				bass.channel = SynthConfig.BASS_CHANNEL;
@@ -70,35 +70,35 @@ public class MidiSequenceConvertor {
 				DrumConvertor drum = new DrumConvertor();
 				drum.name = name;
 				DrumSampleConvertor sample = new DrumSampleConvertor();
-				if (i==DrumAndBassPattern.BASEBEAT) {
+				if (i==InstrumentPattern.BASEBEAT) {
 					sample.midiNote = 35;
 					sample.accentVelocity = 110;
 					sample.accentVelocity = 127;
-				} else if (i==DrumAndBassPattern.SNARE) {
+				} else if (i==InstrumentPattern.SNARE) {
 					sample.midiNote = 50;
 					sample.velocity = 80;
 					sample.accentVelocity = 100;
 					sample.hold = 0.8F;
 					sample.accentHold = 1.0F;
-				} else if (i==DrumAndBassPattern.CLOSED_HIHAT) {
+				} else if (i==InstrumentPattern.CLOSED_HIHAT) {
 					sample.midiNote = 44;
 					sample.velocity = 70;
 					sample.accentVelocity = 80;
 					sample.hold = 0.2F;
 					sample.accentHold = 0.3F;
-				} else if (i==DrumAndBassPattern.OPEN_HIHAT) {
+				} else if (i==InstrumentPattern.OPEN_HIHAT) {
 					sample.midiNote = 45;
 					sample.velocity = 80;
 					sample.accentVelocity = 90;
 					sample.hold = 0.5F;
 					sample.accentHold = 0.8F;
-				} else if (i==DrumAndBassPattern.RIDE) {
+				} else if (i==InstrumentPattern.RIDE) {
 					sample.midiNote = 69;
 					sample.velocity = 80;
 					sample.accentVelocity = 90;
 					sample.hold = 0.9F;
 					sample.accentHold = 1.9F;
-				} else if (i==DrumAndBassPattern.CYMBAL) {
+				} else if (i==InstrumentPattern.CYMBAL) {
 					sample.midiNote = 70;
 					sample.velocity = 90;
 					sample.accentVelocity = 100;
@@ -111,7 +111,7 @@ public class MidiSequenceConvertor {
 		}
 	}
 	
-	protected Sequence generateNoteSequenceForPattern(DrumAndBassPattern pattern) {
+	protected Sequence generateNoteSequenceForPattern(InstrumentPattern pattern) {
 		Sequence r = createSequence();
 		addNotesToSequence(r,pattern);
 		alignTrackEndings(r,pattern.rythm);
@@ -121,7 +121,7 @@ public class MidiSequenceConvertor {
 	protected Sequence createSequence() {
 		Sequence r = null;
 		try {
-			r = new Sequence(Sequence.PPQ,RESOLUTION,DrumAndBassPattern.INSTRUMENT_NAMES.length + 1);
+			r = new Sequence(Sequence.PPQ,RESOLUTION,InstrumentPattern.INSTRUMENT_NAMES.length + 1);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
@@ -129,7 +129,7 @@ public class MidiSequenceConvertor {
 	}
 
 	protected void addInitialSynthConfigToControlTrack(Sequence sequence) {
-		int controlTrack = DrumAndBassPattern.INSTRUMENT_NAMES.length;
+		int controlTrack = InstrumentPattern.INSTRUMENT_NAMES.length;
 		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
 			for (Integer control: SynthConfig.CONTROLS) {
 				int value = channelConfig.getControlValue(control);
@@ -152,12 +152,12 @@ public class MidiSequenceConvertor {
 		createMetaEventOnTrack(track,TEMPO,b,b.length,0);
 	}
 	
-	protected void addNotesToSequence(Sequence sequence, DrumAndBassPattern pattern) {
+	protected void addNotesToSequence(Sequence sequence, InstrumentPattern pattern) {
 		long sequenceEndTick = getSequenceEndTick(pattern.rythm);
 		int ticksPerStep = getTicksPerStep(pattern.rythm);
 		int stepsPerPattern = pattern.rythm.getStepsPerPattern();
-		for (int i = 0; i < DrumAndBassPattern.INSTRUMENT_NAMES.length; i++) {
-			String name = DrumAndBassPattern.INSTRUMENT_NAMES[i];
+		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
+			String name = InstrumentPattern.INSTRUMENT_NAMES[i];
 			InstrumentConvertor convertor = convertors.get(name);
 			if (convertor!=null) {
 				for (int s = 0; s < stepsPerPattern; s++) {
