@@ -59,9 +59,9 @@ public class MidiSequenceConvertor {
 	
 	public void initializeDefaults() {
 		convertors.clear();
-		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
-			String name = InstrumentPattern.INSTRUMENT_NAMES[i];
-			if (i==InstrumentPattern.BASS) {
+		for (int i = 0; i < DrumConvertor.INSTRUMENT_NAMES.length; i++) {
+			String name = DrumConvertor.INSTRUMENT_NAMES[i];
+			if (i==DrumConvertor.BASS) {
 				MonoConvertor bass = new MonoConvertor();
 				bass.name = name;
 				bass.channel = SynthConfig.BASS_CHANNEL;
@@ -70,35 +70,35 @@ public class MidiSequenceConvertor {
 				DrumConvertor drum = new DrumConvertor();
 				drum.name = name;
 				DrumSampleConvertor sample = new DrumSampleConvertor();
-				if (i==InstrumentPattern.BASEBEAT) {
+				if (i==DrumConvertor.KICK) {
 					sample.midiNote = 35;
 					sample.accentVelocity = 110;
 					sample.accentVelocity = 127;
-				} else if (i==InstrumentPattern.SNARE) {
+				} else if (i==DrumConvertor.SNARE) {
 					sample.midiNote = 50;
 					sample.velocity = 80;
 					sample.accentVelocity = 100;
 					sample.hold = 0.8F;
 					sample.accentHold = 1.0F;
-				} else if (i==InstrumentPattern.CLOSED_HIHAT) {
+				} else if (i==DrumConvertor.CLOSED_HIHAT) {
 					sample.midiNote = 44;
 					sample.velocity = 70;
 					sample.accentVelocity = 80;
 					sample.hold = 0.2F;
 					sample.accentHold = 0.3F;
-				} else if (i==InstrumentPattern.OPEN_HIHAT) {
+				} else if (i==DrumConvertor.OPEN_HIHAT) {
 					sample.midiNote = 45;
 					sample.velocity = 80;
 					sample.accentVelocity = 90;
 					sample.hold = 0.5F;
 					sample.accentHold = 0.8F;
-				} else if (i==InstrumentPattern.RIDE) {
+				} else if (i==DrumConvertor.RIDE) {
 					sample.midiNote = 69;
 					sample.velocity = 80;
 					sample.accentVelocity = 90;
 					sample.hold = 0.9F;
 					sample.accentHold = 1.9F;
-				} else if (i==InstrumentPattern.CYMBAL) {
+				} else if (i==DrumConvertor.CYMBAL) {
 					sample.midiNote = 70;
 					sample.velocity = 90;
 					sample.accentVelocity = 100;
@@ -158,10 +158,22 @@ public class MidiSequenceConvertor {
 		int stepsPerPattern = pattern.rythm.getStepsPerPattern();
 		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
 			String name = InstrumentPattern.INSTRUMENT_NAMES[i];
-			InstrumentConvertor convertor = convertors.get(name);
-			if (convertor!=null) {
+			InstrumentConvertor convertor1 = null;
+			InstrumentConvertor convertor2 = null;
+			if (i==InstrumentPattern.HIHAT) {
+				convertor1 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.CLOSED_HIHAT]);
+				convertor2 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.OPEN_HIHAT]);
+			} else {
+				convertor1 = convertors.get(name);
+			}
+			if (convertor1!=null) {
 				for (int s = 0; s < stepsPerPattern; s++) {
-					List<MidiNote> mns = convertor.getMidiNotesForPatternNote(pattern.pattern[s][i]);
+					List<MidiNote> mns = null;
+					if (i==InstrumentPattern.HIHAT && InstrumentPattern.isOpenHihat(pattern.pattern[s][i])) {
+						mns = convertor2.getMidiNotesForPatternNote(pattern.pattern[s][i]);
+					} else {
+						mns = convertor1.getMidiNotesForPatternNote(pattern.pattern[s][i]);
+					}
 					for (MidiNote mn: mns) {
 						long startTick = getStepTick(pattern.rythm,s);
 						if (startTick>sequenceEndTick) {

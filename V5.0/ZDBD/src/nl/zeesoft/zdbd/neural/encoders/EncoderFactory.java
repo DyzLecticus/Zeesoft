@@ -10,6 +10,7 @@ public class EncoderFactory {
 	private static int				ON_BITS			= 2;
 	public static ContextEncoder	contextEncoder	= new ContextEncoder(ON_BITS);
 	public static DrumEncoder		drumEncoder		= new DrumEncoder(ON_BITS);
+	public static HihatEncoder		hihatEncoder	= new HihatEncoder(ON_BITS);
 	public static BassEncoder		bassEncoder		= new BassEncoder(ON_BITS);
 	
 	public static Str testEncoders() {
@@ -30,6 +31,7 @@ public class EncoderFactory {
 		List<AbstractScalarEncoder> r = new ArrayList<AbstractScalarEncoder>();
 		r.add(contextEncoder);
 		r.add(drumEncoder);
+		r.add(hihatEncoder);
 		r.add(bassEncoder);
 		return r;
 	}

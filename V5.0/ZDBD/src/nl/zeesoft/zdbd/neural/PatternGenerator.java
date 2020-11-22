@@ -17,13 +17,21 @@ import nl.zeesoft.zdk.neural.network.NetworkIO;
 public class PatternGenerator {
 	public NetworkIO		prevIO				= null;
 	
-	public float			contextDistortion	= 0.0F;
-	public float			patternDistortion	= 0.5F;
-	public float			combinedDistortion	= 0.0F;
+	// Network merger dirsortion controls
+	public float			contextDistortion	= 0.0F; // 0 - 1
+	public float			patternDistortion	= 0.1F; // 0 - 1
+	public float			combinedDistortion	= 0.0F; // 0 - 1
 	
+	// Randomized rythm generation controls
 	public int				smallerChunk		= 1;
 	public int				largerChunk			= 2;
-	public int				randomChunkOffset	= 2;
+	public boolean			randomChunkOffset	= true;
+	
+	// Mix controls
+	public float			mixStart			= 0.5F; // 0 - 1
+	public float			mixMid				= 1.0F; // 0 - 1
+	public float			mixEnd				= 0.0F; // 0 - 1
+	public float			maintainBeatFactor	= 1.0F; // <= 1 off, > 1 on
 	public List<Integer>	skipInstruments		= new ArrayList<Integer>();
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
@@ -46,8 +54,6 @@ public class PatternGenerator {
 	}
 
 	protected InstrumentPattern generatePattern(Network network, PatternSequence sequence, Rythm rythm, int baseSequencePattern) {
-		List<SDR> rythmSDRs = new ArrayList<SDR>();
-		
 		InstrumentPattern basePattern = null;
 		if (baseSequencePattern>=0) {
 			basePattern = sequence.patterns.get(baseSequencePattern);
@@ -55,6 +61,13 @@ public class PatternGenerator {
 		if (rythm==null && basePattern!=null) {
 			rythm = basePattern.rythm;
 		}
+		List<SDR> rythmSDRs = generateRythmSDRs(sequence,rythm);
+		return generatePattern(network, rythm, rythmSDRs, basePattern);
+	}
+	
+	protected List<SDR> generateRythmSDRs(PatternSequence sequence, Rythm rythm) {
+		List<SDR> r = new ArrayList<SDR>();
+		
 		List<Integer> chunkSizes = new ArrayList<Integer>();
 		chunkSizes.add(rythm.stepsPerBeat);
 		if (smallerChunk>0) {
@@ -75,8 +88,8 @@ public class PatternGenerator {
 		for (int s = 0; s < stepsPerPattern; s++) {
 			List<SDR> chunk = getRandomBeatChunk(sequence, size);
 			for (int c = 0; c < size; c++) {
-				rythmSDRs.add(chunk.get(c));
-				if (rythmSDRs.size()>=stepsPerPattern) {
+				r.add(chunk.get(c));
+				if (r.size()>=stepsPerPattern) {
 					s = stepsPerPattern;
 					break;
 				}
@@ -87,7 +100,7 @@ public class PatternGenerator {
 			size = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
 		}
 		
-		return generatePattern(network, rythm, rythmSDRs, basePattern);
+		return r;
 	}
 
 	protected List<SDR> getRandomBeatChunk(PatternSequence sequence, int size) {
@@ -96,16 +109,16 @@ public class PatternGenerator {
 		InstrumentPattern pattern = sequence.patterns.get(num);
 		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
 		int startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
-		int step = startBeat * pattern.rythm.beatsPerPattern;
-		if (randomChunkOffset > 0 && Rand.getRandomInt(0, randomChunkOffset)==randomChunkOffset) {
-			step += (pattern.rythm.stepsPerBeat / 2);
+		int step = startBeat * pattern.rythm.stepsPerBeat;
+		if (randomChunkOffset) {
+			step += Rand.getRandomInt(0, pattern.rythm.stepsPerBeat);
 		}
 		for (int s = 0; s < size; s++) {
-			r.add(sdrs.get(step));
-			step++;
 			if (step>=sdrs.size()) {
 				step = 0;
 			}
+			r.add(sdrs.get(step));
+			step++;
 		}
 		return r;
 	}
@@ -113,16 +126,25 @@ public class PatternGenerator {
 	protected InstrumentPattern generatePattern(Network network, Rythm rythm, List<SDR> rythmSDRs, InstrumentPattern basePattern) {
 		InstrumentPattern r = new InstrumentPattern();
 		r.initialize(rythm);
+		if (basePattern!=null) {
+			r.num = basePattern.num; 
+		}
 		
 		if (prevIO!=null) {
+			NetworkIO workingIO = prevIO;
 			network.setProcessorProperty(NetworkConfigFactory.CONTEXT_INPUT + "Merger", "distortion", contextDistortion);
 			network.setProcessorProperty(NetworkConfigFactory.PATTERN_INPUT + "Merger", "distortion", patternDistortion);
 			network.setProcessorProperty("Merger", "distortion", combinedDistortion);
 			
+			List<SDR> originalRythmSDRs = rythm.getSDRsForPattern(r.num);
+			
 			// Generate pattern
 			int stepsPerPattern = rythm.getStepsPerPattern();
+			float mix = mixStart;
+			float mixIncrementPerStep = (mixMid - mixStart) / (stepsPerPattern / 2);
+			float bound = mixMid;
 			for (int s = 0 ; s < stepsPerPattern; s++) {
-				int values[] = getPredictedValuesFromPreviousIO(prevIO);
+				int values[] = getPredictedValuesFromPreviousIO(workingIO);
 				for (int i = 0; i < values.length; i++) {
 					if (!skipInstruments.contains(i)) {
 						r.pattern[s][i] = values[i];
@@ -130,7 +152,22 @@ public class PatternGenerator {
 						r.pattern[s][i] = basePattern.pattern[s][i];
 					}
 				}
-				SDR	contextSDR = rythmSDRs.get(s);
+				
+				SDR	contextSDR = originalRythmSDRs.get(s);
+				if (s==(stepsPerPattern / 2) - 1) {
+					mixIncrementPerStep = (mixEnd - mixMid) / (stepsPerPattern / 2);
+					bound = mixEnd;
+				}
+				if (mix>0) {
+					int max = stepsPerPattern - (int)(mix * stepsPerPattern);
+					if (maintainBeatFactor>1 && s % rythm.stepsPerBeat == 0) {
+						max = (int) (max * maintainBeatFactor);
+					}
+					if (max <= stepsPerPattern && (max == 0 || Rand.getRandomInt(0, max)==0)) {
+						contextSDR = rythmSDRs.get(s);
+					}
+				}
+				
 				SDR patternSDR = InstrumentPattern.getSDRForPatternStep(s, values);
 				NetworkIO networkIO = new NetworkIO();
 				networkIO.setValue(NetworkConfigFactory.CONTEXT_INPUT, contextSDR);
@@ -140,7 +177,18 @@ public class PatternGenerator {
 					Logger.err(this, networkIO.getErrors().get(0));
 					break;
 				}
-				prevIO = networkIO;
+				workingIO = networkIO;
+				if (mixIncrementPerStep>0) {
+					mix += mixIncrementPerStep;
+					if (mix > bound) {
+						mix = bound;
+					}
+				} else {
+					mix -= (mixIncrementPerStep * -1);
+					if (mix < bound) {
+						mix = bound;
+					}
+				}
 			}
 			
 			network.setProcessorProperty(NetworkConfigFactory.CONTEXT_INPUT + "Merger", "distortion", 0F);

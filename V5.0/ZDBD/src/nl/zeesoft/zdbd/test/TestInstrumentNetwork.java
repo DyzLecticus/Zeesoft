@@ -64,11 +64,11 @@ public class TestInstrumentNetwork extends TestObject {
 		Network network = createAndTrainNetwork();
 		
 		NetworkIO lastIO = network.getLastIO();
-		ProcessorIO classifierIO = lastIO.getProcessorIO("BasebeatClassifier");
+		ProcessorIO classifierIO = lastIO.getProcessorIO("KickClassifier");
 		KeyValueSDR keyValueSDR = (KeyValueSDR) classifierIO.outputs.get(Classifier.CLASSIFICATION_OUTPUT);
 		Classification classification = (Classification) keyValueSDR.get(Classifier.CLASSIFICATION_VALUE_KEY + ":1");
 		int prediction = (int) classification.getMostCountedValues().get(0);
-		assertEqual(prediction, 2, "Basebeat prediction does not match expectation");
+		assertEqual(prediction, 2, "Kick prediction does not match expectation");
 	}
 	
 	protected static Network createAndTrainNetwork() {
@@ -91,7 +91,7 @@ public class TestInstrumentNetwork extends TestObject {
 		System.out.println("Trained network");
 		
 		if (FileIO.checkDirectory(config.directory).length()==0 &&
-			network.getLastIO().isAccurate(trainer.minimumAverageAccuracy)
+			network.getLastIO().isAccurate(trainer.minimumClassifierAccuracy)
 			) {
 			System.out.println();
 			FileIO.mockIO = false;

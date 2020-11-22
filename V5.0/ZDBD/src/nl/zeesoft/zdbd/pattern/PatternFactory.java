@@ -8,52 +8,51 @@ public class PatternFactory {
 		pattern.initialize(rythm);
 		pattern.num = patternNum;
 	
-		pattern.setDrumNote(0,InstrumentPattern.BASEBEAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(4,InstrumentPattern.BASEBEAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(8,InstrumentPattern.BASEBEAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(12,InstrumentPattern.BASEBEAT,InstrumentPattern.ACCENT);
+		pattern.setKick(0,InstrumentPattern.ACCENT);
+		pattern.setKick(4,InstrumentPattern.ACCENT);
+		pattern.setKick(8,InstrumentPattern.ACCENT);
+		pattern.setKick(12,InstrumentPattern.ACCENT);
 		if (patternNum==1 || patternNum==2) {
-			pattern.setDrumNote(14,InstrumentPattern.BASEBEAT,InstrumentPattern.ON);
+			pattern.setKick(14,InstrumentPattern.ON);
 		}
 
-		pattern.setDrumNote(4,InstrumentPattern.SNARE,InstrumentPattern.ACCENT);
+		pattern.setSnare(4,InstrumentPattern.ACCENT);
 		if (patternNum==2) {
-			pattern.setDrumNote(9,InstrumentPattern.SNARE,InstrumentPattern.ON);
+			pattern.setSnare(9,InstrumentPattern.ON);
 		}
-		pattern.setDrumNote(12,InstrumentPattern.SNARE,InstrumentPattern.ACCENT);
+		pattern.setSnare(12,InstrumentPattern.ACCENT);
 		if (patternNum==1 || patternNum==2) {
-			pattern.setDrumNote(15,InstrumentPattern.SNARE,InstrumentPattern.ON);
+			pattern.setSnare(15,InstrumentPattern.ON);
 		}
 
-		pattern.setDrumNote(0,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(1,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(3,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(4,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(5,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(7,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(8,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(9,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(11,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(12,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(13,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-		pattern.setDrumNote(15,InstrumentPattern.CLOSED_HIHAT,InstrumentPattern.ON);
-
-		pattern.setDrumNote(2,InstrumentPattern.OPEN_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(6,InstrumentPattern.OPEN_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(10,InstrumentPattern.OPEN_HIHAT,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(14,InstrumentPattern.OPEN_HIHAT,InstrumentPattern.ACCENT);
+		pattern.setHihat(0,false,InstrumentPattern.ACCENT);
+		pattern.setHihat(1,false,InstrumentPattern.ON);
+		pattern.setHihat(2,true,InstrumentPattern.ACCENT);
+		pattern.setHihat(3,false,InstrumentPattern.ON);
+		pattern.setHihat(4,false,InstrumentPattern.ACCENT);
+		pattern.setHihat(5,false,InstrumentPattern.ON);
+		pattern.setHihat(6,true,InstrumentPattern.ACCENT);
+		pattern.setHihat(7,false,InstrumentPattern.ON);
+		pattern.setHihat(8,false,InstrumentPattern.ACCENT);
+		pattern.setHihat(9,false,InstrumentPattern.ON);
+		pattern.setHihat(10,true,InstrumentPattern.ACCENT);
+		pattern.setHihat(11,false,InstrumentPattern.ON);
+		pattern.setHihat(12,false,InstrumentPattern.ACCENT);
+		pattern.setHihat(13,false,InstrumentPattern.ON);
+		pattern.setHihat(14,true,InstrumentPattern.ACCENT);
+		pattern.setHihat(15,false,InstrumentPattern.ON);
 		
-		pattern.setDrumNote(0,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(4,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(8,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(12,InstrumentPattern.RIDE,InstrumentPattern.ACCENT);
-		pattern.setDrumNote(14,InstrumentPattern.RIDE,InstrumentPattern.ON);
+		pattern.setRide(0,InstrumentPattern.ACCENT);
+		pattern.setRide(4,InstrumentPattern.ACCENT);
+		pattern.setRide(8,InstrumentPattern.ACCENT);
+		pattern.setRide(12,InstrumentPattern.ACCENT);
+		pattern.setRide(14,InstrumentPattern.ON);
 
 		if (patternNum==0) {
-			pattern.setDrumNote(0,InstrumentPattern.CYMBAL,InstrumentPattern.ACCENT);
+			pattern.setCymbal(0,InstrumentPattern.ACCENT);
 		}
 		if (patternNum==2 || patternNum==3) {
-			pattern.setDrumNote(12,InstrumentPattern.CYMBAL,InstrumentPattern.ACCENT);
+			pattern.setCymbal(12,InstrumentPattern.ACCENT);
 		}
 		
 		pattern.setBassNote(2, 1, true);

@@ -20,8 +20,7 @@ public class MonoConvertor extends InstrumentConvertor {
 			mn.channel = channel;
 			mn.midiNote = midiNote;
 			mn.hold = ((float)(InstrumentPattern.getDurationForNote(note) - 1)) + hold;
-			boolean accent = InstrumentPattern.getAccentForNote(note);
-			if (accent) {
+			if (InstrumentPattern.getAccentForNote(note)) {
 				mn.velocity = accentVelocity;
 			} else {
 				mn.velocity = velocity;
