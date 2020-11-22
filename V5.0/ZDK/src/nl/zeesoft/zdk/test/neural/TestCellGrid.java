@@ -117,7 +117,11 @@ public class TestCellGrid extends TestObject {
 			syn.connectTo.x = posX;
 			syn.connectTo.y = 1;
 			syn.connectTo.z = 0;
-			syn.permanence = 0.1F;
+			if (posX>1) {
+				syn.permanence = 1.0F;
+			} else {
+				syn.permanence = 0.1F;
+			}
 			segment.synapses.add(syn);
 		}
 	}

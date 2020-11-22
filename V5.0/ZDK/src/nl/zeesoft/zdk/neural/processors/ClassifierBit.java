@@ -38,6 +38,11 @@ public class ClassifierBit implements StrAble {
 				valCounts.sb().append(entry.getValue());
 				className = entry.getKey().getClass().getName();
 			}
+			if (className.equals(Integer.class.getName())) {
+				className = "I";
+			} else if (className.equals(Float.class.getName())) {
+				className = "F";
+			}
 			valCounts.sb().insert(0, ";");
 			valCounts.sb().insert(0, className);
 			r.sb().append(valCounts.sb());
@@ -57,6 +62,11 @@ public class ClassifierBit implements StrAble {
 		}
 		index = Integer.parseInt(elems.get(0).toString());
 		String className = elems.get(1).toString();
+		if (className.equals("I")) {
+			className = Integer.class.getName();
+		} else if (className.equals("F")) {
+			className = Float.class.getName();
+		}
 		List<Str> valCounts = elems.get(2).split("%");
 		for (Str valCount: valCounts) {
 			List<Str> vc = valCount.split(",");

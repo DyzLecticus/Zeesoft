@@ -31,7 +31,7 @@ public class Synapse implements StrAble {
 		Str r = new Str();
 		r.sb().append(connectTo.toStr().sb());
 		r.sb().append(";");
-		r.sb().append(df.format(permanence));
+		r.sb().append(getStringValue(permanence));
 		return r;
 	}
 
@@ -42,5 +42,16 @@ public class Synapse implements StrAble {
 			connectTo.fromStr(elems.get(0));
 			permanence = Float.parseFloat(elems.get(1).toString());
 		}
+	}
+	
+	private String getStringValue(float value) {
+		Str r = new Str(df.format(value));
+		while (r.endsWith("0")) {
+			r = r.substring(0,r.length() - 1);
+		}
+		if (r.endsWith(".")) {
+			r = r.substring(0,r.length() - 1);
+		}
+		return r.toString();
 	}
 }
