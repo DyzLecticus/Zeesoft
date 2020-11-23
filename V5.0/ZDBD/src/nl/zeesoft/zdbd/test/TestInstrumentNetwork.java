@@ -95,7 +95,6 @@ public class TestInstrumentNetwork extends TestObject {
 			) {
 			System.out.println();
 			FileIO.mockIO = false;
-			config.toFile();
 			network.save();
 			FileIO.mockIO = true;
 		}

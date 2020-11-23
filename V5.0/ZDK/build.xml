@@ -39,7 +39,7 @@
 		<jar jarfile="${dist}/zdk.jar" basedir="${build}" manifest="dist/mymanifest"/>
 		<!-- Run tests and generate README.md -->
 		<exec dir="${dist}" executable="cmd" output="${dist}/README.md" resultproperty="_error" logError="true"> 
-			<arg line="/c java -jar zdk.jar ${version}"/>
+			<arg line="/c java -jar zdk.jar ${version} STOP_ON_FAILURE"/>
 		</exec>
 		<condition property="_abort">
 			<equals arg1="${_error}" arg2="1"/>

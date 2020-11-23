@@ -14,6 +14,7 @@ public abstract class TestObject {
 	private	Tester			tester		= null;
 	private int 			assertions	= 0;
 	private List<String> 	failures	= new ArrayList<String>();
+	private int				totalMs		= 0;
 	private int 			sleepMs		= 0;
 	
 	public TestObject(Tester tester) {
@@ -50,6 +51,7 @@ public abstract class TestObject {
 	 */
 	protected final void runTest(String[] args) {
 		FileIO.mockIO = true;
+		long start = System.currentTimeMillis();
 		try {
 			test(args);
 		} catch (Exception ex) {
@@ -58,6 +60,7 @@ public abstract class TestObject {
 				ex.printStackTrace();
 			}
 		}
+		totalMs = (int) (System.currentTimeMillis() - start);
 		FileIO.clear();
 		FileIO.mockIO = false;
 	}
@@ -265,6 +268,15 @@ public abstract class TestObject {
 	 */
 	protected final List<String> getFailures() {
 		return failures;
+	}
+
+	/**
+	 * Returns the total number of milliseconds it took this test to complete.
+	 * 
+	 * @return the total number of milliseconds
+	 */
+	protected final int getTotalMs() {
+		return totalMs;
 	}
 
 	/**

@@ -16,16 +16,19 @@ import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.neural.processors.SDRProcessor;
+import nl.zeesoft.zdk.thread.Busy;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waitable;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class Network {
+public class Network implements Waitable {
 	private static String			PREVIOUS_IO_FILE_NAME		= "PreviousIO.txt";
 	
 	private Lock					lock						= new Lock();
+	private Busy					busy						= new Busy(this);
 	
 	// Configuration
 	private NetworkConfig			config						= new NetworkConfig();
@@ -38,15 +41,50 @@ public class Network {
 	private NetworkIO				currentIO					= null;
 	private NetworkIO				previousIO					= null;
 	
+	public boolean initializeAndLoad(NetworkConfig config) {
+		int timeoutMs = config.initializeTimeoutMs + config.loadTimeoutMs;
+		return Waiter.startAndWaitFor(new CodeRunnerList(getInitializeAndLoadRunCode(config)), timeoutMs);
+	}
+	
+	public RunCode getInitializeAndLoadRunCode(NetworkConfig config) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				if (config.fileExists()) {
+					config.fromFile();
+					Str msg = new Str("Configuration;\n");
+					msg.sb().append(config.getDescription());
+					Logger.dbg(this, msg);
+					Str err = configure(config);
+					if (err.length()==0) {
+						if (!busy.isBusy()) {
+							err = initialize(false);
+							if (err.length()==0) {
+								load();
+							}
+						}
+					}
+				} else {
+					Logger.dbg(this, new Str("Configuration file not found: " + config.getFileName()));
+				}
+				return true;
+			}
+		};
+	}
+	
 	public Str configure(NetworkConfig config) {
 		Str err = config.testConfiguration();
 		if (err.length()>0) {
 			Logger.err(this, err);
 		} else {
 			lock.lock(this);
-			this.config.copyFrom(config);
-			processors.clear();
-			processorChain = new CodeRunnerChain();
+			if (processors.size()==0) {
+				this.config.copyFrom(config);
+				processors.clear();
+				processorChain = new CodeRunnerChain();
+			} else {
+				Logger.err(this, new Str("Network has already been initialized"));
+			}
 			lock.unlock(this);
 		}
 		return err;
@@ -55,19 +93,16 @@ public class Network {
 	public Str initialize(boolean resetConnections) {
 		lock.lock(this);
 		Str err = config.testConfiguration();
-		lock.unlock(this);
-		if (err.length()>0) {
-			Logger.err(this, err);
-		} else {
+		if (err.length()==0) {
 			err = new Str();
 			Logger.dbg(this, new Str("Initializing network ..."));
 
-			lock.lock(this);
+			busy.setBusy(true);
 			CodeRunnerList runnerList = buildInitializeRunnerListNoLock(resetConnections);
 			if (!Waiter.startAndWaitFor(runnerList, config.initializeTimeoutMs)) {
 				err.sb().append("Network initialization timed out");
 			}
-			if (processors.size() < config.processorConfigs.size()) {
+			if (err.length()==0 && processors.size() < config.processorConfigs.size()) {
 				err.sb().append("Failed to initialize one or more processors");
 			}
 			if (err.length()==0) {
@@ -75,13 +110,15 @@ public class Network {
 			} else {
 				processors.clear();
 			}
-			lock.unlock(this);
+			busy.setBusy(false);
 			
 			if (err.length()==0) {
 				Logger.dbg(this, new Str("Initialized network"));
-			} else {
-				Logger.err(this, err);
 			}
+		}
+		lock.unlock(this);
+		if (err.length()>0) {
+			Logger.err(this, err);
 		}
 		return err;
 	}
@@ -106,17 +143,31 @@ public class Network {
 		lock.unlock(this);
 	}
 
+	public RunCode getResetConnectionsRunCode() {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				resetConnections();
+				return true;
+			}
+		};
+	}
+
 	public boolean resetConnections() {
 		boolean r = false;
-		lock.lock(this);
-		if (processors.size()>0) {
-			CodeRunnerList runnerList = new CodeRunnerList();
-			for (NetworkProcessor processor: processors) {
-				processor.resetConnections(runnerList);
+		if (!busy.isBusy()) {
+			lock.lock(this);
+			busy.setBusy(true);
+			if (processors.size()>0) {
+				CodeRunnerList runnerList = new CodeRunnerList();
+				for (NetworkProcessor processor: processors) {
+					processor.resetConnections(runnerList);
+				}
+				r = Waiter.startAndWaitFor(runnerList, config.initializeTimeoutMs);
 			}
-			r = Waiter.startAndWaitFor(runnerList, config.resetStateTimeoutMs);
+			busy.setBusy(false);
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 		return r;
 	}
 	
@@ -138,10 +189,12 @@ public class Network {
 	
 	public boolean processIO(NetworkIO networkIO) {
 		List<String> valueNames = networkIO.getValueNames();
+		boolean initialized = false;
 		lock.lock(this);
 		if (processors.size()==0) {
 			networkIO.addError(new Str("Network has not been initialized"));
 		} else {
+			initialized = true;
 			for (String name: config.inputNames) {
 				if (!valueNames.contains(name)) {
 					Str err = new Str();
@@ -152,7 +205,7 @@ public class Network {
 			}
 		}
 		lock.unlock(this);
-		if (!networkIO.hasErrors()) {
+		if (initialized && !networkIO.hasErrors()) {
 			lock.lock(this);
 			currentIO = networkIO;
 			if (!Waiter.startAndWaitFor(processorChain, currentIO.getTimeoutMs())) {
@@ -173,6 +226,14 @@ public class Network {
 		lock.unlock(this);
 		return r;
 	}
+
+	public NetworkIO setDirectory(String directory) {
+		NetworkIO r = null;
+		lock.lock(this);
+		config.directory = directory;
+		lock.unlock(this);
+		return r;
+	}
 	
 	public Str save() {
 		return saveLoad(true);
@@ -180,6 +241,19 @@ public class Network {
 
 	public Str load() {
 		return saveLoad(false);
+	}
+
+	public RunCode getSaveRunCode() {
+		return this.getSaveLoadRunCode(true);
+	}
+
+	public RunCode getLoadRunCode() {
+		return this.getSaveLoadRunCode(false);
+	}
+
+	@Override
+	public boolean isBusy() {
+		return busy.isBusy();
 	}
 	
 	protected CodeRunnerList buildInitializeRunnerListNoLock(boolean resetConnections) {
@@ -333,42 +407,67 @@ public class Network {
 			}
 		}
 	}
+
+	protected RunCode getSaveLoadRunCode(boolean save) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				saveLoad(save);
+				return true;
+			}
+		};
+	}
 	
 	protected Str saveLoad(boolean save) {
 		Str err = new Str();
-		if (save) {
-			Logger.dbg(this, new Str("Saving network ..."));
-		} else {
-			Logger.dbg(this, new Str("Loading network ..."));
-		}
-		lock.lock(this);
-		int timeoutMs = config.saveTimeoutMs;
-		if (!save) {
-			timeoutMs = config.loadTimeoutMs;
-		}
-		CodeRunnerList runnerList = buildSaveLoadRunnerList(save,config.directory);
-		if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
+		if (!busy.isBusy()) {
 			if (save) {
-				err.sb().append("Saving network timed out");
+				Logger.dbg(this, new Str("Saving network ..."));
 			} else {
-				err.sb().append("Loading network timed out");
+				Logger.dbg(this, new Str("Loading network ..."));
 			}
-		}
-		lock.unlock(this);
-		if (err.length()==0) {
-			if (save) {
-				Logger.dbg(this, new Str("Saved network"));
+			lock.lock(this);
+			busy.setBusy(true);
+			int timeoutMs = config.saveTimeoutMs;
+			if (!save) {
+				timeoutMs = config.loadTimeoutMs;
+			}
+			CodeRunnerList runnerList = buildSaveLoadRunnerList(save,config.directory);
+			if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
+				if (save) {
+					err.sb().append("Saving network timed out");
+				} else {
+					err.sb().append("Loading network timed out");
+				}
+			}
+			busy.setBusy(false);
+			lock.unlock(this);
+			if (err.length()==0) {
+				if (save) {
+					Logger.dbg(this, new Str("Saved network"));
+				} else {
+					Logger.dbg(this, new Str("Loaded network"));
+				}
 			} else {
-				Logger.dbg(this, new Str("Loaded network"));
+				Logger.err(this, err);
 			}
-		} else {
-			Logger.err(this, err);
 		}
 		return err;
 	}
 	
 	protected CodeRunnerList buildSaveLoadRunnerList(boolean save, String directory) {
 		CodeRunnerList r = new CodeRunnerList();
+		if (save) {
+			RunCode code = new RunCode() {
+				@Override
+				protected boolean run() {
+					Logger.dbg(this, new Str("Writing " + config.getFileName() + " ..."));
+					config.toFile();
+					return true;
+				}
+			};
+			r.add(code);
+		}
 		for (Processor processor: processors) {
 			RunCode code = new RunCode() {
 				@Override

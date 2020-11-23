@@ -72,6 +72,9 @@ public class TestHttpServer extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Logger logger = new Logger(true);
+		
+		FileIO.mkDirs("http");
+		
 		HttpServerConfig config = new HttpServerConfig(logger);
 		config.setAllowAll();
 		config.setDebugLogHeaders(true);
@@ -140,6 +143,10 @@ public class TestHttpServer extends TestObject {
 		System.out.println();
 		System.out.println("Action log;");
 		System.out.println(FileIO.getActionLogStr());
+		
+		FileIO.renameDir("http", "http_old");
+		assertEqual(FileIO.checkFile("http_old/index.html"),new Str(),"Directory file rename failed");
+		assertEqual(FileIO.listFiles("http_old").size(),1,"List files result does not match expectation");
 		
 		assertEqual(HttpClientManager.getConnectedClients().size(),0,"Number of connected clients does not match expectation");		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");

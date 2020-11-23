@@ -67,12 +67,7 @@ public class TestPatternGenerator extends TestObject {
 			network = TestInstrumentNetwork.createAndTrainNetwork();
 		} else {
 			FileIO.mockIO = false;
-			config.fromFile();
-			System.out.println(config.getDescription());
-			System.out.println();
-			network.configure(config);
-			network.initialize(false);
-			network.load();
+			network.initializeAndLoad(config);
 			FileIO.mockIO = true;
 		}
 		

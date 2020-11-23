@@ -162,6 +162,7 @@ public class TestCollections extends TestObject {
 		}
 		if (!hasFailures()) {
 			String dir = "data/";
+			FileIO.mkDirs(dir);
 			FileIO.writeFile(new Str("Remove me"),dir + "2.txt");
 			
 			PartitionedCollection collection = new PartitionedCollection();
@@ -175,7 +176,7 @@ public class TestCollections extends TestObject {
 			error = collection.fromPath(dir);
 			
 			List<Str> actionLog = FileIO.getActionLog();
-			assertEqual(actionLog.size(),6,"Number of actions does not match expectation");
+			assertEqual(actionLog.size(),7,"Number of actions does not match expectation");
 			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "2.txt"),true,"Expected write 2 not exectuted");
 			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "0.txt"),true,"Expected write 0 not exectuted");
 			assertEqual(Str.contains(actionLog,FileIO.WRITE + dir + "1.txt"),true,"Expected write 1 not exectuted");

@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.collection.PersistableCollection;
+import nl.zeesoft.zdk.collection.CompressedCollection;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;
 import nl.zeesoft.zdk.neural.processors.MergerConfig;
 import nl.zeesoft.zdk.neural.processors.SDRProcessorConfig;
@@ -67,11 +67,11 @@ public class NetworkConfig {
 	}
 	
 	public Str toFile() {
-		return PersistableCollection.toFile(this, getFileName());
+		return CompressedCollection.toFile(this, getFileName());
 	}
 	
 	public void fromFile() {
-		Object obj = PersistableCollection.fromFile(getFileName());
+		Object obj = CompressedCollection.fromFile(getFileName());
 		if (obj!=null && obj instanceof NetworkConfig) {
 			copyFrom((NetworkConfig) obj);
 		}

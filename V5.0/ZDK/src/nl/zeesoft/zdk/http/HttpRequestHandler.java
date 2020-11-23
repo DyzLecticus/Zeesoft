@@ -35,7 +35,7 @@ public class HttpRequestHandler {
 	
 	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
 		String path = request.getPath();
-		Str error = FileIO.checkDirectory(parseDirectoryFromFile(path));
+		Str error = FileIO.checkDirectory(FileIO.getDirName(path));
 		if (error.length()>0) {
 			setError(response,HttpURLConnection.HTTP_PRECON_FAILED,error);
 		} else {
@@ -90,13 +90,5 @@ public class HttpRequestHandler {
 		response.code = code;
 		response.message = error.toString();
 		response.body = error;
-	}
-	
-	protected String parseDirectoryFromFile(String path) {
-		String[] split = path.split("/");
-		if (split.length>1) {
-			path = path.substring(0,path.length() - split[split.length - 1].length());
-		}
-		return path;
 	}
 }

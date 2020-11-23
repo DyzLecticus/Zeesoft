@@ -48,6 +48,14 @@ public class CompressedCollection extends PersistableCollection {
 		return id;
 	}
 	
+	public static Str toFile(Object object, String path) {
+		return toFile(new CompressedCollection(), object, path);
+	}
+	
+	public static Object fromFile(String path) {
+		return fromFile(new CompressedCollection(), path);
+	}
+
 	@Override
 	protected void clearNoLock() {
 		super.clearNoLock();

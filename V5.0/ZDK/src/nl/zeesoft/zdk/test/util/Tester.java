@@ -11,6 +11,8 @@ import nl.zeesoft.zdk.Instantiator;
  * It is designed to sequentially execute tests that extend the abstract TestObject class.
  */
 public final class Tester {
+	private static String		STOP_ON_FAILURE	= "STOP_ON_FAILURE";
+	
 	private String				baseUrl			= "";
 	private List<TestObject>	tests 			= new ArrayList<TestObject>();
 	private List<MockObject>	mocks			= new ArrayList<MockObject>();
@@ -41,6 +43,11 @@ public final class Tester {
 	 */
 	public final boolean test(String[] args) {
 		boolean success = true;
+		
+		boolean stopOnFailure = false;
+		if (args!=null && args.length>=2 && args[1]!=null && args[1].equals(STOP_ON_FAILURE)) {
+			stopOnFailure = true;
+		}
 		
 		if (tests.size()==0) {
 			System.out.println(this.getClass().getName() + ": Nothing to test");
@@ -77,6 +84,10 @@ public final class Tester {
 			Runtime rt = Runtime.getRuntime();
 			rt.gc();
 			usedMemory.add((rt.totalMemory() - rt.freeMemory()) / 1024);
+			
+			if (failures.size()>0 && stopOnFailure) {
+				break;
+			}
 		}
 		
 		System.out.println();
@@ -95,10 +106,10 @@ public final class Tester {
 			System.out.println("All " + tests.size() + " tests have been executed successfully (" + assertions + " assertions).  ");
 			System.out.println("Total test duration: " + ((new Date()).getTime() - start.getTime()) + " ms (total sleep duration: " + sleepMs + " ms).  ");
 			System.out.println();
-			System.out.println("Memory usage per test;  ");
+			System.out.println("Memory usage and duration per test;  ");
 			i = 0;
 			for (TestObject test: tests) {
-				System.out.println(" * " + test.getClass().getName() + ": " + usedMemory.get(i) + " Kb / " + (usedMemory.get(i) / 1024) + " Mb");
+				System.out.println(" * " + test.getClass().getName() + ": " + usedMemory.get(i) + " Kb / " + (usedMemory.get(i) / 1024) + " Mb, " + test.getTotalMs() + " ms");
 				i++;
 			}
 		}

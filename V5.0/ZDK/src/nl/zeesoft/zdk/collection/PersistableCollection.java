@@ -74,14 +74,20 @@ public class PersistableCollection extends CompleteCollection {
 	}
 	
 	public static Str toFile(Object object, String path) {
-		PersistableCollection collection = new PersistableCollection();
+		return toFile(new PersistableCollection(), object, path);
+	}
+	
+	public static Object fromFile(String path) {
+		return fromFile(new PersistableCollection(), path);
+	}
+	
+	protected static Str toFile(PersistableCollection collection, Object object, String path) {
 		collection.put(object);
 		return collection.toPath(path);
 	}
 	
-	public static Object fromFile(String path) {
+	protected static Object fromFile(PersistableCollection collection, String path) {
 		Object r = null;
-		PersistableCollection collection = new PersistableCollection();
 		collection.fromPath(path);
 		if (collection.size()>0) {
 			r = collection.get(collection.getObjectIds().get(0));

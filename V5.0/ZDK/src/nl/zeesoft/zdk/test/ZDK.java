@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
 import nl.zeesoft.zdk.test.collection.TestCollections;
 import nl.zeesoft.zdk.test.grid.TestGrid;
 import nl.zeesoft.zdk.test.http.TestHttpServer;
@@ -47,7 +48,7 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * (Mock) File writing and reading  ");
 		System.out.println(" * Dynamic class instantiation and reflection  ");
 		System.out.println(" * Extended StringBuilder manipulation and validation  ");
-		System.out.println(" * TimeStamped logging  ");
+		System.out.println(" * Timestamped logging  ");
 		System.out.println(" * Multi threading  ");
 		System.out.println(" * Collection queries and persistence  ");
 		System.out.println(" * HTTP servers and requests  ");
@@ -65,10 +66,10 @@ public class ZDK extends LibraryObject {
 		System.out.println(" * SDRs have two dimensions by default in order to retain topographical properties throughout networks  ");
 		System.out.println(" * Individual SDR processors and networks use multi threading to maximize performance  ");
 		System.out.println(" * The spatial pooler does not support local inhibition  ");
-		System.out.println(" * The temporal memory does not generate any initial segments/synapses  ");
 		System.out.println(" * The temporal memory supports optional apical feedback  ");
 		System.out.println(" * The classifier can be configured to slowly forget old SDR associations  ");
 		System.out.println(" * The implementation allows for SDR processor and network customization via configuration and/or code extension   ");
+		System.out.println(" * The global default number of threads used per SDR processor can be controlled via the *ProcessorFactory.THREADS* constant (default = " + ProcessorFactory.THREADS + ") ");
 		System.out.println("  ");
 		describeRelease();
 		System.out.println();

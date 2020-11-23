@@ -33,12 +33,17 @@ public class TestNetwork extends TestObject {
 		System.out.println("This test shows how to use a *Network* to link *Processor* instances together. ");
 		System.out.println("A *NetworkConfig* instance can be used to configure the *Network* before initialization. ");
 		System.out.println("A *NetworkIO* instance can be used to feed input to the network and gather all the outputs of all processors in the network. ");
+		System.out.println("Network links that link from processors in higher layers are interpreted as feedback links. ");
+		System.out.println("Feedback links will receive the specified processor output from the previously processed *NetworkIO*. ");
 		System.out.println("Non-SDR network input values will be wrapped in a *KeyValueSDR* before being passed to a processor. ");
+		System.out.println("Processor thread usage numbers can be specified for each individual processor via the configuration. ");
+		System.out.println("Processor learning and certain processor specific properties can be changed after initialization. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
 		System.out.println("// Create the configuration");
 		System.out.println("NetworkConfig config = new NetworkConfig();");
+		System.out.println("config.directory = \"directoryName\";");
 		System.out.println("// Define a network input");
 		System.out.println("config.inputNames.add(\"input1\");");
 		System.out.println("// Add some processors");
@@ -56,12 +61,18 @@ public class TestNetwork extends TestObject {
 		System.out.println("Network network = new Network();");
 		System.out.println("network.configure(config);");
 		System.out.println("network.initialize(true);");
+		System.out.println("// Turn on step 1 accuracy logging in the classifier");
+		System.out.println("network.setProcessorProperty(\"CL\", \"logPredictionAccuracy\", true);");
 		System.out.println("// Use the network");
 		System.out.println("NetworkIO io = new NetworkIO();");
 		System.out.println("io.setValue(\"input1\", 1);");
 		System.out.println("network.processIO(io);");
-		System.out.println("// Save the network");
-		System.out.println("network.save(\"data/\");");
+		System.out.println("// Get the average classifier accuracy");
+		System.out.println("float accuracy = getAverageClassifierAccuracy(false);");
+		System.out.println("// Turn of learning for all processors");
+		System.out.println("network.setProcessorLearn(\"*\", false);");
+		System.out.println("// Save the network data to the configured directory");
+		System.out.println("network.save();");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
@@ -70,6 +81,7 @@ public class TestNetwork extends TestObject {
 		System.out.println(" * " + getTester().getLinkForClass(Processor.class));
 		System.out.println(" * " + getTester().getLinkForClass(NetworkConfig.class));
 		System.out.println(" * " + getTester().getLinkForClass(NetworkIO.class));
+		System.out.println(" * " + getTester().getLinkForClass(KeyValueSDR.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
 		System.out.println("The output of this test shows;  ");
@@ -150,14 +162,14 @@ public class TestNetwork extends TestObject {
 		network.setProcessorLearn("*", false);
 		network.save();
 		actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),7,"Number of actions does not match expectation(2)");
+		assertEqual(actionLog.size(),8,"Number of actions does not match expectation(2)");
 		
 		Network network2 = new Network();
-		network2.configure(config2);
-		network2.initialize(false);
-		network2.load();
+		Logger.setLoggerDebug(false);
+		network2.initializeAndLoad(config2);
+		Logger.setLoggerDebug(true);
 		actionLog = FileIO.getActionLog();
-		assertEqual(actionLog.size(),12,"Number of actions does not match expectation(3)");
+		assertEqual(actionLog.size(),14,"Number of actions does not match expectation(3)");
 		NetworkIO nIO = new NetworkIO();
 		for (String name: io.getValueNames()) {
 			nIO.setValue(name, io.getValue(name));
