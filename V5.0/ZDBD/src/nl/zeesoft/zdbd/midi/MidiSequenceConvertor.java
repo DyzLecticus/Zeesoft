@@ -14,6 +14,8 @@ import javax.sound.midi.Track;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.inst.Hihat;
+import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
 
 public class MidiSequenceConvertor {
 	public static final int							TEMPO			= 0x51;
@@ -98,12 +100,24 @@ public class MidiSequenceConvertor {
 					sample.accentVelocity = 90;
 					sample.hold = 0.9F;
 					sample.accentHold = 1.9F;
-				} else if (i==DrumConvertor.CYMBAL) {
+				} else if (i==DrumConvertor.CRASH) {
 					sample.midiNote = 70;
 					sample.velocity = 90;
 					sample.accentVelocity = 100;
 					sample.hold = 1.9F;
 					sample.accentHold = 3.9F;
+				} else if (i==DrumConvertor.PERCUSSION1) {
+					sample.midiNote = 76;
+					sample.velocity = 70;
+					sample.accentVelocity = 80;
+					sample.hold = 0.1F;
+					sample.accentHold = 0.2F;
+				} else if (i==DrumConvertor.PERCUSSION2) {
+					sample.midiNote = 77;
+					sample.velocity = 70;
+					sample.accentVelocity = 80;
+					sample.hold = 0.1F;
+					sample.accentHold = 0.2F;
 				}
 				drum.samples.add(sample);
 				convertors.put(name, drum);
@@ -121,7 +135,7 @@ public class MidiSequenceConvertor {
 	protected Sequence createSequence() {
 		Sequence r = null;
 		try {
-			r = new Sequence(Sequence.PPQ,RESOLUTION,InstrumentPattern.INSTRUMENT_NAMES.length + 1);
+			r = new Sequence(Sequence.PPQ,RESOLUTION,InstrumentPattern.INSTRUMENTS.size() + 1);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
@@ -129,7 +143,7 @@ public class MidiSequenceConvertor {
 	}
 
 	protected void addInitialSynthConfigToControlTrack(Sequence sequence) {
-		int controlTrack = InstrumentPattern.INSTRUMENT_NAMES.length;
+		int controlTrack = InstrumentPattern.INSTRUMENTS.size();
 		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
 			for (Integer control: SynthConfig.CONTROLS) {
 				int value = channelConfig.getControlValue(control);
@@ -156,30 +170,29 @@ public class MidiSequenceConvertor {
 		long sequenceEndTick = getSequenceEndTick(pattern.rythm);
 		int ticksPerStep = getTicksPerStep(pattern.rythm);
 		int stepsPerPattern = pattern.rythm.getStepsPerPattern();
-		for (int i = 0; i < InstrumentPattern.INSTRUMENT_NAMES.length; i++) {
-			String name = InstrumentPattern.INSTRUMENT_NAMES[i];
+		for (PatternInstrument inst: pattern.instruments) {
 			InstrumentConvertor convertor1 = null;
 			InstrumentConvertor convertor2 = null;
-			if (i==InstrumentPattern.HIHAT) {
+			if (inst.name().equals(Hihat.NAME)) {
 				convertor1 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.CLOSED_HIHAT]);
 				convertor2 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.OPEN_HIHAT]);
 			} else {
-				convertor1 = convertors.get(name);
+				convertor1 = convertors.get(inst.name());
 			}
 			if (convertor1!=null) {
 				for (int s = 0; s < stepsPerPattern; s++) {
 					List<MidiNote> mns = null;
-					if (i==InstrumentPattern.HIHAT && InstrumentPattern.isOpenHihat(pattern.pattern[s][i])) {
-						mns = convertor2.getMidiNotesForPatternNote(pattern.pattern[s][i]);
+					if (inst.name().equals(Hihat.NAME) && InstrumentPattern.isOpenHihat(inst.stepValues[s])) {
+						mns = convertor2.getMidiNotesForPatternValue(inst.stepValues[s]);
 					} else {
-						mns = convertor1.getMidiNotesForPatternNote(pattern.pattern[s][i]);
+						mns = convertor1.getMidiNotesForPatternValue(inst.stepValues[s]);
 					}
 					for (MidiNote mn: mns) {
 						long startTick = getStepTick(pattern.rythm,s);
 						if (startTick>sequenceEndTick) {
 							startTick = startTick % sequenceEndTick;
 						}
-						Track track = sequence.getTracks()[i];
+						Track track = sequence.getTracks()[inst.index];
 						createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick);
 						long add = (long)(mn.hold * (float)ticksPerStep);
 						long endTick = startTick + add;

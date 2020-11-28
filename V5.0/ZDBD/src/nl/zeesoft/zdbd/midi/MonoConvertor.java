@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
+import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
 
 public class MonoConvertor extends InstrumentConvertor {
 	public int		channel			= 0;
@@ -13,14 +14,14 @@ public class MonoConvertor extends InstrumentConvertor {
 	public float	hold			= 0.9F;
 	
 	@Override
-	public List<MidiNote> getMidiNotesForPatternNote(int note) {
+	public List<MidiNote> getMidiNotesForPatternValue(int value) {
 		List<MidiNote> r = new ArrayList<MidiNote>();
-		if (note!=InstrumentPattern.OFF) {
+		if (value!=PatternInstrument.OFF) {
 			MidiNote mn = new MidiNote();
 			mn.channel = channel;
 			mn.midiNote = midiNote;
-			mn.hold = ((float)(InstrumentPattern.getDurationForNote(note) - 1)) + hold;
-			if (InstrumentPattern.getAccentForNote(note)) {
+			mn.hold = ((float)(InstrumentPattern.getDurationForValue(value) - 1)) + hold;
+			if (InstrumentPattern.isAccent(value)) {
 				mn.velocity = accentVelocity;
 			} else {
 				mn.velocity = velocity;

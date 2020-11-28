@@ -4,89 +4,125 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.neural.encoders.BassEncoder;
+import nl.zeesoft.zdbd.neural.encoders.CymbalEncoder;
 import nl.zeesoft.zdbd.neural.encoders.DrumEncoder;
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdbd.neural.encoders.HihatEncoder;
+import nl.zeesoft.zdbd.neural.encoders.PercussionEncoder;
+import nl.zeesoft.zdbd.pattern.inst.Bass;
+import nl.zeesoft.zdbd.pattern.inst.Crash;
+import nl.zeesoft.zdbd.pattern.inst.Hihat;
+import nl.zeesoft.zdbd.pattern.inst.Kick;
+import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.inst.Percussion1;
+import nl.zeesoft.zdbd.pattern.inst.Percussion2;
+import nl.zeesoft.zdbd.pattern.inst.Ride;
+import nl.zeesoft.zdbd.pattern.inst.Snare;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
 public class InstrumentPattern {
-	public static final int			KICK				= 0;
-	public static final int			SNARE				= 1;
-	public static final int			HIHAT				= 2;
-	public static final int			RIDE				= 3;
-	public static final int			CYMBAL				= 4;
-	public static final int			BASS				= 5;
+	public static List<PatternInstrument>	INSTRUMENTS			= getInstruments();
 	
-	public static final String[]	INSTRUMENT_NAMES	= {
-		"Kick", "Snare", "Hihat", "Ride", "Cymbal", "Bass"
-	};
+	public int 								num					= 0;
+	public Rythm							rythm				= new Rythm();
+	public List<PatternInstrument>			instruments			= getInstruments();
 	
-	public static final int			OFF					= 0;
-	public static final int			ON					= 1;
-	public static final int			ACCENT				= 2;
+	public List<String> getInstrumentNames() {
+		List<String> r = new ArrayList<String>();
+		for (PatternInstrument inst: instruments) {
+			r.add(inst.name());
+		}
+		return r;
+	}
 	
-	public static final int			BASS_ACCENT			= 1;
-	
-	public Rythm					rythm				= new Rythm();
-	
-	public int 						num					= 0;
-	public int[][]					pattern				= null;
-	
-	public void initialize(Rythm rythm) {
-		this.rythm.copyFrom(rythm);
-		pattern = new int[rythm.getStepsPerPattern()][INSTRUMENT_NAMES.length];
-		for (int s = 0; s < rythm.getStepsPerPattern(); s++) {
-			for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
-				pattern[s][i] = OFF;
+	public PatternInstrument getInstrument(String name) {
+		PatternInstrument r = null;
+		for (PatternInstrument inst: instruments) {
+			if (inst.name().equals(name)) {
+				r = inst;
+				break;
+			}
+		}
+		return r;
+	}
+
+	public void setStepValue(String name, int step, int value) {
+		if (value>=0 && step>=0 && step<64) {
+			PatternInstrument inst = getInstrument(name);
+			if (inst!=null) {
+				inst.stepValues[step] = value;
 			}
 		}
 	}
-	
-	public void setKick(int step, int note) {
-		setDrumNote(step,KICK,note);
-	}
-	
-	public void setSnare(int step, int note) {
-		setDrumNote(step,SNARE,note);
-	}
-	
-	public void setHihat(int step, boolean open, int note) {
-		if (note>OFF && open) {
-			note += 2;
-		}
-		pattern[step][HIHAT] = note;
-	}
-	
-	public void setRide(int step, int note) {
-		setDrumNote(step,RIDE,note);
-	}
-	
-	public void setCymbal(int step, int note) {
-		setDrumNote(step,CYMBAL,note);
-	}
 
-	public void setDrumNote(int step, int drum, int note) {
-		if (note>=OFF && note<=ACCENT) {
-			pattern[step][drum] = note;
+	public int getStepValue(String name, int step) {
+		int r = 0;
+		if (step>=0 && step<64) {
+			PatternInstrument inst = getInstrument(name);
+			if (inst!=null) {
+				r = inst.stepValues[step];
+			}
 		}
+		return r;
 	}
 	
-	public void setBassNote(int step, int duration, boolean accent) {
+	public void setKick(int step, int value) {
+		setStepValue(Kick.NAME,step,value);
+	}
+	
+	public void setSnare(int step, int value) {
+		setStepValue(Snare.NAME,step,value);
+	}
+	
+	public void setHihat(int step, boolean open, int value) {
+		if (open) {
+			value += 2;
+		}
+		setStepValue(Hihat.NAME,step,value);
+	}
+	
+	public void setRide(int step, int value) {
+		setStepValue(Ride.NAME,step,value);
+	}
+	
+	public void setCrash(int step, int value) {
+		setStepValue(Crash.NAME,step,value);
+	}
+	
+	public void setPercussion1(int step, int value) {
+		setStepValue(Percussion1.NAME,step,value);
+	}
+	
+	public void setPercussion2(int step, int value) {
+		setStepValue(Percussion2.NAME,step,value);
+	}
+	
+	public void setBass(int step, int duration, boolean accent) {
 		if (duration>=1 && duration<=8) {
-			pattern[step][BASS] = getNoteForDuration(duration,accent);
+			setStepValue(Bass.NAME,step,getValueForDuration(duration,accent));
+		} else {
+			setStepValue(Bass.NAME,step,PatternInstrument.OFF);
 		}
 	}
 	
-	public static boolean isOpenHihat(int note) {
+	public static boolean isAccent(int value) {
 		boolean r = false;
-		if (note>=3) {
+		if (value>0) {
+			r = value % 2 == 0;
+		}
+		return r;
+	}
+	
+	public static boolean isOpenHihat(int value) {
+		boolean r = false;
+		if (value>=3) {
 			r = true;
 		}
 		return r;
 	}
 	
-	public static int getNoteForDuration(int duration, boolean accent) {
+	public static int getValueForDuration(int duration, boolean accent) {
 		int r = 0;
 		if (duration>=1 && duration<=8) {
 			r = (duration * 2) - 1;
@@ -97,79 +133,115 @@ public class InstrumentPattern {
 		return r;
 	}
 	
-	public static int getDurationForNote(int note) {
+	public static int getDurationForValue(int value) {
 		int r = 0;
-		if (note>0) {
-			boolean odd = note % 2 == 1;
+		if (value>0) {
+			boolean odd = value % 2 == 1;
 			if (odd) {
-				note = note + 1;
+				value = value + 1;
 			}
-			r = note / 2;
+			r = value / 2;
 		}
 		return r;
 	}
 	
-	public static boolean getAccentForNote(int note) {
-		boolean r = false;
-		if (note>0) {
-			r = note % 2 == 0;
-		}
-		return r;
-	}
-	
-	public List<SDR> getSDRsForPattern() {
+	public List<SDR> getSDRsForGroup(int group) {
 		List<SDR> r = new ArrayList<SDR>();
 		int stepsPerPattern = rythm.getStepsPerPattern();
 		for (int s = 0; s < stepsPerPattern; s++) {
-			r.add(getSDRForPatternStep(s));
+			if (group==1) {
+				r.add(getSDRForGroup1Step(s));
+			} else if (group==2) {
+				r.add(getSDRForGroup2Step(s));
+			}
 		}
 		return r;
 	}
-	
-	public SDR getSDRForPatternStep(int step) {
-		return getSDRForPatternStep(step, pattern[step]);
-	}
-	
-	public static SDR getSDRForPatternStep(int step, int values[]) {
-		SDR r = null;
+
+	public SDR getSDRForGroup1Step(int step) {
 		DrumEncoder dEnc = EncoderFactory.drumEncoder;
 		HihatEncoder hEnc = EncoderFactory.hihatEncoder;
 		BassEncoder bEnc = EncoderFactory.bassEncoder;
-		int sizeX = (dEnc.getEncodeLength() * (INSTRUMENT_NAMES.length - 2)) + hEnc.getEncodeLength() + bEnc.getEncodeLength();
-		KeyValueSDR kvSdr = new KeyValueSDR(sizeX , 1);
+		
+		int l = dEnc.getEncodeLength() + dEnc.getEncodeLength() + hEnc.getEncodeLength() + bEnc.getEncodeLength();
+		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
+		
 		int offset = 0;
-		for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
-			if (i==HIHAT) {
-				kvSdr.concat(hEnc.getEncodedValue(values[i]), offset);
-				offset += hEnc.getEncodeLength();
-			} else if (i==BASS) {
-				kvSdr.concat(bEnc.getEncodedValue(values[i]), offset);
-				offset += bEnc.getEncodeLength();
-			} else {
-				kvSdr.concat(dEnc.getEncodedValue(values[i]), offset);
-				offset += dEnc.getEncodeLength();
+		kvSdr.concat(dEnc.getEncodedValue(getStepValue(Kick.NAME,step)), offset);
+		offset += dEnc.getEncodeLength();
+		
+		kvSdr.concat(dEnc.getEncodedValue(getStepValue(Snare.NAME,step)), offset);
+		offset += dEnc.getEncodeLength();
+		
+		kvSdr.concat(hEnc.getEncodedValue(getStepValue(Hihat.NAME,step)), offset);
+		offset += hEnc.getEncodeLength();
+		
+		kvSdr.concat(bEnc.getEncodedValue(getStepValue(Bass.NAME,step)), offset);
+
+		for (PatternInstrument inst: instruments) {
+			if (inst.group()==1) {
+				kvSdr.put(inst.name(), inst.stepValues[step]);
 			}
-			kvSdr.put(INSTRUMENT_NAMES[i], values[i]);
 		}
-		r = kvSdr;
-		return r;
+		
+		return kvSdr;
 	}
 
-	public static int sizeX() {
-		return getEmptyPatternSDR().sizeX();
+	public SDR getSDRForGroup2Step(int step) {
+		CymbalEncoder cEnc = EncoderFactory.cymbalEncoder;
+		PercussionEncoder pEnc = EncoderFactory.percussionEncoder;
+		
+		int l = cEnc.getEncodeLength() + pEnc.getEncodeLength();
+		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
+		
+		int offset = 0;
+		int[] cymbalValue = {getStepValue(Ride.NAME,step),getStepValue(Crash.NAME,step)};
+		kvSdr.concat(cEnc.getEncodedValue(cymbalValue), offset);
+		offset += cEnc.getEncodeLength();
+		
+		int[] percussionValue = {getStepValue(Percussion1.NAME,step),getStepValue(Percussion2.NAME,step)};
+		kvSdr.concat(pEnc.getEncodedValue(percussionValue), offset);
+
+		for (PatternInstrument inst: instruments) {
+			if (inst.group()==2) {
+				kvSdr.put(inst.name(), inst.stepValues[step]);
+			}
+		}
+		
+		return kvSdr;
 	}
 
-	public static int sizeY() {
-		return getEmptyPatternSDR().sizeY();
+	public static int sizeX(int group) {
+		return groupSDR(group).sizeX();
+	}
+
+	public static int sizeY(int group) {
+		return groupSDR(group).sizeY();
 	}
 	
-	public static SDR getEmptyPatternSDR() {
-		int l = EncoderFactory.drumEncoder.getEncodeLength() * (InstrumentPattern.INSTRUMENT_NAMES.length - 2);
-		l += EncoderFactory.hihatEncoder.getEncodeLength();
-		l += EncoderFactory.bassEncoder.getEncodeLength();
-		SDR r = new SDR(l,1);
+	private static SDR groupSDR(int group) {
+		SDR r = null;
+		InstrumentPattern p = new InstrumentPattern();
+		if (group==1) {
+			r = p.getSDRForGroup1Step(0);
+		} else if (group==2) {
+			r = p.getSDRForGroup2Step(0);
+		}
 		r.flatten();
 		r.square();
+		return r;
+	}
+	
+	private static List<PatternInstrument> getInstruments() {
+		List<PatternInstrument> r = new ArrayList<PatternInstrument>();
+		r.add(new Kick(0));
+		r.add(new Snare(1));
+		r.add(new Hihat(2));
+		r.add(new Ride(3));
+		r.add(new Crash(4));
+		r.add(new Percussion1(5));
+		r.add(new Percussion2(6));
+		r.add(new Bass(7));
 		return r;
 	}
 }

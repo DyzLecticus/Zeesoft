@@ -5,9 +5,11 @@ import javax.sound.midi.Sequence;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.PatternGenerator;
-import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.inst.Bass;
+import nl.zeesoft.zdbd.pattern.inst.Crash;
+import nl.zeesoft.zdbd.pattern.inst.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.Network;
@@ -95,9 +97,9 @@ public class TestPatternGenerator extends TestObject {
 			
 			PatternGenerator generator = new PatternGenerator();
 			generator.prevIO = lastIO;
-			generator.skipInstruments.add(InstrumentPattern.RIDE);
-			generator.skipInstruments.add(InstrumentPattern.CYMBAL);
-			generator.skipInstruments.add(InstrumentPattern.BASS);
+			generator.skipInstruments.add(Ride.NAME);
+			generator.skipInstruments.add(Crash.NAME);
+			generator.skipInstruments.add(Bass.NAME);
 	
 			sequence = generator.generatePatternSequence(network, sequence);
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);

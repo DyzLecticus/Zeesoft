@@ -57,26 +57,31 @@ public class TestEncoders extends TestObject {
 		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
 		displaySDRList(sdrs);
 		
-		sdrs = pattern.getSDRsForPattern();
+		sdrs = pattern.getSDRsForGroup(1);
 		System.out.println();
-		System.out.println("Pattern (" + InstrumentPattern.sizeX() + "*" + InstrumentPattern.sizeY() + ");");
+		System.out.println("Group 1 pattern (" + InstrumentPattern.sizeX(1) + "*" + InstrumentPattern.sizeY(1) + ");");
 		displaySDRList(sdrs);
 		
-		assertEqual(InstrumentPattern.getNoteForDuration(0,false),0,"Note does not match expectation (1)");
-		assertEqual(InstrumentPattern.getNoteForDuration(1,false),1,"Note does not match expectation (2)");
-		assertEqual(InstrumentPattern.getNoteForDuration(1,true),2,"Note does not match expectation (3)");
-		assertEqual(InstrumentPattern.getNoteForDuration(2,false),3,"Note does not match expectation (4)");
-		assertEqual(InstrumentPattern.getNoteForDuration(2,true),4,"Note does not match expectation (5)");
+		sdrs = pattern.getSDRsForGroup(2);
+		System.out.println();
+		System.out.println("Group 2 pattern (" + InstrumentPattern.sizeX(2) + "*" + InstrumentPattern.sizeY(2) + ");");
+		displaySDRList(sdrs);
 		
-		assertEqual(InstrumentPattern.getDurationForNote(0),0,"Duration does not match expectation (1)");
-		assertEqual(InstrumentPattern.getDurationForNote(1),1,"Duration does not match expectation (2)");
-		assertEqual(InstrumentPattern.getDurationForNote(2),1,"Duration does not match expectation (3)");
-		assertEqual(InstrumentPattern.getDurationForNote(3),2,"Duration does not match expectation (4)");
-		assertEqual(InstrumentPattern.getDurationForNote(4),2,"Duration does not match expectation (5)");
+		assertEqual(InstrumentPattern.getValueForDuration(0,false),0,"Note does not match expectation (1)");
+		assertEqual(InstrumentPattern.getValueForDuration(1,false),1,"Note does not match expectation (2)");
+		assertEqual(InstrumentPattern.getValueForDuration(1,true),2,"Note does not match expectation (3)");
+		assertEqual(InstrumentPattern.getValueForDuration(2,false),3,"Note does not match expectation (4)");
+		assertEqual(InstrumentPattern.getValueForDuration(2,true),4,"Note does not match expectation (5)");
 		
-		assertEqual(InstrumentPattern.getAccentForNote(0),false,"Accent does not match expectation (1)");
-		assertEqual(InstrumentPattern.getAccentForNote(3),false,"Accent does not match expectation (2)");
-		assertEqual(InstrumentPattern.getAccentForNote(4),true,"Accent does not match expectation (3)");
+		assertEqual(InstrumentPattern.getDurationForValue(0),0,"Duration does not match expectation (1)");
+		assertEqual(InstrumentPattern.getDurationForValue(1),1,"Duration does not match expectation (2)");
+		assertEqual(InstrumentPattern.getDurationForValue(2),1,"Duration does not match expectation (3)");
+		assertEqual(InstrumentPattern.getDurationForValue(3),2,"Duration does not match expectation (4)");
+		assertEqual(InstrumentPattern.getDurationForValue(4),2,"Duration does not match expectation (5)");
+		
+		assertEqual(InstrumentPattern.isAccent(0),false,"Accent does not match expectation (1)");
+		assertEqual(InstrumentPattern.isAccent(3),false,"Accent does not match expectation (2)");
+		assertEqual(InstrumentPattern.isAccent(4),true,"Accent does not match expectation (3)");
 	}
 	
 	private void displaySDRList(List<SDR> sdrs) {

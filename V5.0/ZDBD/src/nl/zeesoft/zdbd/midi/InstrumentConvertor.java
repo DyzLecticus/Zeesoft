@@ -5,5 +5,5 @@ import java.util.List;
 public abstract class InstrumentConvertor {
 	public String 	name	= "";
 	
-	public abstract List<MidiNote> getMidiNotesForPatternNote(int note);
+	public abstract List<MidiNote> getMidiNotesForPatternValue(int value);
 }

@@ -7,11 +7,15 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.AbstractScalarEncoder;
 
 public class EncoderFactory {
-	private static int				ON_BITS			= 2;
-	public static ContextEncoder	contextEncoder	= new ContextEncoder(ON_BITS);
-	public static DrumEncoder		drumEncoder		= new DrumEncoder(ON_BITS);
-	public static HihatEncoder		hihatEncoder	= new HihatEncoder(ON_BITS);
-	public static BassEncoder		bassEncoder		= new BassEncoder(ON_BITS);
+	private static int					ON_BITS				= 2;
+	
+	public static ContextEncoder		contextEncoder		= new ContextEncoder(ON_BITS);
+	public static DrumEncoder			drumEncoder			= new DrumEncoder(ON_BITS);
+	public static HihatEncoder			hihatEncoder		= new HihatEncoder(ON_BITS);
+	public static CymbalEncoder			cymbalEncoder		= new CymbalEncoder(ON_BITS);
+	public static PercussionEncoder		percussionEncoder	= new PercussionEncoder(ON_BITS);
+	
+	public static BassEncoder			bassEncoder			= new BassEncoder(ON_BITS);
 	
 	public static Str testEncoders() {
 		Str r = new Str();
@@ -32,6 +36,8 @@ public class EncoderFactory {
 		r.add(contextEncoder);
 		r.add(drumEncoder);
 		r.add(hihatEncoder);
+		r.add(cymbalEncoder);
+		r.add(percussionEncoder);
 		r.add(bassEncoder);
 		return r;
 	}

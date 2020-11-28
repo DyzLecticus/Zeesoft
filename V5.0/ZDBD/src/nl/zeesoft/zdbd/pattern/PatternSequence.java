@@ -20,7 +20,7 @@ public class PatternSequence {
 	public List<InstrumentPattern> getSequencedPatterns() {
 		List<InstrumentPattern> r = new ArrayList<InstrumentPattern>();
 		for (int i = 0; i < sequence.length; i++) {
-			if (sequence[i] < patterns.size()) {
+			if (sequence[i]>= 0 && sequence[i] < patterns.size()) {
 				r.add(patterns.get(sequence[i]));
 			}
 		}
@@ -43,8 +43,9 @@ public class PatternSequence {
 			int stepsPerPattern = pattern.rythm.getStepsPerPattern();
 			for (int s = 0; s < stepsPerPattern; s++) {
 				NetworkIO io = new NetworkIO();
-				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, pattern.rythm.getSDRForPatternStep(pattern.num, s));
-				io.setValue(NetworkConfigFactory.PATTERN_INPUT, pattern.getSDRForPatternStep(s));
+				io.setValue(NetworkConfigFactory.RYTHM_INPUT, pattern.rythm.getSDRForPatternStep(pattern.num, s));
+				io.setValue(NetworkConfigFactory.GROUP1_INPUT, pattern.getSDRForGroup1Step(s));
+				io.setValue(NetworkConfigFactory.GROUP2_INPUT, pattern.getSDRForGroup2Step(s));
 				r.add(io);
 			}
 		}
