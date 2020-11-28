@@ -1,8 +1,6 @@
 package nl.zeesoft.zdbd.midi;
 
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -24,15 +22,11 @@ public class MidiSequenceConvertor {
 	
 	public int										beatsPerMinute	= 120;
 	
-	public SortedMap<String,InstrumentConvertor>	convertors		= new TreeMap<String,InstrumentConvertor>();
+	public InstrumentConvertors						convertors		= new InstrumentConvertors();
 
-	public MidiSequenceConvertor() {
-		initializeDefaults();
-	}
-	
 	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
 		Sequence r = createSequence();
-		addInitialSynthConfigToControlTrack(r);
+		addInitialSynthConfig(r);
 		addTempoMetaEventToSequence(r);
 		
 		List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
@@ -55,81 +49,8 @@ public class MidiSequenceConvertor {
 	public Sequence generateSequenceForPattern(InstrumentPattern pattern) {
 		Sequence r = generateNoteSequenceForPattern(pattern);
 		addTempoMetaEventToSequence(r);
-		addInitialSynthConfigToControlTrack(r);
+		addInitialSynthConfig(r);
 		return r;
-	}
-	
-	public void initializeDefaults() {
-		convertors.clear();
-		for (int i = 0; i < DrumConvertor.INSTRUMENT_NAMES.length; i++) {
-			String name = DrumConvertor.INSTRUMENT_NAMES[i];
-			if (i==DrumConvertor.BASS) {
-				BassConvertor bass = new BassConvertor();
-				bass.name = name;
-				BassLayerConvertor layer1 = new BassLayerConvertor();
-				layer1.channel = SynthConfig.BASS_CHANNEL_1;
-				bass.layers.add(layer1);
-				BassLayerConvertor layer2 = new BassLayerConvertor();
-				layer2.channel = SynthConfig.BASS_CHANNEL_2;
-				layer2.velocity = 40;
-				layer2.accentVelocity = 50;
-				bass.layers.add(layer2);
-				convertors.put(name, bass);
-			} else {
-				DrumConvertor drum = new DrumConvertor();
-				drum.name = name;
-				DrumSampleConvertor sample = new DrumSampleConvertor();
-				if (i==DrumConvertor.KICK) {
-					sample.midiNote = 35;
-					sample.accentVelocity = 110;
-					sample.accentVelocity = 127;
-				} else if (i==DrumConvertor.SNARE) {
-					sample.midiNote = 50;
-					sample.velocity = 80;
-					sample.accentVelocity = 100;
-					sample.hold = 0.8F;
-					sample.accentHold = 1.0F;
-				} else if (i==DrumConvertor.CLOSED_HIHAT) {
-					sample.midiNote = 44;
-					sample.velocity = 70;
-					sample.accentVelocity = 80;
-					sample.hold = 0.2F;
-					sample.accentHold = 0.3F;
-				} else if (i==DrumConvertor.OPEN_HIHAT) {
-					sample.midiNote = 45;
-					sample.velocity = 80;
-					sample.accentVelocity = 90;
-					sample.hold = 0.5F;
-					sample.accentHold = 0.8F;
-				} else if (i==DrumConvertor.RIDE) {
-					sample.midiNote = 69;
-					sample.velocity = 80;
-					sample.accentVelocity = 90;
-					sample.hold = 0.9F;
-					sample.accentHold = 1.9F;
-				} else if (i==DrumConvertor.CRASH) {
-					sample.midiNote = 70;
-					sample.velocity = 90;
-					sample.accentVelocity = 100;
-					sample.hold = 1.9F;
-					sample.accentHold = 3.9F;
-				} else if (i==DrumConvertor.PERCUSSION1) {
-					sample.midiNote = 76;
-					sample.velocity = 80;
-					sample.accentVelocity = 90;
-					sample.hold = 0.1F;
-					sample.accentHold = 0.2F;
-				} else if (i==DrumConvertor.PERCUSSION2) {
-					sample.midiNote = 77;
-					sample.velocity = 70;
-					sample.accentVelocity = 80;
-					sample.hold = 0.1F;
-					sample.accentHold = 0.2F;
-				}
-				drum.samples.add(sample);
-				convertors.put(name, drum);
-			}
-		}
 	}
 	
 	protected Sequence generateNoteSequenceForPattern(InstrumentPattern pattern) {
@@ -149,7 +70,7 @@ public class MidiSequenceConvertor {
 		return r;
 	}
 
-	protected void addInitialSynthConfigToControlTrack(Sequence sequence) {
+	protected void addInitialSynthConfig(Sequence sequence) {
 		int controlTrack = InstrumentPattern.INSTRUMENTS.size();
 		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
 			for (Integer control: SynthConfig.CONTROLS) {
@@ -162,7 +83,8 @@ public class MidiSequenceConvertor {
 	}
 	
 	protected void addTempoMetaEventToSequence(Sequence sequence) {
-		Track track = sequence.getTracks()[0];
+		int controlTrack = InstrumentPattern.INSTRUMENTS.size();
+		Track track = sequence.getTracks()[controlTrack];
 		int tempo = (60000000 / beatsPerMinute);
 		byte[] b = new byte[3];
 		int tmp = tempo >> 16;
@@ -181,8 +103,8 @@ public class MidiSequenceConvertor {
 			InstrumentConvertor convertor1 = null;
 			InstrumentConvertor convertor2 = null;
 			if (inst.name().equals(Hihat.NAME)) {
-				convertor1 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.CLOSED_HIHAT]);
-				convertor2 = convertors.get(DrumConvertor.INSTRUMENT_NAMES[DrumConvertor.OPEN_HIHAT]);
+				convertor1 = convertors.get(InstrumentConvertors.getInstrumentName(InstrumentConvertors.CLOSED_HIHAT));
+				convertor2 = convertors.get(InstrumentConvertors.getInstrumentName(InstrumentConvertors.OPEN_HIHAT));
 			} else {
 				convertor1 = convertors.get(inst.name());
 			}

@@ -32,6 +32,7 @@ public class PatternGenerator {
 	public float			mixEnd				= 1.0F; // 0 - 1
 	public float			maintainBeat		= 1.0F; // 0 - 1
 	public List<String>		skipInstruments		= new ArrayList<String>();
+	public boolean			maintainFeedback	= true;
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
 		PatternSequence r = new PatternSequence();
@@ -216,7 +217,9 @@ public class PatternGenerator {
 		for (PatternInstrument inst: pattern.instruments) {
 			if (basePattern!=null && (ori || skipInstruments.contains(inst.name()))) {
 				inst.stepValues[step] = basePattern.getInstrument(inst.name()).stepValues[step];
-				values[inst.index] = inst.stepValues[step];
+				if (maintainFeedback) {
+					values[inst.index] = inst.stepValues[step];
+				}
 			} else {
 				inst.stepValues[step] = values[inst.index];
 			}
