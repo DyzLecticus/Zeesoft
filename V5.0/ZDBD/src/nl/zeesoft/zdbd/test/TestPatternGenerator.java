@@ -70,6 +70,7 @@ public class TestPatternGenerator extends TestObject {
 		} else {
 			FileIO.mockIO = false;
 			network.initializeAndLoad(config);
+			network.setProcessorProperty("*", "sequential", true);
 			FileIO.mockIO = true;
 		}
 		
@@ -80,7 +81,6 @@ public class TestPatternGenerator extends TestObject {
 			System.out.println();
 			MidiSys.initialize();
 			
-			// Load soundbanks
 			CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
 				"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",
 				"../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2"
@@ -88,13 +88,11 @@ public class TestPatternGenerator extends TestObject {
 			chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 			Waiter.startAndWaitFor(chain,3000);
 			
+			System.out.println();
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
 			PatternGenerator generator = new PatternGenerator();
 			generator.prevIO = lastIO;
-			generator.skipInstruments.add(Ride.NAME);
-			generator.skipInstruments.add(Crash.NAME);
-			generator.skipInstruments.add(Bass.NAME);
-	
+			generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
 			PatternSequence generated = generator.generatePatternSequence(network, sequence);
 			
 			Sequence midiSequence = null;

@@ -28,13 +28,18 @@ public class PatternGenerator {
 	public boolean			randomChunkOffset	= true;
 	
 	// Mix controls
-	public float			mixStart			= 0.5F; // 0 - 1
+	public String[]			skipInstruments		= new String[0];
+	public float			mixStart			= 0.2F; // 0 - 1
 	public float			mixEnd				= 1.0F; // 0 - 1
 	public float			maintainBeat		= 1.0F; // 0 - 1
-	public List<String>		skipInstruments		= new ArrayList<String>();
-	public boolean			maintainFeedback	= true;
+	public boolean			maintainFeedback	= false;
 
+	public void setSkipInstruments(String ... names) {
+		skipInstruments = names;
+	}
+	
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
+		Logger.dbg(this, new Str("Generating sequence ..."));
 		PatternSequence r = new PatternSequence();
 		for (InstrumentPattern pattern: sequence.patterns) {
 			r.patterns.add(generatePattern(network,sequence,pattern.num));
@@ -42,6 +47,7 @@ public class PatternGenerator {
 		for (int p = 0; p < r.sequence.length; p++) {
 			r.sequence[p] = sequence.sequence[p];
 		}
+		Logger.dbg(this, new Str("Generated sequence"));
 		return r;
 	}
 	
@@ -215,7 +221,7 @@ public class PatternGenerator {
 	protected int[] addPredictedValuesToPattern(InstrumentPattern pattern, int step, NetworkIO workingIO, InstrumentPattern basePattern, boolean ori) {
 		int values[] = getPredictedValuesFromPreviousIO(workingIO);
 		for (PatternInstrument inst: pattern.instruments) {
-			if (basePattern!=null && (ori || skipInstruments.contains(inst.name()))) {
+			if (basePattern!=null && (ori || skipInstrumentsContains(inst.name()))) {
 				inst.stepValues[step] = basePattern.getInstrument(inst.name()).stepValues[step];
 				if (maintainFeedback) {
 					values[inst.index] = inst.stepValues[step];
@@ -225,5 +231,16 @@ public class PatternGenerator {
 			}
 		}
 		return values;
+	}
+	
+	protected boolean skipInstrumentsContains(String name) {
+		boolean r = false;
+		for (int i = 0; i < skipInstruments.length; i++) {
+			if (skipInstruments[i].equals(name)) {
+				r = true;
+				break;
+			}
+		}
+		return r;
 	}
 }

@@ -83,6 +83,7 @@ public class TestInstrumentNetwork extends TestObject {
 		
 		System.out.println();
 		Network network = new Network();
+		network.setProcessorProperty("*", "sequential", true);
 		Str err = network.configure(config);
 		if (err.length()==0) {
 			System.out.println("Initializing network ...");
