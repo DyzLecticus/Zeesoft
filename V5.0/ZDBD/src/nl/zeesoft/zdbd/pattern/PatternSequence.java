@@ -11,10 +11,10 @@ public class PatternSequence {
 	public int[]						sequence	= new int[4];
 	
 	public PatternSequence() {
-		sequence[0] = 0;
-		sequence[1] = 1;
-		sequence[2] = 0;
-		sequence[3] = 2;
+		sequence[0] = -1;
+		sequence[1] = -1;
+		sequence[2] = -1;
+		sequence[3] = -1;
 	}
 
 	public List<InstrumentPattern> getSequencedPatterns() {

@@ -64,9 +64,16 @@ public class MidiSequenceConvertor {
 		for (int i = 0; i < DrumConvertor.INSTRUMENT_NAMES.length; i++) {
 			String name = DrumConvertor.INSTRUMENT_NAMES[i];
 			if (i==DrumConvertor.BASS) {
-				MonoConvertor bass = new MonoConvertor();
+				BassConvertor bass = new BassConvertor();
 				bass.name = name;
-				bass.channel = SynthConfig.BASS_CHANNEL;
+				BassLayerConvertor layer1 = new BassLayerConvertor();
+				layer1.channel = SynthConfig.BASS_CHANNEL_1;
+				bass.layers.add(layer1);
+				BassLayerConvertor layer2 = new BassLayerConvertor();
+				layer2.channel = SynthConfig.BASS_CHANNEL_2;
+				layer2.velocity = 40;
+				layer2.accentVelocity = 50;
+				bass.layers.add(layer2);
 				convertors.put(name, bass);
 			} else {
 				DrumConvertor drum = new DrumConvertor();
@@ -108,8 +115,8 @@ public class MidiSequenceConvertor {
 					sample.accentHold = 3.9F;
 				} else if (i==DrumConvertor.PERCUSSION1) {
 					sample.midiNote = 76;
-					sample.velocity = 70;
-					sample.accentVelocity = 80;
+					sample.velocity = 80;
+					sample.accentVelocity = 90;
 					sample.hold = 0.1F;
 					sample.accentHold = 0.2F;
 				} else if (i==DrumConvertor.PERCUSSION2) {

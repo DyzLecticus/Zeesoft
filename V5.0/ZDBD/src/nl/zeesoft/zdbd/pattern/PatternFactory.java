@@ -8,6 +8,10 @@ public class PatternFactory {
 		seq.patterns.add(getFourOnFloorInstrumentPattern(0));
 		seq.patterns.add(getFourOnFloorInstrumentPattern(1));
 		seq.patterns.add(getFourOnFloorInstrumentPattern(2));
+		seq.sequence[0] = 0;
+		seq.sequence[1] = 1;
+		seq.sequence[2] = 0;
+		seq.sequence[3] = 2;
 		return seq;
 	}
 

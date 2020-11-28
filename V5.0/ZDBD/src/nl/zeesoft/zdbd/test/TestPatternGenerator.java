@@ -89,23 +89,23 @@ public class TestPatternGenerator extends TestObject {
 			Waiter.startAndWaitFor(chain,3000);
 			
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
-
-			Sequence midiSequence = null;
-			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-			MidiSys.sequencePlayer.setSequence(midiSequence);
-			MidiSys.sequencePlayer.start();
-			
 			PatternGenerator generator = new PatternGenerator();
 			generator.prevIO = lastIO;
 			generator.skipInstruments.add(Ride.NAME);
 			generator.skipInstruments.add(Crash.NAME);
 			generator.skipInstruments.add(Bass.NAME);
 	
-			sequence = generator.generatePatternSequence(network, sequence);
+			PatternSequence generated = generator.generatePatternSequence(network, sequence);
+			
+			Sequence midiSequence = null;
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+			MidiSys.sequencePlayer.setSequence(midiSequence);
+			MidiSys.sequencePlayer.start();
+			
+			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
 			MidiSys.sequencePlayer.setNextSequence(midiSequence);
 			MidiSys.sequencePlayer.start();
-			sleep(30000);
+			sleep(60000);
 			MidiSys.sequencePlayer.stop();
 					
 			MidiSys.closeDevices();

@@ -36,60 +36,8 @@ public class NetworkConfigFactory {
 		r.addInput(GROUP1_INPUT);
 		r.addInput(GROUP2_INPUT);
 		
-		SDR sdr = new SDR((Rythm.sizeX() * Rythm.sizeY()) + (InstrumentPattern.sizeX(1) * InstrumentPattern.sizeY(1)),1);
-		sdr.square();
-		
-		MergerConfig group1MergerConfig = r.addMerger(GROUP1_INPUT + "Merger",MERGER_LAYER);
-		group1MergerConfig.sizeX = sdr.sizeX();
-		group1MergerConfig.sizeY = sdr.sizeY();
-		r.addLink(RYTHM_INPUT, 0, GROUP1_INPUT + "Merger", 0);
-		r.addLink(GROUP1_INPUT, 0, GROUP1_INPUT + "Merger", 1);
-		
-		sdr = new SDR((Rythm.sizeX() * Rythm.sizeY()) + (InstrumentPattern.sizeX(2) * InstrumentPattern.sizeY(2)),1);
-		sdr.square();
-		
-		MergerConfig group2MergerConfig = r.addMerger(GROUP2_INPUT + "Merger",MERGER_LAYER);
-		group2MergerConfig.sizeX = sdr.sizeX();
-		group2MergerConfig.sizeY = sdr.sizeY();
-		r.addLink(RYTHM_INPUT, 0, GROUP2_INPUT + "Merger", 0);
-		r.addLink(GROUP2_INPUT, 0, GROUP2_INPUT + "Merger", 1);
-
-		SpatialPoolerConfig group1PoolerConfig = r.addSpatialPooler(GROUP1_INPUT + "Pooler", POOLER_LAYER);
-		group1PoolerConfig.inputSizeX = group1MergerConfig.sizeX;
-		group1PoolerConfig.inputSizeY = group1MergerConfig.sizeY;
-		group1PoolerConfig.potentialRadius = 0;
-		group1PoolerConfig.outputSizeX = TM_SIZE_X;
-		group1PoolerConfig.outputSizeY = TM_SIZE_Y;
-		group1PoolerConfig.outputOnBits = SP_ON_BITS;
-		r.addLink(GROUP1_INPUT + "Merger", Merger.MERGED_OUTPUT, GROUP1_INPUT + "Pooler", 0);
-		
-
-		SpatialPoolerConfig group2PoolerConfig = r.addSpatialPooler(GROUP2_INPUT + "Pooler", POOLER_LAYER);
-		group2PoolerConfig.inputSizeX = group2MergerConfig.sizeX;
-		group2PoolerConfig.inputSizeY = group2MergerConfig.sizeY;
-		group2PoolerConfig.potentialRadius = 0;
-		group2PoolerConfig.outputSizeX = TM_SIZE_X;
-		group2PoolerConfig.outputSizeY = TM_SIZE_Y;
-		group2PoolerConfig.outputOnBits = SP_ON_BITS;
-		r.addLink(GROUP2_INPUT + "Merger", Merger.MERGED_OUTPUT, GROUP2_INPUT + "Pooler", 0);
-		
-		TemporalMemoryConfig group1MemoryConfig = r.addTemporalMemory(GROUP1_INPUT + "Memory", MEMORY_LAYER);
-		group1MemoryConfig.sizeX = TM_SIZE_X;
-		group1MemoryConfig.sizeY = TM_SIZE_Y;
-		group1MemoryConfig.sizeZ = TM_SIZE_Z;
-		if (QUICK_LEARN) {
-			group1MemoryConfig.initialPermanence = group1MemoryConfig.permanenceThreshold + 0.1F;
-		}
-		r.addLink(GROUP1_INPUT + "Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, GROUP1_INPUT + "Memory", 0);
-		
-		TemporalMemoryConfig group2MemoryConfig = r.addTemporalMemory(GROUP2_INPUT + "Memory", MEMORY_LAYER);
-		group2MemoryConfig.sizeX = TM_SIZE_X;
-		group2MemoryConfig.sizeY = TM_SIZE_Y;
-		group2MemoryConfig.sizeZ = TM_SIZE_Z;
-		if (QUICK_LEARN) {
-			group2MemoryConfig.initialPermanence = group2MemoryConfig.permanenceThreshold + 0.1F;
-		}
-		r.addLink(GROUP2_INPUT + "Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, GROUP2_INPUT + "Memory", 0);
+		addGroupProcessors(r,1,GROUP1_INPUT);
+		addGroupProcessors(r,2,GROUP2_INPUT);
 		
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
 			String inputName = "";
@@ -101,6 +49,36 @@ public class NetworkConfigFactory {
 			addClassifier(r, inst.name(), inputName);
 		}
 		return r;
+	}
+	
+	protected static void addGroupProcessors(NetworkConfig r, int group, String inputName) {
+		SDR sdr = new SDR((Rythm.sizeX() * Rythm.sizeY()) + (InstrumentPattern.sizeX(group) * InstrumentPattern.sizeY(group)),1);
+		sdr.square();
+		
+		MergerConfig mergerConfig = r.addMerger(inputName + "Merger",MERGER_LAYER);
+		mergerConfig.sizeX = sdr.sizeX();
+		mergerConfig.sizeY = sdr.sizeY();
+		r.addLink(RYTHM_INPUT, 0, inputName + "Merger", 0);
+		r.addLink(inputName, 0, inputName + "Merger", 1);
+
+		SpatialPoolerConfig poolerConfig = r.addSpatialPooler(inputName + "Pooler", POOLER_LAYER);
+		poolerConfig.inputSizeX = mergerConfig.sizeX;
+		poolerConfig.inputSizeY = mergerConfig.sizeY;
+		poolerConfig.potentialRadius = 0;
+		poolerConfig.outputSizeX = TM_SIZE_X;
+		poolerConfig.outputSizeY = TM_SIZE_Y;
+		poolerConfig.outputOnBits = SP_ON_BITS;
+		r.addLink(inputName + "Merger", Merger.MERGED_OUTPUT, inputName + "Pooler", 0);
+		
+		
+		TemporalMemoryConfig memoryConfig = r.addTemporalMemory(inputName + "Memory", MEMORY_LAYER);
+		memoryConfig.sizeX = TM_SIZE_X;
+		memoryConfig.sizeY = TM_SIZE_Y;
+		memoryConfig.sizeZ = TM_SIZE_Z;
+		if (QUICK_LEARN) {
+			memoryConfig.initialPermanence = memoryConfig.permanenceThreshold + 0.1F;
+		}
+		r.addLink(inputName + "Pooler", SpatialPooler.ACTIVE_COLUMNS_OUTPUT, inputName + "Memory", 0);
 	}
 	
 	protected static void addClassifier(NetworkConfig r, String name, String inputName) {

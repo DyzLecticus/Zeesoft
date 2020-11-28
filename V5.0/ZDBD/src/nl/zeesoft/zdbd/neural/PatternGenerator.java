@@ -29,15 +29,14 @@ public class PatternGenerator {
 	
 	// Mix controls
 	public float			mixStart			= 0.5F; // 0 - 1
-	public float			mixMid				= 1.0F; // 0 - 1
-	public float			mixEnd				= 0.0F; // 0 - 1
-	public float			maintainBeatFactor	= 1.0F; // <= 1 off, > 1 on
+	public float			mixEnd				= 1.0F; // 0 - 1
+	public float			maintainBeat		= 1.0F; // 0 - 1
 	public List<String>		skipInstruments		= new ArrayList<String>();
 
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
 		PatternSequence r = new PatternSequence();
 		for (InstrumentPattern pattern: sequence.patterns) {
-			r.patterns.add(generatePattern(network,sequence,null,pattern.num));
+			r.patterns.add(generatePattern(network,sequence,pattern.num));
 		}
 		for (int p = 0; p < r.sequence.length; p++) {
 			r.sequence[p] = sequence.sequence[p];
@@ -140,31 +139,36 @@ public class PatternGenerator {
 			// Generate pattern
 			int stepsPerPattern = rythm.getStepsPerPattern();
 			float mix = mixStart;
-			float mixIncrementPerStep = (mixMid - mixStart) / (stepsPerPattern / 2);
-			float bound = mixMid;
+			float mixIncrementPerBeat = (mixEnd - mixStart) / rythm.beatsPerPattern;
+			boolean original = (mix == 0);
 			for (int s = 0 ; s < stepsPerPattern; s++) {
-				int values[] = getPredictedValuesFromPreviousIO(workingIO);
-				for (PatternInstrument inst: r.instruments) {
-					if (!skipInstruments.contains(inst.name())) {
-						inst.stepValues[s] = values[inst.index];
-					} else if (basePattern!=null) {
-						inst.stepValues[s] = basePattern.getInstrument(inst.name()).stepValues[s];
+				if (s % rythm.stepsPerBeat == 0) {
+					if (mixIncrementPerBeat>0) {
+						mix += mixIncrementPerBeat;
+					} else if (mixIncrementPerBeat<0) {
+						mix -= (mixIncrementPerBeat * -1);
+					}
+					if (mix > 0) {
+						if (mix==1 || Rand.getRandomInt(0, 100)<(int)(100F * mix)) {
+							original = false;
+						}
+					} else {
+						original = true; 
+					}
+				}
+
+				boolean ori = original;
+				if (!ori && s % rythm.stepsPerBeat == 0 && maintainBeat>0) {
+					if (maintainBeat==1 || Rand.getRandomInt(0, 100)<(int)(100F * maintainBeat)) {
+						ori = true;
 					}
 				}
 				
+				int[] values = addPredictedValuesToPattern(r, s, workingIO, basePattern, ori);
+				
 				SDR	rythmSDR = originalRythmSDRs.get(s);
-				if (s==(stepsPerPattern / 2) - 1) {
-					mixIncrementPerStep = (mixEnd - mixMid) / (stepsPerPattern / 2);
-					bound = mixEnd;
-				}
-				if (mix>0) {
-					int max = stepsPerPattern - (int)(mix * stepsPerPattern);
-					if (maintainBeatFactor>1 && s % rythm.stepsPerBeat == 0) {
-						max = (int) (max * maintainBeatFactor);
-					}
-					if (max <= stepsPerPattern && (max == 0 || Rand.getRandomInt(0, max)==0)) {
-						rythmSDR = rythmSDRs.get(s);
-					}
+				if (!ori) {
+					rythmSDR = rythmSDRs.get(s);
 				}
 
 				InstrumentPattern t = new InstrumentPattern();
@@ -184,17 +188,6 @@ public class PatternGenerator {
 					break;
 				}
 				workingIO = networkIO;
-				if (mixIncrementPerStep>0) {
-					mix += mixIncrementPerStep;
-					if (mix > bound) {
-						mix = bound;
-					}
-				} else {
-					mix -= (mixIncrementPerStep * -1);
-					if (mix < bound) {
-						mix = bound;
-					}
-				}
 			}
 			
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", 0F);
@@ -216,5 +209,18 @@ public class PatternGenerator {
 			r[inst.index] = (int) value;
 		}
 		return r;
+	}
+	
+	protected int[] addPredictedValuesToPattern(InstrumentPattern pattern, int step, NetworkIO workingIO, InstrumentPattern basePattern, boolean ori) {
+		int values[] = getPredictedValuesFromPreviousIO(workingIO);
+		for (PatternInstrument inst: pattern.instruments) {
+			if (basePattern!=null && (ori || skipInstruments.contains(inst.name()))) {
+				inst.stepValues[step] = basePattern.getInstrument(inst.name()).stepValues[step];
+				values[inst.index] = inst.stepValues[step];
+			} else {
+				inst.stepValues[step] = values[inst.index];
+			}
+		}
+		return values;
 	}
 }

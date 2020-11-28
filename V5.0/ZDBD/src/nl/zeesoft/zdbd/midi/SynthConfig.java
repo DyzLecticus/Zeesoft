@@ -5,7 +5,8 @@ import javax.sound.midi.Synthesizer;
 
 public class SynthConfig {
 	public static final int			DRUM_CHANNEL		= 9;
-	public static final int			BASS_CHANNEL		= 0;
+	public static final int			BASS_CHANNEL_1		= 0;
+	public static final int			BASS_CHANNEL_2		= 1;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -53,11 +54,15 @@ public class SynthConfig {
 		}
 		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
 		drumConfig.instrument = 118;
-		SynthChannelConfig bassConfig = channels[BASS_CHANNEL];
-		bassConfig.instrument = 87;
-		bassConfig.reverb = 0;
-		bassConfig.decay = 32;
-		bassConfig.filter = 16;
+		SynthChannelConfig bass1Config = channels[BASS_CHANNEL_1];
+		bass1Config.instrument = 87;
+		bass1Config.reverb = 0;
+		bass1Config.decay = 32;
+		bass1Config.filter = 16;
+		SynthChannelConfig bass2Config = channels[BASS_CHANNEL_2];
+		bass2Config.instrument = 85;
+		bass2Config.reverb = 0;
+		bass2Config.chorus = 40;
 	}
 	
 	public void configureSynthesizer() {
