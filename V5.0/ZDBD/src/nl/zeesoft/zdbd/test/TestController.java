@@ -50,10 +50,11 @@ public class TestController extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
+		Controller controller = new Controller();
 		Settings settings = new Settings();
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
-		Controller controller = new Controller(settings);
-		CodeRunnerChain chain = controller.initialize();
+		settings.workDir = "dist";
+		CodeRunnerChain chain = controller.initialize(settings);
 		Waiter.waitFor(chain,3000);
 		
 		sleep(1000);

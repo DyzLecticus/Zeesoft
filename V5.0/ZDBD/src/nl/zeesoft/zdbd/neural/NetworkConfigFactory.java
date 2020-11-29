@@ -70,7 +70,6 @@ public class NetworkConfigFactory {
 		poolerConfig.outputOnBits = SP_ON_BITS;
 		r.addLink(inputName + "Merger", Merger.MERGED_OUTPUT, inputName + "Pooler", 0);
 		
-		
 		TemporalMemoryConfig memoryConfig = r.addTemporalMemory(inputName + "Memory", MEMORY_LAYER);
 		memoryConfig.sizeX = TM_SIZE_X;
 		memoryConfig.sizeY = TM_SIZE_Y;
