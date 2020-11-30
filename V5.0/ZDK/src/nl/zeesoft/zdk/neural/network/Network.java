@@ -53,7 +53,7 @@ public class Network implements Waitable {
 				if (config.fileExists()) {
 					config.fromFile();
 					Str msg = new Str("Configuration;\n");
-					msg.sb().append(config.getDescription());
+					msg.sb().append(config.getDescription().sb());
 					Logger.dbg(this, msg);
 					Str err = configure(config);
 					if (err.length()==0) {
@@ -66,6 +66,29 @@ public class Network implements Waitable {
 					}
 				} else {
 					Logger.dbg(this, new Str("Configuration file not found: " + config.getFileName()));
+				}
+				return true;
+			}
+		};
+	}
+	
+	public boolean configureAndInitialize(NetworkConfig config, boolean resetConnections) {
+		int timeoutMs = config.initializeTimeoutMs;
+		return Waiter.startAndWaitFor(new CodeRunnerList(getConfigureAndInitializeRunCode(config,resetConnections)), timeoutMs);
+	}
+	
+	public RunCode getConfigureAndInitializeRunCode(NetworkConfig config, boolean resetConnections) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				Str msg = new Str("Configuration;\n");
+				msg.sb().append(config.getDescription().sb());
+				Logger.dbg(this, msg);
+				Str err = configure(config);
+				if (err.length()==0) {
+					if (!busy.isBusy()) {
+						initialize(resetConnections);
+					}
 				}
 				return true;
 			}

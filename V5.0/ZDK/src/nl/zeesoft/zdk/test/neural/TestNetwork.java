@@ -59,8 +59,7 @@ public class TestNetwork extends TestObject {
 		System.out.println("config.addLink(\"input1\", 0, \"CL\", 1);");
 		System.out.println("// Create the network");
 		System.out.println("Network network = new Network();");
-		System.out.println("network.configure(config);");
-		System.out.println("network.initialize(true);");
+		System.out.println("network.configureAndInitialize(config,true);");
 		System.out.println("// Turn on step 1 accuracy logging in the classifier");
 		System.out.println("network.setProcessorProperty(\"CL\", \"logPredictionAccuracy\", true);");
 		System.out.println("// Use the network");
@@ -119,8 +118,7 @@ public class TestNetwork extends TestObject {
 		
 		System.out.println();
 		Network network = new Network();
-		network.configure(config);
-		network.initialize(true);
+		network.configureAndInitialize(config, true);
 		
 		System.out.println();
 		Logger.dbg(this, new Str("Processing 100 SDRs ..."));
