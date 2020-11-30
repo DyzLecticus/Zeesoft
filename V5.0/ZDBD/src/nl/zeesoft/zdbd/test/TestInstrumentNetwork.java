@@ -93,12 +93,11 @@ public class TestInstrumentNetwork extends TestObject {
 			System.out.println();
 			System.out.println("Training network ...");
 			NetworkTrainer trainer = new NetworkTrainer();
-			trainer.trainNetwork(network, sequence);
+			trainer.setSequence(sequence);
+			trainer.trainNetwork(network);
 			System.out.println("Trained network");
 			
-			if (FileIO.checkDirectory(config.directory).length()==0 &&
-				network.getLastIO().isAccurate(trainer.minimumClassifierAccuracy)
-				) {
+			if (FileIO.checkDirectory(config.directory).length()==0 && trainer.getLastIO()!=null) {
 				System.out.println();
 				FileIO.mockIO = false;
 				network.save();
