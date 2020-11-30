@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.pattern.inst;
+package nl.zeesoft.zdbd.pattern.instruments;
 
 public class Percussion2 extends PatternInstrument {
 	public static String	NAME	= "Percussion2";

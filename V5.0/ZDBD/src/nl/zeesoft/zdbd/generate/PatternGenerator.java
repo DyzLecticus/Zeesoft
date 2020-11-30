@@ -1,13 +1,14 @@
-package nl.zeesoft.zdbd.neural;
+package nl.zeesoft.zdbd.generate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
+import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;

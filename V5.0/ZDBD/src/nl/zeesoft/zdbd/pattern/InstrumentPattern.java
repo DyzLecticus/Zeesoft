@@ -9,15 +9,15 @@ import nl.zeesoft.zdbd.neural.encoders.DrumEncoder;
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdbd.neural.encoders.HihatEncoder;
 import nl.zeesoft.zdbd.neural.encoders.PercussionEncoder;
-import nl.zeesoft.zdbd.pattern.inst.Bass;
-import nl.zeesoft.zdbd.pattern.inst.Crash;
-import nl.zeesoft.zdbd.pattern.inst.Hihat;
-import nl.zeesoft.zdbd.pattern.inst.Kick;
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
-import nl.zeesoft.zdbd.pattern.inst.Percussion1;
-import nl.zeesoft.zdbd.pattern.inst.Percussion2;
-import nl.zeesoft.zdbd.pattern.inst.Ride;
-import nl.zeesoft.zdbd.pattern.inst.Snare;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Hihat;
+import nl.zeesoft.zdbd.pattern.instruments.Kick;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
+import nl.zeesoft.zdbd.pattern.instruments.Ride;
+import nl.zeesoft.zdbd.pattern.instruments.Snare;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
@@ -27,6 +27,23 @@ public class InstrumentPattern {
 	public int 								num					= 0;
 	public Rythm							rythm				= new Rythm();
 	public List<PatternInstrument>			instruments			= getInstruments();
+
+	public InstrumentPattern copy() {
+		InstrumentPattern r = new InstrumentPattern();
+		r.copyFrom(this);
+		return r;
+	}
+
+	public void copyFrom(InstrumentPattern pat) {
+		this.num = pat.num;
+		this.rythm.copyFrom(pat.rythm);
+		this.instruments = getInstruments();
+		int i = 0;
+		for (PatternInstrument inst: pat.instruments) {
+			this.instruments.get(i).copyFrom(inst);
+			i++;
+		}
+	}
 	
 	public List<String> getInstrumentNames() {
 		List<String> r = new ArrayList<String>();

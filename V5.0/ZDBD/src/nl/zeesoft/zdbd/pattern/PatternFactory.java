@@ -1,6 +1,6 @@
 package nl.zeesoft.zdbd.pattern;
 
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class PatternFactory {
 	public static PatternSequence getFourOnFloorInstrumentPatternSequence() {

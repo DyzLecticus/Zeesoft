@@ -1,10 +1,10 @@
-package nl.zeesoft.zdbd.pattern.inst;
+package nl.zeesoft.zdbd.pattern.instruments;
 
-public class Crash extends PatternInstrument {
-	public static String	NAME	= "Crash";
+public class Ride extends PatternInstrument {
+	public static String	NAME	= "Ride";
 	public static int		GROUP	= 2;
 	
-	public Crash(int index) {
+	public Ride(int index) {
 		super(index);
 	}
 

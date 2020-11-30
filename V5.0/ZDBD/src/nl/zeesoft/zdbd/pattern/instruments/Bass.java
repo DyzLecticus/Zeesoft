@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.pattern.inst;
+package nl.zeesoft.zdbd.pattern.instruments;
 
 public class Bass extends PatternInstrument {
 	public static String	NAME	= "Bass";

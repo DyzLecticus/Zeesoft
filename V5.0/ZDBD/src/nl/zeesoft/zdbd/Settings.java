@@ -16,23 +16,23 @@ public class Settings {
 		initialize();
 	}
 
-	public String getFullFile() {
+	public String getFileName() {
 		return FileIO.addSlash(workDir) + "Settings.txt";
 	}
 	
 	public boolean fileExists() {
-		return FileIO.checkFile(getFullFile()).length() == 0;
+		return FileIO.checkFile(getFileName()).length() == 0;
 	}
 	
 	public Settings fromFile() {
-		return (Settings) PersistableCollection.fromFile(getFullFile());
+		return (Settings) PersistableCollection.fromFile(getFileName());
 	}
 	
 	public void toFile() {
 		if (FileIO.checkDirectory(workDir).length()>0) {
 			FileIO.mkDirs(workDir);
 		}
-		PersistableCollection.toFile(this, getFullFile());
+		PersistableCollection.toFile(this, getFileName());
 	}
 	
 	private void initialize() {

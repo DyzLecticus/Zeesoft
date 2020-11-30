@@ -12,8 +12,8 @@ import javax.sound.midi.Track;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
-import nl.zeesoft.zdbd.pattern.inst.Hihat;
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Hihat;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class MidiSequenceConvertor {
 	public static final int							TEMPO			= 0x51;

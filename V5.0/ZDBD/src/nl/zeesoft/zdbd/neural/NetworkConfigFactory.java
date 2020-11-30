@@ -2,7 +2,7 @@ package nl.zeesoft.zdbd.neural;
 
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.Rythm;
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.processors.ClassifierConfig;

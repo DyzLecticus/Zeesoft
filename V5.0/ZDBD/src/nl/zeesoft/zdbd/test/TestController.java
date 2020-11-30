@@ -1,13 +1,10 @@
 package nl.zeesoft.zdbd.test;
 
-import java.util.List;
-
 import nl.zeesoft.zdbd.Controller;
 import nl.zeesoft.zdbd.Settings;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
-import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
@@ -55,12 +52,12 @@ public class TestController extends TestObject {
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		settings.workDir = "dist";
 		CodeRunnerChain chain = controller.initialize(settings);
-		Waiter.waitFor(chain,3000);
+		Waiter.startAndWaitFor(chain,3000);
 		
 		sleep(1000);
 		
-		List<CodeRunner> runners = controller.destroy();
-		Waiter.waitForRunners(runners,100);
+		chain = controller.destroy();
+		Waiter.startAndWaitFor(chain,1000);
 		
 		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}

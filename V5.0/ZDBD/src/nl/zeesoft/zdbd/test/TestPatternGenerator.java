@@ -2,14 +2,14 @@ package nl.zeesoft.zdbd.test;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.generate.PatternGenerator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
-import nl.zeesoft.zdbd.neural.PatternGenerator;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
-import nl.zeesoft.zdbd.pattern.inst.Bass;
-import nl.zeesoft.zdbd.pattern.inst.Crash;
-import nl.zeesoft.zdbd.pattern.inst.Ride;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.Network;

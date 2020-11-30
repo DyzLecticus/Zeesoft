@@ -3,7 +3,9 @@ package nl.zeesoft.zdbd.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.Settings;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
+import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class PatternSequence {
@@ -15,6 +17,30 @@ public class PatternSequence {
 		sequence[1] = -1;
 		sequence[2] = -1;
 		sequence[3] = -1;
+	}
+	
+	public PatternSequence copy() {
+		PatternSequence r = new PatternSequence();
+		r.copyFrom(this);
+		return r;
+	}
+	
+	public void copyFrom(PatternSequence seq) {
+		this.patterns.clear();
+		for (InstrumentPattern pat: seq.patterns) {
+			patterns.add(pat.copy());
+		}
+		for (int i = 0; i < this.sequence.length; i++) {
+			this.sequence[i] = seq.sequence[i];
+		}
+	}
+	
+	public Settings fromFile(String path) {
+		return (Settings) PersistableCollection.fromFile(path);
+	}
+	
+	public void toFile(String path) {
+		PersistableCollection.toFile(this, path);
 	}
 
 	public List<InstrumentPattern> getSequencedPatterns() {

@@ -1,131 +1,118 @@
 package nl.zeesoft.zdbd;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import nl.zeesoft.zdbd.midi.MidiSys;
-import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.neural.network.Network;
-import nl.zeesoft.zdk.neural.network.NetworkConfig;
-import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
 
-public class Controller implements StateListener {
-	public static String		BPM					= "BPM";
-	public static String		SETTINGS			= "SETTINGS";
-	public static String		LOAD_COMPOSITION	= "LOAD_COMPOSITION";
-	public static String		COMPOSITION			= "COMPOSITION";
+public class Controller implements EventListener {
+	public static String			INITIALIZED			= "INITIALIZED";
+	public static String			COMPOSITION_SAVED	= "COMPOSITION_SAVED";
+	public static String			COMPOSITION_LOADED	= "COMPOSITION_LOADED";
 	
-	public static StateManager	stateManager		= new StateManager();
+	public static EventPublisher	eventPublisher		= new EventPublisher();
+	
+	private Lock					lock				= new Lock();
+	private Settings				settings			= null;
+	private Composition				composition			= null;
 	
 	public Controller() {
-		stateManager.addListener(this);
+		eventPublisher.addListener(this);
 	}
 	
 	public Settings getSettings() {
-		return (Settings) stateManager.getObject(SETTINGS);
-	}
-	
-	public Composition getComposition() {
-		return (Composition) stateManager.getObject(COMPOSITION);
-	}
-	
-	public String getCompositionDir() {
-		return FileIO.addSlash(getSettings().workDir) + FileIO.addSlash(getComposition().name);
+		lock.lock(this);
+		Settings r = settings;
+		lock.unlock(this);
+		return r;
 	}
 	
 	public CodeRunnerChain initialize(Settings settings) {
-		if (settings.fileExists()) {
-			settings = settings.fromFile();
-		} else {
-			settings.toFile();
-			install();
+		CodeRunnerChain r = null;
+		boolean initialize = false;
+		lock.lock(this);
+		if (this.settings==null) {
+			this.settings = settings;
+			initialize = true;
 		}
-		return initializeState(settings);
+		lock.unlock(this);
+		if (initialize) {
+			if (settings.fileExists()) {
+				settings = settings.fromFile();
+			} else {
+				install(settings);
+			}
+			Logger.dbg(this, new Str("Intializing controller ..."));
+			r = initializeState(settings);
+		}
+		return r;
 	}
 	
 	protected CodeRunnerChain initializeState(Settings settings) {
-		stateManager.putObject(SETTINGS, settings);
-		stateManager.putObject(BPM, 120);
+		CodeRunnerChain r = new CodeRunnerChain();
 		
-		Logger.dbg(this,new Str("Initializing ..."));
-		CodeRunnerChain soundBankChain = getLoadSoundBankChain();
-		soundBankChain.start();
-
-		String name = "Demo";
-		boolean load = false;
+		List<RunCode> codes = new ArrayList<RunCode>();
+		codes.addAll(getLoadSoundBankRunCodes());
+		
+		lock.lock(this);
+		composition = new Composition();
+		composition.directory = FileIO.addSlash(settings.workDir);
 		if (settings.workingComposition.length()>0) {
-			name = settings.workingComposition;
-			load = true;
+			composition.name = settings.workingComposition;
+			codes.add(composition.loadNetwork());
+		} else {
+			composition.name = "Demo";
+			codes.add(composition.initializeNetwork());
 		}
-		stateManager.putObject(LOAD_COMPOSITION, load);
-		newComposition(name);
-
-		return soundBankChain;
-	}
-	
-	protected void install() {
-		Logger.dbg(this,new Str("Installing ..."));
-	}
-
-	protected CodeRunnerChain getLoadSoundBankChain() {
-		Settings settings = getSettings();
-		List<String> filePaths = new ArrayList<String>();
-		if (settings.useInternalSyntesizers) {
-			filePaths.add(settings.soundBankDir + "ZeeTrackerSynthesizers.sf2");
-		}
-		if (settings.useInternalDrumKit) {
-			filePaths.add(settings.soundBankDir + "ZeeTrackerDrumKit.sf2");
-		}
-		CodeRunnerChain r = MidiSys.getCodeRunnerChainForSoundbankFiles(filePaths);
+		lock.unlock(this);
+		
+		r.addAll(codes);
+		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
+		
 		return r;
 	}
 	
-	public List<CodeRunner> destroy() {
-		List<CodeRunner> r = new ArrayList<CodeRunner>();
-		Logger.dbg(this,new Str("Destroying ..."));
-		
+	public CodeRunnerChain destroy() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		Logger.dbg(this,new Str("Destroying controller ..."));
 		MidiSys.closeDevices();
-
-		Logger.dbg(this,new Str("Destroyed"));
+		Logger.dbg(this,new Str("Destroyed controller"));
 		return r;
-	}
-	
-	protected void newComposition(String name) {
-		Composition composition = new Composition();
-		composition.name = name;
-		stateManager.putAndPublishObject(COMPOSITION,composition);
-	}
-	
-	protected void loadState(String name) {
-		Composition composition = new Composition();
-		composition.name = name;
-		stateManager.putAndPublishObject(COMPOSITION,composition);
-		
-		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
-		config.directory = getCompositionDir();
-		Network network = new Network();
-		network.initializeAndLoad(config);
 	}
 
 	@Override
-	public void changedState(String name, HashMap<String, Object> params) {
-		if (name.equals(SETTINGS)) {
+	public void handleEvent(Event event) {
+		if (event.name.equals(INITIALIZED)) {
+			Logger.dbg(this, new Str("Intialized controller"));
+		} else if (event.name.equals(COMPOSITION_LOADED)) {
 			// TODO Implement
-		} else if (name.equals(BPM)) {
-			int bpm = (int) stateManager.getObject(BPM);
-			MidiSys.sequencePlayer.setBeatsPerMinute(bpm);
-		} else if (name.equals(COMPOSITION)) {
-			boolean load = (boolean) stateManager.getObject(LOAD_COMPOSITION);
-			if (load) {
-				getComposition().loadNetwork(getCompositionDir());
-			} else {
-				getComposition().initializeNetwork(getCompositionDir());
-			}
+		} else if (event.name.equals(COMPOSITION_SAVED)) {
+			// TODO Implement
 		}
+	}
+	
+	protected void install(Settings settings) {
+		Logger.dbg(this,new Str("Installing ..."));
+		settings.toFile();
+		Logger.dbg(this,new Str("Installed"));
+	}
+
+	protected List<RunCode> getLoadSoundBankRunCodes() {
+		List<RunCode> r = new ArrayList<RunCode>();
+		Settings settings = getSettings();
+		String soundBankDir = FileIO.addSlash(settings.soundBankDir);
+		if (settings.useInternalSyntesizers) {
+			r.add(MidiSys.getLoadSoundbankRunCode(soundBankDir + "ZeeTrackerSynthesizers.sf2"));
+		}
+		if (settings.useInternalDrumKit) {
+			r.add(MidiSys.getLoadSoundbankRunCode(soundBankDir + "ZeeTrackerDrumKit.sf2"));
+		}
+		return r;
 	}
 }

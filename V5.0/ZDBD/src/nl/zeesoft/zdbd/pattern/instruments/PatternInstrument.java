@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.pattern.inst;
+package nl.zeesoft.zdbd.pattern.instruments;
 
 public abstract class PatternInstrument {
 	public static int	OFF				= 0;
@@ -12,6 +12,13 @@ public abstract class PatternInstrument {
 		this.index = index;
 		for (int s = 0; s < stepValues.length; s++) {
 			stepValues[s] = OFF;
+		}
+	}
+	
+	public void copyFrom(PatternInstrument inst) {
+		this.index = inst.index;
+		for (int s = 0; s < this.stepValues.length; s++) {
+			this.stepValues[s] = inst.stepValues[s];
 		}
 	}
 	

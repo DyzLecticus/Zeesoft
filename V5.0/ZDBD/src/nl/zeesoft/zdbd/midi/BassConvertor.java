@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
-import nl.zeesoft.zdbd.pattern.inst.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class BassConvertor extends InstrumentConvertor {
 	public int							midiNote		= 3;

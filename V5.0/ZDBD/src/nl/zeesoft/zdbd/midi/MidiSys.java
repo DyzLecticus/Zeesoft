@@ -16,7 +16,6 @@ import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Transmitter;
 
-import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.midi.SoundbankLoader;
@@ -109,35 +108,24 @@ public class MidiSys {
 		}
 	}
 
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... filePaths) {
-		List<String> paths = new ArrayList<String>();
-		for (String path: filePaths) {
-			paths.add(path);
-		}
-		return getCodeRunnerChainForSoundbankFiles(synthesizer, paths);
-	}
-
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(List<String> filePaths) {
-		if (synthesizer==null) {
-			initialize();
-		}
-		return getCodeRunnerChainForSoundbankFiles(synthesizer, filePaths);
-	}
-
-	protected static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(Synthesizer synthesizer, List<String> filePaths) {
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... paths) {
 		CodeRunnerChain r = new CodeRunnerChain();
-		List<RunCode> codes = new ArrayList<RunCode>();
-		for (String path: filePaths) {
-			Str error = FileIO.checkFile(path);
-			if (error.length()==0) {
-				codes.add(getRunCodeForSoundbank(synthesizer,path));
-			}
+		r.addAll(getLoadSoundbankRunCodes(paths));
+		return r;
+	}
+	
+	public static List<RunCode> getLoadSoundbankRunCodes(String... paths) {
+		List<RunCode> r = new ArrayList<RunCode>();
+		for (String path: paths) {
+			r.add(getLoadSoundbankRunCode(path));
 		}
-		r.addAll(codes);
 		return r;
 	}
 
-	protected static RunCode getRunCodeForSoundbank(Synthesizer synthesizer, String path) {
+	public static RunCode getLoadSoundbankRunCode(String path) {
+		if (synthesizer==null) {
+			initialize();
+		}
 		return new RunCode() {
 			@Override
 			protected boolean run() {

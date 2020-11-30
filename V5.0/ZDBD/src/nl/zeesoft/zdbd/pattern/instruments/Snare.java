@@ -1,10 +1,10 @@
-package nl.zeesoft.zdbd.pattern.inst;
+package nl.zeesoft.zdbd.pattern.instruments;
 
-public class Kick extends PatternInstrument {
-	public static String	NAME	= "Kick";
+public class Snare extends PatternInstrument {
+	public static String	NAME	= "Snare";
 	public static int		GROUP	= 1;
 	
-	public Kick(int index) {
+	public Snare(int index) {
 		super(index);
 	}
 
