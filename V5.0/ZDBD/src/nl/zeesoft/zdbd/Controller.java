@@ -62,7 +62,7 @@ public class Controller implements EventListener {
 		
 		lock.lock(this);
 		composition = new Composition();
-		composition.directory = FileIO.addSlash(settings.workDir);
+		composition.workDir = FileIO.addSlash(settings.workDir);
 		if (settings.workingComposition.length()>0) {
 			composition.name = settings.workingComposition;
 			codes.add(composition.loadNetwork());
