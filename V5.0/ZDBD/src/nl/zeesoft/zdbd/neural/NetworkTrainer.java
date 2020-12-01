@@ -38,7 +38,11 @@ public class NetworkTrainer implements Waitable {
 		this.maxTrainCycles = trainer.maxTrainCycles;
 		this.minimumAverageAccuracy = trainer.minimumAverageAccuracy;
 		this.minimumClassifierAccuracy = trainer.minimumClassifierAccuracy;
-		this.lastIO = new NetworkIO(trainer.lastIO);
+		if (trainer.lastIO!=null) {
+			this.lastIO = new NetworkIO(trainer.lastIO);
+		} else {
+			this.lastIO = null;
+		}
 		lock.unlock(this);
 	}
 	

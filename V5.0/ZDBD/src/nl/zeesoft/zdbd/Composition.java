@@ -9,31 +9,66 @@ import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Composition {
-	public String					workDir				= "";
+	protected String			workDir				= "";
 	
-	public String 					name					= "";
-	public NetworkTrainer			networkTrainer			= new NetworkTrainer();
-	public NetworkConfig			networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
-	public Network					network					= new Network();
-	public Generators				generators				= new Generators();
-	
-	public RunCode loadNetwork() {
-		networkConfiguration.directory = getDirecory();
-		return network.getInitializeAndLoadRunCode(networkConfiguration);
+	protected String 			name					= "";
+	protected NetworkTrainer	networkTrainer			= new NetworkTrainer();
+	protected NetworkConfig		networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
+	protected Network			network					= new Network();
+	protected Generators		generators				= new Generators();
+
+	protected RunCode loadNetworkTrainer() {
+		return networkTrainer.getFromFileRunCode(getTrainerFileName());
+	}
+
+	protected RunCode saveNetworkTrainer() {
+		return networkTrainer.getToFileRunCode(getTrainerFileName());
 	}
 	
-	public RunCode initializeNetwork() {
-		networkConfiguration.directory = getDirecory();
+	protected RunCode initializeNetwork(boolean load) {
+		networkConfiguration.directory = getDirectory();
 		return network.getConfigureAndInitializeRunCode(networkConfiguration, true);
 	}
-	
-	// TODO: mkdirs before save
-	public RunCode saveNetwork() {
-		network.setDirectory(getDirecory());
+
+	protected RunCode loadNetwork() {
+		networkConfiguration.directory = getDirectory();
 		return network.getInitializeAndLoadRunCode(networkConfiguration);
 	}
 	
-	protected String getDirecory() {
+	protected RunCode saveNetwork() {
+		network.setDirectory(getDirectory());
+		return network.getSaveRunCode();
+	}
+
+	protected RunCode loadGenerators() {
+		return generators.getFromFileRunCode(getGeneratorsFileName());
+	}
+
+	protected RunCode saveGenerators() {
+		return generators.getToFileRunCode(getGeneratorsFileName());
+	}
+	
+	protected String getDirectory() {
 		return FileIO.addSlash(workDir) + FileIO.addSlash(name);
+	}
+	
+	protected String getTrainerFileName() {
+		return getDirectory() + "NetworkTrainer.txt";
+	}
+	
+	protected String getGeneratorsFileName() {
+		return getDirectory() + "Generators.txt";
+	}
+	
+	protected RunCode getMkdirsRunCode() {
+		RunCode code = new RunCode() {
+			@Override
+			protected boolean run() {
+				FileIO.mkDirs((String)params[0]);
+				return true;
+			}
+		};
+		code.params[0] = getDirectory();
+		return code;
 	}
 }

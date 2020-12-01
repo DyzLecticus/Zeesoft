@@ -16,6 +16,20 @@ public class Settings {
 		initialize();
 	}
 
+	public Settings copy() {
+		Settings r = new Settings();
+		r.copyFrom(this);
+		return r;
+	}
+	
+	public void copyFrom(Settings set) {
+		this.workDir = set.workDir;
+		this.soundBankDir = set.soundBankDir;
+		this.useInternalDrumKit = set.useInternalDrumKit;
+		this.useInternalSyntesizers = set.useInternalSyntesizers;
+		this.workingComposition = set.workingComposition;
+	}
+	
 	public String getFileName() {
 		return FileIO.addSlash(workDir) + "Settings.txt";
 	}

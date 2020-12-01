@@ -3,11 +3,23 @@ package nl.zeesoft.zdbd.generate;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class Generators {
 	private Lock					lock		= new Lock();
-	private List<GeneratorIO>		generators	= new ArrayList<GeneratorIO>();
+	
+	protected List<GeneratorIO>		generators	= new ArrayList<GeneratorIO>();
+	
+	public void copyFrom(Generators gens) {
+		lock.lock(this);
+		generators.clear();
+		for (GeneratorIO io: gens.generators) {
+			generators.add(io.copy());
+		}
+		lock.unlock(this);
+	}
 	
 	public int size() {
 		lock.lock(this);
@@ -64,5 +76,36 @@ public class Generators {
 		lock.lock(this);
 		generators.clear();
 		lock.unlock(this);
+	}
+	
+	public RunCode getFromFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				fromFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void fromFile(String path) {
+		Generators generators = (Generators) PersistableCollection.fromFile(path);
+		if (generators!=null) {
+			copyFrom(generators);
+		}
+	}
+	
+	public RunCode getToFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				toFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void toFile(String path) {
+		PersistableCollection.toFile(this, path);
 	}
 }

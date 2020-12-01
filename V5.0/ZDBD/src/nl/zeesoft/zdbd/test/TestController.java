@@ -2,6 +2,7 @@ package nl.zeesoft.zdbd.test;
 
 import nl.zeesoft.zdbd.Controller;
 import nl.zeesoft.zdbd.Settings;
+import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
@@ -52,13 +53,37 @@ public class TestController extends TestObject {
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		settings.workDir = "dist";
 		CodeRunnerChain chain = controller.initialize(settings);
-		Waiter.startAndWaitFor(chain,3000);
-		
-		sleep(1000);
-		
-		chain = controller.destroy();
-		Waiter.startAndWaitFor(chain,1000);
-		
-		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
+		assertNotNull(chain,"Failed to initialize controller");
+		if (chain!=null) {
+			Waiter.waitFor(chain,3000);
+			assertEqual(FileIO.getActionLog().size(),1,"Action log size does not match expectation (1)");
+			
+			System.out.println();
+			chain = controller.saveState();
+			Waiter.waitFor(chain,10000);
+			assertEqual(FileIO.getActionLog().size(),21,"Action log size does not match expectation (2)");
+			
+			settings = controller.getSettings();
+			assertEqual(settings.workingComposition,"Demo","Working composition does not match expectation");
+			
+			System.out.println();
+			chain = controller.destroy();
+			Waiter.waitFor(chain,1000);
+
+			System.out.println();
+			Controller controller2 = new Controller();
+			chain = controller2.initialize(settings);
+			Waiter.waitFor(chain,20000);
+			
+			assertEqual(FileIO.getActionLog().size(),40,"Action log size does not match expectation (3)");
+
+			System.out.println();
+			chain = controller2.destroy();
+			Waiter.waitFor(chain,1000);
+
+			assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
+			System.out.println();
+			System.out.println(FileIO.getActionLogStr());
+		}
 	}
 }
