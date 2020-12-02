@@ -18,6 +18,12 @@ public class EventPublisher {
 		lock.unlock(this);
 	}
 	
+	public void removeListener(EventListener listener) {
+		lock.lock(this);
+		listeners.remove(listener);
+		lock.unlock(this);
+	}
+	
 	public void publishEvent(Object source, String name) {
 		publishEvent(source,name,null);
 	}

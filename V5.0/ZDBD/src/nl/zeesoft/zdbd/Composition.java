@@ -60,6 +60,10 @@ public class Composition {
 		return getDirectory() + "Generators.txt";
 	}
 	
+	protected boolean directoryExists() {
+		return FileIO.checkDirectory(getDirectory()).length() == 0;
+	}
+	
 	protected RunCode getMkdirsRunCode() {
 		RunCode code = new RunCode() {
 			@Override

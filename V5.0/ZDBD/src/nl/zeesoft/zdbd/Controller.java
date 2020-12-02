@@ -14,12 +14,13 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waitable;
 
 public class Controller implements EventListener, Waitable {
+	public static String			INITIALIZING			= "INITIALIZING";
 	public static String			INITIALIZED				= "INITIALIZED";
 	
 	public static String			SAVING_COMPOSITION		= "SAVING_COMPOSITION";
 	public static String			COMPOSITION_SAVED		= "COMPOSITION_SAVED";
 	
-	public static String			LOADING_COMPOSISTION	= "LOADING_COMPOSITION";
+	public static String			LOADING_COMPOSITION		= "LOADING_COMPOSITION";
 	public static String			COMPOSITION_LOADED		= "COMPOSITION_LOADED";
 	
 	public static EventPublisher	eventPublisher			= new EventPublisher();
@@ -56,9 +57,7 @@ public class Controller implements EventListener, Waitable {
 			} else {
 				install(settings);
 			}
-			Logger.dbg(this, new Str("Intializing controller ..."));
 			r = initializeState(settings);
-			r.start();
 		} else {
 			Logger.dbg(this, new Str("Controller has already been initialized"));
 		}
@@ -82,9 +81,9 @@ public class Controller implements EventListener, Waitable {
 			MidiSys.closeDevices();
 			settings = null;
 			composition = null;
+			eventPublisher.removeListener(this);
 			Logger.dbg(this,new Str("Destroyed controller"));
 		}
-		r.start();
 		lock.unlock(this);
 		
 		return r;
@@ -97,9 +96,13 @@ public class Controller implements EventListener, Waitable {
 	
 	@Override
 	public void handleEvent(Event event) {
-		if (event.name.equals(INITIALIZED)) {
+		if (event.name.equals(INITIALIZING)) {
+			Logger.dbg(this, new Str("Intializing controller ..."));
+		} else if (event.name.equals(INITIALIZED)) {
 			Logger.dbg(this, new Str("Intialized controller"));
 			busy.setBusy(false);
+		} else if (event.name.equals(LOADING_COMPOSITION)) {
+			Logger.dbg(this, new Str("Loading composition ..."));
 		} else if (event.name.equals(COMPOSITION_LOADED)) {
 			Logger.dbg(this, new Str("Loaded composition"));
 			lock.lock(this);
@@ -107,6 +110,8 @@ public class Controller implements EventListener, Waitable {
 			settings.toFile();
 			lock.unlock(this);
 			busy.setBusy(false);
+		} else if (event.name.equals(SAVING_COMPOSITION)) {
+			Logger.dbg(this, new Str("Saving composition ..."));
 		} else if (event.name.equals(COMPOSITION_SAVED)) {
 			Logger.dbg(this, new Str("Saved composition"));
 			lock.lock(this);
@@ -119,7 +124,6 @@ public class Controller implements EventListener, Waitable {
 	
 	protected void install(Settings settings) {
 		Logger.dbg(this,new Str("Installing ..."));
-		// TODO: Mkdirs
 		settings.toFile();
 		Logger.dbg(this,new Str("Installed"));
 	}
@@ -130,24 +134,29 @@ public class Controller implements EventListener, Waitable {
 		List<RunCode> codes = new ArrayList<RunCode>();
 		codes.addAll(getLoadSoundBankRunCodes());
 		
-		// TODO: Check dirs
-		
 		lock.lock(this);
-		composition = new Composition();
-		composition.workDir = FileIO.addSlash(settings.workDir);
 		if (settings.workingComposition.length()>0) {
+			composition = new Composition();
+			composition.workDir = FileIO.addSlash(settings.workDir);
 			composition.name = settings.workingComposition;
-			codes.add(composition.loadNetworkTrainer());
-			codes.add(composition.loadNetwork());
-			codes.add(composition.loadGenerators());
-		} else {
+			if (composition.directoryExists()) {
+				codes.add(composition.loadNetworkTrainer());
+				codes.add(composition.loadNetwork());
+				codes.add(composition.loadGenerators());
+			} else {
+				composition = null;
+			}
+		}
+		if (composition==null) {
+			composition = new Composition();
+			composition.workDir = FileIO.addSlash(settings.workDir);
 			composition.name = "Demo";
 			codes.add(composition.initializeNetwork(false));
 		}
-		lock.unlock(this);
-		
+		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
 		r.addAll(codes);
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
+		lock.unlock(this);
 		
 		return r;
 	}
@@ -177,10 +186,10 @@ public class Controller implements EventListener, Waitable {
 			codes.add(composition.saveNetwork());
 			codes.add(composition.saveGenerators());
 			
+			r.add(eventPublisher.getPublishEventRunCode(this, SAVING_COMPOSITION));
 			r.add(composition.getMkdirsRunCode());
 			r.addAll(codes);
 			r.add(eventPublisher.getPublishEventRunCode(this, COMPOSITION_SAVED));
-			r.start();
 		}
 		lock.unlock(this);
 		
@@ -188,10 +197,8 @@ public class Controller implements EventListener, Waitable {
 	}
 	
 	protected CodeRunnerChain getLoadStateRunnerChain(String name) {
-		CodeRunnerChain r = new CodeRunnerChain();
+		CodeRunnerChain r = null;
 		
-		// TODO: Check dirs
-
 		lock.lock(this);
 		if (!busy.isBusy()) {
 			busy.setBusy(true);
@@ -200,13 +207,15 @@ public class Controller implements EventListener, Waitable {
 			composition = new Composition();
 			composition.workDir = FileIO.addSlash(settings.workDir);
 			composition.name = name;
-			codes.add(composition.loadNetworkTrainer());
-			codes.add(composition.loadNetwork());
-			codes.add(composition.loadGenerators());
-			
-			r.addAll(codes);
-			r.add(eventPublisher.getPublishEventRunCode(this, COMPOSITION_LOADED));
-			r.start();
+			if (composition.directoryExists()) {
+				codes.add(composition.loadNetworkTrainer());
+				codes.add(composition.loadNetwork());
+				codes.add(composition.loadGenerators());
+				r = new CodeRunnerChain();
+				r.add(eventPublisher.getPublishEventRunCode(this, LOADING_COMPOSITION));
+				r.addAll(codes);
+				r.add(eventPublisher.getPublishEventRunCode(this, COMPOSITION_LOADED));
+			}
 		}
 		lock.unlock(this);
 		

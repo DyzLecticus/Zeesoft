@@ -55,12 +55,12 @@ public class TestController extends TestObject {
 		CodeRunnerChain chain = controller.initialize(settings);
 		assertNotNull(chain,"Failed to initialize controller");
 		if (chain!=null) {
-			Waiter.waitFor(chain,3000);
+			Waiter.startAndWaitFor(chain,10000);
 			assertEqual(FileIO.getActionLog().size(),1,"Action log size does not match expectation (1)");
 			
 			System.out.println();
 			chain = controller.saveState();
-			Waiter.waitFor(chain,10000);
+			Waiter.startAndWaitFor(chain,10000);
 			assertEqual(FileIO.getActionLog().size(),21,"Action log size does not match expectation (2)");
 			
 			settings = controller.getSettings();
@@ -68,18 +68,18 @@ public class TestController extends TestObject {
 			
 			System.out.println();
 			chain = controller.destroy();
-			Waiter.waitFor(chain,1000);
-
+			Waiter.startAndWaitFor(chain,1000);
+			
 			System.out.println();
 			Controller controller2 = new Controller();
 			chain = controller2.initialize(settings);
-			Waiter.waitFor(chain,20000);
+			Waiter.startAndWaitFor(chain,20000);
 			
 			assertEqual(FileIO.getActionLog().size(),40,"Action log size does not match expectation (3)");
 
 			System.out.println();
 			chain = controller2.destroy();
-			Waiter.waitFor(chain,1000);
+			Waiter.startAndWaitFor(chain,1000);
 
 			assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 			System.out.println();
