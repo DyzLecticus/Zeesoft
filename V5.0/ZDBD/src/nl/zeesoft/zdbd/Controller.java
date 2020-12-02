@@ -211,6 +211,7 @@ public class Controller implements EventListener, Waitable {
 				codes.add(composition.loadNetworkTrainer());
 				codes.add(composition.loadNetwork());
 				codes.add(composition.loadGenerators());
+				
 				r = new CodeRunnerChain();
 				r.add(eventPublisher.getPublishEventRunCode(this, LOADING_COMPOSITION));
 				r.addAll(codes);

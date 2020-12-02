@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Composition {
-	protected String			workDir				= "";
+	protected String			workDir					= "";
 	
 	protected String 			name					= "";
 	protected NetworkTrainer	networkTrainer			= new NetworkTrainer();

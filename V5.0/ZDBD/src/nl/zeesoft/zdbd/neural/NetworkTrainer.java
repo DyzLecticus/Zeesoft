@@ -150,7 +150,6 @@ public class NetworkTrainer implements Waitable {
 				
 				lastIO = r.get(r.size() - 1);
 				if (lastIO.isAccurate(false, minimumAverageAccuracy) && lastIO.isAccurate(true, minimumClassifierAccuracy)) {
-					this.lastIO = new NetworkIO(lastIO);
 					break;
 				}
 				SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
@@ -185,6 +184,8 @@ public class NetworkTrainer implements Waitable {
 					msg.sb().append(lastIO.getAverageClassifierAccuracy(false));
 					Logger.dbg(this, msg);
 				}
+				
+				this.lastIO = lastIO;
 			}
 			
 			network.setProcessorLearn("*", false);
@@ -238,8 +239,11 @@ public class NetworkTrainer implements Waitable {
 	}
 
 	public NetworkIO getLastIO() {
+		NetworkIO r = null;
 		lock.lock(this);
-		NetworkIO r = new NetworkIO(lastIO);
+		if (lastIO!=null) {
+			r = new NetworkIO(lastIO);
+		}
 		lock.unlock(this);
 		return r;
 	}
