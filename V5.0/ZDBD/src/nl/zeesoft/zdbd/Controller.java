@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -59,8 +60,26 @@ public class Controller implements EventListener, Waitable {
 			}
 			r = initializeState(settings);
 		} else {
-			Logger.dbg(this, new Str("Controller has already been initialized"));
+			Logger.err(this, new Str("Controller has already been initialized"));
 		}
+		return r;
+	}
+	
+	public void setTrainingSequence(PatternSequence sequence) {
+		lock.lock(this);
+		if (composition!=null) {
+			composition.networkTrainer.setSequence(sequence);
+		}
+		lock.unlock(this);
+	}
+	
+	public PatternSequence getTrainingSequence() {
+		PatternSequence r = null;
+		lock.lock(this);
+		if (composition!=null) {
+			r = composition.networkTrainer.getSequence();
+		}
+		lock.unlock(this);
 		return r;
 	}
 	

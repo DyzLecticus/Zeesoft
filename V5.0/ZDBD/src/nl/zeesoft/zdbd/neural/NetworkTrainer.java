@@ -94,9 +94,19 @@ public class NetworkTrainer implements Waitable {
 	
 	public List<NetworkIO> trainNetwork(Network network) {
 		List<NetworkIO> r = new ArrayList<NetworkIO>();
+		boolean train = false;
+		
+		List<NetworkIO> trainingSet = null;
+		int startTrainTM = 0;
+		int startTrainCL = 0;
+		int maxCycles = 0;
+		float minAvgAcc = 0F;
+		float minClAcc = 0F;
+		
 		lock.lock(this);
 		if (!busy.isBusy()) {
 			busy.setBusy(true);
+			train = true;
 			this.lastIO = null;
 			
 			if (maxTrainCycles < 4) {
@@ -109,28 +119,35 @@ public class NetworkTrainer implements Waitable {
 				startTrainTemporalMemory = (startTrainClassifiers - 1);
 			}
 						
-			List<NetworkIO> trainingSet = sequence.getNetworkIO();
+			trainingSet = sequence.getNetworkIO();
+			startTrainTM = startTrainTemporalMemory;
+			startTrainCL = startTrainClassifiers;
+			maxCycles = maxTrainCycles;
+			minAvgAcc = minimumAverageAccuracy;
+			minClAcc = minimumClassifierAccuracy;
 			
 			network.setProcessorLearn("*", false);
 			network.setLayerLearn(NetworkConfigFactory.POOLER_LAYER, true);
 			network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", true);
-			
+		}
+		lock.unlock(this);
+		
+		if (train) {
 			long start = System.currentTimeMillis();
-			
 			NetworkIO lastIO = null;
 			Str err = new Str();
-			for (int i = 1; i <= maxTrainCycles; i++) {
+			for (int i = 1; i <= maxCycles; i++) {
 				Str msg = new Str("Training cycle ");
 				msg.sb().append(i);
 				msg.sb().append("/");
-				msg.sb().append(maxTrainCycles);
+				msg.sb().append(maxCycles);
 				msg.sb().append(" ...");
 				Logger.dbg(this, msg);
-				if (i == startTrainTemporalMemory) {
+				if (i == startTrainTM) {
 					Logger.dbg(this, new Str("(Training memory)"));
 					network.setLayerLearn(NetworkConfigFactory.MEMORY_LAYER, true);
 				}
-				if (i == startTrainClassifiers) {
+				if (i == startTrainCL) {
 					Logger.dbg(this, new Str("(Training classifiers)"));
 					network.setLayerLearn(NetworkConfigFactory.CLASSIFIER_LAYER, true);
 				}
@@ -149,7 +166,7 @@ public class NetworkTrainer implements Waitable {
 				}
 				
 				lastIO = r.get(r.size() - 1);
-				if (lastIO.isAccurate(false, minimumAverageAccuracy) && lastIO.isAccurate(true, minimumClassifierAccuracy)) {
+				if (lastIO.isAccurate(false, minAvgAcc) && lastIO.isAccurate(true, minClAcc)) {
 					break;
 				}
 				SortedMap<String,Float> accuracies = lastIO.getClassifierAccuracies(false);
@@ -184,14 +201,15 @@ public class NetworkTrainer implements Waitable {
 					msg.sb().append(lastIO.getAverageClassifierAccuracy(false));
 					Logger.dbg(this, msg);
 				}
-				
-				this.lastIO = lastIO;
 			}
 			
+			lock.lock(this);
+			this.lastIO = lastIO;
 			network.setProcessorLearn("*", false);
 			network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", false);
+			busy.setBusy(false);
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 		return r;
 	}
 	
