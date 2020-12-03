@@ -107,17 +107,24 @@ public class MidiSys {
 			synthesizer = null;
 		}
 	}
-
+	
 	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... paths) {
+		if (synthesizer==null) {
+			initialize();
+		}
+		return getCodeRunnerChainForSoundbankFiles(synthesizer,paths);
+	}
+
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(Synthesizer synthesizer, String... paths) {
 		CodeRunnerChain r = new CodeRunnerChain();
-		r.addAll(getLoadSoundbankRunCodes(paths));
+		r.addAll(getLoadSoundbankRunCodes(synthesizer,paths));
 		return r;
 	}
 	
-	public static List<RunCode> getLoadSoundbankRunCodes(String... paths) {
+	public static List<RunCode> getLoadSoundbankRunCodes(Synthesizer synthesizer, String... paths) {
 		List<RunCode> r = new ArrayList<RunCode>();
 		for (String path: paths) {
-			r.add(getLoadSoundbankRunCode(path));
+			r.add(getLoadSoundbankRunCode(synthesizer,path));
 		}
 		return r;
 	}
@@ -126,19 +133,23 @@ public class MidiSys {
 		if (synthesizer==null) {
 			initialize();
 		}
+		return getLoadSoundbankRunCode(synthesizer,path);
+	}
+	
+	public static RunCode getLoadSoundbankRunCode(Synthesizer synthesizer, String path) {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
-				Soundbank soundbank = loadSoundBank(path);
+				Soundbank soundbank = loadSoundBank(synthesizer,path);
 				replaceSoundBankInstruments(synthesizer, soundbank);
 				return true;
 			}
 		};
 	}
 	
-	protected static Soundbank loadSoundBank(String path) {
+	protected static Soundbank loadSoundBank(Synthesizer synthesizer, String path) {
 		Soundbank r = null;
-		InputStream is = (new SoundbankLoader()).getClass().getResourceAsStream("/" + path);
+		InputStream is = (new SoundbankLoader()).getClass().getResourceAsStream(path);
 		if (is!=null) {
 			try {
 				r = MidiSystem.getSoundbank(new BufferedInputStream(is));
