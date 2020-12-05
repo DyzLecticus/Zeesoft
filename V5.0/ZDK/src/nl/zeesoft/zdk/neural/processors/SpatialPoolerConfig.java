@@ -9,7 +9,7 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 		=
 		"Please note that this spatial pooler implementation does not support local inhibition.  \n" +
 	    "  \n" + 
-		"Configurable properties;  \n" + 
+		"Configurable properties (**Bolded** properties can be changed after initialization);  \n" + 
 		" * *inputSizeX*, *inputSizeY*; Input SDR dimensions.  \n" + 
 		" * *outputSizeX*, *outputSizeY*; Output SDR dimensions (mini column dimensions).  \n" +
 		" * *outputOnBits*; Maximum number of on bits in the output.  \n" +
@@ -18,7 +18,6 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 		" * *activationHistorySize*; Historic column activation buffer size (used to calculate boost factors).  \n" +
 		" * **boostFactorPeriod**; Boost factor recalculation period.  \n" +
 		" * **boostStrength**; Boost strength.  \n" +
-		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 
 	public int		inputSizeX					= 16;

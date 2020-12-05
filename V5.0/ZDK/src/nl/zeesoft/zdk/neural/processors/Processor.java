@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.neural.processors;
 
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.StrAble;
+import nl.zeesoft.zdk.neural.model.ModelStatistics;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.Lock;
@@ -40,6 +41,17 @@ public class Processor implements StrAble {
 	
 	public void resetConnections() {
 		resetConnections(null);
+	}
+	
+	public ModelStatistics getStatistics() {
+		ModelStatistics r = null;
+		if (processor instanceof CellGridProcessor) {
+			r = ((CellGridProcessor)processor).getStatistics();
+			if (!(processor instanceof TemporalMemory)) {
+				r.cells = 0;
+			}
+		}
+		return r;
 	}
 	
 	public void resetState() {
@@ -100,26 +112,26 @@ public class Processor implements StrAble {
 	}
 	
 	protected void resetConnections(CodeRunnerList runnerList) {
-		if (runnerList==null) {
-			lock.lock(this);
-		}
 		if (processor instanceof CellGridProcessor) {
+			if (runnerList==null) {
+				lock.lock(this);
+			}
 			((CellGridProcessor)processor).resetConnections(runnerList);
-		}
-		if (runnerList==null) {
-			lock.unlock(this);
+			if (runnerList==null) {
+				lock.unlock(this);
+			}
 		}
 	}
 	
 	protected void resetState(CodeRunnerList runnerList) {
-		if (runnerList==null) {
-			lock.lock(this);
-		}
 		if (processor instanceof TemporalMemory) {
+			if (runnerList==null) {
+				lock.lock(this);
+			}
 			((TemporalMemory)processor).resetState(runnerList);
-		}
-		if (runnerList==null) {
-			lock.unlock(this);
+			if (runnerList==null) {
+				lock.unlock(this);
+			}
 		}
 	}
 }

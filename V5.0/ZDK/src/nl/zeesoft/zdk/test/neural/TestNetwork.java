@@ -58,9 +58,11 @@ public class TestNetwork extends TestObject {
 		System.out.println("config.addLink(\"SP\", 0, \"TM\", 0);");
 		System.out.println("config.addLink(\"TM\", 0, \"CL\", 0);");
 		System.out.println("config.addLink(\"input1\", 0, \"CL\", 1);");
+		System.out.println("// Check the configuration");
+		System.out.println("Str err = config.check();");
 		System.out.println("// Create the network");
 		System.out.println("Network network = new Network();");
-		System.out.println("network.configureAndInitialize(config,true);");
+		System.out.println("network.initialize(config,true);");
 		System.out.println("// Turn on step 1 accuracy logging in the classifier");
 		System.out.println("network.setProcessorProperty(\"CL\", \"logPredictionAccuracy\", true);");
 		System.out.println("// Use the network");
@@ -68,7 +70,7 @@ public class TestNetwork extends TestObject {
 		System.out.println("io.setValue(\"input1\", 1);");
 		System.out.println("network.processIO(io);");
 		System.out.println("// Get the average classifier accuracy");
-		System.out.println("float accuracy = getAverageClassifierAccuracy(false);");
+		System.out.println("float accuracy = io.getAverageClassifierAccuracy(false);");
 		System.out.println("// Turn of learning for all processors");
 		System.out.println("network.setProcessorLearn(\"*\", false);");
 		System.out.println("// Save the network data to the configured directory");
@@ -111,7 +113,7 @@ public class TestNetwork extends TestObject {
 		config.addLink("TM", 0, "CL", 0);
 		config.addLink(KeyValueSDR.DEFAULT_VALUE_KEY, 0, "CL", 1);
 
-		Str err = config.testConfiguration();
+		Str err = config.check();
 		assertEqual(err,new Str(),"Error does not match expectation");
 		
 		Str desc = config.getDescription();
@@ -119,7 +121,7 @@ public class TestNetwork extends TestObject {
 		
 		System.out.println();
 		Network network = new Network();
-		network.configureAndInitialize(config, true);
+		network.initialize(config, true);
 		
 		System.out.println();
 		Logger.dbg(this, new Str("Processing 100 SDRs ..."));
@@ -144,9 +146,12 @@ public class TestNetwork extends TestObject {
 			}
 		}
 		Logger.dbg(this, new Str("Processed 100 SDRs"));
+				
+		System.out.println();
+		System.out.println("Statistics;");
+		System.out.println(network.getStatistics().getDebugLogStr());
 		
 		System.out.println();
-		
 		config.toFile();
 		assertEqual(config.fileExists(),true,"Configuration file was not written");
 		

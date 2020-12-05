@@ -83,10 +83,10 @@ public class TestInstrumentNetwork extends TestObject {
 		
 		System.out.println();
 		Network network = new Network();
-		Str err = network.configure(config);
+		Str err = config.testConfiguration();
 		if (err.length()==0) {
 			System.out.println("Initializing network ...");
-			network.initialize(true);
+			network.initialize(config,true);
 			System.out.println("Initialized network");
 			
 			System.out.println();

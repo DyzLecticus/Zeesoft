@@ -33,10 +33,6 @@ public class SpatialPooler extends CellGridProcessor {
 	protected float				potentialConnections		= 0.85F;
 	protected int				potentialRadius				= 16;
 	
-	protected float				permanenceThreshold			= 0.1F;
-	protected float				permanenceIncrement			= 0.05F;
-	protected float				permanenceDecrement			= 0.008F;
-	
 	protected int				activationHistorySize		= 1000;
 	protected int				boostFactorPeriod			= 10;
 	protected int				boostStrength				= 2;
@@ -296,6 +292,11 @@ public class SpatialPooler extends CellGridProcessor {
 			hist.fromStr(objects.get(8));
 			setActivationHistory(hist);
 		}
+	}
+
+	@Override
+	public CellGrid getCellGrid() {
+		return toCellGrid(null);
 	}
 
 	protected void randomConnectColumn(GridColumn column) {

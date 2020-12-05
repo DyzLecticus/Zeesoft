@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
+import nl.zeesoft.zdk.neural.model.ModelStatistics;
 import nl.zeesoft.zdk.neural.processors.CellGridProcessor;
 import nl.zeesoft.zdk.neural.processors.Processor;
 import nl.zeesoft.zdk.neural.processors.ProcessorFactory;
@@ -56,13 +57,10 @@ public class Network implements Waitable {
 					Str msg = new Str("Configuration;\n");
 					msg.sb().append(config.getDescription().sb());
 					Logger.dbg(this, msg);
-					Str err = configure(config);
-					if (err.length()==0) {
-						if (!busy.isBusy()) {
-							err = initialize(false);
-							if (err.length()==0) {
-								load();
-							}
+					if (!busy.isBusy()) {
+						Str err = initialize(config,false);
+						if (err.length()==0) {
+							load();
 						}
 					}
 				} else {
@@ -73,74 +71,55 @@ public class Network implements Waitable {
 		};
 	}
 	
-	public boolean configureAndInitialize(NetworkConfig config, boolean resetConnections) {
-		int timeoutMs = config.initializeTimeoutMs;
-		return Waiter.startAndWaitFor(new CodeRunnerList(getConfigureAndInitializeRunCode(config,resetConnections)), timeoutMs);
-	}
-	
-	public RunCode getConfigureAndInitializeRunCode(NetworkConfig config, boolean resetConnections) {
+	public RunCode getInitializeRunCode(NetworkConfig config, boolean resetConnections) {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
 				Str msg = new Str("Configuration;\n");
 				msg.sb().append(config.getDescription().sb());
 				Logger.dbg(this, msg);
-				Str err = configure(config);
-				if (err.length()==0) {
-					if (!busy.isBusy()) {
-						initialize(resetConnections);
-					}
+				if (!busy.isBusy()) {
+					initialize(config,resetConnections);
 				}
 				return true;
 			}
 		};
 	}
 	
-	public Str configure(NetworkConfig config) {
-		Str err = config.testConfiguration();
-		if (err.length()>0) {
-			Logger.err(this, err);
-		} else {
+	public Str initialize(NetworkConfig config,boolean resetConnections) {
+		Str err = config.check();
+		if (err.length()==0) {
+			err = new Str();
 			lock.lock(this);
 			if (processors.size()==0) {
 				this.config.copyFrom(config);
 				processors.clear();
 				processorChain = new CodeRunnerChain();
 			} else {
-				Logger.err(this, new Str("Network has already been initialized"));
-			}
-			lock.unlock(this);
-		}
-		return err;
-	}
-	
-	public Str initialize(boolean resetConnections) {
-		lock.lock(this);
-		Str err = config.testConfiguration();
-		if (err.length()==0) {
-			err = new Str();
-			Logger.dbg(this, new Str("Initializing network ..."));
-
-			busy.setBusy(true);
-			CodeRunnerList runnerList = buildInitializeRunnerListNoLock(resetConnections);
-			if (!Waiter.startAndWaitFor(runnerList, config.initializeTimeoutMs)) {
-				err.sb().append("Network initialization timed out");
-			}
-			if (err.length()==0 && processors.size() < config.processorConfigs.size()) {
-				err.sb().append("Failed to initialize one or more processors");
+				err.sb().append("Network has already been initialized");
 			}
 			if (err.length()==0) {
-				buildProcessorChainNoLock(processorChain);
-			} else {
-				processors.clear();
+				Logger.dbg(this, new Str("Initializing network ..."));
+				busy.setBusy(true);
+				CodeRunnerList runnerList = buildInitializeRunnerListNoLock(resetConnections);
+				if (!Waiter.startAndWaitFor(runnerList, config.initializeTimeoutMs)) {
+					err.sb().append("Network initialization timed out");
+				}
+				if (err.length()==0 && processors.size() < config.processorConfigs.size()) {
+					err.sb().append("Failed to initialize one or more processors");
+				}
+				if (err.length()==0) {
+					buildProcessorChainNoLock(processorChain);
+				} else {
+					processors.clear();
+				}
+				busy.setBusy(false);
 			}
-			busy.setBusy(false);
-			
 			if (err.length()==0) {
 				Logger.dbg(this, new Str("Initialized network"));
 			}
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 		if (err.length()>0) {
 			Logger.err(this, err);
 		}
@@ -217,7 +196,26 @@ public class Network implements Waitable {
 		lock.unlock(this);
 		return r;
 	}
-	
+
+	public ModelStatistics getStatistics() {
+		ModelStatistics r = new ModelStatistics();
+		if (!busy.isBusy()) {
+			lock.lock(this);
+			busy.setBusy(true);
+			if (processors.size()>0) {
+				for (NetworkProcessor processor: processors) {
+					ModelStatistics stats = processor.getStatistics();
+					if (stats!=null) {
+						r.add(stats);
+					}
+				}
+			}
+			busy.setBusy(false);
+			lock.unlock(this);
+		}
+		return r;
+	}
+
 	public boolean processIO(NetworkIO networkIO) {
 		List<String> valueNames = networkIO.getValueNames();
 		boolean initialized = false;

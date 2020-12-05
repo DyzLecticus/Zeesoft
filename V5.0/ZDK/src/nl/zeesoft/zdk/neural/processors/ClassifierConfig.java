@@ -10,7 +10,7 @@ public class ClassifierConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 	=
 		"Please note that this classifier implementation will 'forget' old classifications by default (see maxCount).  \n" +
 		"  \n" +
-		"Configurable properties;  \n" + 
+		"Configurable properties (**Bolded** properties can be changed after initialization);  \n" + 
 		" * *sizeX*, *sizeY*; Merged output SDR dimensions (input SDRs that do not match are ignored for merge).  \n" + 
 		" * **maxOnBits**; Optional maximum number of on bits in the merged input (uses sub sampling).  \n" +
 		" * *valueKey*; Value key to look for in the input KeyValueSDRs.  \n" +
@@ -25,7 +25,6 @@ public class ClassifierConfig extends SDRProcessorConfig{
 		" * **logPredictionAccuracy**; Indicates average next step prediction accuracy and trend should be logged (requires predictSteps to contain step 1).  \n" +
 		" * *accuracyHistorySize*; The size of the historical accuracy buffer used to calculate average next step prediction accuracy and trend.  \n" +
 		" * *accuracyTrendSize*; The subsample of the historical accuracy used to calculate the trend.  \n" +
-		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 	
 	public int				sizeX					= 768;

@@ -197,14 +197,23 @@ public class NetworkTrainer implements Waitable {
 					msg.sb().append((System.currentTimeMillis() - start));
 					msg.sb().append(" ms, accuracies;\n");
 					for (Entry<String,Float> entry: accuracies.entrySet()) {
+						String name = entry.getKey();
+						while (name.length() < 22) {
+							name += " ";
+						}
 						msg.sb().append("- "); 
-						msg.sb().append(entry.getKey()); 
+						msg.sb().append(name); 
 						msg.sb().append(": "); 
 						msg.sb().append(entry.getValue()); 
 						msg.sb().append("\n"); 
 					}
-					msg.sb().append("- Average: ");
+					msg.sb().append("------------------------------------\n");
+					msg.sb().append("- Average               : ");
 					msg.sb().append(lastIO.getAverageClassifierAccuracy(false));
+					Logger.dbg(this, msg);
+					msg = new Str();
+					msg.sb().append("Statistics;\n");
+					msg.sb().append(network.getStatistics().getDebugLogStr());
 					Logger.dbg(this, msg);
 				}
 			}

@@ -209,7 +209,7 @@ public class NetworkConfig {
 		links.add(new NetworkLink(fromName, fromIndex, toName, toIndex));
 	}
 	
-	public Str testConfiguration() {
+	public Str check() {
 		Str r = new Str();
 		int i = 0;
 		List<String> names = getInputNames();

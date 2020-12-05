@@ -2,10 +2,16 @@ package nl.zeesoft.zdk.neural.processors;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.model.CellGrid;
+import nl.zeesoft.zdk.neural.model.ModelStatistics;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerList;
 
-public class CellGridProcessor extends SDRProcessor {
+public abstract class CellGridProcessor extends SDRProcessor {
+	protected float				permanenceThreshold			= 0.1F;
+	protected float				permanenceIncrement			= 0.05F;
+	protected float				permanenceDecrement			= 0.008F;
+	
 	public final void resetConnections() {
 		Str msg = new Str("Resetting ");
 		msg.sb().append(getName());
@@ -15,9 +21,7 @@ public class CellGridProcessor extends SDRProcessor {
 		Logger.dbg(this, new Str("Reset connections"));
 	}
 	
-	public void resetConnections(CodeRunnerList runnerList) {
-		// Override to implement
-	}
+	public abstract void resetConnections(CodeRunnerList runnerList);
 
 	public void buildInitializeChain(CodeRunnerChain runnerChain, boolean randomizeConnections) {
 		CodeRunnerList init = new CodeRunnerList();
@@ -32,5 +36,11 @@ public class CellGridProcessor extends SDRProcessor {
 				runnerChain.add(rand);
 			}
 		}
+	}
+	
+	public abstract CellGrid getCellGrid();
+	
+	public ModelStatistics getStatistics() {
+		return getCellGrid().getStatistics(permanenceThreshold);
 	}
 }

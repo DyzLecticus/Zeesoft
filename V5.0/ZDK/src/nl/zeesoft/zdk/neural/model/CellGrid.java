@@ -88,6 +88,50 @@ public class CellGrid extends Grid implements StrAble {
 		return r;
 	}
 
+	public ModelStatistics getStatistics(float permanenceThreshold) {
+		ModelStatistics r = new ModelStatistics();
+		for (GridColumn column: columns) {
+			for (int z = 0; z < sizeZ; z++) {
+				Cell cell = (Cell) column.getValue(z);
+				r.cells++;
+				for (Segment seg: cell.proximalSegments)  {
+					r.proximalSegments++;
+					for (Synapse syn: seg.synapses) {
+						if (syn.permanence>0) {
+							r.proximalSynapses++;
+							if (syn.permanence > permanenceThreshold) {
+								r.activeProximalSynapses++;
+							}
+						}
+					}
+				}
+				for (Segment seg: cell.distalSegments)  {
+					r.distalSegments++;
+					for (Synapse syn: seg.synapses) {
+						if (syn.permanence>0) {
+							r.distalSynapses++;
+							if (syn.permanence > permanenceThreshold) {
+								r.activeDistalSynapses++;
+							}
+						}
+					}
+				}
+				for (Segment seg: cell.apicalSegments)  {
+					r.apicalSegments++;
+					for (Synapse syn: seg.synapses) {
+						if (syn.permanence>0) {
+							r.apicalSynapses++;
+							if (syn.permanence > permanenceThreshold) {
+								r.activeApicalSynapses++;
+							}
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
 	@Override
 	public void fromStr(Str str) {
 		List<Str> elems = str.split("\n");

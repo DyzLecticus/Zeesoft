@@ -38,9 +38,6 @@ public class TemporalMemory extends CellGridProcessor {
 	protected int				maxSynapsesPerSegment			= 256;
 	
 	protected float				initialPermanence				= 0.21F;
-	protected float				permanenceThreshold				= 0.5F;
-	protected float				permanenceIncrement				= 0.1F;
-	protected float				permanenceDecrement				= 0.1F;
 
 	protected float				segmentCreationSubsample		= 0.9F;
 	

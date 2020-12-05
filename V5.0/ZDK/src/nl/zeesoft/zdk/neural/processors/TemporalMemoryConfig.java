@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Str;
  */
 public class TemporalMemoryConfig extends SDRProcessorConfig{
 	public static String 	DOCUMENTATION 		=
-		"Configurable properties;  \n" + 
+		"Configurable properties (**Bolded** properties can be changed after initialization);  \n" + 
 		" * *sizeX*, *sizeY*, *sizeZ*; Cell grid dimensions (sizeX, sizeY specify input SDR dimensions).  \n" + 
 		" * *maxSegmentsPerCell*; Maximum number of segments per cell.  \n" +
 		" * *maxSynapsesPerSegment*; Maximum number of synapses per segment.  \n" +
@@ -19,7 +19,6 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 		" * *activationThreshold*; Number of active synapses on a segment for it to be considered active.  \n" + 
 		" * *matchingThreshold*; Number of potential synapses on a segment for it to be considered matching.  \n" + 
 		" * *maxNewSynapseCount*; Maximum number of synapses to create when creating/adapting segments.  \n" + 
-		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 
 	public int		sizeX						= 48;
