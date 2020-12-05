@@ -112,20 +112,24 @@ public class SpatialPooler extends CellGridProcessor {
 		
 		connections = new Grid();
 		connections.initialize(outputSizeX, outputSizeY);
+		connections.setUseLock(false);
 		
 		activations = new Grid();
 		activations.initialize(outputSizeX, outputSizeY, 1, 0F);
+		activations.setUseLock(false);
 		
 		activationHistory = new SDRHistory(outputSizeX, outputSizeY, activationHistorySize);
 		
 		boostFactors = new Grid();
 		boostFactors.initialize(outputSizeX, outputSizeY, 1, 1F);
+		boostFactors.setUseLock(false);
 		
 		ColumnFunction function = new ColumnFunction() {
 			@Override
 			public Object applyFunction(GridColumn column, int posZ, Object value) {
 				Grid inputPermanences = new Grid();
 				inputPermanences.initialize(inputSizeX, inputSizeY, 1, -1F);
+				inputPermanences.setUseLock(false);
 				return inputPermanences;
 			}
 		};
@@ -258,6 +262,16 @@ public class SpatialPooler extends CellGridProcessor {
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(boostStrength);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(boostFactorPeriod);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceThreshold);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceIncrement);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceDecrement);
+		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(toCellGrid(null).toStr().sb());
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(getActivationHistory().toStr().sb());
@@ -267,14 +281,19 @@ public class SpatialPooler extends CellGridProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=4) {
+		if (objects.size()>=9) {
 			learn = Boolean.parseBoolean(objects.get(0).toString());
 			processed = Integer.parseInt(objects.get(1).toString());
+			boostStrength = Integer.parseInt(objects.get(2).toString());
+			boostFactorPeriod = Integer.parseInt(objects.get(3).toString());
+			permanenceThreshold = Float.parseFloat(objects.get(4).toString());
+			permanenceIncrement = Float.parseFloat(objects.get(5).toString());
+			permanenceDecrement = Float.parseFloat(objects.get(6).toString());
 			CellGrid cellGrid = new CellGrid();
-			cellGrid.fromStr(objects.get(2));
+			cellGrid.fromStr(objects.get(7));
 			fromCellGrid(cellGrid,null);
 			SDRHistory hist = new SDRHistory();
-			hist.fromStr(objects.get(3));
+			hist.fromStr(objects.get(8));
 			setActivationHistory(hist);
 		}
 	}

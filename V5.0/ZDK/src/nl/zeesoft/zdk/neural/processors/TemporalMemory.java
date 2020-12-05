@@ -245,6 +245,20 @@ public class TemporalMemory extends CellGridProcessor {
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(initialPermanence);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceThreshold);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceIncrement);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(permanenceDecrement);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(segmentCreationSubsample);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(distalSegmentDecrement);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(apicalSegmentDecrement);
+		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(getCellGrid().toStr().sb());
 		return r;
 	}
@@ -252,11 +266,18 @@ public class TemporalMemory extends CellGridProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=3) {
+		if (objects.size()>=10) {
 			learn = Boolean.parseBoolean(objects.get(0).toString());
 			processed = Integer.parseInt(objects.get(1).toString());
+			initialPermanence = Float.parseFloat(objects.get(2).toString());
+			permanenceThreshold = Float.parseFloat(objects.get(3).toString());
+			permanenceIncrement = Float.parseFloat(objects.get(4).toString());
+			permanenceDecrement = Float.parseFloat(objects.get(5).toString());
+			segmentCreationSubsample = Float.parseFloat(objects.get(6).toString());
+			distalSegmentDecrement = Float.parseFloat(objects.get(7).toString());
+			apicalSegmentDecrement = Float.parseFloat(objects.get(8).toString());
 			CellGrid cellGrid = new CellGrid();
-			cellGrid.fromStr(objects.get(2));
+			cellGrid.fromStr(objects.get(9));
 			setCellGrid(cellGrid);
 		}
 	}

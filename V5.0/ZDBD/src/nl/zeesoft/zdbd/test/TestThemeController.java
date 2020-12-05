@@ -1,7 +1,9 @@
 package nl.zeesoft.zdbd.test;
 
-import nl.zeesoft.zdbd.Controller;
-import nl.zeesoft.zdbd.Settings;
+import java.util.List;
+
+import nl.zeesoft.zdbd.ThemeControllerSettings;
+import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -10,13 +12,13 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestController extends TestObject {
-	public TestController(Tester tester) {
+public class TestThemeController extends TestObject {
+	public TestThemeController(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestController(new Tester())).runTest(args);
+		(new TestThemeController(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -48,34 +50,39 @@ public class TestController extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
-		Controller controller = new Controller();
-		Settings settings = new Settings();
+		
+		ThemeControllerSettings settings = new ThemeControllerSettings();
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		settings.workDir = "dist";
+		
+		ThemeController controller = new ThemeController();
 		CodeRunnerChain chain = controller.initialize(settings);
 		assertNotNull(chain,"Failed to initialize controller");
 		if (chain!=null) {
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(FileIO.getActionLog().size(),1,"Action log size does not match expectation (1)");
+			assertEqual(FileIO.getActionLog().size(),2,"Action log size does not match expectation (1)");
 			
 			System.out.println();
-			chain = controller.saveState();
+			chain = controller.saveTheme();
 			Waiter.startAndWaitFor(chain,10000);
 			assertEqual(FileIO.getActionLog().size(),21,"Action log size does not match expectation (2)");
-			
-			settings = controller.getSettings();
-			assertEqual(settings.workingComposition,"Demo","Working composition does not match expectation");
+			List<String> themes = controller.listThemes();
+			assertEqual(themes.size(),1,"Number of themes does not match expectation");
+			assertEqual(themes.get(0),"Demo","The listed theme name does not match expectation");
 			
 			System.out.println();
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,1000);
+			assertEqual(FileIO.getActionLog().size(),22,"Action log size does not match expectation (3)");
+			
 			
 			System.out.println();
-			Controller controller2 = new Controller();
+			ThemeController controller2 = new ThemeController();
 			chain = controller2.initialize(settings);
 			Waiter.startAndWaitFor(chain,20000);
-			
-			assertEqual(FileIO.getActionLog().size(),40,"Action log size does not match expectation (3)");
+			settings = controller2.getSettings();
+			assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
+			assertEqual(FileIO.getActionLog().size(),41,"Action log size does not match expectation (4)");
 
 			System.out.println();
 			chain = controller2.destroy();

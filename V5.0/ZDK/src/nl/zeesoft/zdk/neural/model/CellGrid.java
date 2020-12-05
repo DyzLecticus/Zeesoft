@@ -64,6 +64,7 @@ public class CellGrid extends Grid implements StrAble {
 			}
 			initializeCells(runnerList, ProcessorFactory.THREADS);
 		}
+		setUseLock(false);
 	}
 
 	@Override

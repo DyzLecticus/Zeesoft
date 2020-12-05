@@ -29,10 +29,7 @@ public class NetworkTrainer implements Waitable {
 	protected float				minimumClassifierAccuracy	= 0.990F;
 	
 	protected long				changedSequence				= 1;
-	protected long				savedSelf					= 0;
-	
 	protected long				trainedNetwork				= 0;
-	protected long				savedNetwork				= -1;
 	
 	protected NetworkIO			lastIO						= null;
 	
@@ -45,9 +42,7 @@ public class NetworkTrainer implements Waitable {
 		this.minimumAverageAccuracy = trainer.minimumAverageAccuracy;
 		this.minimumClassifierAccuracy = trainer.minimumClassifierAccuracy;
 		this.changedSequence = trainer.changedSequence;
-		this.savedSelf = trainer.savedSelf;
 		this.trainedNetwork = trainer.trainedNetwork;
-		this.savedNetwork = trainer.savedNetwork;
 		if (trainer.lastIO!=null) {
 			this.lastIO = new NetworkIO(trainer.lastIO);
 		} else {
@@ -253,7 +248,6 @@ public class NetworkTrainer implements Waitable {
 	}
 	
 	public void toFile(String path) {
-		this.savedSelf = System.currentTimeMillis();
 		PersistableCollection.toFile(this, path);
 	}
 
@@ -269,9 +263,9 @@ public class NetworkTrainer implements Waitable {
 		return r;
 	}
 
-	public boolean changedSequenceSinceSave() {
+	public long getChangedSequence() {
 		lock.lock(this);
-		boolean r = savedSelf < changedSequence;
+		long r = changedSequence;
 		lock.unlock(this);
 		return r;
 	}
@@ -283,15 +277,9 @@ public class NetworkTrainer implements Waitable {
 		return r;
 	}
 
-	public void savedNetwork() {
+	public long getTrainedNetwork() {
 		lock.lock(this);
-		savedNetwork = System.currentTimeMillis();
-		lock.unlock(this);
-	}
-
-	public boolean trainedNetworkSinceSave() {
-		lock.lock(this);
-		boolean r = savedNetwork < trainedNetwork;
+		long r = trainedNetwork;
 		lock.unlock(this);
 		return r;
 	}

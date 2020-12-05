@@ -12,7 +12,7 @@ public class ClassifierConfig extends SDRProcessorConfig{
 		"  \n" +
 		"Configurable properties;  \n" + 
 		" * *sizeX*, *sizeY*; Merged output SDR dimensions (input SDRs that do not match are ignored for merge).  \n" + 
-		" * *maxOnBits*; Optional maximum number of on bits in the merged input (uses sub sampling).  \n" +
+		" * **maxOnBits**; Optional maximum number of on bits in the merged input (uses sub sampling).  \n" +
 		" * *valueKey*; Value key to look for in the input KeyValueSDRs.  \n" +
 		" * *predictSteps*; Array of steps to classify/predict;  \n" +
 		"   Step 0 will classify the current input.  \n" +
@@ -22,9 +22,10 @@ public class ClassifierConfig extends SDRProcessorConfig{
 		"   If a step bit reaches this maximum, all bit value counts of the step are divided by two.  \n" +
 		"   When when a value has only a single count it will be removed.  \n" +
 		"   When a step bit has no value counts it will be removed.  \n" +
-		" * *logPredictionAccuracy*; Indicates average next step prediction accuracy and trend should be logged (requires predictSteps to contain step 1).  \n" +
+		" * **logPredictionAccuracy**; Indicates average next step prediction accuracy and trend should be logged (requires predictSteps to contain step 1).  \n" +
 		" * *accuracyHistorySize*; The size of the historical accuracy buffer used to calculate average next step prediction accuracy and trend.  \n" +
 		" * *accuracyTrendSize*; The subsample of the historical accuracy used to calculate the trend.  \n" +
+		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 	
 	public int				sizeX					= 768;

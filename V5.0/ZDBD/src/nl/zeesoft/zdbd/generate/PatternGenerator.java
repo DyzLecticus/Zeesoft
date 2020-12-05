@@ -190,7 +190,7 @@ public class PatternGenerator {
 				SDR group2SDR = t.getSDRForGroup2Step(0);
 				
 				NetworkIO networkIO = new NetworkIO();
-				networkIO.setValue(NetworkConfigFactory.RYTHM_INPUT, rythmSDR);
+				networkIO.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythmSDR);
 				networkIO.setValue(NetworkConfigFactory.GROUP1_INPUT, group1SDR);
 				networkIO.setValue(NetworkConfigFactory.GROUP2_INPUT, group2SDR);
 				network.processIO(networkIO);

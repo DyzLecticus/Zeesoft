@@ -69,8 +69,8 @@ public class TestPatternGenerator extends TestObject {
 			network = TestInstrumentNetwork.createAndTrainNetwork();
 		} else {
 			FileIO.mockIO = false;
+			network.setSequential(true);
 			network.initializeAndLoad(config);
-			network.setProcessorProperty("*", "sequential", true);
 			FileIO.mockIO = true;
 		}
 		

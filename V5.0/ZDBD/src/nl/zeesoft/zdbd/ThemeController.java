@@ -1,0 +1,337 @@
+package nl.zeesoft.zdbd;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdk.FileIO;
+import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.Busy;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waitable;
+
+public class ThemeController implements EventListener, Waitable {
+	public static String			INITIALIZING			= "INITIALIZING";
+	public static String			INITIALIZED				= "INITIALIZED";
+	
+	public static String			SAVING_THEME			= "SAVING_THEME";
+	public static String			SAVED_THEME				= "SAVED_THEME";
+	public static String			LOADING_THEME			= "LOADING_THEME";
+	public static String			LOADED_THEME			= "LOADED_THEME";
+	
+	public static String			TRAINING_NETWORK		= "TRAINING_NETWORK";
+	public static String			TRAINED_NETWORK			= "TRAINED_NETWORK";
+	
+	public static String			DESTROYING				= "DESTROYING";
+	public static String			DESTROYED				= "DESTROYED";
+	
+	public EventPublisher			eventPublisher			= new EventPublisher();
+	
+	private Lock					lock					= new Lock();
+	private Busy					busy					= new Busy(this);
+	private ThemeControllerSettings	settings				= null;
+	
+	private Theme					theme					= null;
+	private long					savedTheme				= 0;
+	
+	public ThemeController() {
+		eventPublisher.addListener(this);
+	}
+	
+	public ThemeControllerSettings getSettings() {
+		lock.lock(this);
+		ThemeControllerSettings r = (ThemeControllerSettings) settings.copy();
+		lock.unlock(this);
+		return r;
+	}
+	
+	public CodeRunnerChain initialize(ThemeControllerSettings settings) {
+		CodeRunnerChain r = null;
+		boolean initialize = false;
+		lock.lock(this);
+		if (this.settings==null && !busy.isBusy()) {
+			this.settings = (ThemeControllerSettings) settings.copy();
+			initialize = true;
+			busy.setBusy(true);
+		}
+		lock.unlock(this);
+		if (initialize) {
+			List<RunCode> codes = new ArrayList<RunCode>();
+			codes.add(MidiSys.getInitializeRunCode());
+			if (settings.fileExists()) {
+				settings = (ThemeControllerSettings) settings.fromFile();
+			} else {
+				codes.add(getInstallRunCode(settings));
+			}
+			r = getInitializeRunnerChain(settings,codes);
+		} else {
+			Logger.err(this, new Str("Controller has already been initialized"));
+		}
+		return r;
+	}
+	
+	public List<String> listThemes() {
+		List<String> r = new ArrayList<String>();
+		lock.lock(this);
+		if (settings!=null) {
+			List<File> directories = FileIO.listDirectories(settings.getThemeDir());
+			for (File dir: directories) {
+				r.add(dir.getName());
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void setTrainingSequence(PatternSequence sequence) {
+		lock.lock(this);
+		if (theme!=null) {
+			theme.networkTrainer.setSequence(sequence);
+		}
+		lock.unlock(this);
+	}
+	
+	public PatternSequence getTrainingSequence() {
+		PatternSequence r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.networkTrainer.getSequence();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public CodeRunnerChain trainNetwork() {
+		return getTrainNetworkRunnerChain();
+	}
+	
+	public boolean themeHasChanges() {
+		boolean r = false;
+		lock.lock(this);
+		if (theme!=null &&
+			(
+				savedTheme<theme.networkTrainer.getChangedSequence() || 
+				savedTheme<theme.networkTrainer.getTrainedNetwork() 
+			)
+			) {
+			r = true;
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public CodeRunnerChain saveTheme() {
+		return getSaveThemeRunnerChain();
+	}
+	
+	public CodeRunnerChain loadTheme(String name) {
+		return getLoadThemeRunnerChain(name);
+	}
+	
+	public CodeRunnerChain destroy() {
+		return getDestroyRunnerChain();
+	}
+
+	@Override
+	public boolean isBusy() {
+		return busy.isBusy();
+	}
+	
+	@Override
+	public void handleEvent(Event event) {
+		Logger.dbg(this, new Str(event.name));
+		if (event.name.equals(INITIALIZING)) {
+			// Ignore
+		} else if (event.name.equals(INITIALIZED)) {
+			busy.setBusy(false);
+		} else if (event.name.equals(LOADING_THEME)) {
+			// Ignore
+		} else if (event.name.equals(LOADED_THEME)) {
+			lock.lock(this);
+			savedTheme = System.currentTimeMillis();
+			lock.unlock(this);
+			busy.setBusy(false);
+		} else if (event.name.equals(SAVING_THEME)) {
+			// Ignore
+		} else if (event.name.equals(SAVED_THEME)) {
+			lock.lock(this);
+			savedTheme = System.currentTimeMillis();
+			lock.unlock(this);
+			busy.setBusy(false);
+		} else if (event.name.equals(TRAINING_NETWORK)) {
+			// Ignore
+		} else if (event.name.equals(TRAINED_NETWORK)) {
+			busy.setBusy(false);
+		} else if (event.name.equals(DESTROYING)) {
+			// Ignore
+		} else if (event.name.equals(DESTROYED)) {
+			busy.setBusy(false);
+		}
+	}
+	
+	protected RunCode getInstallRunCode(ThemeControllerSettings settings) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				install(settings);
+				return true;
+			}
+		};
+	}
+	
+	protected void install(ThemeControllerSettings settings) {
+		Logger.dbg(this,new Str("Installing ..."));
+		settings.toFile();
+		if (FileIO.checkDirectory(settings.getThemeDir()).length()>0) {
+			FileIO.mkDirs(settings.getThemeDir());
+		}
+		Logger.dbg(this,new Str("Installed"));
+	}
+	
+	protected void destroyMe() {
+		Logger.dbg(this,new Str("Destroying ..."));
+		MidiSys.closeDevices();
+		lock.lock(this);
+		if (theme!=null) {
+			settings.workingTheme = theme.name;
+		}
+		settings.toFile();
+		settings = null;
+		theme = null;
+		lock.unlock(this);
+		eventPublisher.removeListener(this);
+		Logger.dbg(this,new Str("Destroyed"));
+	}
+	
+	protected CodeRunnerChain getInitializeRunnerChain(ThemeControllerSettings settings, List<RunCode> beforeCodes) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		
+		List<RunCode> codes = new ArrayList<RunCode>();
+		codes.addAll(getLoadSoundBankRunCodes());
+		
+		lock.lock(this);
+		if (settings.workingTheme.length()>0) {
+			theme = new Theme();
+			theme.themeDir = settings.getThemeDir();
+			theme.name = settings.workingTheme;
+			if (theme.directoryExists()) {
+				codes.add(theme.loadNetworkTrainer());
+				codes.add(theme.loadNetwork());
+				codes.add(theme.loadGenerators());
+			} else {
+				theme = null;
+			}
+		}
+		if (theme==null) {
+			theme = new Theme();
+			theme.themeDir = settings.getThemeDir();
+			theme.name = "Demo";
+			codes.add(theme.initializeNetwork(false));
+		}
+		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
+		r.addAll(beforeCodes);
+		r.addAll(codes);
+		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
+		lock.unlock(this);
+		
+		return r;
+	}
+
+	protected List<RunCode> getLoadSoundBankRunCodes() {
+		List<RunCode> r = new ArrayList<RunCode>();
+		ThemeControllerSettings settings = getSettings();
+		String soundBankDir = FileIO.addSlash(settings.soundBankDir);
+		if (settings.useInternalSyntesizers) {
+			r.add(MidiSys.getLoadSoundbankRunCode(soundBankDir + "ZeeTrackerSynthesizers.sf2"));
+		}
+		if (settings.useInternalDrumKit) {
+			r.add(MidiSys.getLoadSoundbankRunCode(soundBankDir + "ZeeTrackerDrumKit.sf2"));
+		}
+		return r;
+	}
+	
+	protected CodeRunnerChain getSaveThemeRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (theme!=null && !busy.isBusy()) {
+			busy.setBusy(true);
+			
+			List<RunCode> codes = new ArrayList<RunCode>();
+			codes.add(theme.saveNetworkTrainer());
+			codes.add(theme.saveNetwork());
+			codes.add(theme.saveGenerators());
+			
+			r.add(eventPublisher.getPublishEventRunCode(this, SAVING_THEME));
+			r.add(theme.getMkdirsRunCode());
+			r.addAll(codes);
+			r.add(eventPublisher.getPublishEventRunCode(this, SAVED_THEME));
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getLoadThemeRunnerChain(String name) {
+		CodeRunnerChain r = null;
+		lock.lock(this);
+		if (!busy.isBusy()) {
+			busy.setBusy(true);
+			
+			List<RunCode> codes = new ArrayList<RunCode>();
+			theme = new Theme();
+			theme.themeDir = settings.getThemeDir();
+			theme.name = name;
+			if (theme.directoryExists()) {
+				codes.add(theme.loadNetworkTrainer());
+				codes.add(theme.loadNetwork());
+				codes.add(theme.loadGenerators());
+				
+				r = new CodeRunnerChain();
+				r.add(eventPublisher.getPublishEventRunCode(this, LOADING_THEME));
+				r.addAll(codes);
+				r.add(eventPublisher.getPublishEventRunCode(this, LOADED_THEME));
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getTrainNetworkRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (theme!=null && !busy.isBusy() &&
+			theme.networkTrainer.changedSequenceSinceTraining()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, TRAINING_NETWORK));
+			r.add(theme.trainNetwork());
+			r.add(eventPublisher.getPublishEventRunCode(this, TRAINED_NETWORK));
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getDestroyRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		
+		lock.lock(this);
+		if (!busy.isBusy()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, DESTROYING));
+			r.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					destroyMe();
+					return true;
+				}
+			});
+			r.add(eventPublisher.getPublishEventRunCode(this, DESTROYED));
+		}
+		lock.unlock(this);
+		
+		return r;
+	}
+}

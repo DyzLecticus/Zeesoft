@@ -34,12 +34,19 @@ public class Grid {
 		copyValuesFrom(grid.getColumns());
 	}
 	
+	public void setUseLock(boolean useLock) {
+		for (GridColumn column: columns) {
+			column.useLock = useLock;
+		}
+	}
+
 	public void copyValuesFrom(List<GridColumn> columns) {
 		if (columns.size()>0) {
 			for (GridColumn column: columns) {
 				GridColumn columnTo = getColumn(column.index);
 				if (columnTo!=null) {
 					for (int z = 0; z < sizeZ; z++) {
+						columnTo.useLock = column.useLock;
 						columnTo.setValue(z, copyValueFrom(column,z));
 					}
 				} else {

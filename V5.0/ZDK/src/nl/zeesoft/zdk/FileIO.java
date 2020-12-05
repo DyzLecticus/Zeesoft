@@ -158,27 +158,11 @@ public class FileIO {
 	}
 	
 	public static List<File> listFiles(String path) {
-		List<File> r = new ArrayList<File>(); 
-		if (mockIO) {
-			FileIO self = new FileIO();
-			lock.lock(self);
-			path = cleanPath(addSlash(path));
-			for (String filePath: fileData.keySet()) {
-				if (getDirName(filePath).equals(path)) {
-					r.add(new File(filePath));
-				}
-			}
-			lock.unlock(self);
-		} else {
-			File dir = new File(path);
-			if (dir.exists() && dir.isDirectory()) {
-				File[] files = dir.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					r.add(files[i]);
-				}
-			}
-		}
-		return r;
+		return list(path,true);
+	}
+	
+	public static List<File> listDirectories(String path) {
+		return list(path,false);
 	}
 	
 	public static List<Str> getActionLog() {
@@ -209,19 +193,12 @@ public class FileIO {
 		}
 	}
 	
-	public static String getDirName(String path) {
-		path = cleanPath(path);
-		if (!path.endsWith("/")) {
-			if (path.contains("/")) {
-				String[] split = path.split("/");
-				if (split.length>1) {
-					path = path.substring(0,path.length() - split[split.length - 1].length());
-				}
-			} else {
-				path = "";
-			}
-		}
-		return path;
+	public static String getDirName(String filePath) {
+		return getDirName(filePath,true);
+	}
+	
+	public static String getParentDirName(String dirPath) {
+		return getDirName(dirPath,false);
 	}
 	
 	public static String cleanPath(String path) {
@@ -254,6 +231,7 @@ public class FileIO {
 
 	private static Str checkFileExists(String path, boolean isFile) {
 		Str error = new Str();
+		path = cleanPath(path);
 		File file = new File(path);
 		if (!file.exists()) {
 			if (mockIO) {
@@ -283,6 +261,60 @@ public class FileIO {
 			error.sb().append(path);
 		}
 		return error;
+	}
+	
+	private static List<File> list(String path, boolean listFiles) {
+		List<File> r = new ArrayList<File>(); 
+		if (mockIO) {
+			FileIO self = new FileIO();
+			lock.lock(self);
+			path = cleanPath(addSlash(path));
+			if (listFiles) {
+				for (String filePath: fileData.keySet()) {
+					if (getDirName(filePath).equals(path)) {
+						r.add(new File(filePath));
+					}
+				}
+			} else {
+				for (String dirPath: paths) {
+					if (getParentDirName(dirPath).equals(path)) {
+						r.add(new File(dirPath));
+					}
+				}
+			}
+			lock.unlock(self);
+		} else {
+			File dir = new File(path);
+			if (dir.exists() && dir.isDirectory()) {
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (listFiles && files[i].isFile()) {
+						r.add(files[i]);
+					} else if (!listFiles && files[i].isFile()) {
+						r.add(files[i]);
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	private static String getDirName(String path, boolean isFile) {
+		path = cleanPath(path);
+		if (!isFile && path.endsWith("/")) {
+			path = path.substring(0,path.length() - 1);
+		}
+		if (!path.endsWith("/")) {
+			if (path.contains("/")) {
+				String[] split = path.split("/");
+				if (split.length>1) {
+					path = path.substring(0,path.length() - split[split.length - 1].length());
+				}
+			} else {
+				path = "";
+			}
+		}
+		return path;
 	}
 	
 	private static void addActionLogNoLock(String action, String path) {

@@ -432,6 +432,6 @@ public class NetworkConfig {
 	}
 	
 	protected String getFileName() {
-		return FileIO.addSlash(directory) + FILE_NAME;
+		return FileIO.cleanPath(FileIO.addSlash(directory)) + FILE_NAME;
 	}
 }

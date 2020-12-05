@@ -153,6 +153,10 @@ public class Classifier extends SDRProcessor {
 		r.sb().append(OBJECT_SEPARATOR);
 		r.sb().append(processed);
 		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(maxOnBits);
+		r.sb().append(OBJECT_SEPARATOR);
+		r.sb().append(logPredictionAccuracy);
+		r.sb().append(OBJECT_SEPARATOR);
 		int i = 0;
 		for (ClassifierStep step: classifierSteps) {
 			if (i>0) {
@@ -169,12 +173,14 @@ public class Classifier extends SDRProcessor {
 	@Override
 	public void fromStr(Str str) {
 		List<Str> objects = str.split(OBJECT_SEPARATOR);
-		if (objects.size()>=4) {
+		if (objects.size()>=6) {
 			learn = Boolean.parseBoolean(objects.get(0).toString());
 			processed = Integer.parseInt(objects.get(1).toString());
+			maxOnBits = Integer.parseInt(objects.get(2).toString());
+			logPredictionAccuracy = Boolean.parseBoolean(objects.get(3).toString());
 			
 			classifierSteps.clear();
-			List<Str> steps = objects.get(2).split("\n");
+			List<Str> steps = objects.get(4).split("\n");
 			for (Str step: steps) {
 				ClassifierStep cs = new ClassifierStep(0,valueKey,maxCount,activationHistory);
 				cs.fromStr(step);
@@ -182,7 +188,7 @@ public class Classifier extends SDRProcessor {
 			}
 			
 			activationHistory.clear();
-			activationHistory.fromStr(objects.get(3));
+			activationHistory.fromStr(objects.get(5));
 		}
 	}
 

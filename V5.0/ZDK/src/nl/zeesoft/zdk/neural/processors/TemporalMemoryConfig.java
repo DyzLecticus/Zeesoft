@@ -11,14 +11,15 @@ public class TemporalMemoryConfig extends SDRProcessorConfig{
 		" * *sizeX*, *sizeY*, *sizeZ*; Cell grid dimensions (sizeX, sizeY specify input SDR dimensions).  \n" + 
 		" * *maxSegmentsPerCell*; Maximum number of segments per cell.  \n" +
 		" * *maxSynapsesPerSegment*; Maximum number of synapses per segment.  \n" +
-		" * *initialPermanence*, *permanenceThreshold*, *permanenceIncrement*, *permanenceDecrement*; Distal and apical synapse adaptation control.  \n" +
-		" * *segmentCreationSubsample*; Limits the creation of new segments to the specified percentage.  \n" +
-		" * *distalSegmentDecrement*, *apicalSegmentDecrement*; Optional segment decrement for distal/apical segments.  \n" + 
-		" * *distalPotentialRadius*; Optional potential radius for distal segments.  \n" + 
+		" * **initialPermanence**, **permanenceThreshold**, **permanenceIncrement**, **permanenceDecrement**; Distal and apical synapse adaptation control.  \n" +
+		" * **segmentCreationSubsample**; Limits the creation of new segments to the specified percentage.  \n" +
+		" * **distalSegmentDecrement**, **apicalSegmentDecrement**; Optional segment decrement for distal/apical segments.  \n" + 
+		" * **distalPotentialRadius**; Optional potential radius for distal segments.  \n" + 
 		" * *apicalPotentialRadius*; Optional potential radius for apical segments (assumes apical input XY dimensions match model XY dimensions).  \n" + 
 		" * *activationThreshold*; Number of active synapses on a segment for it to be considered active.  \n" + 
 		" * *matchingThreshold*; Number of potential synapses on a segment for it to be considered matching.  \n" + 
 		" * *maxNewSynapseCount*; Maximum number of synapses to create when creating/adapting segments.  \n" + 
+		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 
 	public int		sizeX						= 48;

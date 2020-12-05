@@ -38,6 +38,7 @@ public class TestNetwork extends TestObject {
 		System.out.println("Non-SDR network input values will be wrapped in a *KeyValueSDR* before being passed to a processor. ");
 		System.out.println("Processor thread usage numbers can be specified for each individual processor via the configuration. ");
 		System.out.println("Processor learning and certain processor specific properties can be changed after initialization. ");
+		System.out.println("This includes the option to switch between parallel (default) and sequential processing for the entire network and/or individual processors. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");

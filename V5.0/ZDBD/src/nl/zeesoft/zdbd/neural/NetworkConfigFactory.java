@@ -25,14 +25,14 @@ public class NetworkConfigFactory {
 	public static int		MEMORY_LAYER			= 2;
 	public static int		CLASSIFIER_LAYER		= 3;
 		
-	public static String	RYTHM_INPUT				= "Rythm";
+	public static String	CONTEXT_INPUT			= "Context";
 	public static String	GROUP1_INPUT			= "Group1";
 	public static String	GROUP2_INPUT			= "Group2";
 		
 	public static NetworkConfig getNetworkConfig() {
 		NetworkConfig r = new NetworkConfig();
 		
-		r.addInput(RYTHM_INPUT);
+		r.addInput(CONTEXT_INPUT);
 		r.addInput(GROUP1_INPUT);
 		r.addInput(GROUP2_INPUT);
 		
@@ -58,7 +58,7 @@ public class NetworkConfigFactory {
 		MergerConfig mergerConfig = r.addMerger(inputName + "Merger",MERGER_LAYER);
 		mergerConfig.sizeX = sdr.sizeX();
 		mergerConfig.sizeY = sdr.sizeY();
-		r.addLink(RYTHM_INPUT, 0, inputName + "Merger", 0);
+		r.addLink(CONTEXT_INPUT, 0, inputName + "Merger", 0);
 		r.addLink(inputName, 0, inputName + "Merger", 1);
 
 		SpatialPoolerConfig poolerConfig = r.addSpatialPooler(inputName + "Pooler", POOLER_LAYER);

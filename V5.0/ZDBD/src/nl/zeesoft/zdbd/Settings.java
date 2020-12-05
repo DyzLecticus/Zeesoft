@@ -1,38 +1,31 @@
 package nl.zeesoft.zdbd;
 
 import nl.zeesoft.zdk.FileIO;
+import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 
-public class Settings {
+public abstract class Settings {
 	public String		workDir						= "ZDBD/";
-	
-	public String		soundBankDir				= "resources/";
-	public boolean		useInternalDrumKit			= true;
-	public boolean		useInternalSyntesizers		= true;
-	
-	public String		workingComposition			= "";
 	
 	public Settings() {
 		initialize();
 	}
 
 	public Settings copy() {
-		Settings r = new Settings();
+		Settings r = (Settings) Instantiator.getNewClassInstance(getClass());
 		r.copyFrom(this);
 		return r;
 	}
 	
 	public void copyFrom(Settings set) {
 		this.workDir = set.workDir;
-		this.soundBankDir = set.soundBankDir;
-		this.useInternalDrumKit = set.useInternalDrumKit;
-		this.useInternalSyntesizers = set.useInternalSyntesizers;
-		this.workingComposition = set.workingComposition;
 	}
 	
-	public String getFileName() {
-		return FileIO.addSlash(workDir) + "Settings.txt";
+	public String getWorkDir() {
+		return FileIO.addSlash(workDir);
 	}
+	
+	public abstract String getFileName();
 	
 	public boolean fileExists() {
 		return FileIO.checkFile(getFileName()).length() == 0;

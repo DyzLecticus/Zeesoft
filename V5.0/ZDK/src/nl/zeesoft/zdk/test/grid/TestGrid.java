@@ -33,7 +33,9 @@ public class TestGrid extends TestObject {
 		System.out.println("// Create the grid");
 		System.out.println("Grid grid = new Grid();");
 		System.out.println("// Initialize the grid");
-		System.out.println("Grid grid = new Grid(4, 4, 4, 0.5F);");
+		System.out.println("grid.initialize(4, 4, 4, 0.5F);");
+		System.out.println("// Disable locking (Not needed if column functions do not depend on values on other columns)  ");
+		System.out.println("grid.setUseLock(false);");
 		System.out.println("// Set a value");
 		System.out.println("grid.setValue(1, 2, 3, 0.5F);");
 		System.out.println("// Create a column function");
@@ -64,6 +66,7 @@ public class TestGrid extends TestObject {
 		Grid grid = new Grid();
 		grid.setValue(10, 15, 4, 0.5F);
 		grid.initialize(48, 48, 16, 0F);
+		grid.setUseLock(false);
 		assertEqual(grid.getColumns().size(), 2304, "Number of columns does not match expectation");
 		System.out.println("Columns: " + grid.getColumns().size());
 		

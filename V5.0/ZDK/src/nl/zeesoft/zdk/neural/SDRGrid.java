@@ -75,5 +75,6 @@ public class SDRGrid extends Grid implements StrAble {
 			value = false;
 		}
 		super.initialize(sizeX, sizeY, sizeZ, value);
+		setUseLock(false);
 	}
 }

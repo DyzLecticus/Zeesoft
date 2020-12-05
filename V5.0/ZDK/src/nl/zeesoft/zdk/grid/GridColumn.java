@@ -7,11 +7,13 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class GridColumn {
-	private Lock		lock	= new Lock();			
+	private Lock		lock	= new Lock();
 	
 	protected int		index	= 0;
 	protected int		posX	= 0;
 	protected int		posY	= 0;
+	
+	protected boolean	useLock	= true;
 	
 	private Object[]	values	= null;
 	
@@ -27,14 +29,18 @@ public class GridColumn {
 	@Override
 	public String toString() {
 		Str vals = new Str();
-		lock.lock(this);
+		if (useLock) {
+			lock.lock(this);
+		}
 		for (int z = 0; z < values.length; z++) {
 			if (vals.length()>0) {
 				vals.sb().append(", ");
 			}
 			vals.sb().append(values[z]);
 		}
-		lock.unlock(this);
+		if (useLock) {
+			lock.unlock(this);
+		}
 		vals.sb().insert(0,"[");
 		vals.sb().append("]");
 		return String.format("%02d", posX) + "," + String.format("%02d", posY) + "=" + vals;
@@ -57,11 +63,17 @@ public class GridColumn {
 	}
 	
 	public void setValue(int posZ, Object value) {
-		lock.lock(this);
-		if (values!=null && posZ<values.length) {
-			values[posZ] = value;
+		if (useLock) {
+			lock.lock(this);
+			if (values!=null && posZ<values.length) {
+				values[posZ] = value;
+			}
+			lock.unlock(this);
+		} else {
+			if (values!=null && posZ<values.length) {
+				values[posZ] = value;
+			}
 		}
-		lock.unlock(this);
 	}
 	
 	public Object getValue() {
@@ -70,17 +82,25 @@ public class GridColumn {
 	
 	public Object getValue(int posZ) {
 		Object r = null;
-		lock.lock(this);
-		if (values!=null && posZ<values.length) {
-			r = values[posZ];
+		if (useLock) {
+			lock.lock(this);
+			if (values!=null && posZ<values.length) {
+				r = values[posZ];
+			}
+			lock.unlock(this);
+		} else {
+			if (values!=null && posZ<values.length) {
+				r = values[posZ];
+			}
 		}
-		lock.unlock(this);
 		return r;
 	}
 	
 	public List<Position> getValuePositions(Object value) {
 		List<Position> r = new ArrayList<Position>();
-		lock.lock(this);
+		if (useLock) {
+			lock.lock(this);
+		}
 		for (int z = 0; z < values.length; z++) {
 			if ((values[z]==null && value==null) ||
 				(values[z]!=null && values[z]==value) ||
@@ -89,20 +109,31 @@ public class GridColumn {
 				r.add(new Position(posX,posY,z));
 			}
 		}
-		lock.unlock(this);
+		if (useLock) {
+			lock.unlock(this);
+		}
 		return r;
 	}
 	
 	public void applyFunction(ColumnFunction function) {
-		lock.lock(this);
-		Object[] currentValues = new Object[values.length];
-		for (int z = 0; z < values.length; z++) {
-			currentValues[z] = values[z];
+		if (useLock) {
+			lock.lock(this);
+			Object[] currentValues = getCurrentValuesNoLock();
+			lock.unlock(this);
+			Object[] newValues = function.applyFunction(this, currentValues);
+			lock.lock(this);
+			values = newValues;
+			lock.unlock(this);
+		} else {
+			values = function.applyFunction(this, values);
 		}
-		lock.unlock(this);
-		Object[] newValues = function.applyFunction(this, currentValues);
-		lock.lock(this);
-		values = newValues;
-		lock.unlock(this);
+	}
+	
+	private Object[] getCurrentValuesNoLock() {
+		Object[] r = new Object[values.length];
+		for (int z = 0; z < values.length; z++) {
+			r[z] = values[z];
+		}
+		return r;
 	}
 }

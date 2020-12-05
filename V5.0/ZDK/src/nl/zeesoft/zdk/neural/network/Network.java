@@ -36,6 +36,7 @@ public class Network implements Waitable {
 	private Lock					initLocker					= new Lock();
 	private List<NetworkProcessor>	processors					= new ArrayList<NetworkProcessor>();
 	private CodeRunnerChain			processorChain				= null;
+	private boolean					sequential					= false;
 	
 	// State
 	private NetworkIO				currentIO					= null;
@@ -145,6 +146,13 @@ public class Network implements Waitable {
 		}
 		return err;
 	}
+	
+	public void setSequential(boolean sequential) {
+		lock.lock(this);
+		this.sequential = sequential; 
+		setProcessorPropertyNoLock("*", "sequential", sequential);
+		lock.unlock(this);
+	}
 
 	public void setLayerLearn(int layer, boolean learn) {
 		setLayerProperty(layer, "learn", learn);
@@ -231,8 +239,12 @@ public class Network implements Waitable {
 		if (initialized && !networkIO.hasErrors()) {
 			lock.lock(this);
 			currentIO = networkIO;
-			if (!Waiter.startAndWaitFor(processorChain, currentIO.getTimeoutMs())) {
-				networkIO.addError(new Str("Processing networkIO timed out"));
+			if (sequential) {
+				processorChain.runSequential();
+			} else {
+				if (!Waiter.startAndWaitFor(processorChain, currentIO.getTimeoutMs())) {
+					networkIO.addError(new Str("Processing networkIO timed out"));
+				}
 			}
 			previousIO = new NetworkIO(currentIO);
 			lock.unlock(this);
@@ -285,17 +297,19 @@ public class Network implements Waitable {
 			RunCode code = new RunCode() {
 				@Override
 				protected boolean run() {
-					initializeNetworkProcessor((NetworkProcessorConfig) params[0], resetConnections);
+					initializeNetworkProcessor((NetworkProcessorConfig) params[0], resetConnections, (Boolean) params[1]);
 					return true;
 				}
 			};
+			code.params = new Object[2];
 			code.params[0] = cfg;
+			code.params[1] = sequential;
 			r.add(code);
 		}
 		return r;
 	}
 	
-	protected void initializeNetworkProcessor(NetworkProcessorConfig cfg, boolean resetConnections) {
+	protected void initializeNetworkProcessor(NetworkProcessorConfig cfg, boolean resetConnections, boolean sequential) {
 		SDRProcessor sdrProcessor = ProcessorFactory.getNewSDRProcessor(cfg.processorConfig, true);
 		if (sdrProcessor!=null) {
 			if (sdrProcessor instanceof CellGridProcessor && resetConnections) {
@@ -496,7 +510,7 @@ public class Network implements Waitable {
 				@Override
 				protected boolean run() {
 					Processor processor = (Processor) params[0];
-					String path = FileIO.addSlash(directory) + processor.getName() + ".txt";
+					String path = FileIO.cleanPath(FileIO.addSlash(directory)) + processor.getName() + ".txt";
 					if (save) {
 						Logger.dbg(this, new Str("Writing " + path + " ..."));
 						processor.save(path);
@@ -514,7 +528,7 @@ public class Network implements Waitable {
 			@Override
 			protected boolean run() {
 				Str data = new Str(); 
-				String path = FileIO.addSlash(directory) + PREVIOUS_IO_FILE_NAME;
+				String path = FileIO.cleanPath(FileIO.addSlash(directory)) + PREVIOUS_IO_FILE_NAME;
 				if (save) {
 					if (previousIO!=null) {
 						data = previousIO.toStr();

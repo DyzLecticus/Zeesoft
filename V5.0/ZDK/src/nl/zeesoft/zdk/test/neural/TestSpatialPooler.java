@@ -125,7 +125,7 @@ public class TestSpatialPooler extends TestObject {
 		
 		System.out.println();
 		System.out.println("Average overlap for similar inputs: " + averageSimilar + ", overall: " + averageOverall);
-		assertEqual(averageSimilar>=44F,true,"Average overlap for similar inputs is below expectation");
+		assertEqual(averageSimilar>=43F,true,"Average overlap for similar inputs is below expectation");
 		assertEqual(averageOverall<=3F,true,"Average overlap for overall inputs is above expectation");
 		
 		CellGrid cellGrid = sp.toCellGrid(null);

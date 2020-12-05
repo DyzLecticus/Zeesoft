@@ -14,10 +14,11 @@ public class SpatialPoolerConfig extends SDRProcessorConfig{
 		" * *outputSizeX*, *outputSizeY*; Output SDR dimensions (mini column dimensions).  \n" +
 		" * *outputOnBits*; Maximum number of on bits in the output.  \n" +
 		" * *potentialConnections*, *potentialRadius*; Number and optional radius of potential connections relative to the input space.  \n" +
-		" * *permanenceThreshold*, *permanenceIncrement*, *permanenceDecrement*; Potential synapse adaptation control.  \n" +
+		" * **permanenceThreshold**, **permanenceIncrement**, **permanenceDecrement**; Potential synapse adaptation control.  \n" +
 		" * *activationHistorySize*; Historic column activation buffer size (used to calculate boost factors).  \n" +
-		" * *boostFactorPeriod*; Boost factor recalculation period.  \n" +
-		" * *boostStrength*; Boost strength.  \n" +
+		" * **boostFactorPeriod**; Boost factor recalculation period.  \n" +
+		" * **boostStrength**; Boost strength.  \n" +
+		"(**Bolded** properties can be changed after initialization)  \n" + 
 		"";
 
 	public int		inputSizeX					= 16;

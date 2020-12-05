@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class Composition {
-	protected String			workDir					= "";
+public class Theme {
+	protected String			themeDir				= "";
 	
 	protected String 			name					= "";
 	protected NetworkTrainer	networkTrainer			= new NetworkTrainer();
@@ -53,7 +53,7 @@ public class Composition {
 	}
 	
 	protected String getDirectory() {
-		return FileIO.addSlash(workDir) + FileIO.addSlash(name);
+		return FileIO.addSlash(themeDir) + FileIO.addSlash(name);
 	}
 	
 	protected String getTrainerFileName() {
