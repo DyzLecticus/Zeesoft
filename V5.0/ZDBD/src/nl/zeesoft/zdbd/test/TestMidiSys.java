@@ -1,9 +1,7 @@
 package nl.zeesoft.zdbd.test;
 
 import java.io.File;
-import java.io.IOException;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
@@ -11,7 +9,6 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.sound.sampled.AudioFileFormat;
@@ -90,8 +87,8 @@ public class TestMidiSys extends TestObject {
 			// Open AudioStream from AudioSynthesizer.
 			AudioInputStream stream = synth.openStream(null, null);
 
+			MidiSys.synthesizer = synth;
 			CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(
-				synth,
 				"../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2",
 				"../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2"
 			);

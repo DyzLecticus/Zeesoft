@@ -34,6 +34,9 @@ public class PatternGenerator {
 	public float			mixEnd				= 1.0F; // 0 - 1
 	public float			maintainBeat		= 1.0F; // 0 - 1
 	public boolean			maintainFeedback	= false;
+	
+	// System resource usage limiting
+	public int				sleepMs				= 50;
 
 	public void setSkipInstruments(String ... names) {
 		skipInstruments = names;
@@ -196,6 +199,14 @@ public class PatternGenerator {
 					break;
 				}
 				workingIO = networkIO;
+				
+				if (sleepMs>0) {
+					try {
+						Thread.sleep(sleepMs);
+					} catch (InterruptedException e) {
+						Logger.err(this, new Str("Pattern generator was interrupted"),e);
+					}
+				}
 			}
 			
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", 0F);

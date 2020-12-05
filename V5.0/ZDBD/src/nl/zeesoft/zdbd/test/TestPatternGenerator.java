@@ -88,6 +88,8 @@ public class TestPatternGenerator extends TestObject {
 			chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 			Waiter.startAndWaitFor(chain,3000);
 			
+			sleep(5000);
+			
 			System.out.println();
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
 			PatternGenerator generator = new PatternGenerator();
@@ -102,8 +104,14 @@ public class TestPatternGenerator extends TestObject {
 			
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
 			MidiSys.sequencePlayer.setNextSequence(midiSequence);
-			MidiSys.sequencePlayer.start();
-			sleep(60000);
+			
+			generator.generatePatternSequence(network, sequence);
+			generator.generatePatternSequence(network, sequence);
+			generator.generatePatternSequence(network, sequence);
+			generator.generatePatternSequence(network, sequence);
+			generator.generatePatternSequence(network, sequence);
+
+			sleep(30000);
 			MidiSys.sequencePlayer.stop();
 					
 			MidiSys.closeDevices();

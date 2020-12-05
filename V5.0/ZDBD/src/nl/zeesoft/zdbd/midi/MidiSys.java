@@ -30,6 +30,16 @@ public class MidiSys {
 	public static MidiSequenceConvertor convertor			= null;
 	public static List<String>			loadedSoundbanks	= new ArrayList<String>();
 	
+	public static RunCode getInitializeRunCode() {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				initialize();
+				return true;
+			}
+		};
+	}
+	
 	public static void initialize() {
 		if (!isInitialized()) {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
@@ -107,39 +117,28 @@ public class MidiSys {
 			synthesizer = null;
 		}
 	}
-	
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... paths) {
-		if (synthesizer==null) {
-			initialize();
-		}
-		return getCodeRunnerChainForSoundbankFiles(synthesizer,paths);
-	}
 
-	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(Synthesizer synthesizer, String... paths) {
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... paths) {
 		CodeRunnerChain r = new CodeRunnerChain();
-		r.addAll(getLoadSoundbankRunCodes(synthesizer,paths));
+		r.addAll(getLoadSoundbankRunCodes(paths));
 		return r;
 	}
 	
-	public static List<RunCode> getLoadSoundbankRunCodes(Synthesizer synthesizer, String... paths) {
+	public static List<RunCode> getLoadSoundbankRunCodes(String... paths) {
 		List<RunCode> r = new ArrayList<RunCode>();
 		for (String path: paths) {
-			r.add(getLoadSoundbankRunCode(synthesizer,path));
+			r.add(getLoadSoundbankRunCode(path));
 		}
 		return r;
 	}
-
-	public static RunCode getLoadSoundbankRunCode(String path) {
-		if (synthesizer==null) {
-			initialize();
-		}
-		return getLoadSoundbankRunCode(synthesizer,path);
-	}
 	
-	public static RunCode getLoadSoundbankRunCode(Synthesizer synthesizer, String path) {
+	public static RunCode getLoadSoundbankRunCode(String path) {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
+				if (synthesizer==null) {
+					initialize();
+				}
 				Soundbank soundbank = loadSoundBank(synthesizer,path);
 				replaceSoundBankInstruments(synthesizer, soundbank);
 				return true;

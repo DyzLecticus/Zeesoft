@@ -20,9 +20,13 @@ public class Controller implements EventListener, Waitable {
 	
 	public static String			SAVING_COMPOSITION		= "SAVING_COMPOSITION";
 	public static String			COMPOSITION_SAVED		= "COMPOSITION_SAVED";
-	
 	public static String			LOADING_COMPOSITION		= "LOADING_COMPOSITION";
 	public static String			COMPOSITION_LOADED		= "COMPOSITION_LOADED";
+	
+	public static String			TRAINING_NETWORK		= "TRAINING_NETWORK";
+	public static String			NETWORK_TRAINED			= "NETWORK_TRAINED";
+	public static String			SAVING_NETWORK			= "SAVING_NETWORK";
+	public static String			NETWORK_SAVED			= "NETWORK_SAVED";
 	
 	public static EventPublisher	eventPublisher			= new EventPublisher();
 	
@@ -46,19 +50,21 @@ public class Controller implements EventListener, Waitable {
 		CodeRunnerChain r = null;
 		boolean initialize = false;
 		lock.lock(this);
-		if (this.settings==null) {
+		if (this.settings==null && !busy.isBusy()) {
 			this.settings = settings.copy();
 			initialize = true;
 			busy.setBusy(true);
 		}
 		lock.unlock(this);
 		if (initialize) {
+			List<RunCode> codes = new ArrayList<RunCode>();
+			codes.add(MidiSys.getInitializeRunCode());
 			if (settings.fileExists()) {
 				settings = settings.fromFile();
 			} else {
-				install(settings);
+				codes.add(getInstallRunCode(settings));
 			}
-			r = initializeState(settings);
+			r = getInitializeStateRunnerChain(settings,codes);
 		} else {
 			Logger.err(this, new Str("Controller has already been initialized"));
 		}
@@ -81,6 +87,14 @@ public class Controller implements EventListener, Waitable {
 		}
 		lock.unlock(this);
 		return r;
+	}
+	
+	public CodeRunnerChain trainNetwork() {
+		return getTrainNetworkRunnerChain();
+	}
+	
+	public CodeRunnerChain saveNetwork() {
+		return getSaveNetworkRunnerChain();
 	}
 	
 	public CodeRunnerChain saveState() {
@@ -136,9 +150,33 @@ public class Controller implements EventListener, Waitable {
 			lock.lock(this);
 			settings.workingComposition = composition.name;
 			settings.toFile();
+			composition.networkTrainer.savedNetwork();
+			lock.unlock(this);
+			busy.setBusy(false);
+		} else if (event.name.equals(TRAINING_NETWORK)) {
+			Logger.dbg(this, new Str("Training network ..."));
+		} else if (event.name.equals(NETWORK_TRAINED)) {
+			Logger.dbg(this, new Str("Trained network"));
+			busy.setBusy(false);
+		} else if (event.name.equals(SAVING_NETWORK)) {
+			Logger.dbg(this, new Str("Saving network ..."));
+		} else if (event.name.equals(NETWORK_SAVED)) {
+			Logger.dbg(this, new Str("Saved network"));
+			lock.lock(this);
+			composition.networkTrainer.savedNetwork();
 			lock.unlock(this);
 			busy.setBusy(false);
 		}
+	}
+	
+	protected RunCode getInstallRunCode(Settings settings) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				install(settings);
+				return true;
+			}
+		};
 	}
 	
 	protected void install(Settings settings) {
@@ -147,7 +185,7 @@ public class Controller implements EventListener, Waitable {
 		Logger.dbg(this,new Str("Installed"));
 	}
 	
-	protected CodeRunnerChain initializeState(Settings settings) {
+	protected CodeRunnerChain getInitializeStateRunnerChain(Settings settings, List<RunCode> beforeCodes) {
 		CodeRunnerChain r = new CodeRunnerChain();
 		
 		List<RunCode> codes = new ArrayList<RunCode>();
@@ -173,6 +211,7 @@ public class Controller implements EventListener, Waitable {
 			codes.add(composition.initializeNetwork(false));
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
+		r.addAll(beforeCodes);
 		r.addAll(codes);
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
 		lock.unlock(this);
@@ -195,7 +234,6 @@ public class Controller implements EventListener, Waitable {
 	
 	protected CodeRunnerChain getSaveStateRunnerChain() {
 		CodeRunnerChain r = new CodeRunnerChain();
-		
 		lock.lock(this);
 		if (composition!=null && !busy.isBusy()) {
 			busy.setBusy(true);
@@ -211,13 +249,11 @@ public class Controller implements EventListener, Waitable {
 			r.add(eventPublisher.getPublishEventRunCode(this, COMPOSITION_SAVED));
 		}
 		lock.unlock(this);
-		
 		return r;
 	}
 	
 	protected CodeRunnerChain getLoadStateRunnerChain(String name) {
 		CodeRunnerChain r = null;
-		
 		lock.lock(this);
 		if (!busy.isBusy()) {
 			busy.setBusy(true);
@@ -238,7 +274,35 @@ public class Controller implements EventListener, Waitable {
 			}
 		}
 		lock.unlock(this);
-		
+		return r;
+	}
+	
+	protected CodeRunnerChain getTrainNetworkRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (composition!=null && !busy.isBusy() &&
+			composition.networkTrainer.changedSequenceSinceTraining()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, TRAINING_NETWORK));
+			r.add(composition.trainNetwork());
+			r.add(eventPublisher.getPublishEventRunCode(this, NETWORK_TRAINED));
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getSaveNetworkRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (composition!=null && !busy.isBusy() &&
+			composition.networkTrainer.trainedNetworkSinceSave()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, SAVING_NETWORK));
+			r.add(composition.saveNetworkTrainer());
+			r.add(composition.saveNetwork());
+			r.add(eventPublisher.getPublishEventRunCode(this, NETWORK_SAVED));
+		}
+		lock.unlock(this);
 		return r;
 	}
 }

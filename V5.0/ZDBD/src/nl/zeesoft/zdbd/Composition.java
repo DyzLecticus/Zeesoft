@@ -35,6 +35,10 @@ public class Composition {
 		return network.getInitializeAndLoadRunCode(networkConfiguration);
 	}
 	
+	public RunCode trainNetwork() {
+		return networkTrainer.getTrainNetworkRunCode(network);
+	}
+	
 	protected RunCode saveNetwork() {
 		network.setDirectory(getDirectory());
 		return network.getSaveRunCode();

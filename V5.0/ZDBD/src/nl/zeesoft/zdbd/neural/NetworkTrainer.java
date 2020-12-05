@@ -28,8 +28,14 @@ public class NetworkTrainer implements Waitable {
 	protected float				minimumAverageAccuracy		= 0.950F;
 	protected float				minimumClassifierAccuracy	= 0.990F;
 	
+	protected long				changedSequence				= 1;
+	protected long				savedSelf					= 0;
+	
+	protected long				trainedNetwork				= 0;
+	protected long				savedNetwork				= -1;
+	
 	protected NetworkIO			lastIO						= null;
-
+	
 	public void copyFrom(NetworkTrainer trainer) {
 		lock.lock(this);
 		this.sequence = trainer.sequence.copy();
@@ -38,6 +44,10 @@ public class NetworkTrainer implements Waitable {
 		this.maxTrainCycles = trainer.maxTrainCycles;
 		this.minimumAverageAccuracy = trainer.minimumAverageAccuracy;
 		this.minimumClassifierAccuracy = trainer.minimumClassifierAccuracy;
+		this.changedSequence = trainer.changedSequence;
+		this.savedSelf = trainer.savedSelf;
+		this.trainedNetwork = trainer.trainedNetwork;
+		this.savedNetwork = trainer.savedNetwork;
 		if (trainer.lastIO!=null) {
 			this.lastIO = new NetworkIO(trainer.lastIO);
 		} else {
@@ -49,6 +59,7 @@ public class NetworkTrainer implements Waitable {
 	public void setSequence(PatternSequence sequence) {
 		lock.lock(this);
 		this.sequence = sequence.copy();
+		this.changedSequence = System.currentTimeMillis();
 		lock.unlock(this);
 	}
 
@@ -205,6 +216,7 @@ public class NetworkTrainer implements Waitable {
 			
 			lock.lock(this);
 			this.lastIO = lastIO;
+			this.trainedNetwork = System.currentTimeMillis();
 			network.setProcessorLearn("*", false);
 			network.setLayerProperty(NetworkConfigFactory.CLASSIFIER_LAYER, "logPredictionAccuracy", false);
 			busy.setBusy(false);
@@ -241,6 +253,7 @@ public class NetworkTrainer implements Waitable {
 	}
 	
 	public void toFile(String path) {
+		this.savedSelf = System.currentTimeMillis();
 		PersistableCollection.toFile(this, path);
 	}
 
@@ -252,6 +265,33 @@ public class NetworkTrainer implements Waitable {
 	public PatternSequence getSequence() {
 		lock.lock(this);
 		PatternSequence r = sequence.copy();
+		lock.unlock(this);
+		return r;
+	}
+
+	public boolean changedSequenceSinceSave() {
+		lock.lock(this);
+		boolean r = savedSelf < changedSequence;
+		lock.unlock(this);
+		return r;
+	}
+
+	public boolean changedSequenceSinceTraining() {
+		lock.lock(this);
+		boolean r = trainedNetwork < changedSequence;
+		lock.unlock(this);
+		return r;
+	}
+
+	public void savedNetwork() {
+		lock.lock(this);
+		savedNetwork = System.currentTimeMillis();
+		lock.unlock(this);
+	}
+
+	public boolean trainedNetworkSinceSave() {
+		lock.lock(this);
+		boolean r = savedNetwork < trainedNetwork;
 		lock.unlock(this);
 		return r;
 	}
