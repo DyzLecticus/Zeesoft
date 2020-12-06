@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.midi;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
@@ -13,6 +14,7 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class MidiSequencer {
 	private static int							CURR			= 0;
@@ -27,6 +29,7 @@ public class MidiSequencer {
 	
 	protected MidiSequence[]					sequence		= new MidiSequence[2];
 	
+	protected boolean							paused			= false;
 	protected long								startedNs		= 0;
 	protected long								prevTick		= 0;
 	
@@ -38,6 +41,12 @@ public class MidiSequencer {
 			@Override
 			protected void caughtException(Exception exception) {
 				exception.printStackTrace();
+			}
+			@Override
+			protected void doneCallback() {
+				lock.lock(this);
+				allSoundOff(synthesizer);
+				lock.unlock(this);
 			}
 		};
 		eventPublisher = new CodeRunner(getPublishSequenceSwitchRunCode());
@@ -69,12 +78,18 @@ public class MidiSequencer {
 			sequence.getResolution()==PatternSequenceConvertor.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
+			boolean restart = false;
 			lock.lock(this);
-			if (this.sequence[CURR]==null && sender.isBusy()) {
-				// TODO: Check replacement length; if shorter and currentTick > new length; restart (stop all synth notes!)
+			if (this.sequence[CURR]!=null && sender.isBusy()) {
+				if (seq.getTickLength() < this.sequence[CURR].getTickLength() && getCurrentTick(seq) >= seq.getTickLength()) {
+					restart = true;
+				}
 			}
 			setSequenceNoLock(CURR,seq);
 			lock.unlock(this);
+			if (restart) {
+				restart();
+			}
 		}
 	}
 	
@@ -90,30 +105,67 @@ public class MidiSequencer {
 		}
 	}
 	
-	public void start() {
-		Str err = new Str();
-		lock.lock(this);
-		if (synthesizer==null) {
-			err.sb().append("Synthesizer has not been set");
-		} else if (sequence[CURR]==null) {
-			err.sb().append("Sequence has not been set");
+	public Str restart() {
+		if (sender.isBusy()) {
+			sender.stop();
 		}
-		startedNs = System.nanoTime();
-		prevTick = -1;
+		lock.lock(this);
+		paused = false;
 		lock.unlock(this);
-		if (err.length()>0) {
-			Logger.err(this, err);
-		} else {
-			sender.start();
-		}	
+		Str err = new Str();
+		if (Waiter.waitFor(sender,1000)) {
+			err = start();
+		}
+		return err;
+	}
+	
+	public Str start() {
+		Str err = new Str();
+		if (!sender.isBusy()) {
+			lock.lock(this);
+			if (synthesizer==null) {
+				err.sb().append("Synthesizer has not been set");
+			} else if (sequence[CURR]==null) {
+				err.sb().append("Sequence has not been set");
+			}
+			if (err.length()==0) {
+				if (!paused) {
+					startedNs = System.nanoTime();
+					prevTick = -1;
+				}
+				paused = false;
+			}
+			lock.unlock(this);
+			
+			if (err.length()>0) {
+				Logger.err(this, err);
+			} else {
+				sender.start();
+			}
+		}
+		return err;
 	}
 	
 	public boolean isPlaying() {
 		return sender.isBusy();
 	}
 	
+	public void pause() {
+		if (sender.isBusy()) {
+			sender.stop();
+			lock.lock(this);
+			paused = true;
+			lock.unlock(this);
+		}
+	}
+	
 	public void stop() {
-		sender.stop();
+		if (sender.isBusy()) {
+			sender.stop();
+			lock.lock(this);
+			paused = false;
+			lock.unlock(this);
+		}
 	}
 	
 	protected void setSequenceNoLock(int seq, MidiSequence sequence) {
@@ -179,7 +231,7 @@ public class MidiSequencer {
 					events.addAll(cSeq.getMidiEventsForTicks(pTick + 1, cTick + 1));
 					for (MidiEvent event:events) {
 						try {
-							synth.getReceiver().send(event.getMessage(),0);
+							synth.getReceiver().send(event.getMessage(),-1);
 						} catch (MidiUnavailableException e) {
 							stop = true;
 							break;
@@ -217,5 +269,13 @@ public class MidiSequencer {
 				return true;
 			}
 		};
+	}
+	
+	public static void allSoundOff(Synthesizer synthesizer) {
+		MidiChannel[] channels = synthesizer.getChannels();
+		for (int c = 0; c < channels.length; c++) {
+			MidiChannel channel = channels[c];
+			channel.allSoundOff();
+		}
 	}
 }

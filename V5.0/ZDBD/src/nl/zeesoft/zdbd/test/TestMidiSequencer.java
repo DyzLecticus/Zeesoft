@@ -13,13 +13,13 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.ProgressBar;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestCustomSequencer extends TestObject implements MidiSequencerEventListener {
-	public TestCustomSequencer(Tester tester) {
+public class TestMidiSequencer extends TestObject implements MidiSequencerEventListener {
+	public TestMidiSequencer(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestCustomSequencer(new Tester())).runTest(args);
+		(new TestMidiSequencer(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -71,13 +71,22 @@ public class TestCustomSequencer extends TestObject implements MidiSequencerEven
 		
 		int bpm = 120;
 		for (int i = 0; i < 20; i++) {
-			sleep(200);
+			sleep(300);
 			bpm++;
 			sequencer.setBeatsPerMinute(bpm);
 		}
 		sequencer.setNextSequence(midiSequence);
+
+		sleep(5000);
+		System.out.println("Pausing 1 second ...");
+		sequencer.pause();
+		sleep(1000);
+		sequencer.start();
+		sleep(3000);
+		sequencer.restart();
+		System.out.println("Restarted");
 		
-		sleep(20000);
+		sleep(10000);
 		
 		sequencer.stop();
 		
