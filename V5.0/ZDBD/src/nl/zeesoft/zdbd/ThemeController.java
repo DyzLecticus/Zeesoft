@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -16,28 +18,30 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waitable;
 
 public class ThemeController implements EventListener, Waitable {
-	public static String			INITIALIZING			= "INITIALIZING";
-	public static String			INITIALIZED				= "INITIALIZED";
+	public static String				INITIALIZING			= "INITIALIZING";
+	public static String				INITIALIZED				= "INITIALIZED";
 	
-	public static String			SAVING_THEME			= "SAVING_THEME";
-	public static String			SAVED_THEME				= "SAVED_THEME";
-	public static String			LOADING_THEME			= "LOADING_THEME";
-	public static String			LOADED_THEME			= "LOADED_THEME";
+	public static String				INITIALIZING_THEME		= "INITIALIZING_THEME";
+	public static String				INITIALIZED_THEME		= "INITIALIZED_THEME";
+	public static String				SAVING_THEME			= "SAVING_THEME";
+	public static String				SAVED_THEME				= "SAVED_THEME";
+	public static String				LOADING_THEME			= "LOADING_THEME";
+	public static String				LOADED_THEME			= "LOADED_THEME";
 	
-	public static String			TRAINING_NETWORK		= "TRAINING_NETWORK";
-	public static String			TRAINED_NETWORK			= "TRAINED_NETWORK";
+	public static String				TRAINING_NETWORK		= "TRAINING_NETWORK";
+	public static String				TRAINED_NETWORK			= "TRAINED_NETWORK";
 	
-	public static String			DESTROYING				= "DESTROYING";
-	public static String			DESTROYED				= "DESTROYED";
+	public static String				DESTROYING				= "DESTROYING";
+	public static String				DESTROYED				= "DESTROYED";
 	
-	public EventPublisher			eventPublisher			= new EventPublisher();
+	public EventPublisher				eventPublisher			= new EventPublisher();
 	
-	private Lock					lock					= new Lock();
-	private Busy					busy					= new Busy(this);
-	private ThemeControllerSettings	settings				= null;
+	protected Lock						lock					= new Lock();
+	protected Busy						busy					= new Busy(this);
+	protected ThemeControllerSettings	settings				= null;
 	
-	private Theme					theme					= null;
-	private long					savedTheme				= 0;
+	protected Theme						theme					= null;
+	protected long						savedTheme				= 0;
 	
 	public ThemeController() {
 		eventPublisher.addListener(this);
@@ -88,6 +92,27 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public String getName() {
+		String r = "";
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.name;
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public Rythm getRythm() {
+		Rythm r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = new Rythm();
+			r.copyFrom(theme.rythm);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void setBeatsPerMinute(float beatsPerMinute) {
 		lock.lock(this);
 		if (theme!=null) {
@@ -95,16 +120,6 @@ public class ThemeController implements EventListener, Waitable {
 			MidiSys.midiSequencer.setBeatsPerMinute(beatsPerMinute);
 		}
 		lock.unlock(this);
-	}
-	
-	public float getBeatsPerMinute(float beatsPerMinute) {
-		float r = 120;
-		lock.lock(this);
-		if (theme!=null) {
-			r = theme.rythm.beatsPerMinute;
-		}
-		lock.unlock(this);
-		return r;
 	}
 	
 	public void setTrainingSequence(PatternSequence sequence) {
@@ -133,19 +148,29 @@ public class ThemeController implements EventListener, Waitable {
 	public boolean themeHasChanges() {
 		boolean r = false;
 		lock.lock(this);
-		if (theme!=null &&
-			(
-				savedTheme<theme.networkTrainer.getChangedSequence() || 
-				savedTheme<theme.networkTrainer.getTrainedNetwork() 
-			)
-			) {
+		if (theme!=null && (
+			savedTheme<theme.networkTrainer.getChangedSequence() || 
+			savedTheme<theme.networkTrainer.getTrainedNetwork() 
+			)) {
 			r = true;
 		}
 		lock.unlock(this);
 		return r;
 	}
 	
+	public CodeRunnerChain newTheme(String name) {
+		return getNewThemeRunnerChain(name,null);
+	}
+	
+	public CodeRunnerChain newTheme(String name, Rythm rythm) {
+		return getNewThemeRunnerChain(name,rythm);
+	}
+	
 	public CodeRunnerChain saveTheme() {
+		return getSaveThemeRunnerChain();
+	}
+	
+	public CodeRunnerChain saveThemeAs(String name) {
 		return getSaveThemeRunnerChain();
 	}
 	
@@ -193,8 +218,11 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(false);
 		} else if (event.name.equals(DESTROYING)) {
 			MidiSys.midiSequencer.stop();
-			// Ignore
 		} else if (event.name.equals(DESTROYED)) {
+			busy.setBusy(false);
+		} else if (event.name.equals(INITIALIZING_THEME)) {
+			MidiSys.midiSequencer.stop();
+		} else if (event.name.equals(INITIALIZED_THEME)) {
 			busy.setBusy(false);
 		}
 	}
@@ -258,6 +286,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
+			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
 			codes.add(theme.initializeNetwork(false));
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
@@ -282,22 +311,55 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	protected CodeRunnerChain getNewThemeRunnerChain(String name, Rythm rythm) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (!busy.isBusy()) {
+			busy.setBusy(true);
+			
+			List<RunCode> codes = new ArrayList<RunCode>();
+			theme = new Theme();
+			theme.themeDir = settings.getThemeDir();
+			theme.name = name;
+			if (rythm!=null) {
+				theme.rythm.copyFrom(rythm);
+			}
+			codes.add(theme.initializeNetwork(false));
+			
+			r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING_THEME));
+			r.addAll(codes);
+			r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED_THEME));
+		}
+		lock.unlock(this);
+		return r;
+	}
+
 	protected CodeRunnerChain getSaveThemeRunnerChain() {
+		return getSaveThemeRunnerChain(null);
+	}
+	
+	protected CodeRunnerChain getSaveThemeRunnerChain(String name) {
 		CodeRunnerChain r = new CodeRunnerChain();
 		lock.lock(this);
 		if (theme!=null && !busy.isBusy()) {
 			busy.setBusy(true);
 			
-			List<RunCode> codes = new ArrayList<RunCode>();
-			codes.add(theme.saveRythm());
-			codes.add(theme.saveNetworkTrainer());
-			codes.add(theme.saveNetwork());
-			codes.add(theme.saveGenerators());
+			if (name!=null && name.length()>0 && !theme.name.equals(name)) {
+				theme.name = name;
+			}
 			
-			r.add(eventPublisher.getPublishEventRunCode(this, SAVING_THEME));
-			r.add(theme.getMkdirsRunCode());
-			r.addAll(codes);
-			r.add(eventPublisher.getPublishEventRunCode(this, SAVED_THEME));
+			if (theme.name.length()>0) {
+				List<RunCode> codes = new ArrayList<RunCode>();
+				codes.add(theme.saveRythm());
+				codes.add(theme.saveNetworkTrainer());
+				codes.add(theme.saveNetwork());
+				codes.add(theme.saveGenerators());
+				
+				r.add(eventPublisher.getPublishEventRunCode(this, SAVING_THEME));
+				r.add(theme.getMkdirsRunCode());
+				r.addAll(codes);
+				r.add(eventPublisher.getPublishEventRunCode(this, SAVED_THEME));
+			}
 		}
 		lock.unlock(this);
 		return r;

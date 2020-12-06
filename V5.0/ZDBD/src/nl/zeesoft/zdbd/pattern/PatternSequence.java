@@ -14,10 +14,7 @@ public class PatternSequence {
 	public int[]						sequence	= new int[4];
 	
 	public PatternSequence() {
-		sequence[0] = -1;
-		sequence[1] = -1;
-		sequence[2] = -1;
-		sequence[3] = -1;
+		clear();
 	}
 	
 	public PatternSequence copy() {
@@ -35,6 +32,14 @@ public class PatternSequence {
 		for (int i = 0; i < this.sequence.length; i++) {
 			this.sequence[i] = seq.sequence[i];
 		}
+	}
+	
+	public void clear() {
+		patterns.clear();
+		sequence[0] = -1;
+		sequence[1] = -1;
+		sequence[2] = -1;
+		sequence[3] = -1;
 	}
 	
 	public ThemeControllerSettings fromFile(String path) {

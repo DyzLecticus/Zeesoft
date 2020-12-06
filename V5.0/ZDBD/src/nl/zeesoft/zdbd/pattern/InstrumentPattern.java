@@ -62,6 +62,10 @@ public class InstrumentPattern {
 		return r;
 	}
 
+	public void clear() {
+		this.instruments = getInstruments();
+	}
+	
 	public void setStepValue(String name, int step, int value) {
 		if (value>=0 && step>=0 && step<64) {
 			PatternInstrument inst = getInstrument(name);

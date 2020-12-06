@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -21,14 +20,14 @@ public class NetworkTrainer implements Waitable {
 	private Lock				lock						= new Lock();
 	private Busy				busy						= new Busy(this);
 	
-	protected PatternSequence	sequence					= PatternFactory.getFourOnFloorInstrumentPatternSequence();
+	protected PatternSequence	sequence					= new PatternSequence();
 	protected int				startTrainTemporalMemory	= 4;
 	protected int				startTrainClassifiers		= 8;
 	protected int				maxTrainCycles				= 16;
 	protected float				minimumAverageAccuracy		= 0.950F;
 	protected float				minimumClassifierAccuracy	= 0.990F;
 	
-	protected long				changedSequence				= 1;
+	protected long				changedSequence				= System.currentTimeMillis();
 	protected long				trainedNetwork				= 0;
 	
 	protected NetworkIO			lastIO						= null;
