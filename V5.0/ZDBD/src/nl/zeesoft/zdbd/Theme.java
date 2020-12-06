@@ -27,7 +27,7 @@ public class Theme {
 	
 	protected RunCode initializeNetwork(boolean load) {
 		networkConfiguration.directory = getDirectory();
-		return network.getConfigureAndInitializeRunCode(networkConfiguration, true);
+		return network.getInitializeRunCode(networkConfiguration, true);
 	}
 
 	protected RunCode loadNetwork() {

@@ -140,7 +140,7 @@ public class TestMidiSys extends TestObject {
 	 */
 	public static double send(Sequence seq, Receiver recv) {
 		float divtype = seq.getDivisionType();
-		assert (seq.getDivisionType() == Sequence.PPQ);
+		//assert (seq.getDivisionType() == Sequence.PPQ);
 		Track[] tracks = seq.getTracks();
 		int[] trackspos = new int[tracks.length];
 		int mpq = 500000;
