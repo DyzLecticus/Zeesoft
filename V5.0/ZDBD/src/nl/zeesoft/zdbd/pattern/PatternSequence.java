@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class PatternSequence {
+	public Rythm						rythm		= new Rythm();
 	public List<InstrumentPattern>		patterns	= new ArrayList<InstrumentPattern>();
 	public int[]						sequence	= new int[4];
 	
@@ -26,6 +27,7 @@ public class PatternSequence {
 	}
 	
 	public void copyFrom(PatternSequence seq) {
+		this.rythm.copyFrom(seq.rythm);
 		this.patterns.clear();
 		for (InstrumentPattern pat: seq.patterns) {
 			patterns.add(pat.copy());
@@ -54,22 +56,17 @@ public class PatternSequence {
 	}
 
 	public int getTotalSteps() {
-		int r = 0;
-		List<InstrumentPattern> patterns = getSequencedPatterns();
-		for (InstrumentPattern pattern: patterns) {
-			r += pattern.rythm.getStepsPerPattern();
-		}
-		return r;
+		return getSequencedPatterns().size() * rythm.getStepsPerPattern();
 	}
 	
 	public List<NetworkIO> getNetworkIO() {
 		List<NetworkIO> r = new ArrayList<NetworkIO>();
 		List<InstrumentPattern> patterns = getSequencedPatterns();
 		for (InstrumentPattern pattern: patterns) {
-			int stepsPerPattern = pattern.rythm.getStepsPerPattern();
+			int stepsPerPattern = rythm.getStepsPerPattern();
 			for (int s = 0; s < stepsPerPattern; s++) {
 				NetworkIO io = new NetworkIO();
-				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, pattern.rythm.getSDRForPatternStep(pattern.num, s));
+				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythm.getSDRForPatternStep(pattern.num, s));
 				io.setValue(NetworkConfigFactory.GROUP1_INPUT, pattern.getSDRForGroup1Step(s));
 				io.setValue(NetworkConfigFactory.GROUP2_INPUT, pattern.getSDRForGroup2Step(s));
 				r.add(io);

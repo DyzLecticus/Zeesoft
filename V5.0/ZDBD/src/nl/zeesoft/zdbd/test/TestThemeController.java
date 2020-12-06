@@ -65,7 +65,7 @@ public class TestThemeController extends TestObject {
 			System.out.println();
 			chain = controller.saveTheme();
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(FileIO.getActionLog().size(),21,"Action log size does not match expectation (2)");
+			assertEqual(FileIO.getActionLog().size(),22,"Action log size does not match expectation (2)");
 			List<String> themes = controller.listThemes();
 			assertEqual(themes.size(),1,"Number of themes does not match expectation");
 			assertEqual(themes.get(0),"Demo","The listed theme name does not match expectation");
@@ -73,8 +73,7 @@ public class TestThemeController extends TestObject {
 			System.out.println();
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,1000);
-			assertEqual(FileIO.getActionLog().size(),22,"Action log size does not match expectation (3)");
-			
+			assertEqual(FileIO.getActionLog().size(),23,"Action log size does not match expectation (3)");
 			
 			System.out.println();
 			ThemeController controller2 = new ThemeController();
@@ -82,7 +81,7 @@ public class TestThemeController extends TestObject {
 			Waiter.startAndWaitFor(chain,20000);
 			settings = controller2.getSettings();
 			assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
-			assertEqual(FileIO.getActionLog().size(),41,"Action log size does not match expectation (4)");
+			assertEqual(FileIO.getActionLog().size(),43,"Action log size does not match expectation (4)");
 
 			System.out.println();
 			chain = controller2.destroy();

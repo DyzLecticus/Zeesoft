@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.midi;
+package nl.zeesoft.zdbd.midi.convertors;
 
 import java.util.List;
 

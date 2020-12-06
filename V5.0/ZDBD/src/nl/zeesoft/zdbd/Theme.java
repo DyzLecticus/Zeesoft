@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd;
 import nl.zeesoft.zdbd.generate.Generators;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
+import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
@@ -12,11 +13,20 @@ public class Theme {
 	protected String			themeDir				= "";
 	
 	protected String 			name					= "";
+	protected Rythm				rythm					= new Rythm();
 	protected NetworkTrainer	networkTrainer			= new NetworkTrainer();
 	protected NetworkConfig		networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
 	protected Network			network					= new Network();
 	protected Generators		generators				= new Generators();
 
+	protected RunCode loadRythm() {
+		return rythm.getFromFileRunCode(getRythmFileName());
+	}
+
+	protected RunCode saveRythm() {
+		return rythm.getToFileRunCode(getRythmFileName());
+	}
+	
 	protected RunCode loadNetworkTrainer() {
 		return networkTrainer.getFromFileRunCode(getTrainerFileName());
 	}
@@ -54,6 +64,10 @@ public class Theme {
 	
 	protected String getDirectory() {
 		return FileIO.addSlash(themeDir) + FileIO.addSlash(name);
+	}
+	
+	protected String getRythmFileName() {
+		return getDirectory() + "Rythm.txt";
 	}
 	
 	protected String getTrainerFileName() {

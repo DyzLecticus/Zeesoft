@@ -45,6 +45,7 @@ public class PatternGenerator {
 	public PatternSequence generatePatternSequence(Network network, PatternSequence sequence) {
 		Logger.dbg(this, new Str("Generating sequence ..."));
 		PatternSequence r = new PatternSequence();
+		r.rythm.copyFrom(sequence.rythm);
 		for (InstrumentPattern pattern: sequence.patterns) {
 			r.patterns.add(generatePattern(network,sequence,pattern.num));
 		}
@@ -68,8 +69,8 @@ public class PatternGenerator {
 		if (baseSequencePattern>=0) {
 			basePattern = sequence.patterns.get(baseSequencePattern);
 		}
-		if (rythm==null && basePattern!=null) {
-			rythm = basePattern.rythm;
+		if (rythm==null) {
+			rythm = sequence.rythm;
 		}
 		List<SDR> rythmSDRs = generateRythmSDRs(sequence,rythm);
 		return generatePattern(network, rythm, rythmSDRs, basePattern);
@@ -117,11 +118,11 @@ public class PatternGenerator {
 		List<SDR> r = new ArrayList<SDR>();
 		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
 		InstrumentPattern pattern = sequence.patterns.get(num);
-		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
-		int startBeat = Rand.getRandomInt(0, pattern.rythm.beatsPerPattern - 1);
-		int step = startBeat * pattern.rythm.stepsPerBeat;
+		List<SDR> sdrs = sequence.rythm.getSDRsForPattern(pattern.num);
+		int startBeat = Rand.getRandomInt(0, sequence.rythm.beatsPerPattern - 1);
+		int step = startBeat * sequence.rythm.stepsPerBeat;
 		if (randomChunkOffset) {
-			step += Rand.getRandomInt(0, pattern.rythm.stepsPerBeat);
+			step += Rand.getRandomInt(0, sequence.rythm.stepsPerBeat);
 		}
 		for (int s = 0; s < size; s++) {
 			if (step>=sdrs.size()) {
@@ -135,7 +136,6 @@ public class PatternGenerator {
 	
 	protected InstrumentPattern generatePattern(Network network, Rythm rythm, List<SDR> rythmSDRs, InstrumentPattern basePattern) {
 		InstrumentPattern r = new InstrumentPattern();
-		r.rythm.copyFrom(rythm);
 		if (basePattern!=null) {
 			r.num = basePattern.num; 
 		}

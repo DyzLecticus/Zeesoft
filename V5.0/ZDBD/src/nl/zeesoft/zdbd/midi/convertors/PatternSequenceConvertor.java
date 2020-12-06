@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.midi;
+package nl.zeesoft.zdbd.midi.convertors;
 
 import java.util.List;
 
@@ -9,6 +9,9 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.midi.SynthChannelConfig;
+import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
@@ -32,7 +35,7 @@ public class PatternSequenceConvertor {
 		List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
 		long startTick = 0;
 		for (InstrumentPattern pattern: patterns) {
-			Sequence seq = generateNoteSequenceForPattern(pattern);
+			Sequence seq = generateNoteSequenceForPattern(pattern,sequence.rythm);
 			for (int t = 0; t < seq.getTracks().length; t++) {
 				Track track = seq.getTracks()[t];
 				for (int e = 0; e < track.size(); e++) {
@@ -41,22 +44,22 @@ public class PatternSequenceConvertor {
 					r.getTracks()[t].add(event);
 				}
 			}
-			startTick += getSequenceEndTick(pattern.rythm);
+			startTick += getSequenceEndTick(sequence.rythm);
 		}
 		return r;
 	}
 	
-	public Sequence generateSequenceForPattern(InstrumentPattern pattern) {
-		Sequence r = generateNoteSequenceForPattern(pattern);
+	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
+		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
 		addTempoMetaEventToSequence(r);
 		addInitialSynthConfig(r);
 		return r;
 	}
 	
-	protected Sequence generateNoteSequenceForPattern(InstrumentPattern pattern) {
+	protected Sequence generateNoteSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
 		Sequence r = createSequence();
-		addNotesToSequence(r,pattern);
-		alignTrackEndings(r,pattern.rythm);
+		addNotesToSequence(r,pattern,rythm);
+		alignTrackEndings(r,rythm);
 		return r;
 	}
 	
@@ -95,10 +98,10 @@ public class PatternSequenceConvertor {
 		createMetaEventOnTrack(track,TEMPO,b,b.length,0);
 	}
 	
-	protected void addNotesToSequence(Sequence sequence, InstrumentPattern pattern) {
-		long sequenceEndTick = getSequenceEndTick(pattern.rythm);
-		int ticksPerStep = getTicksPerStep(pattern.rythm);
-		int stepsPerPattern = pattern.rythm.getStepsPerPattern();
+	protected void addNotesToSequence(Sequence sequence, InstrumentPattern pattern, Rythm rythm) {
+		long sequenceEndTick = getSequenceEndTick(rythm);
+		int ticksPerStep = getTicksPerStep(rythm);
+		int stepsPerPattern = rythm.getStepsPerPattern();
 		for (PatternInstrument inst: pattern.instruments) {
 			InstrumentConvertor convertor1 = null;
 			InstrumentConvertor convertor2 = null;
@@ -117,7 +120,7 @@ public class PatternSequenceConvertor {
 						mns = convertor1.getMidiNotesForPatternValue(inst.stepValues[s]);
 					}
 					for (MidiNote mn: mns) {
-						long startTick = getStepTick(pattern.rythm,s);
+						long startTick = getStepTick(rythm,s);
 						if (startTick>sequenceEndTick) {
 							startTick = startTick % sequenceEndTick;
 						}

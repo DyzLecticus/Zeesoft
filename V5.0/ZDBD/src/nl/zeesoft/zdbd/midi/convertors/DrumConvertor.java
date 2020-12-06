@@ -1,8 +1,9 @@
-package nl.zeesoft.zdbd.midi;
+package nl.zeesoft.zdbd.midi.convertors;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 

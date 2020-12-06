@@ -51,18 +51,19 @@ public class TestEncoders extends TestObject {
 		Str err = EncoderFactory.testEncoders();
 		assertEqual(err, new Str(), "Encoder factory error does not match expectation");
 		
+		Rythm rythm = new Rythm();
 		InstrumentPattern pattern = PatternFactory.getFourOnFloorInstrumentPattern(0);
 		
-		List<SDR> sdrs = pattern.rythm.getSDRsForPattern(pattern.num);
+		List<SDR> sdrs = rythm.getSDRsForPattern(pattern.num);
 		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
 		displaySDRList(sdrs);
 		
-		sdrs = pattern.getSDRsForGroup(1);
+		sdrs = pattern.getSDRsForGroup(1,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 1 pattern (" + InstrumentPattern.sizeX(1) + "*" + InstrumentPattern.sizeY(1) + ");");
 		displaySDRList(sdrs);
 		
-		sdrs = pattern.getSDRsForGroup(2);
+		sdrs = pattern.getSDRsForGroup(2,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 2 pattern (" + InstrumentPattern.sizeX(2) + "*" + InstrumentPattern.sizeY(2) + ");");
 		displaySDRList(sdrs);

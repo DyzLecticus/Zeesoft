@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.collection.PersistableCollection;
+import nl.zeesoft.zdk.thread.Busy;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Generators {
-	private Lock					lock		= new Lock();
+	protected Lock					lock		= new Lock();
+	protected Busy					busy		= new Busy(this);
 	
-	protected List<GeneratorIO>		generators	= new ArrayList<GeneratorIO>();
+	protected List<Generator>		generators	= new ArrayList<Generator>();
 	
 	public void copyFrom(Generators gens) {
 		lock.lock(this);
 		generators.clear();
-		for (GeneratorIO io: gens.generators) {
-			generators.add(io.copy());
+		for (Generator gen: gens.generators) {
+			generators.add(gen.copy());
 		}
 		lock.unlock(this);
 	}
@@ -28,45 +30,56 @@ public class Generators {
 		return r;
 	}
 	
-	public void add(GeneratorIO generator) {
-		add(-1,generator);
-	}
-	
-	public void add(int index, GeneratorIO generator) {
+	public void put(Generator generator) {
+		generator = generator.copy();
 		lock.lock(this);
-		if (generator!=null) {
-			if (index>=0 && index<generators.size()) {
-				generators.add(index,generator.copy());
-			} else {
-				generators.add(generator.copy());
-			}
+		Generator gen = getNoLock(generator.name);
+		if (gen!=null) {
+			generators.set(generators.indexOf(gen), generator);
+		} else {
+			generators.add(generator);
 		}
 		lock.unlock(this);
 	}
 	
-	public GeneratorIO get(int index) {
-		GeneratorIO r = null;
+	public Generator get(String name) {
+		Generator r = null;
 		lock.lock(this);
-		if (index<generators.size()) {
-			r = generators.get(index).copy();
+		r = getNoLock(name);
+		if (r!=null) {
+			r = r.copy();
 		}
 		lock.unlock(this);
 		return r;
 	}
 	
-	public void set(int index, GeneratorIO generator) {
+	public void set(String name, int index) {
 		lock.lock(this);
-		if (index>=0 && index<generators.size()) {
-			generators.set(index,generator.copy());
+		Generator gen = getNoLock(name);
+		if (gen!=null) {
+			generators.remove(gen);
+			generators.set(index,gen);
 		}
 		lock.unlock(this);
 	}
 	
-	public GeneratorIO remove(int index) {
-		GeneratorIO r = null;
+	public int indexOf(String name) {
+		int r = -1;
 		lock.lock(this);
-		if (index<generators.size()) {
-			r = generators.remove(index);
+		Generator gen = getNoLock(name);
+		if (gen!=null) {
+			r = generators.indexOf(gen);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public Generator remove(String name) {
+		Generator r = null;
+		lock.lock(this);
+		r = getNoLock(name);
+		if (r!=null) {
+			generators.remove(r);
 		}
 		lock.unlock(this);
 		return r;
@@ -107,5 +120,15 @@ public class Generators {
 	
 	public void toFile(String path) {
 		PersistableCollection.toFile(this, path);
+	}
+	
+	protected Generator getNoLock(String name) {
+		Generator r = null;
+		for (Generator gen: generators) {
+			if (gen.name.equals(name)) {
+				r = gen;
+			}
+		}
+		return r;
 	}
 }

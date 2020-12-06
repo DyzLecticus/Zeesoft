@@ -9,6 +9,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Synthesizer;
 
+import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
@@ -65,7 +66,7 @@ public class MidiSequencer {
 		lock.unlock(this);
 	}
 	
-	public void setBeatsPerMinute(int beatsPerMinute) {
+	public void setBeatsPerMinute(float beatsPerMinute) {
 		lock.lock(this);
 		this.beatsPerMinute = beatsPerMinute;
 		calculateNsPerTickNoLock();
@@ -156,6 +157,20 @@ public class MidiSequencer {
 			lock.lock(this);
 			paused = true;
 			lock.unlock(this);
+		}
+	}
+	
+	public void resume() {
+		if (!sender.isBusy()) {
+			boolean start = false;
+			lock.lock(this);
+			if (paused) {
+				start = true;
+			}
+			lock.unlock(this);
+			if (start) {
+				start();
+			}
 		}
 	}
 	

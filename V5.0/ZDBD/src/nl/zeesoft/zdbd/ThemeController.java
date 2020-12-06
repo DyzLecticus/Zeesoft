@@ -88,9 +88,29 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public void setBeatsPerMinute(float beatsPerMinute) {
+		lock.lock(this);
+		if (theme!=null) {
+			theme.rythm.beatsPerMinute = beatsPerMinute;
+			MidiSys.midiSequencer.setBeatsPerMinute(beatsPerMinute);
+		}
+		lock.unlock(this);
+	}
+	
+	public float getBeatsPerMinute(float beatsPerMinute) {
+		float r = 120;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.rythm.beatsPerMinute;
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void setTrainingSequence(PatternSequence sequence) {
 		lock.lock(this);
 		if (theme!=null) {
+			sequence.rythm.copyFrom(theme.rythm);
 			theme.networkTrainer.setSequence(sequence);
 		}
 		lock.unlock(this);
@@ -148,26 +168,31 @@ public class ThemeController implements EventListener, Waitable {
 		if (event.name.equals(INITIALIZING)) {
 			// Ignore
 		} else if (event.name.equals(INITIALIZED)) {
+			lock.lock(this);
+			MidiSys.midiSequencer.setBeatsPerMinute(theme.rythm.beatsPerMinute);
+			lock.unlock(this);
 			busy.setBusy(false);
 		} else if (event.name.equals(LOADING_THEME)) {
-			// Ignore
+			MidiSys.midiSequencer.pause();
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
+			MidiSys.midiSequencer.setBeatsPerMinute(theme.rythm.beatsPerMinute);
 			lock.unlock(this);
 			busy.setBusy(false);
 		} else if (event.name.equals(SAVING_THEME)) {
-			// Ignore
+			MidiSys.midiSequencer.pause();
 		} else if (event.name.equals(SAVED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
 			lock.unlock(this);
 			busy.setBusy(false);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
-			// Ignore
+			MidiSys.midiSequencer.pause();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
 			busy.setBusy(false);
 		} else if (event.name.equals(DESTROYING)) {
+			MidiSys.midiSequencer.stop();
 			// Ignore
 		} else if (event.name.equals(DESTROYED)) {
 			busy.setBusy(false);
@@ -215,11 +240,13 @@ public class ThemeController implements EventListener, Waitable {
 		codes.addAll(getLoadSoundBankRunCodes());
 		
 		lock.lock(this);
+		this.settings = settings;
 		if (settings.workingTheme.length()>0) {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = settings.workingTheme;
 			if (theme.directoryExists()) {
+				codes.add(theme.loadRythm());
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
@@ -262,6 +289,7 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(true);
 			
 			List<RunCode> codes = new ArrayList<RunCode>();
+			codes.add(theme.saveRythm());
 			codes.add(theme.saveNetworkTrainer());
 			codes.add(theme.saveNetwork());
 			codes.add(theme.saveGenerators());
@@ -286,6 +314,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme.themeDir = settings.getThemeDir();
 			theme.name = name;
 			if (theme.directoryExists()) {
+				codes.add(theme.loadRythm());
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());

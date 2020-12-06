@@ -16,6 +16,7 @@ import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Transmitter;
 
+import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.midi.SoundbankLoader;

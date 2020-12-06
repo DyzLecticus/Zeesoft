@@ -2,7 +2,9 @@ package nl.zeesoft.zdbd.generate;
 
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 
-public class GeneratorIO {
+public class Generator {
+	public String			name						= "";
+	
 	// Network merger dirsortion controls
 	public float			group1Distortion			= 0.1F; // 0 - 1
 	public float			group2Distortion			= 0.1F; // 0 - 1
@@ -22,25 +24,26 @@ public class GeneratorIO {
 	// Output
 	public PatternSequence	generatedPatternSequence	= null;
 	
-	public GeneratorIO copy() {
-		GeneratorIO r = new GeneratorIO();
+	public Generator copy() {
+		Generator r = new Generator();
 		r.copyFrom(this);
 		return r;
 	}
 
-	public void copyFrom(GeneratorIO io) {
-		this.group1Distortion = io.group1Distortion;
-		this.group2Distortion = io.group2Distortion;
-		this.smallerChunk = io.smallerChunk;
-		this.largerChunk = io.largerChunk;
-		this.randomChunkOffset = io.randomChunkOffset;
-		this.setSkipInstruments(io.skipInstruments);
-		this.mixStart = io.mixStart;
-		this.mixEnd = io.mixEnd;
-		this.maintainBeat = io.maintainBeat;
-		this.maintainFeedback = io.maintainFeedback;
-		if (io.generatedPatternSequence!=null) {
-			this.generatedPatternSequence = io.generatedPatternSequence.copy();
+	public void copyFrom(Generator gen) {
+		this.name = gen.name;
+		this.group1Distortion = gen.group1Distortion;
+		this.group2Distortion = gen.group2Distortion;
+		this.smallerChunk = gen.smallerChunk;
+		this.largerChunk = gen.largerChunk;
+		this.randomChunkOffset = gen.randomChunkOffset;
+		this.setSkipInstruments(gen.skipInstruments);
+		this.mixStart = gen.mixStart;
+		this.mixEnd = gen.mixEnd;
+		this.maintainBeat = gen.maintainBeat;
+		this.maintainFeedback = gen.maintainFeedback;
+		if (gen.generatedPatternSequence!=null) {
+			this.generatedPatternSequence = gen.generatedPatternSequence.copy();
 		} else {
 			this.generatedPatternSequence = null;
 		}

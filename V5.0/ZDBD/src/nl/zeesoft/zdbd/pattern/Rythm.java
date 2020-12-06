@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
+import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.SDR;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class Rythm {
 	public static String	PATTERN				= "Pattern";
@@ -13,10 +15,12 @@ public class Rythm {
 	
 	public static String[]	ELEMENT_NAMES		= {PATTERN, STEP, BEAT};
 	
+	public float			beatsPerMinute		= 135;
 	public int				beatsPerPattern 	= 4;
 	public int				stepsPerBeat		= 4;
 	
 	public void copyFrom(Rythm rythm) {
+		this.beatsPerMinute = rythm.beatsPerMinute;
 		this.beatsPerPattern = rythm.beatsPerPattern;
 		this.stepsPerBeat = rythm.stepsPerBeat;
 	}
@@ -57,5 +61,36 @@ public class Rythm {
 		r.flatten();
 		r.square();
 		return r;
+	}
+
+	public RunCode getFromFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				fromFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void fromFile(String path) {
+		Rythm rythm = (Rythm) PersistableCollection.fromFile(path);
+		if (rythm!=null) {
+			copyFrom(rythm);
+		}
+	}
+	
+	public RunCode getToFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				toFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void toFile(String path) {
+		PersistableCollection.toFile(this, path);
 	}
 }

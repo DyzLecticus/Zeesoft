@@ -25,7 +25,6 @@ public class InstrumentPattern {
 	public static List<PatternInstrument>	INSTRUMENTS			= getInstruments();
 	
 	public int 								num					= 0;
-	public Rythm							rythm				= new Rythm();
 	public List<PatternInstrument>			instruments			= getInstruments();
 
 	public InstrumentPattern copy() {
@@ -36,7 +35,6 @@ public class InstrumentPattern {
 
 	public void copyFrom(InstrumentPattern pat) {
 		this.num = pat.num;
-		this.rythm.copyFrom(pat.rythm);
 		this.instruments = getInstruments();
 		int i = 0;
 		for (PatternInstrument inst: pat.instruments) {
@@ -162,9 +160,8 @@ public class InstrumentPattern {
 		return r;
 	}
 	
-	public List<SDR> getSDRsForGroup(int group) {
+	public List<SDR> getSDRsForGroup(int group, int stepsPerPattern) {
 		List<SDR> r = new ArrayList<SDR>();
-		int stepsPerPattern = rythm.getStepsPerPattern();
 		for (int s = 0; s < stepsPerPattern; s++) {
 			if (group==1) {
 				r.add(getSDRForGroup1Step(s));

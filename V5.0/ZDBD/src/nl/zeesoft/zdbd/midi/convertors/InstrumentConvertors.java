@@ -1,7 +1,9 @@
-package nl.zeesoft.zdbd.midi;
+package nl.zeesoft.zdbd.midi.convertors;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import nl.zeesoft.zdbd.midi.SynthConfig;
 
 public class InstrumentConvertors {
 	public static final int							KICK				= 0;

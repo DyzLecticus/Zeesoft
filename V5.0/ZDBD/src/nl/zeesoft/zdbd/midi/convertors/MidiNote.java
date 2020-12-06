@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.midi;
+package nl.zeesoft.zdbd.midi.convertors;
 
 public class MidiNote {
 	public int		channel		= 0;
