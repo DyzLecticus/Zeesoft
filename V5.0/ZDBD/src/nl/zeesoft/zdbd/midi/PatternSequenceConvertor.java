@@ -15,7 +15,7 @@ import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
-public class MidiSequenceConvertor {
+public class PatternSequenceConvertor {
 	public static final int							TEMPO			= 0x51;
 	public static final int							TEXT			= 0x01;
 	public static final int							RESOLUTION		= 960;

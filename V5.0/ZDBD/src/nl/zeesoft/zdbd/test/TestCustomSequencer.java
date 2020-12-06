@@ -2,8 +2,9 @@ package nl.zeesoft.zdbd.test;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.midi.MidiSequencer;
+import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
-import nl.zeesoft.zdbd.midi.sequencer.CustomSequencer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -12,7 +13,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.ProgressBar;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class TestCustomSequencer extends TestObject {
+public class TestCustomSequencer extends TestObject implements MidiSequencerEventListener {
 	public TestCustomSequencer(Tester tester) {
 		super(tester);
 	}
@@ -56,20 +57,36 @@ public class TestCustomSequencer extends TestObject {
 		);
 		chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 		Waiter.startAndWaitFor(chain,3000);
-		
+
+		sleep(3000);
+
 		PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
 		Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
 		
-		CustomSequencer sequencer = new CustomSequencer();
-		sequencer.setSynthesizer(MidiSys.synthesizer);
+		MidiSequencer sequencer = MidiSys.midiSequencer;
+		sequencer.addListener(this);
 		sequencer.setSequence(midiSequence);
 		
 		sequencer.start();
+		
+		int bpm = 120;
+		for (int i = 0; i < 20; i++) {
+			sleep(200);
+			bpm++;
+			sequencer.setBeatsPerMinute(bpm);
+		}
+		sequencer.setNextSequence(midiSequence);
 		
 		sleep(20000);
 		
 		sequencer.stop();
 		
 		MidiSys.closeDevices();
+	}
+
+	@Override
+	public void switchedSequence() {
+		// TODO Auto-generated method stub
+		System.out.println("Switched sequence!");
 	}
 }

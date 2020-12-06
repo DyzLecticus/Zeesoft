@@ -99,11 +99,11 @@ public class TestPatternGenerator extends TestObject {
 			
 			Sequence midiSequence = null;
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-			MidiSys.sequencePlayer.setSequence(midiSequence);
-			MidiSys.sequencePlayer.start();
+			MidiSys.midiSequencer.setSequence(midiSequence);
+			MidiSys.midiSequencer.start();
 			
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
-			MidiSys.sequencePlayer.setNextSequence(midiSequence);
+			MidiSys.midiSequencer.setNextSequence(midiSequence);
 			
 			generator.generatePatternSequence(network, sequence);
 			generator.generatePatternSequence(network, sequence);
@@ -112,7 +112,7 @@ public class TestPatternGenerator extends TestObject {
 			generator.generatePatternSequence(network, sequence);
 
 			sleep(30000);
-			MidiSys.sequencePlayer.stop();
+			MidiSys.midiSequencer.stop();
 					
 			MidiSys.closeDevices();
 		}

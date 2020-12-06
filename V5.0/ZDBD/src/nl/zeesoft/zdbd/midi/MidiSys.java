@@ -23,12 +23,12 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class MidiSys {
-	public static Synthesizer			synthesizer			= null;
-	public static SynthConfig			synthConfig			= null;
-	public static Sequencer				sequencer			= null;
-	public static MidiSequencePlayer	sequencePlayer		= null;
-	public static MidiSequenceConvertor convertor			= null;
-	public static List<String>			loadedSoundbanks	= new ArrayList<String>();
+	public static Synthesizer				synthesizer			= null;
+	public static SynthConfig				synthConfig			= null;
+	public static Sequencer					sequencer			= null;
+	public static MidiSequencer				midiSequencer		= null;
+	public static PatternSequenceConvertor	convertor			= null;
+	public static List<String>				loadedSoundbanks	= new ArrayList<String>();
 	
 	public static RunCode getInitializeRunCode() {
 		return new RunCode() {
@@ -45,8 +45,9 @@ public class MidiSys {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
 			synthConfig = new SynthConfig(synthesizer);
-			sequencePlayer = new MidiSequencePlayer(sequencer);
-			convertor = new MidiSequenceConvertor();
+			midiSequencer = new MidiSequencer();
+			midiSequencer.setSynthesizer(synthesizer);
+			convertor = new PatternSequenceConvertor();
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}
