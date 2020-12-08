@@ -36,7 +36,7 @@ public class PatternGenerator {
 	public boolean			maintainFeedback	= false;
 	
 	// System resource usage limiting
-	public int				sleepMs				= 50;
+	public int				sleepMs				= 0;
 
 	public void setSkipInstruments(String ... names) {
 		skipInstruments = names;

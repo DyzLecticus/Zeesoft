@@ -60,6 +60,16 @@ public class CodeRunnerChain implements Waitable {
 		}
 	}
 	
+	public void setPriority(int priority) {
+		if (priority>=Thread.MIN_PRIORITY && priority<=Thread.MAX_PRIORITY) {
+			lock.lock(this);
+			for (CodeRunnerList runnerList: runnerLists) {
+				runnerList.setPriority(priority);
+			}
+			lock.unlock(this);
+		}
+	}
+	
 	public void setLogExceptions(boolean logExceptions) {
 		lock.lock(this);
 		this.logExceptions = logExceptions;
@@ -82,7 +92,7 @@ public class CodeRunnerChain implements Waitable {
 	
 	protected List<CodeRunnerList> getRunnerLists() {
 		lock.lock(this);
-		List<CodeRunnerList> r = new ArrayList<CodeRunnerList>();
+		List<CodeRunnerList> r = new ArrayList<CodeRunnerList>(runnerLists);
 		lock.unlock(this);
 		return r;
 	}

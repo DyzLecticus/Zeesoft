@@ -142,7 +142,7 @@ public class TestSpatialPooler extends TestObject {
 		Waiter.startAndWaitFor(processorChain2, 1000);
 		SDR output = sp2.getOutput();
 		overlap = output.getOverlap(lastOutput);
-		assertEqual(overlap>=45,true,"Overlap does not match expectation");
+		assertEqual(overlap>=44,true,"Overlap does not match expectation");
 	}
 	
 	private List<SDR> getInputSDRList(int num) {

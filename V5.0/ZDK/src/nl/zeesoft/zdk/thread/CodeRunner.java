@@ -4,6 +4,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	private RunCode		code		= null;
 	private int			sleepMs		= 100;
 	private int			sleepNs		= 0;
+	private int			priority	= Thread.NORM_PRIORITY;
 
 	private Thread		runner 		= null;
 	
@@ -23,25 +24,34 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		setSleep(sleepNs,false);
 	}
 	
+	public void setPriority(int priority) {
+		if (priority>=Thread.MIN_PRIORITY && priority<=Thread.MAX_PRIORITY) {
+			lock.lock(this);
+			this.priority = priority;
+			lock.unlock(this);
+		}
+	}
+	
 	@Override
 	public void start() {
-		getLock().lock(this);
-		if (!isBusyNoLock() && runner == null) {
+		lock.lock(this);
+		if (!busy.isBusy() && runner == null) {
 			runner = new Thread(this);
+			runner.setPriority(priority);
 			runner.start();
-			setBusyNoLock(true);
+			busy.setBusy(true);
 			CodeRunnerManager.startedRunner(this);
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 
 	@Override
 	public void stop() {
-		getLock().lock(this);
+		lock.lock(this);
 		if (runner != null) {
 			runner = null;
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 
 	@Override
@@ -58,28 +68,26 @@ public class CodeRunner extends RunnerObject implements Runnable {
 		
 		CodeRunnerManager.stoppedRunner(this);
 		
-		getLock().lock(this);
-		setBusyNoLock(false);
-		getLock().unlock(this);
+		busy.setBusy(false);
 		
 		doneCallback();
 	}
 
 	protected void whileRunning() {
-		getLock().lock(this);
+		lock.lock(this);
 		Thread rnnr = runner;
 		int slpMs = sleepMs;
 		int slpNs = sleepNs;
-		getLock().unlock(this);
+		lock.unlock(this);
 		
 		while (rnnr!=null) {
 			tryRunCatchSleep(slpMs,slpNs);
 			
-			getLock().lock(this);
+			lock.lock(this);
 			rnnr = runner;
 			slpMs = sleepMs;
 			slpNs = sleepNs;
-			getLock().unlock(this);
+			lock.unlock(this);
 		}
 	}
 
@@ -97,7 +105,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	}
 		
 	private void setSleep(int sleep, boolean ms) {
-		getLock().lock(this);
+		lock.lock(this);
 		if (ms) {
 			this.sleepMs = sleep;
 			this.sleepNs = 0;
@@ -105,7 +113,7 @@ public class CodeRunner extends RunnerObject implements Runnable {
 			this.sleepMs = 0;
 			this.sleepNs = sleep;
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 
 	private final void sleepMs(long sleepMs) {

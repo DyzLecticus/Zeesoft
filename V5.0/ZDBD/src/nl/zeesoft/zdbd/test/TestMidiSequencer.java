@@ -73,7 +73,7 @@ public class TestMidiSequencer extends TestObject implements MidiSequencerEventL
 		for (int i = 0; i < 20; i++) {
 			sleep(300);
 			bpm++;
-			sequencer.setBeatsPerMinute(bpm);
+			sequencer.setTempoInBPM(bpm);
 		}
 		sequencer.setNextSequence(midiSequence);
 

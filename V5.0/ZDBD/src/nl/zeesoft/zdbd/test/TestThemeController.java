@@ -86,10 +86,8 @@ public class TestThemeController extends TestObject {
 			System.out.println();
 			chain = controller2.newTheme("Test");
 			Waiter.startAndWaitFor(chain,10000);
-			settings = controller2.getSettings();
-			assertEqual(settings.workingTheme,"Test","Working theme does not match expectation");
+			assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
 			assertEqual(FileIO.getActionLog().size(),43,"Action log size does not match expectation (4)");
-
 			
 			System.out.println();
 			chain = controller2.destroy();

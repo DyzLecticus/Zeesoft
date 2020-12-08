@@ -59,7 +59,7 @@ public class TestInstrumentNetwork extends TestObject {
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
 		System.out.println(config.getDescription());
 		
-		if (assertEqual(config.testConfiguration(),new Str(),"Network configuration error does not match expectation")) {
+		if (assertEqual(config.check(),new Str(),"Network configuration error does not match expectation")) {
 		
 			Network network = createAndTrainNetwork();
 			
@@ -83,7 +83,7 @@ public class TestInstrumentNetwork extends TestObject {
 		
 		System.out.println();
 		Network network = new Network();
-		Str err = config.testConfiguration();
+		Str err = config.check();
 		if (err.length()==0) {
 			System.out.println("Initializing network ...");
 			network.initialize(config,true);

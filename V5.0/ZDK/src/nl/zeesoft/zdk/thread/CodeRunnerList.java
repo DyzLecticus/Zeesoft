@@ -18,11 +18,11 @@ public class CodeRunnerList extends RunnerObject {
 	
 	public CodeRunner add(RunCode code) {
 		CodeRunner runner = getNewCodeRunner(code);
-		getLock().lock(this);
-		if (!isBusyNoLock()) {
+		lock.lock(this);
+		if (!busy.isBusy()) {
 			runners.add(runner);
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 		return runner;
 	}
 	
@@ -33,35 +33,45 @@ public class CodeRunnerList extends RunnerObject {
 	}
 	
 	public void setSleepMs(int sleepMs) {
-		getLock().lock(this);
+		lock.lock(this);
 		for (CodeRunner runner: runners) {
 			runner.setSleepMs(sleepMs);
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 	
 	public void setSleepNs(int sleepNs) {
-		getLock().lock(this);
+		lock.lock(this);
 		for (CodeRunner runner: runners) {
 			runner.setSleepNs(sleepNs);
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
+	}
+	
+	public void setPriority(int priority) {
+		if (priority>=Thread.MIN_PRIORITY && priority<=Thread.MAX_PRIORITY) {
+			lock.lock(this);
+			for (CodeRunner runner: runners) {
+				runner.setPriority(priority);
+			}
+			lock.unlock(this);
+		}
 	}
 	
 	@Override
 	public void start() {
 		boolean started = false;
-		getLock().lock(this);
-		if (!isBusyNoLock()) {
+		lock.lock(this);
+		if (!busy.isBusy()) {
 			exception = null;
 			for (CodeRunner runner: runners) {
 				runner.start();
 				activeRunners.add(runner);
 			}
-			setBusyNoLock(true);
+			busy.setBusy(true);
 			started = true;
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 		if (started) {
 			started();
 		}
@@ -69,44 +79,44 @@ public class CodeRunnerList extends RunnerObject {
 
 	@Override
 	public void stop() {
-		getLock().lock(this);
-		if (isBusyNoLock()) {
+		lock.lock(this);
+		if (busy.isBusy()) {
 			for (CodeRunner runner: runners) {
 				runner.stop();
 			}
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 
 	public int size() {
-		getLock().lock(this);
+		lock.lock(this);
 		int r = runners.size();
-		getLock().unlock(this);
+		lock.unlock(this);
 		return r;
 	}
 
 	public List<RunCode> getCodes() {
 		List<RunCode> r = new ArrayList<RunCode>();
-		getLock().lock(this);
+		lock.lock(this);
 		for (CodeRunner runner: runners) {
 			r.add(runner.getCode());
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 		return r;
 	}
 
 	public void clearCodes() {
-		getLock().lock(this);
-		if (!isBusyNoLock()) {
+		lock.lock(this);
+		if (!busy.isBusy()) {
 			runners.clear();
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 	}
 	
 	public Exception getException() {
-		getLock().lock(this);
+		lock.lock(this);
 		Exception r = exception;
-		getLock().unlock(this);
+		lock.unlock(this);
 		return r;
 	}
 	
@@ -128,16 +138,16 @@ public class CodeRunnerList extends RunnerObject {
 		codeDoneCallback(runner.getCode());
 		boolean stopped = false;
 		Exception ex = null;
-		getLock().lock(this);
+		lock.lock(this);
 		activeRunners.remove(runner);
 		if (activeRunners.size()==0) {
 			stopped = true;
 			ex = exception;
 		}
 		if (stopped) {
-			setBusyNoLock(false);
+			busy.setBusy(false);
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 		if (ex!=null) {
 			caughtException(ex);
 		}
@@ -148,11 +158,11 @@ public class CodeRunnerList extends RunnerObject {
 	}
 	
 	protected final void runnerCaughtException(CodeRunner runner, Exception exception) {
-		getLock().lock(this);
+		lock.lock(this);
 		if (this.exception==null) {
 			this.exception = exception;
 		}
-		getLock().unlock(this);
+		lock.unlock(this);
 		stop();
 	}
 		

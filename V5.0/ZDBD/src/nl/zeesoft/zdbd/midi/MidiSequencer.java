@@ -1,13 +1,23 @@
 package nl.zeesoft.zdbd.midi;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.ControllerEventListener;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Track;
+import javax.sound.midi.Transmitter;
 
 import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
@@ -17,7 +27,7 @@ import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class MidiSequencer {
+public class MidiSequencer implements Sequencer {
 	private static int							CURR			= 0;
 	private static int							NEXT			= 1;
 	
@@ -50,6 +60,7 @@ public class MidiSequencer {
 				lock.unlock(this);
 			}
 		};
+		sender.setPriority(Thread.MAX_PRIORITY);
 		eventPublisher = new CodeRunner(getPublishSequenceSwitchRunCode());
 		calculateNsPerTickNoLock();
 	}
@@ -66,13 +77,24 @@ public class MidiSequencer {
 		lock.unlock(this);
 	}
 	
-	public void setBeatsPerMinute(float beatsPerMinute) {
+	@Override
+	public void setTempoInBPM(float beatsPerMinute) {
 		lock.lock(this);
 		this.beatsPerMinute = beatsPerMinute;
 		calculateNsPerTickNoLock();
 		lock.unlock(this);
 	}
+
+
+	@Override
+	public float getTempoInBPM() {
+		lock.lock(this);
+		float r = beatsPerMinute;
+		lock.unlock(this);
+		return r;
+	}
 	
+	@Override
 	public void setSequence(Sequence sequence) {
 		if (sequence!=null &&
 			sequence.getDivisionType() == Sequence.PPQ &&
@@ -106,23 +128,38 @@ public class MidiSequencer {
 		}
 	}
 	
-	public Str restart() {
+	@Override
+	public void setSequence(InputStream stream) throws IOException, InvalidMidiDataException {
+		setSequence(MidiSystem.getSequence(stream));
+	}
+
+	@Override
+	public Sequence getSequence() {
+		Sequence r = null;
+		lock.lock(this);
+		if (sequence[CURR]!=null) {
+			r = sequence[CURR].sequence;
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void restart() {
 		if (sender.isBusy()) {
 			sender.stop();
 		}
 		lock.lock(this);
 		paused = false;
 		lock.unlock(this);
-		Str err = new Str();
 		if (Waiter.waitFor(sender,1000)) {
-			err = start();
+			start();
 		}
-		return err;
 	}
-	
-	public Str start() {
-		Str err = new Str();
+
+	@Override
+	public void start() {
 		if (!sender.isBusy()) {
+			Str err = new Str();
 			lock.lock(this);
 			if (synthesizer==null) {
 				err.sb().append("Synthesizer has not been set");
@@ -144,10 +181,10 @@ public class MidiSequencer {
 				sender.start();
 			}
 		}
-		return err;
 	}
 	
-	public boolean isPlaying() {
+	@Override
+	public boolean isRunning() {
 		return sender.isBusy();
 	}
 	
@@ -174,6 +211,7 @@ public class MidiSequencer {
 		}
 	}
 	
+	@Override
 	public void stop() {
 		if (sender.isBusy()) {
 			sender.stop();
@@ -292,5 +330,256 @@ public class MidiSequencer {
 			MidiChannel channel = channels[c];
 			channel.allSoundOff();
 		}
+	}
+
+	@Override
+	public Info getDeviceInfo() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public void open() throws MidiUnavailableException {
+		// Not implemented
+	}
+
+	@Override
+	public void close() {
+		// Not implemented
+	}
+
+	@Override
+	public boolean isOpen() {
+		// Not implemented
+		return true;
+	}
+
+	@Override
+	public int getMaxReceivers() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public int getMaxTransmitters() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public Receiver getReceiver() throws MidiUnavailableException {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public List<Receiver> getReceivers() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public Transmitter getTransmitter() throws MidiUnavailableException {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public List<Transmitter> getTransmitters() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public void startRecording() {
+		// TODO Implement
+	}
+
+	@Override
+	public void stopRecording() {
+		// TODO Implement
+	}
+
+	@Override
+	public boolean isRecording() {
+		// TODO Implement
+		return false;
+	}
+
+	@Override
+	public void recordEnable(Track track, int channel) {
+		// Not implemented
+	}
+
+	@Override
+	public void recordDisable(Track track) {
+		// Not implemented
+	}
+
+	@Override
+	public float getTempoInMPQ() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public void setTempoInMPQ(float mpq) {
+		// Not implemented
+	}
+
+	@Override
+	public void setTempoFactor(float factor) {
+		// Not implemented
+	}
+
+	@Override
+	public float getTempoFactor() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public long getTickLength() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public long getTickPosition() {
+		// TODO Implement
+		return 0;
+	}
+
+	@Override
+	public void setTickPosition(long tick) {
+		// TODO Implement
+	}
+
+	@Override
+	public long getMicrosecondLength() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public long getMicrosecondPosition() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public void setMicrosecondPosition(long microseconds) {
+		// Not implemented
+	}
+
+	@Override
+	public void setMasterSyncMode(SyncMode sync) {
+		// Not implemented
+	}
+
+	@Override
+	public SyncMode getMasterSyncMode() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public SyncMode[] getMasterSyncModes() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public void setSlaveSyncMode(SyncMode sync) {
+		// Not implemented
+	}
+
+	@Override
+	public SyncMode getSlaveSyncMode() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public SyncMode[] getSlaveSyncModes() {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public void setTrackMute(int track, boolean mute) {
+		// TODO Implement
+	}
+
+	@Override
+	public boolean getTrackMute(int track) {
+		// TODO Implement
+		return false;
+	}
+
+	@Override
+	public void setTrackSolo(int track, boolean solo) {
+		// TODO Implement
+	}
+
+	@Override
+	public boolean getTrackSolo(int track) {
+		// TODO Implement
+		return false;
+	}
+
+	@Override
+	public boolean addMetaEventListener(MetaEventListener listener) {
+		// TODO Implement
+		return false;
+	}
+
+	@Override
+	public void removeMetaEventListener(MetaEventListener listener) {
+		// TODO Implement
+	}
+
+	@Override
+	public int[] addControllerEventListener(ControllerEventListener listener, int[] controllers) {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public int[] removeControllerEventListener(ControllerEventListener listener, int[] controllers) {
+		// Not implemented
+		return null;
+	}
+
+	@Override
+	public void setLoopStartPoint(long tick) {
+		// Not implemented
+	}
+
+	@Override
+	public long getLoopStartPoint() {
+		// Not implemented
+		return 0;
+	}
+
+	@Override
+	public void setLoopEndPoint(long tick) {
+		// Not implemented
+	}
+
+	@Override
+	public long getLoopEndPoint() {
+		// Not implemented
+		return getTickLength();
+	}
+
+	@Override
+	public void setLoopCount(int count) {
+		// Not implemented
+	}
+
+	@Override
+	public int getLoopCount() {
+		return Sequencer.LOOP_CONTINUOUSLY;
 	}
 }

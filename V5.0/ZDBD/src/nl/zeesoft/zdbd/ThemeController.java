@@ -117,7 +117,7 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			theme.rythm.beatsPerMinute = beatsPerMinute;
-			MidiSys.midiSequencer.setBeatsPerMinute(beatsPerMinute);
+			MidiSys.midiSequencer.setTempoInBPM(beatsPerMinute);
 		}
 		lock.unlock(this);
 	}
@@ -194,19 +194,19 @@ public class ThemeController implements EventListener, Waitable {
 			// Ignore
 		} else if (event.name.equals(INITIALIZED)) {
 			lock.lock(this);
-			MidiSys.midiSequencer.setBeatsPerMinute(theme.rythm.beatsPerMinute);
+			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 			lock.unlock(this);
 			busy.setBusy(false);
 		} else if (event.name.equals(LOADING_THEME)) {
-			MidiSys.midiSequencer.pause();
+			MidiSys.midiSequencer.stop();
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			MidiSys.midiSequencer.setBeatsPerMinute(theme.rythm.beatsPerMinute);
+			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 			lock.unlock(this);
 			busy.setBusy(false);
 		} else if (event.name.equals(SAVING_THEME)) {
-			MidiSys.midiSequencer.pause();
+			// Ignore
 		} else if (event.name.equals(SAVED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
@@ -287,7 +287,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
 			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
-			codes.add(theme.initializeNetwork(false));
+			codes.add(theme.initializeNetwork());
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
 		r.addAll(beforeCodes);
@@ -324,7 +324,7 @@ public class ThemeController implements EventListener, Waitable {
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);
 			}
-			codes.add(theme.initializeNetwork(false));
+			codes.add(theme.initializeNetwork());
 			
 			r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING_THEME));
 			r.addAll(codes);

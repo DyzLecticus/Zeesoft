@@ -35,14 +35,14 @@ public class Theme {
 		return networkTrainer.getToFileRunCode(getTrainerFileName());
 	}
 	
-	protected RunCode initializeNetwork(boolean load) {
+	protected RunCode initializeNetwork() {
 		networkConfiguration.directory = getDirectory();
 		return network.getInitializeRunCode(networkConfiguration, true);
 	}
 
 	protected RunCode loadNetwork() {
 		networkConfiguration.directory = getDirectory();
-		return network.getInitializeAndLoadRunCode(networkConfiguration);
+		return network.getInitializeAndLoadRunCode(networkConfiguration,false);
 	}
 	
 	public RunCode trainNetwork() {
@@ -51,7 +51,7 @@ public class Theme {
 	
 	protected RunCode saveNetwork() {
 		network.setDirectory(getDirectory());
-		return network.getSaveRunCode();
+		return network.getSaveRunCode(true);
 	}
 
 	protected RunCode loadGenerators() {

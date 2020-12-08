@@ -110,6 +110,11 @@ public class TestPatternGenerator extends TestObject {
 			generator.generatePatternSequence(network, sequence);
 			generator.generatePatternSequence(network, sequence);
 			generator.generatePatternSequence(network, sequence);
+			
+			network.save(true);
+			network.save(true);
+			network.save(true);
+			network.save(true);
 
 			sleep(30000);
 			MidiSys.midiSequencer.stop();

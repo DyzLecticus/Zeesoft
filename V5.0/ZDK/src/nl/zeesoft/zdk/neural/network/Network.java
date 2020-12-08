@@ -44,11 +44,15 @@ public class Network implements Waitable {
 	private NetworkIO				previousIO					= null;
 	
 	public boolean initializeAndLoad(NetworkConfig config) {
+		return initializeAndLoad(config,false);
+	}
+
+	public boolean initializeAndLoad(NetworkConfig config, boolean loadSequential) {
 		int timeoutMs = config.initializeTimeoutMs + config.loadTimeoutMs;
-		return Waiter.startAndWaitFor(new CodeRunnerList(getInitializeAndLoadRunCode(config)), timeoutMs);
+		return Waiter.startAndWaitFor(new CodeRunnerList(getInitializeAndLoadRunCode(config,loadSequential)), timeoutMs);
 	}
 	
-	public RunCode getInitializeAndLoadRunCode(NetworkConfig config) {
+	public RunCode getInitializeAndLoadRunCode(NetworkConfig config, boolean loadSequential) {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
@@ -60,7 +64,7 @@ public class Network implements Waitable {
 					if (!busy.isBusy()) {
 						Str err = initialize(config,false);
 						if (err.length()==0) {
-							load();
+							load(loadSequential);
 						}
 					}
 				} else {
@@ -269,19 +273,27 @@ public class Network implements Waitable {
 	}
 	
 	public Str save() {
-		return saveLoad(true);
+		return saveLoad(true,false);
+	}
+	
+	public Str save(boolean sequential) {
+		return saveLoad(true,sequential);
 	}
 
 	public Str load() {
-		return saveLoad(false);
+		return saveLoad(false,false);
 	}
 
-	public RunCode getSaveRunCode() {
-		return this.getSaveLoadRunCode(true);
+	public Str load(boolean sequential) {
+		return saveLoad(false,sequential);
 	}
 
-	public RunCode getLoadRunCode() {
-		return this.getSaveLoadRunCode(false);
+	public RunCode getSaveRunCode(boolean sequential) {
+		return getSaveLoadRunCode(true,sequential);
+	}
+
+	public RunCode getLoadRunCode(boolean sequential) {
+		return getSaveLoadRunCode(false,sequential);
 	}
 
 	@Override
@@ -443,17 +455,17 @@ public class Network implements Waitable {
 		}
 	}
 
-	protected RunCode getSaveLoadRunCode(boolean save) {
+	protected RunCode getSaveLoadRunCode(boolean save, boolean sequential) {
 		return new RunCode() {
 			@Override
 			protected boolean run() {
-				saveLoad(save);
+				saveLoad(save, sequential);
 				return true;
 			}
 		};
 	}
 	
-	protected Str saveLoad(boolean save) {
+	protected Str saveLoad(boolean save, boolean sequential) {
 		Str err = new Str();
 		if (!busy.isBusy()) {
 			if (save) {
@@ -468,11 +480,17 @@ public class Network implements Waitable {
 				timeoutMs = config.loadTimeoutMs;
 			}
 			CodeRunnerList runnerList = buildSaveLoadRunnerList(save,config.directory);
-			if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
-				if (save) {
-					err.sb().append("Saving network timed out");
-				} else {
-					err.sb().append("Loading network timed out");
+			if (sequential) {
+				CodeRunnerChain chain = new CodeRunnerChain();
+				chain.add(runnerList);
+				chain.runSequential();
+			} else {
+				if (!Waiter.startAndWaitFor(runnerList, timeoutMs)) {
+					if (save) {
+						err.sb().append("Saving network timed out");
+					} else {
+						err.sb().append("Loading network timed out");
+					}
 				}
 			}
 			busy.setBusy(false);
