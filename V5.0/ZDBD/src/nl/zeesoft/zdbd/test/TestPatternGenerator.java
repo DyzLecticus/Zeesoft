@@ -9,6 +9,7 @@ import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
@@ -94,7 +95,7 @@ public class TestPatternGenerator extends TestObject {
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
 			PatternGenerator generator = new PatternGenerator();
 			generator.prevIO = lastIO;
-			generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
+			generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME, Note.NAME);
 			PatternSequence generated = generator.generatePatternSequence(network, sequence);
 			
 			Sequence midiSequence = null;
@@ -105,6 +106,7 @@ public class TestPatternGenerator extends TestObject {
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
 			MidiSys.midiSequencer.setNextSequence(midiSequence);
 			
+			/*
 			generator.generatePatternSequence(network, sequence);
 			generator.generatePatternSequence(network, sequence);
 			generator.generatePatternSequence(network, sequence);
@@ -115,6 +117,7 @@ public class TestPatternGenerator extends TestObject {
 			network.save(true);
 			network.save(true);
 			network.save(true);
+			*/
 
 			sleep(30000);
 			MidiSys.midiSequencer.stop();

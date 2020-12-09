@@ -7,7 +7,6 @@ import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class BassConvertor extends InstrumentConvertor {
-	public int							midiNote		= 3;
 	public float						hold			= 0.9F;
 	public List<BassLayerConvertor>		layers			= new ArrayList<BassLayerConvertor>();
 	
@@ -18,7 +17,7 @@ public class BassConvertor extends InstrumentConvertor {
 			for (BassLayerConvertor layer: layers) {
 				MidiNote mn = new MidiNote();
 				mn.channel = layer.channel;
-				mn.midiNote = (layer.baseOctave * 12) + midiNote;
+				mn.midiNote = (layer.baseOctave * 12);
 				mn.hold = ((float)(InstrumentPattern.getDurationForValue(value) - 1)) + hold;
 				if (InstrumentPattern.isAccent(value)) {
 					mn.velocity = layer.accentVelocity;
@@ -29,5 +28,11 @@ public class BassConvertor extends InstrumentConvertor {
 			}
 		}
 		return r;
+	}
+	
+	public static void applyOctaveNote(List<MidiNote> mns, int octave, int note) {
+		for (MidiNote mn: mns) {
+			mn.midiNote += (octave * 12) + note;
+		}
 	}
 }

@@ -8,6 +8,7 @@ import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
@@ -72,11 +73,11 @@ public class PatternGenerator {
 		if (rythm==null) {
 			rythm = sequence.rythm;
 		}
-		List<SDR> rythmSDRs = generateRythmSDRs(sequence,rythm);
+		List<SDR> rythmSDRs = generateRythmSDRs(sequence,baseSequencePattern,rythm);
 		return generatePattern(network, rythm, rythmSDRs, basePattern);
 	}
 	
-	protected List<SDR> generateRythmSDRs(PatternSequence sequence, Rythm rythm) {
+	protected List<SDR> generateRythmSDRs(PatternSequence sequence, int patternNum, Rythm rythm) {
 		List<SDR> r = new ArrayList<SDR>();
 		
 		List<Integer> chunkSizes = new ArrayList<Integer>();
@@ -97,7 +98,7 @@ public class PatternGenerator {
 		int stepsPerPattern = rythm.getStepsPerPattern();
 		int size = chunkSizes.get(Rand.getRandomInt(0, chunkSizes.size() - 1));
 		for (int s = 0; s < stepsPerPattern; s++) {
-			List<SDR> chunk = getRandomBeatChunk(sequence, size);
+			List<SDR> chunk = getRandomBeatChunk(sequence, patternNum, size);
 			for (int c = 0; c < size; c++) {
 				r.add(chunk.get(c));
 				if (r.size()>=stepsPerPattern) {
@@ -114,10 +115,12 @@ public class PatternGenerator {
 		return r;
 	}
 
-	protected List<SDR> getRandomBeatChunk(PatternSequence sequence, int size) {
+	protected List<SDR> getRandomBeatChunk(PatternSequence sequence,int patternNum, int size) {
 		List<SDR> r = new ArrayList<SDR>();
-		int num = Rand.getRandomInt(0, sequence.patterns.size() - 1);
-		InstrumentPattern pattern = sequence.patterns.get(num);
+		if (patternNum==-1) {
+			patternNum = Rand.getRandomInt(0, sequence.patterns.size() - 1);
+		}
+		InstrumentPattern pattern = sequence.patterns.get(patternNum);
 		List<SDR> sdrs = sequence.rythm.getSDRsForPattern(pattern.num);
 		int startBeat = Rand.getRandomInt(0, sequence.rythm.beatsPerPattern - 1);
 		int step = startBeat * sequence.rythm.stepsPerBeat;
@@ -226,6 +229,9 @@ public class PatternGenerator {
 				value = PatternInstrument.OFF;
 			}
 			r[inst.index] = (int) value;
+			if (inst.name().equals(Note.NAME)) {
+				//System.out.println("Predicted note: " + r[inst.index]);
+			}
 		}
 		return r;
 	}

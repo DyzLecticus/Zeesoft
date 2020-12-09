@@ -8,11 +8,15 @@ import nl.zeesoft.zdbd.neural.encoders.CymbalEncoder;
 import nl.zeesoft.zdbd.neural.encoders.DrumEncoder;
 import nl.zeesoft.zdbd.neural.encoders.EncoderFactory;
 import nl.zeesoft.zdbd.neural.encoders.HihatEncoder;
+import nl.zeesoft.zdbd.neural.encoders.NoteEncoder;
+import nl.zeesoft.zdbd.neural.encoders.OctaveEncoder;
 import nl.zeesoft.zdbd.neural.encoders.PercussionEncoder;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Crash;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Kick;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
+import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
@@ -26,7 +30,7 @@ public class InstrumentPattern {
 	
 	public int 								num					= 0;
 	public List<PatternInstrument>			instruments			= getInstruments();
-
+	
 	public InstrumentPattern copy() {
 		InstrumentPattern r = new InstrumentPattern();
 		r.copyFrom(this);
@@ -125,6 +129,13 @@ public class InstrumentPattern {
 		}
 	}
 	
+	public void setNote(int step, int octave, int note) {
+		octave = octave % 3;
+		note = note % 12;
+		setStepValue(Octave.NAME,step,octave);
+		setStepValue(Note.NAME,step,note);
+	}
+	
 	public static boolean isAccent(int value) {
 		boolean r = false;
 		if (value>0) {
@@ -208,8 +219,10 @@ public class InstrumentPattern {
 	public SDR getSDRForGroup2Step(int step) {
 		CymbalEncoder cEnc = EncoderFactory.cymbalEncoder;
 		PercussionEncoder pEnc = EncoderFactory.percussionEncoder;
+		OctaveEncoder oEnc = EncoderFactory.octaveEncoder;
+		NoteEncoder nEnc = EncoderFactory.noteEncoder;
 		
-		int l = cEnc.getEncodeLength() + pEnc.getEncodeLength();
+		int l = cEnc.getEncodeLength() + pEnc.getEncodeLength() + oEnc.getEncodeLength() + nEnc.getEncodeLength();
 		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
 		
 		int offset = 0;
@@ -219,6 +232,12 @@ public class InstrumentPattern {
 		
 		int[] percussionValue = {getStepValue(Percussion1.NAME,step),getStepValue(Percussion2.NAME,step)};
 		kvSdr.concat(pEnc.getEncodedValue(percussionValue), offset);
+		offset += pEnc.getEncodeLength();
+		
+		kvSdr.concat(oEnc.getEncodedValue(getStepValue(Octave.NAME,step)), offset);
+		offset += oEnc.getEncodeLength();
+		
+		kvSdr.concat(nEnc.getEncodedValue(getStepValue(Note.NAME,step)), offset);
 
 		for (PatternInstrument inst: instruments) {
 			if (inst.group()==2) {
@@ -260,6 +279,8 @@ public class InstrumentPattern {
 		r.add(new Percussion1(5));
 		r.add(new Percussion2(6));
 		r.add(new Bass(7));
+		r.add(new Octave(8));
+		r.add(new Note(9));
 		return r;
 	}
 }

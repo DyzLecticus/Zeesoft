@@ -15,7 +15,10 @@ import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
+import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class PatternSequenceConvertor {
@@ -118,6 +121,11 @@ public class PatternSequenceConvertor {
 						mns = convertor2.getMidiNotesForPatternValue(inst.stepValues[s]);
 					} else {
 						mns = convertor1.getMidiNotesForPatternValue(inst.stepValues[s]);
+						if (inst.name().equals(Bass.NAME)) {
+							int octave = pattern.getInstrument(Octave.NAME).stepValues[s];
+							int note = pattern.getInstrument(Note.NAME).stepValues[s];
+							BassConvertor.applyOctaveNote(mns, octave, note);
+						}
 					}
 					for (MidiNote mn: mns) {
 						long startTick = getStepTick(rythm,s);
