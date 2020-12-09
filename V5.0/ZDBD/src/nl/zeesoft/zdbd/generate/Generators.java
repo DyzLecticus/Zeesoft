@@ -3,7 +3,10 @@ package nl.zeesoft.zdbd.generate;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.collection.PersistableCollection;
+import nl.zeesoft.zdk.neural.network.Network;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.thread.Busy;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
@@ -113,6 +116,35 @@ public class Generators {
 		lock.lock(this);
 		long r = changed;
 		lock.unlock(this);
+		return r;
+	}
+	
+	public RunCode getGenerateSequenceRunCode(Network network, NetworkIO lastIO, PatternSequence trainingSequence, String name) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				generateSequence(network,lastIO,trainingSequence,name);
+				return true;
+			}
+		};
+	}
+	
+	public PatternSequence generateSequence(Network network, NetworkIO lastIO, PatternSequence trainingSequence, String name) {
+		PatternSequence r = null;
+		lock.lock(this);
+		Generator gen = null;
+		if (!busy.isBusy()) {
+			busy.setBusy(true);
+			gen = getNoLock(name);
+		}
+		lock.unlock(this);
+		if (gen!=null) {
+			gen.generatePatternSequence(network,lastIO,trainingSequence);
+			lock.lock(this);
+			r = gen.generatedPatternSequence.copy();
+			busy.setBusy(false);
+			lock.unlock(this);
+		}
 		return r;
 	}
 	

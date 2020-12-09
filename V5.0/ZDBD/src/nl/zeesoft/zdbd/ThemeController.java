@@ -187,6 +187,10 @@ public class ThemeController implements EventListener, Waitable {
 		return getTrainNetworkRunnerChain();
 	}
 	
+	public CodeRunnerChain generateSequence(String name) {
+		return getGenerateSequenceRunnerChain(name);
+	}
+	
 	public boolean themeHasChanges() {
 		boolean r = false;
 		lock.lock(this);
@@ -267,15 +271,21 @@ public class ThemeController implements EventListener, Waitable {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
-		} else if (event.name.equals(DESTROYING)) {
-			MidiSys.midiSequencer.stop();
-		} else if (event.name.equals(DESTROYED)) {
-			lock.lock(this);
-			busy.setBusy(false);
-			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZING_THEME)) {
 			MidiSys.midiSequencer.stop();
 		} else if (event.name.equals(INITIALIZED_THEME)) {
+			lock.lock(this);
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(GENERATING_SEQUENCE)) {
+			// Ignore
+		} else if (event.name.equals(GENERATED_SEQUENCE)) {
+			lock.lock(this);
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(DESTROYING)) {
+			MidiSys.midiSequencer.stop();
+		} else if (event.name.equals(DESTROYED)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
@@ -467,16 +477,14 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
-	protected CodeRunnerChain getGenerateSequenceRunnerChain(Generator generator) {
+	protected CodeRunnerChain getGenerateSequenceRunnerChain(String name) {
 		CodeRunnerChain r = new CodeRunnerChain();
 		lock.lock(this);
-		if (theme!=null && !busy.isBusy() &&
-			theme.networkTrainer.changedSequenceSinceTraining()) {
+		if (theme!=null && !busy.isBusy()) {
 			busy.setBusy(true);
 			r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
-			// TODO: Generate sequence
-			//r.add(theme.trainNetwork());
-			r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE));
+			r.add(theme.generateSequence(name));
+			r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, name));
 		}
 		lock.unlock(this);
 		return r;

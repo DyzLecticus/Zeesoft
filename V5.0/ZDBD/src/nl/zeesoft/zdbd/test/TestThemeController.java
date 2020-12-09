@@ -80,6 +80,15 @@ public class TestThemeController extends TestObject {
 			assertEqual(controller.themeHasChanges(),true,"Theme changes do not match expectation (3)");
 			
 			System.out.println();
+			chain = controller.trainNetwork();
+			Waiter.startAndWaitFor(chain,30000);
+			
+			System.out.println();
+			chain = controller.generateSequence("TestGenerator");
+			Waiter.startAndWaitFor(chain,10000);
+			assertNotNull(controller.getGenerator("TestGenerator").generatedPatternSequence,"Generated pattern sequence does not match expectation");
+			
+			System.out.println();
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,1000);
 			assertEqual(FileIO.getActionLog().size(),25,"Action log size does not match expectation (3)");

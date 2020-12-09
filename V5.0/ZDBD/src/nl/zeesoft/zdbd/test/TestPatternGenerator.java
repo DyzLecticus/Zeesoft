@@ -2,7 +2,7 @@ package nl.zeesoft.zdbd.test;
 
 import javax.sound.midi.Sequence;
 
-import nl.zeesoft.zdbd.generate.PatternGenerator;
+import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -93,10 +93,14 @@ public class TestPatternGenerator extends TestObject {
 			
 			System.out.println();
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
-			PatternGenerator generator = new PatternGenerator();
-			generator.prevIO = lastIO;
+			//PatternGenerator generator = new PatternGenerator();
+			//generator.prevIO = lastIO;
+			//generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME, Note.NAME);
+			//PatternSequence generated = generator.generatePatternSequence(network, sequence);
+			Generator generator = new Generator();
 			generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME, Note.NAME);
-			PatternSequence generated = generator.generatePatternSequence(network, sequence);
+			generator.generatePatternSequence(network, lastIO, sequence);
+			PatternSequence generated = generator.generatedPatternSequence;
 			
 			Sequence midiSequence = null;
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);

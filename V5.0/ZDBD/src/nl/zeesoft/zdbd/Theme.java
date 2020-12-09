@@ -61,6 +61,10 @@ public class Theme {
 	protected RunCode saveGenerators() {
 		return generators.getToFileRunCode(getGeneratorsFileName());
 	}
+
+	protected RunCode generateSequence(String name) {
+		return generators.getGenerateSequenceRunCode(network, networkTrainer.getLastIO(), networkTrainer.getSequence(), name);
+	}
 	
 	protected String getDirectory() {
 		return FileIO.addSlash(themeDir) + FileIO.addSlash(name);
