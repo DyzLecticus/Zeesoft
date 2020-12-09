@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
@@ -20,6 +21,7 @@ import nl.zeesoft.zdk.thread.Waitable;
 public class ThemeController implements EventListener, Waitable {
 	public static String				INITIALIZING			= "INITIALIZING";
 	public static String				INITIALIZED				= "INITIALIZED";
+	public static String				INITIALIZED_AND_LOADED	= "INITIALIZED_AND_LOADED";
 	
 	public static String				INITIALIZING_THEME		= "INITIALIZING_THEME";
 	public static String				INITIALIZED_THEME		= "INITIALIZED_THEME";
@@ -30,6 +32,8 @@ public class ThemeController implements EventListener, Waitable {
 	
 	public static String				TRAINING_NETWORK		= "TRAINING_NETWORK";
 	public static String				TRAINED_NETWORK			= "TRAINED_NETWORK";
+	public static String				GENERATING_SEQUENCE		= "GENERATING_SEQUENCE";
+	public static String				GENERATED_SEQUENCE		= "GENERATED_SEQUENCE";
 	
 	public static String				DESTROYING				= "DESTROYING";
 	public static String				DESTROYED				= "DESTROYED";
@@ -141,6 +145,44 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public void putGenerator(Generator generator) {
+		lock.lock(this);
+		if (theme!=null) {
+			theme.generators.put(generator);
+		}
+		lock.unlock(this);
+	}
+	
+	public Generator getGenerator(String name) {
+		Generator r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.get(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public Generator removeGenerator(String name) {
+		Generator r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.remove(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<Generator> getGenerators() {
+		List<Generator> r = new ArrayList<Generator>();
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.list();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public CodeRunnerChain trainNetwork() {
 		return getTrainNetworkRunnerChain();
 	}
@@ -150,7 +192,8 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null && (
 			savedTheme<theme.networkTrainer.getChangedSequence() || 
-			savedTheme<theme.networkTrainer.getTrainedNetwork() 
+			savedTheme<theme.networkTrainer.getTrainedNetwork() || 
+			savedTheme<theme.generators.getChanged() 
 			)) {
 			r = true;
 		}
@@ -195,35 +238,47 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(INITIALIZED)) {
 			lock.lock(this);
 			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
-			lock.unlock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(INITIALIZED_AND_LOADED)) {
+			lock.lock(this);
+			savedTheme = System.currentTimeMillis();
+			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			busy.setBusy(false);
+			lock.unlock(this);
 		} else if (event.name.equals(LOADING_THEME)) {
 			MidiSys.midiSequencer.stop();
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
 			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
-			lock.unlock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
 		} else if (event.name.equals(SAVING_THEME)) {
 			// Ignore
 		} else if (event.name.equals(SAVED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			lock.unlock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
 			MidiSys.midiSequencer.pause();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
+			lock.lock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
 		} else if (event.name.equals(DESTROYING)) {
 			MidiSys.midiSequencer.stop();
 		} else if (event.name.equals(DESTROYED)) {
+			lock.lock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZING_THEME)) {
 			MidiSys.midiSequencer.stop();
 		} else if (event.name.equals(INITIALIZED_THEME)) {
+			lock.lock(this);
 			busy.setBusy(false);
+			lock.unlock(this);
 		}
 	}
 	
@@ -267,6 +322,8 @@ public class ThemeController implements EventListener, Waitable {
 		List<RunCode> codes = new ArrayList<RunCode>();
 		codes.addAll(getLoadSoundBankRunCodes());
 		
+		boolean load = false;
+		
 		lock.lock(this);
 		this.settings = settings;
 		if (settings.workingTheme.length()>0) {
@@ -278,6 +335,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
+				load = true;
 			} else {
 				theme = null;
 			}
@@ -292,7 +350,11 @@ public class ThemeController implements EventListener, Waitable {
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
 		r.addAll(beforeCodes);
 		r.addAll(codes);
-		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
+		if (load) {
+			r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED_AND_LOADED));
+		} else {
+			r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZED));
+		}
 		lock.unlock(this);
 		
 		return r;
@@ -400,6 +462,21 @@ public class ThemeController implements EventListener, Waitable {
 			r.add(eventPublisher.getPublishEventRunCode(this, TRAINING_NETWORK));
 			r.add(theme.trainNetwork());
 			r.add(eventPublisher.getPublishEventRunCode(this, TRAINED_NETWORK));
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getGenerateSequenceRunnerChain(Generator generator) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (theme!=null && !busy.isBusy() &&
+			theme.networkTrainer.changedSequenceSinceTraining()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
+			// TODO: Generate sequence
+			//r.add(theme.trainNetwork());
+			r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE));
 		}
 		lock.unlock(this);
 		return r;

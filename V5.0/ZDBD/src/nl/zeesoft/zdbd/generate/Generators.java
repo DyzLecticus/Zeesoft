@@ -13,13 +13,15 @@ public class Generators {
 	protected Busy					busy		= new Busy(this);
 	
 	protected List<Generator>		generators	= new ArrayList<Generator>();
-	
+	protected long					changed		= System.currentTimeMillis();
+
 	public void copyFrom(Generators gens) {
 		lock.lock(this);
 		generators.clear();
 		for (Generator gen: gens.generators) {
 			generators.add(gen.copy());
 		}
+		changed	= System.currentTimeMillis();
 		lock.unlock(this);
 	}
 	
@@ -32,14 +34,17 @@ public class Generators {
 	
 	public void put(Generator generator) {
 		generator = generator.copy();
-		lock.lock(this);
-		Generator gen = getNoLock(generator.name);
-		if (gen!=null) {
-			generators.set(generators.indexOf(gen), generator);
-		} else {
-			generators.add(generator);
+		if (generator.name.length()>0) {
+			lock.lock(this);
+			Generator gen = getNoLock(generator.name);
+			if (gen!=null) {
+				generators.set(generators.indexOf(gen), generator);
+			} else {
+				generators.add(generator);
+			}
+			changed	= System.currentTimeMillis();
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 	}
 	
 	public Generator get(String name) {
@@ -59,6 +64,7 @@ public class Generators {
 		if (gen!=null) {
 			generators.remove(gen);
 			generators.set(index,gen);
+			changed	= System.currentTimeMillis();
 		}
 		lock.unlock(this);
 	}
@@ -80,6 +86,17 @@ public class Generators {
 		r = getNoLock(name);
 		if (r!=null) {
 			generators.remove(r);
+			changed	= System.currentTimeMillis();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<Generator> list() {
+		List<Generator> r = new ArrayList<Generator>();
+		lock.lock(this);
+		for (Generator gen: generators) {
+			r.add(gen.copy());
 		}
 		lock.unlock(this);
 		return r;
@@ -88,7 +105,15 @@ public class Generators {
 	public void clear() {
 		lock.lock(this);
 		generators.clear();
+		changed	= System.currentTimeMillis();
 		lock.unlock(this);
+	}
+
+	public long getChanged() {
+		lock.lock(this);
+		long r = changed;
+		lock.unlock(this);
+		return r;
 	}
 	
 	public RunCode getFromFileRunCode(String path) {

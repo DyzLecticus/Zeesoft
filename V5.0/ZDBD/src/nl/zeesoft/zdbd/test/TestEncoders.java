@@ -56,16 +56,19 @@ public class TestEncoders extends TestObject {
 		
 		List<SDR> sdrs = rythm.getSDRsForPattern(pattern.num);
 		System.out.println("Context (" + Rythm.sizeX() + "*" + Rythm.sizeY() + ");");
+		System.out.println("(Combines pattern number, beat and beat step into a single value)");
 		displaySDRList(sdrs);
 		
 		sdrs = pattern.getSDRsForGroup(1,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 1 pattern (" + InstrumentPattern.sizeX(1) + "*" + InstrumentPattern.sizeY(1) + ");");
+		System.out.println("(Kick, Snare, Hihat, Bass)");
 		displaySDRList(sdrs);
 		
 		sdrs = pattern.getSDRsForGroup(2,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 2 pattern (" + InstrumentPattern.sizeX(2) + "*" + InstrumentPattern.sizeY(2) + ");");
+		System.out.println("(Cymbals, Percussion, Octave, Note)");
 		displaySDRList(sdrs);
 		
 		assertEqual(InstrumentPattern.getValueForDuration(0,false),0,"Note does not match expectation (1)");

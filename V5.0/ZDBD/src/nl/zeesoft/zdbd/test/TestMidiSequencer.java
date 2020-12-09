@@ -95,7 +95,6 @@ public class TestMidiSequencer extends TestObject implements MidiSequencerEventL
 
 	@Override
 	public void switchedSequence() {
-		// TODO Auto-generated method stub
 		System.out.println("Switched sequence!");
 	}
 }
