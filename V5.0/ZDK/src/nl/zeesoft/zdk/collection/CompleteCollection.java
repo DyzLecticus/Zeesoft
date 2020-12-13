@@ -5,9 +5,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
 
 import nl.zeesoft.zdk.Reflector;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.Busy;
 
 public class CompleteCollection extends QueryableCollection {
 	protected boolean	complete	= true;
@@ -61,7 +63,9 @@ public class CompleteCollection extends QueryableCollection {
 			className.startsWith("java.lang.") ||
 			className.startsWith("java.math.") ||
 			className.startsWith("java.util.") ||
-			className.equals(Str.class.getName())
+			className.equals(Str.class.getName()) ||
+			className.equals(Lock.class.getName()) ||
+			className.equals(Busy.class.getName())
 			) {
 			r = false;
 		}
