@@ -2,6 +2,8 @@ package nl.zeesoft.zdbd.generate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.collection.PersistableCollection;
@@ -105,6 +107,18 @@ public class Generators {
 		return r;
 	}
 	
+	public SortedMap<String,PatternSequence> getSequences() {
+		SortedMap<String,PatternSequence> r = new TreeMap<String,PatternSequence>();
+		lock.lock(this);
+		for (Generator gen: generators) {
+			if (gen.generatedPatternSequence!=null) {
+				r.put(gen.name,gen.generatedPatternSequence.copy());
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void clear() {
 		lock.lock(this);
 		generators.clear();
@@ -142,6 +156,7 @@ public class Generators {
 			gen.generatePatternSequence(network,lastIO,trainingSequence);
 			lock.lock(this);
 			r = gen.generatedPatternSequence.copy();
+			changed = System.currentTimeMillis();
 			busy.setBusy(false);
 			lock.unlock(this);
 		}

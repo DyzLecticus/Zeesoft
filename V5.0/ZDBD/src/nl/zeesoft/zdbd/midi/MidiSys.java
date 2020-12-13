@@ -11,10 +11,8 @@ import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
-import javax.sound.midi.Transmitter;
 
 import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
@@ -26,8 +24,7 @@ import nl.zeesoft.zdk.thread.RunCode;
 public class MidiSys {
 	public static Synthesizer				synthesizer			= null;
 	public static SynthConfig				synthConfig			= null;
-	public static Sequencer					sequencer			= null;
-	public static MidiSequencer				midiSequencer		= null;
+	public static MidiSequencer				sequencer			= null;
 	public static PatternSequenceConvertor	convertor			= null;
 	public static List<String>				loadedSoundbanks	= new ArrayList<String>();
 	
@@ -46,8 +43,8 @@ public class MidiSys {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
 			synthConfig = new SynthConfig(synthesizer);
-			midiSequencer = new MidiSequencer();
-			midiSequencer.setSynthesizer(synthesizer);
+			sequencer = new MidiSequencer();
+			sequencer.setSynthesizer(synthesizer);
 			convertor = new PatternSequenceConvertor();
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
@@ -55,65 +52,26 @@ public class MidiSys {
 	
 	public static boolean isInitialized() {
 		boolean r = false;
-		if (synthesizer!=null && sequencer!=null) {
+		if (synthesizer!=null) {
 			r = true;
 		}
 		return r;
 	}
 	
 	public static void openDevices() {
-		if (sequencer==null) {
-			try {
-				sequencer = MidiSystem.getSequencer(false);
-				if (sequencer!=null) {
-					sequencer.open();
-				} else {
-					Logger.err(new MidiSys(),new Str("Sequencer device is not supported"));
-				}
-			} catch (MidiUnavailableException e) {
-				Logger.err(new MidiSys(),new Str("Failed to initialize sequencer"),e);
-			}
-		}
-		if (synthesizer==null && sequencer!=null) {
-			if (sequencer instanceof Synthesizer) {
-				synthesizer = (Synthesizer) sequencer;
+		try {
+			synthesizer = MidiSystem.getSynthesizer();
+			if (synthesizer!=null) {
+				synthesizer.open();
 			} else {
-				try {
-					synthesizer = MidiSystem.getSynthesizer();
-					if (synthesizer!=null) {
-						synthesizer.open();
-					} else {
-						Logger.err(new MidiSys(),new Str("Synthesizer device is not supported"));
-					}
-				} catch (MidiUnavailableException e) {
-					Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
-				}
-				if (synthesizer!=null) {
-					if (sequencer.getTransmitters().size()>0) {
-						for (Transmitter trm: sequencer.getTransmitters()) {
-							try {
-								trm.setReceiver(synthesizer.getReceiver());
-							} catch (MidiUnavailableException e) {
-								Logger.err(new MidiSys(),new Str("Failed to link sequencer transmitters to synthesizer"),e);
-							}
-						}
-					} else {
-						try {
-							sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
-						} catch (MidiUnavailableException e) {
-							Logger.err(new MidiSys(),new Str("Failed to link sequencer transmitter to synthesizer"),e);
-						}
-					}
-				}
+				Logger.err(new MidiSys(),new Str("Synthesizer device is not supported"));
 			}
+		} catch (MidiUnavailableException e) {
+			Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
 		}
 	}
 	
 	public static void closeDevices() {
-		if (sequencer!=null && sequencer.isOpen()) {
-			sequencer.close();
-			sequencer = null;
-		}
 		if (synthesizer!=null && synthesizer.isOpen()) {
 			synthesizer.close();
 			synthesizer = null;

@@ -2,9 +2,12 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdbd.ThemeControllerSettings;
-import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.ThemeController;
+import nl.zeesoft.zdbd.ThemeControllerSettings;
+import nl.zeesoft.zdbd.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.generate.Generator;
+import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -72,11 +75,12 @@ public class TestThemeController extends TestObject {
 			List<String> themes = controller.listThemes();
 			assertEqual(themes.size(),1,"Number of themes does not match expectation");
 			assertEqual(themes.get(0),"Demo","The listed theme name does not match expectation");
+			assertEqual(controller.getSequences().size(),1,"Number of sequences does not match expectation (1)");
 
 			Generator generator = new Generator();
 			generator.name = "TestGenerator";
 			controller.putGenerator(generator);
-			assertEqual(controller.getGenerators().size(),1,"Number of generators does not match expectation");
+			assertEqual(controller.getGenerators().size(),4,"Number of generators does not match expectation");
 			assertEqual(controller.themeHasChanges(),true,"Theme changes do not match expectation (3)");
 			
 			System.out.println();
@@ -87,14 +91,34 @@ public class TestThemeController extends TestObject {
 			chain = controller.generateSequence("TestGenerator");
 			Waiter.startAndWaitFor(chain,10000);
 			assertNotNull(controller.getGenerator("TestGenerator").generatedPatternSequence,"Generated pattern sequence does not match expectation");
+			assertEqual(controller.getSequences().size(),2,"Number of sequences does not match expectation (2)");
 			
 			System.out.println();
+			System.out.println("Playing sequence '" + NetworkTrainer.TRAINING_SEQUENCE + "'");
+			ThemeSequenceSelector selector = new ThemeSequenceSelector();
+			MidiSys.sequencer.addListener(selector);
+			selector.setController(controller);
+			selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
+			sleep(12000);
+			MidiSys.sequencer.stop();
+			
+			sleep(1000);
+			
+			System.out.println();
+			System.out.println("Playing theme");
+			selector.startTheme("TestGenerator");
+			sleep(60000);
+			MidiSys.sequencer.stop();
+			
+			System.out.println();
+			Waiter.waitFor(controller, 1000);
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,1000);
 			assertEqual(FileIO.getActionLog().size(),25,"Action log size does not match expectation (3)");
 			
 			System.out.println();
 			ThemeController controller2 = new ThemeController();
+			selector.setController(controller);
 			chain = controller2.initialize(settings);
 			Waiter.startAndWaitFor(chain,20000);
 			settings = controller2.getSettings();

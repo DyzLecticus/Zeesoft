@@ -1,5 +1,6 @@
 package nl.zeesoft.zdbd.midi.convertors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -22,18 +23,41 @@ import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class PatternSequenceConvertor {
-	public static final int							TEMPO			= 0x51;
-	public static final int							TEXT			= 0x01;
-	public static final int							RESOLUTION		= 960;
+	public static final int			TEMPO				= 0x51;
+	public static final int			TEXT				= 0x01;
+	public static final int			RESOLUTION			= 960;
 	
-	public int										beatsPerMinute	= 120;
+	public static final String		CONTROL_TRACK		= "Control";
 	
-	public InstrumentConvertors						convertors		= new InstrumentConvertors();
+	public InstrumentConvertors		convertors			= new InstrumentConvertors();
+	
+	protected List<String>			trackNames			= new ArrayList<String>();
+	protected int					controlTrackNum		= 0;
 
+	public PatternSequenceConvertor() {
+		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+			if (!inst.name().equals(Octave.NAME) &&
+				!inst.name().equals(Note.NAME)
+				) {
+				trackNames.add(inst.name());
+			}
+		}
+		controlTrackNum = trackNames.size();
+		trackNames.add("Control");
+	}
+	
+	public List<String> getTrackNames() {
+		return new ArrayList<String>(trackNames);
+	}
+	
+	public int getControlTrackNum() {
+		return controlTrackNum;
+	}
+	
 	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
 		Sequence r = createSequence();
 		addInitialSynthConfig(r);
-		addTempoMetaEventToSequence(r);
+		addTempoMetaEventToSequence(r,sequence.rythm.beatsPerMinute);
 		
 		List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
 		long startTick = 0;
@@ -54,7 +78,7 @@ public class PatternSequenceConvertor {
 	
 	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
 		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
-		addTempoMetaEventToSequence(r);
+		addTempoMetaEventToSequence(r,rythm.beatsPerMinute);
 		addInitialSynthConfig(r);
 		return r;
 	}
@@ -69,7 +93,7 @@ public class PatternSequenceConvertor {
 	protected Sequence createSequence() {
 		Sequence r = null;
 		try {
-			r = new Sequence(Sequence.PPQ,RESOLUTION,InstrumentPattern.INSTRUMENTS.size() + 1);
+			r = new Sequence(Sequence.PPQ,RESOLUTION,trackNames.size());
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
@@ -77,21 +101,19 @@ public class PatternSequenceConvertor {
 	}
 
 	protected void addInitialSynthConfig(Sequence sequence) {
-		int controlTrack = InstrumentPattern.INSTRUMENTS.size();
 		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
 			for (Integer control: SynthConfig.CONTROLS) {
 				int value = channelConfig.getControlValue(control);
 				createEventOnTrack(
-					sequence.getTracks()[controlTrack],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
+					sequence.getTracks()[controlTrackNum],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
 				);
 			}
 		}
 	}
 	
-	protected void addTempoMetaEventToSequence(Sequence sequence) {
-		int controlTrack = InstrumentPattern.INSTRUMENTS.size();
-		Track track = sequence.getTracks()[controlTrack];
-		int tempo = (60000000 / beatsPerMinute);
+	protected void addTempoMetaEventToSequence(Sequence sequence, float beatsPerMinute) {
+		Track track = sequence.getTracks()[controlTrackNum];
+		int tempo = (int)(60000000 / beatsPerMinute);
 		byte[] b = new byte[3];
 		int tmp = tempo >> 16;
 		b[0] = (byte) tmp;

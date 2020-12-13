@@ -17,6 +17,8 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waitable;
 
 public class NetworkTrainer implements Waitable {
+	public static String		TRAINING_SEQUENCE			= "Training sequence";
+	
 	private Lock				lock						= new Lock();
 	private Busy				busy						= new Busy(this);
 	

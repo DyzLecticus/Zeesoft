@@ -3,12 +3,18 @@ package nl.zeesoft.zdbd;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -121,7 +127,7 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			theme.rythm.beatsPerMinute = beatsPerMinute;
-			MidiSys.midiSequencer.setTempoInBPM(beatsPerMinute);
+			MidiSys.sequencer.setTempoInBPM(beatsPerMinute);
 		}
 		lock.unlock(this);
 	}
@@ -146,11 +152,13 @@ public class ThemeController implements EventListener, Waitable {
 	}
 	
 	public void putGenerator(Generator generator) {
-		lock.lock(this);
-		if (theme!=null) {
-			theme.generators.put(generator);
+		if (!generator.name.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
+			lock.lock(this);
+			if (theme!=null) {
+				theme.generators.put(generator);
+			}
+			lock.unlock(this);
 		}
-		lock.unlock(this);
 	}
 	
 	public Generator getGenerator(String name) {
@@ -158,6 +166,43 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			r = theme.generators.get(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<Generator> listGenerators() {
+		List<Generator> r = new ArrayList<Generator>();
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.list();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<String> getSequenceNames() {
+		List<String> r = new ArrayList<String>();
+		lock.lock(this);
+		if (theme!=null) {
+			List<Generator> generators = theme.generators.list();
+			for (Generator gen: generators) {
+				if (gen.generatedPatternSequence!=null) {
+					r.add(gen.name);
+				}
+			}
+			r.add(NetworkTrainer.TRAINING_SEQUENCE);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public SortedMap<String,PatternSequence> getSequences() {
+		SortedMap<String,PatternSequence> r = new TreeMap<String,PatternSequence>();
+		lock.lock(this);
+		if (theme!=null) {
+			r.putAll(theme.generators.getSequences());
+			r.put(NetworkTrainer.TRAINING_SEQUENCE,theme.networkTrainer.getSequence());
 		}
 		lock.unlock(this);
 		return r;
@@ -236,26 +281,32 @@ public class ThemeController implements EventListener, Waitable {
 	
 	@Override
 	public void handleEvent(Event event) {
-		Logger.dbg(this, new Str(event.name));
+		Str msg = new Str(event.name);
+		if (event.param!=null) {
+			msg.sb().append("(");
+			msg.sb().append(event.param.toString());
+			msg.sb().append(")");
+		}
+		Logger.dbg(this, msg);
 		if (event.name.equals(INITIALIZING)) {
 			// Ignore
 		} else if (event.name.equals(INITIALIZED)) {
 			lock.lock(this);
-			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZED_AND_LOADED)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(LOADING_THEME)) {
-			MidiSys.midiSequencer.stop();
+			MidiSys.sequencer.stop();
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			MidiSys.midiSequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(SAVING_THEME)) {
@@ -266,13 +317,13 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
-			MidiSys.midiSequencer.pause();
+			MidiSys.sequencer.pause();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZING_THEME)) {
-			MidiSys.midiSequencer.stop();
+			MidiSys.sequencer.stop();
 		} else if (event.name.equals(INITIALIZED_THEME)) {
 			lock.lock(this);
 			busy.setBusy(false);
@@ -284,7 +335,7 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(DESTROYING)) {
-			MidiSys.midiSequencer.stop();
+			MidiSys.sequencer.stop();
 		} else if (event.name.equals(DESTROYED)) {
 			lock.lock(this);
 			busy.setBusy(false);
@@ -355,6 +406,28 @@ public class ThemeController implements EventListener, Waitable {
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
 			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
+
+			Generator gen = new Generator();
+			gen.name = "Maintain beat and feedback";
+			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
+			theme.generators.put(gen);
+
+			gen = new Generator();
+			gen.name = "Free form";
+			gen.maintainBeat = 0;
+			gen.maintainFeedback = false;
+			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
+			theme.generators.put(gen);
+
+			gen = new Generator();
+			gen.name = "Free form, undistorted";
+			gen.group1Distortion = 0;
+			gen.group2Distortion = 0;
+			gen.maintainBeat = 0;
+			gen.maintainFeedback = false;
+			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
+			theme.generators.put(gen);
+			
 			codes.add(theme.initializeNetwork());
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
@@ -444,10 +517,11 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(true);
 			
 			List<RunCode> codes = new ArrayList<RunCode>();
-			theme = new Theme();
-			theme.themeDir = settings.getThemeDir();
-			theme.name = name;
-			if (theme.directoryExists()) {
+			Theme thm = new Theme();
+			thm.themeDir = settings.getThemeDir();
+			thm.name = name;
+			if (thm.directoryExists()) {
+				theme = thm;
 				codes.add(theme.loadRythm());
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());

@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
@@ -28,7 +29,7 @@ public class Generator {
 	public boolean			randomChunkOffset			= true;
 	
 	// Mix controls
-	public String[]			skipInstruments				= new String[0];
+	public String[]			skipInstruments				= {Note.NAME};
 	public float			mixStart					= 0.2F; // 0 - 1
 	public float			mixEnd						= 1.0F; // 0 - 1
 	public float			maintainBeat				= 1.0F; // 0 - 1
@@ -72,6 +73,7 @@ public class Generator {
 	public void generatePatternSequence(Network network, NetworkIO lastIO, PatternSequence trainingSequence) {
 		if (lastIO!=null) {
 			Logger.dbg(this, new Str("Generating sequence ..."));
+			network.setSequential(true);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", group1Distortion);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", group2Distortion);
 
@@ -86,6 +88,7 @@ public class Generator {
 			}
 			generatedPatternSequence = r;
 			
+			network.setSequential(false);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", 0F);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", 0F);
 			Logger.dbg(this, new Str("Generated sequence"));

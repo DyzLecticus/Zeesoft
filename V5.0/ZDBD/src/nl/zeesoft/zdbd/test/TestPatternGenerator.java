@@ -70,7 +70,6 @@ public class TestPatternGenerator extends TestObject {
 			network = TestInstrumentNetwork.createAndTrainNetwork();
 		} else {
 			FileIO.mockIO = false;
-			network.setSequential(true);
 			network.initializeAndLoad(config);
 			FileIO.mockIO = true;
 		}
@@ -89,7 +88,7 @@ public class TestPatternGenerator extends TestObject {
 			chain.addProgressListener(new ProgressBar("Loading soundbanks"));
 			Waiter.startAndWaitFor(chain,3000);
 			
-			sleep(5000);
+			//sleep(5000);
 			
 			System.out.println();
 			PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
@@ -99,16 +98,18 @@ public class TestPatternGenerator extends TestObject {
 			//PatternSequence generated = generator.generatePatternSequence(network, sequence);
 			Generator generator = new Generator();
 			generator.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME, Note.NAME);
+			//generator.maintainBeat = 0f;
+			//generator.maintainFeedback = true;
 			generator.generatePatternSequence(network, lastIO, sequence);
 			PatternSequence generated = generator.generatedPatternSequence;
 			
 			Sequence midiSequence = null;
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-			MidiSys.midiSequencer.setSequence(midiSequence);
-			MidiSys.midiSequencer.start();
+			MidiSys.sequencer.setSequence(midiSequence);
+			MidiSys.sequencer.start();
 			
 			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
-			MidiSys.midiSequencer.setNextSequence(midiSequence);
+			MidiSys.sequencer.setNextSequence(midiSequence);
 			
 			/*
 			generator.generatePatternSequence(network, sequence);
@@ -124,7 +125,7 @@ public class TestPatternGenerator extends TestObject {
 			*/
 
 			sleep(30000);
-			MidiSys.midiSequencer.stop();
+			MidiSys.sequencer.stop();
 					
 			MidiSys.closeDevices();
 		}
