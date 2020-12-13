@@ -90,7 +90,19 @@ public class PersistableCollection extends CompleteCollection {
 		Object r = null;
 		collection.fromPath(path);
 		if (collection.size()>0) {
-			r = collection.get(collection.getObjectIds().get(0));
+			Str firstId = null;
+			List<Str> idList = collection.getObjectIds();
+			String endsWith = ID_CONCATENATOR + "1";
+			for (Str id: idList) {
+				if (id.endsWith(endsWith)) {
+					firstId = id;
+					break;
+				}
+			}
+			if (firstId==null) {
+				firstId = collection.getObjectIds().get(0);
+			}
+			r = collection.get(firstId);
 		}
 		return r;
 	}
