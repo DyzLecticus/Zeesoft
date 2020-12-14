@@ -2,7 +2,7 @@ package nl.zeesoft.zdbd.pattern.instruments;
 
 public class Ride extends PatternInstrument {
 	public static String	NAME	= "Ride";
-	public static int		GROUP	= 2;
+	public static int		GROUP	= 1;
 	
 	public Ride(int index) {
 		super(index);

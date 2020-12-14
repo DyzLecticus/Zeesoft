@@ -190,9 +190,9 @@ public class InstrumentPattern {
 	public SDR getSDRForGroup1Step(int step) {
 		DrumEncoder dEnc = EncoderFactory.drumEncoder;
 		HihatEncoder hEnc = EncoderFactory.hihatEncoder;
-		BassEncoder bEnc = EncoderFactory.bassEncoder;
+		CymbalEncoder cEnc = EncoderFactory.cymbalEncoder;
 		
-		int l = dEnc.getEncodeLength() + dEnc.getEncodeLength() + hEnc.getEncodeLength() + bEnc.getEncodeLength();
+		int l = dEnc.getEncodeLength() + dEnc.getEncodeLength() + hEnc.getEncodeLength() + cEnc.getEncodeLength();
 		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
 		
 		int offset = 0;
@@ -205,7 +205,8 @@ public class InstrumentPattern {
 		kvSdr.concat(hEnc.getEncodedValue(getStepValue(Hihat.NAME,step)), offset);
 		offset += hEnc.getEncodeLength();
 		
-		kvSdr.concat(bEnc.getEncodedValue(getStepValue(Bass.NAME,step)), offset);
+		int[] cymbalValue = {getStepValue(Ride.NAME,step),getStepValue(Crash.NAME,step)};
+		kvSdr.concat(cEnc.getEncodedValue(cymbalValue), offset);
 
 		for (PatternInstrument inst: instruments) {
 			if (inst.group()==1) {
@@ -217,23 +218,22 @@ public class InstrumentPattern {
 	}
 
 	public SDR getSDRForGroup2Step(int step) {
-		CymbalEncoder cEnc = EncoderFactory.cymbalEncoder;
 		PercussionEncoder pEnc = EncoderFactory.percussionEncoder;
 		OctaveEncoder oEnc = EncoderFactory.octaveEncoder;
 		NoteEncoder nEnc = EncoderFactory.noteEncoder;
+		BassEncoder bEnc = EncoderFactory.bassEncoder;
 		
-		int l = cEnc.getEncodeLength() + pEnc.getEncodeLength() + oEnc.getEncodeLength() + nEnc.getEncodeLength();
+		int l = pEnc.getEncodeLength() + bEnc.getEncodeLength() + oEnc.getEncodeLength() + nEnc.getEncodeLength();
 		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
 		
 		int offset = 0;
-		int[] cymbalValue = {getStepValue(Ride.NAME,step),getStepValue(Crash.NAME,step)};
-		kvSdr.concat(cEnc.getEncodedValue(cymbalValue), offset);
-		offset += cEnc.getEncodeLength();
-		
 		int[] percussionValue = {getStepValue(Percussion1.NAME,step),getStepValue(Percussion2.NAME,step)};
 		kvSdr.concat(pEnc.getEncodedValue(percussionValue), offset);
 		offset += pEnc.getEncodeLength();
-		
+
+		kvSdr.concat(bEnc.getEncodedValue(getStepValue(Bass.NAME,step)), offset);
+		offset += bEnc.getEncodeLength();
+
 		kvSdr.concat(oEnc.getEncodedValue(getStepValue(Octave.NAME,step)), offset);
 		offset += oEnc.getEncodeLength();
 		

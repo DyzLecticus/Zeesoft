@@ -99,7 +99,7 @@ public class TestThemeController extends TestObject {
 			MidiSys.sequencer.addListener(selector);
 			selector.setController(controller);
 			selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
-			sleep(12000);
+			sleep(11000);
 			MidiSys.sequencer.stop();
 			
 			sleep(1000);
@@ -107,7 +107,7 @@ public class TestThemeController extends TestObject {
 			System.out.println();
 			System.out.println("Playing theme");
 			selector.startTheme("TestGenerator");
-			sleep(60000);
+			sleep(120000);
 			MidiSys.sequencer.stop();
 			
 			System.out.println();

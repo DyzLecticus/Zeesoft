@@ -62,13 +62,13 @@ public class TestEncoders extends TestObject {
 		sdrs = pattern.getSDRsForGroup(1,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 1 pattern (" + InstrumentPattern.sizeX(1) + "*" + InstrumentPattern.sizeY(1) + ");");
-		System.out.println("(Kick, Snare, Hihat, Bass)");
+		System.out.println("(Kick, Snare, Hihat, Cymbals)");
 		displaySDRList(sdrs);
 		
 		sdrs = pattern.getSDRsForGroup(2,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 2 pattern (" + InstrumentPattern.sizeX(2) + "*" + InstrumentPattern.sizeY(2) + ");");
-		System.out.println("(Cymbals, Percussion, Octave, Note)");
+		System.out.println("(Percussion, Bass, Octave, Note)");
 		displaySDRList(sdrs);
 		
 		assertEqual(InstrumentPattern.getValueForDuration(0,false),0,"Note does not match expectation (1)");
@@ -89,9 +89,11 @@ public class TestEncoders extends TestObject {
 	}
 	
 	private void displaySDRList(List<SDR> sdrs) {
+		int i = 0;
 		for (SDR sdr: sdrs) {
+			i++;
 			sdr.flatten();
-			System.out.println(sdr.toVisualStr());
+			System.out.println(String.format("%02d", i) + ": " + sdr.toVisualStr());
 		}
 	}
 }

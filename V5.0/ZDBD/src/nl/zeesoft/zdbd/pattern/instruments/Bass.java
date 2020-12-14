@@ -2,7 +2,7 @@ package nl.zeesoft.zdbd.pattern.instruments;
 
 public class Bass extends PatternInstrument {
 	public static String	NAME	= "Bass";
-	public static int		GROUP	= 1;
+	public static int		GROUP	= 2;
 	
 	public Bass(int index) {
 		super(index);
