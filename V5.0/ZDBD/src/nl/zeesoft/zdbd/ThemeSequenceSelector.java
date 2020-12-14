@@ -23,6 +23,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	
 	private String				currSequence			= "";
 	private String				nextSequence			= "";
+	private Sequence			nextMidiSequence		= null;
 	
 	private ThemeController		controller				= null;
 	
@@ -40,7 +41,16 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 
 	public void setHold(boolean hold) {
 		lock.lock(this);
-		this.hold = hold;
+		if (this.hold!=hold) {
+			this.hold = hold;
+			if (!hold) {
+				nextSequence = selectNextSequenceNoLock();
+				changedNextSequenceNoLock();
+			} else if (!nextSequence.equals(currSequence)) {
+				nextSequence = currSequence;
+				changedNextSequenceNoLock();
+			}
+		}
 		lock.unlock(this);
 	}
 
@@ -88,6 +98,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			lock.lock(this);
 			currSequence = "";
 			nextSequence = "";
+			nextMidiSequence = null;
 			if (event.name.equals(ThemeController.DESTROYING) && controller!=null) {
 				controller.eventPublisher.removeListener(this);
 				controller = null;
@@ -163,10 +174,11 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			if (sequence!=null) {
 				this.currSequence = startSequence;
 				Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-				MidiSys.sequencer.setSequence(midiSequence);
-				if (!MidiSys.sequencer.isRunning()) {
-					MidiSys.sequencer.start();
+				if (MidiSys.sequencer.isRunning()) {
+					MidiSys.sequencer.stop();
 				}
+				MidiSys.sequencer.setSequence(midiSequence);
+				MidiSys.sequencer.start();
 				if (selectNextSequence) {
 					this.nextSequence = selectNextSequenceNoLock();
 				} else {
@@ -199,8 +211,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		if (controller!=null) {
 			PatternSequence sequence = controller.getSequences().get(nextSequence);
 			if (sequence!=null) {
-				Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-				MidiSys.sequencer.setNextSequence(midiSequence);
+				nextMidiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+				MidiSys.sequencer.setNextSequence(nextMidiSequence);
 			}
 		}
 	}
