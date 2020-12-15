@@ -227,9 +227,12 @@ public class Generator {
 		int values[] = getPredictedValuesFromPreviousIO(workingIO);
 		for (PatternInstrument inst: pattern.instruments) {
 			if (basePattern!=null && (ori || skipInstrumentsContains(inst.name()))) {
-				inst.stepValues[step] = basePattern.getInstrument(inst.name()).stepValues[step];
-				if (maintainFeedback) {
-					values[inst.index] = inst.stepValues[step];
+				int value = basePattern.getInstrument(inst.name()).stepValues[step];
+				if (value!=PatternInstrument.OFF) {
+					inst.stepValues[step] = value;
+					if (maintainFeedback) {
+						values[inst.index] = inst.stepValues[step];
+					}
 				}
 			} else {
 				inst.stepValues[step] = values[inst.index];

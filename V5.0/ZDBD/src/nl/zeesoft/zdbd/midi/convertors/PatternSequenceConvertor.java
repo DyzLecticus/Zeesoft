@@ -149,19 +149,27 @@ public class PatternSequenceConvertor {
 							BassConvertor.applyOctaveNote(mns, octave, note);
 						}
 					}
-					for (MidiNote mn: mns) {
-						long startTick = getStepTick(rythm,s);
-						if (startTick>sequenceEndTick) {
-							startTick = startTick % sequenceEndTick;
+					if (mns.size()>0) {
+						long nextActiveTick = sequenceEndTick;
+						for (int ns = (s+1); ns < stepsPerPattern; ns++) {
+							if (inst.stepValues[ns]!=PatternInstrument.OFF) {
+								nextActiveTick = getStepTick(rythm,ns);
+								break;
+							}
 						}
-						Track track = sequence.getTracks()[inst.index];
-						createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick);
-						long add = (long)(mn.hold * (float)ticksPerStep);
-						long endTick = startTick + add;
-						if (endTick>=sequenceEndTick) {
-							endTick = sequenceEndTick - 1;
+						for (MidiNote mn: mns) {
+							long startTick = getStepTick(rythm,s);
+							if (startTick<(nextActiveTick - 1)) {
+								Track track = sequence.getTracks()[inst.index];
+								createEventOnTrack(track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick);
+								long add = (long)(mn.hold * (float)ticksPerStep);
+								long endTick = startTick + add;
+								if (endTick>=nextActiveTick) {
+									endTick = nextActiveTick - 1;
+								}
+								createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick);
+							}
 						}
-						createEventOnTrack(track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick);
 					}
 				}
 			}
