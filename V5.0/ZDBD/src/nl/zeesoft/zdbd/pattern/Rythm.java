@@ -18,6 +18,7 @@ public class Rythm {
 	public float			beatsPerMinute		= 135;
 	public int				beatsPerPattern 	= 4;
 	public int				stepsPerBeat		= 4;
+	public float[]			stepDelays			= {0F,0F,0F,0F,0F,0F,0F,0F};
 	
 	public void copyFrom(Rythm rythm) {
 		this.beatsPerMinute = rythm.beatsPerMinute;

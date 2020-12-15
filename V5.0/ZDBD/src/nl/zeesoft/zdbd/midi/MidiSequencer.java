@@ -19,7 +19,6 @@ import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
@@ -98,7 +97,7 @@ public class MidiSequencer implements Sequencer {
 	public void setSequence(Sequence sequence) {
 		if (sequence!=null &&
 			sequence.getDivisionType() == Sequence.PPQ &&
-			sequence.getResolution()==PatternSequenceConvertor.RESOLUTION
+			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
 			boolean restart = false;
@@ -119,7 +118,7 @@ public class MidiSequencer implements Sequencer {
 	public void setNextSequence(Sequence sequence) {
 		if (sequence!=null &&
 			sequence.getDivisionType() == Sequence.PPQ &&
-			sequence.getResolution()==PatternSequenceConvertor.RESOLUTION
+			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
 			lock.lock(this);
@@ -231,7 +230,7 @@ public class MidiSequencer implements Sequencer {
 			cTick = getCurrentTick(sequence[CURR]);
 		}
 		long msPerBeat = (int)(60000000F / beatsPerMinute);
-		nsPerTick = (int)((msPerBeat * 1000) / PatternSequenceConvertor.RESOLUTION);
+		nsPerTick = (int)((msPerBeat * 1000) / MidiSequenceUtil.RESOLUTION);
 		if (cTick>=0) {
 			startedNs = System.nanoTime() - (cTick * nsPerTick);
 		}

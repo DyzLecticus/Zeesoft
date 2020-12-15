@@ -1,7 +1,18 @@
 package nl.zeesoft.zdbd.midi;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Track;
+
+import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;
+import nl.zeesoft.zdbd.midi.lfo.LFO;
+import nl.zeesoft.zdbd.pattern.Rythm;
 
 public class SynthConfig {
 	public static final int			DRUM_CHANNEL		= 9;
@@ -40,6 +51,7 @@ public class SynthConfig {
 	
 	public Synthesizer				synthesizer			= null;
 	public SynthChannelConfig[]		channels 			= new SynthChannelConfig[16];
+	public List<ChannelLFO>			lfos				= new ArrayList<ChannelLFO>();
 	
 	public SynthConfig(Synthesizer synthesizer) {
 		this.synthesizer = synthesizer;
@@ -63,6 +75,9 @@ public class SynthConfig {
 		bass2Config.instrument = 85;
 		bass2Config.reverb = 0;
 		bass2Config.chorus = 40;
+		bass2Config.pan = 127;
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,3,-1));
 	}
 	
 	public void configureSynthesizer() {
@@ -95,5 +110,39 @@ public class SynthConfig {
 				chan.setSolo(config.solo);
 			}
 		}
+	}
+	
+	public void setRythm(Rythm rythm) {
+		for (ChannelLFO lfo: lfos) {
+			lfo.setRythm(rythm);
+		}
+	}
+	
+	public Sequence generateSequenceForChannelLFOs(int ticks) {
+		Sequence r = null;
+		try {
+			r = new Sequence(Sequence.PPQ,MidiSequenceUtil.RESOLUTION,1);
+		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
+		}
+		if (r!=null) {
+			Track track = r.getTracks()[0]; 
+			for (ChannelLFO lfo: lfos) {
+				int channel = lfo.getChannel();
+				int control = lfo.getControl();
+				List<Float> changes = lfo.getChangesForTicks(ticks);
+				int value = channels[channel].getControlValue(control);
+				long tick = 0;
+				for (Float change: changes) {
+					float chg = (change * -1F);
+					int val = value - (int)(value * chg);
+					MidiSequenceUtil.createEventOnTrack(
+						track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
+					);
+					tick++;
+				}
+			}
+		}
+		return r;
 	}
 }
