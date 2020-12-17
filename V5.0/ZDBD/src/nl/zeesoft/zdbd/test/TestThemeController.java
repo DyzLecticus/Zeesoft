@@ -70,7 +70,7 @@ public class TestThemeController extends TestObject {
 			System.out.println();
 			chain = controller.saveTheme();
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(FileIO.getActionLog().size(),24,"Action log size does not match expectation (2)");
+			assertEqual(FileIO.getActionLog().size(),25,"Action log size does not match expectation (2)");
 			assertEqual(controller.themeHasChanges(),false,"Theme changes do not match expectation (2)");
 			List<String> themes = controller.listThemes();
 			assertEqual(themes.size(),1,"Number of themes does not match expectation");
@@ -114,7 +114,7 @@ public class TestThemeController extends TestObject {
 			Waiter.waitFor(controller, 1000);
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,1000);
-			assertEqual(FileIO.getActionLog().size(),25,"Action log size does not match expectation (3)");
+			assertEqual(FileIO.getActionLog().size(),26,"Action log size does not match expectation (3)");
 			
 			System.out.println();
 			ThemeController controller2 = new ThemeController();
@@ -123,14 +123,14 @@ public class TestThemeController extends TestObject {
 			Waiter.startAndWaitFor(chain,20000);
 			settings = controller2.getSettings();
 			assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
-			assertEqual(FileIO.getActionLog().size(),47,"Action log size does not match expectation (4)");
+			assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (4)");
 			assertEqual(controller2.themeHasChanges(),false,"Theme changes do not match expectation (4)");
 			
 			System.out.println();
 			chain = controller2.newTheme("Test");
 			Waiter.startAndWaitFor(chain,10000);
 			assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
-			assertEqual(FileIO.getActionLog().size(),47,"Action log size does not match expectation (5)");
+			assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (5)");
 			assertEqual(controller2.themeHasChanges(),true,"Theme changes do not match expectation (5)");
 			
 			System.out.println();

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.sound.midi.Sequence;
+
 import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
@@ -208,6 +210,16 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public Sequence generateMidiSequence(PatternSequence sequence) {
+		Sequence r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.soundPatch.generateMidiSequence(sequence);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public Generator removeGenerator(String name) {
 		Generator r = null;
 		lock.lock(this);
@@ -263,7 +275,7 @@ public class ThemeController implements EventListener, Waitable {
 	}
 	
 	public CodeRunnerChain saveThemeAs(String name) {
-		return getSaveThemeRunnerChain();
+		return getSaveThemeRunnerChain(name);
 	}
 	
 	public CodeRunnerChain loadTheme(String name) {
@@ -292,13 +304,13 @@ public class ThemeController implements EventListener, Waitable {
 			// Ignore
 		} else if (event.name.equals(INITIALIZED)) {
 			lock.lock(this);
-			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZED_AND_LOADED)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(LOADING_THEME)) {
@@ -306,7 +318,7 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
-			MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(SAVING_THEME)) {
@@ -326,6 +338,7 @@ public class ThemeController implements EventListener, Waitable {
 			MidiSys.sequencer.stop();
 		} else if (event.name.equals(INITIALIZED_THEME)) {
 			lock.lock(this);
+			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(GENERATING_SEQUENCE)) {
@@ -343,6 +356,12 @@ public class ThemeController implements EventListener, Waitable {
 		}
 	}
 	
+	protected void updateSequencerAndSynthesizerNoLock() {
+		MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+		theme.soundPatch.synthConfig.setRythm(theme.rythm);
+		theme.soundPatch.synthConfig.configureSynthesizer(MidiSys.synthesizer);
+	}
+
 	protected RunCode getInstallRunCode(ThemeControllerSettings settings) {
 		return new RunCode() {
 			@Override
@@ -396,6 +415,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
+				codes.add(theme.loadSoundPatch());
 				load = true;
 			} else {
 				theme = null;
@@ -499,6 +519,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.saveNetworkTrainer());
 				codes.add(theme.saveNetwork());
 				codes.add(theme.saveGenerators());
+				codes.add(theme.saveSoundPatch());
 				
 				r.add(eventPublisher.getPublishEventRunCode(this, SAVING_THEME));
 				r.add(theme.getMkdirsRunCode());
@@ -526,6 +547,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
+				codes.add(theme.loadSoundPatch());
 				
 				r = new CodeRunnerChain();
 				r.add(eventPublisher.getPublishEventRunCode(this, LOADING_THEME));

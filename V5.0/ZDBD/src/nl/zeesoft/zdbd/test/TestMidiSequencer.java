@@ -61,7 +61,7 @@ public class TestMidiSequencer extends TestObject implements MidiSequencerEventL
 		sleep(3000);
 
 		PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
-		Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+		Sequence midiSequence = sequence.toDefaultMidiSequence();
 		
 		MidiSequencer sequencer = MidiSys.sequencer;
 		sequencer.addListener(this);

@@ -21,7 +21,7 @@ public class Generator {
 	
 	// Network merger dirsortion controls
 	public float			group1Distortion			= 0.1F; // 0 - 1
-	public float			group2Distortion			= 0.1F; // 0 - 1
+	public float			group2Distortion			= 0.0F; // 0 - 1
 	
 	// Randomized rythm generation controls
 	public int				smallerChunk				= 1;
@@ -30,7 +30,7 @@ public class Generator {
 	
 	// Mix controls
 	public String[]			skipInstruments				= {Note.NAME};
-	public float			mixStart					= 0.2F; // 0 - 1
+	public float			mixStart					= 0.0F; // 0 - 1
 	public float			mixEnd						= 1.0F; // 0 - 1
 	public float			maintainBeat				= 1.0F; // 0 - 1
 	public boolean			maintainFeedback			= false;

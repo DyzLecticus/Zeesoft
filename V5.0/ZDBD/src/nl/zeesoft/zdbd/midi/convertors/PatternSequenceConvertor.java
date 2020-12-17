@@ -10,8 +10,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
-import nl.zeesoft.zdbd.midi.MidiSys;
-import nl.zeesoft.zdbd.midi.SynthChannelConfig;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
@@ -21,12 +19,14 @@ import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdk.thread.Lock;
 
 public class PatternSequenceConvertor {
 	public static final String		CONTROL_TRACK		= "Control";
 	
-	public InstrumentConvertors		convertors			= new InstrumentConvertors();
+	protected Lock					lock				= new Lock();
 	
+	protected InstrumentConvertors	convertors			= new InstrumentConvertors();
 	protected List<String>			trackNames			= new ArrayList<String>();
 	protected int					controlTrackNum		= 0;
 
@@ -50,32 +50,38 @@ public class PatternSequenceConvertor {
 		return controlTrackNum;
 	}
 	
-	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
+	public Sequence generateSequenceForPatternSequence(SynthConfig synthConfig, PatternSequence sequence) {
 		Sequence r = createSequence();
-		addInitialSynthConfig(r);
-		MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,sequence.rythm.beatsPerMinute);
-		
-		List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
-		long startTick = 0;
-		for (InstrumentPattern pattern: patterns) {
-			Sequence seq = generateNoteSequenceForPattern(pattern,sequence.rythm);
-			for (int t = 0; t < seq.getTracks().length; t++) {
-				Track track = seq.getTracks()[t];
-				for (int e = 0; e < track.size(); e++) {
-					MidiEvent event = track.get(e);
-					event.setTick(event.getTick() + startTick);
-					r.getTracks()[t].add(event);
+		if (r!=null) {
+			lock.lock(this);
+			synthConfig.addInitialSynthConfig(r,controlTrackNum);
+			MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,sequence.rythm.beatsPerMinute);
+			
+			List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
+			long startTick = 0;
+			for (InstrumentPattern pattern: patterns) {
+				Sequence seq = generateNoteSequenceForPattern(pattern,sequence.rythm);
+				for (int t = 0; t < seq.getTracks().length; t++) {
+					Track track = seq.getTracks()[t];
+					for (int e = 0; e < track.size(); e++) {
+						MidiEvent event = track.get(e);
+						event.setTick(event.getTick() + startTick);
+						r.getTracks()[t].add(event);
+					}
 				}
+				startTick += MidiSequenceUtil.getSequenceEndTick(sequence.rythm);
 			}
-			startTick += MidiSequenceUtil.getSequenceEndTick(sequence.rythm);
+			lock.unlock(this);
 		}
 		return r;
 	}
 	
-	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
+	public Sequence generateSequenceForPattern(SynthConfig synthConfig, InstrumentPattern pattern, Rythm rythm) {
+		lock.lock(this);
 		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
 		MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,rythm.beatsPerMinute);
-		addInitialSynthConfig(r);
+		synthConfig.addInitialSynthConfig(r,controlTrackNum);
+		lock.unlock(this);
 		return r;
 	}
 	
@@ -149,17 +155,6 @@ public class PatternSequenceConvertor {
 						}
 					}
 				}
-			}
-		}
-	}
-
-	protected void addInitialSynthConfig(Sequence sequence) {
-		for (SynthChannelConfig channelConfig: MidiSys.synthConfig.channels) {
-			for (Integer control: SynthConfig.CONTROLS) {
-				int value = channelConfig.getControlValue(control);
-				MidiSequenceUtil.createEventOnTrack(
-					sequence.getTracks()[controlTrackNum],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
-				);
 			}
 		}
 	}

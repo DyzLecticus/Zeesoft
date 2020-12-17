@@ -1,6 +1,7 @@
 package nl.zeesoft.zdbd;
 
 import nl.zeesoft.zdbd.generate.Generators;
+import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.Rythm;
@@ -18,6 +19,7 @@ public class Theme {
 	protected NetworkConfig		networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
 	protected Network			network					= new Network();
 	protected Generators		generators				= new Generators();
+	protected SoundPatch		soundPatch				= new SoundPatch();
 
 	protected RunCode loadRythm() {
 		return rythm.getFromFileRunCode(getRythmFileName());
@@ -66,6 +68,14 @@ public class Theme {
 		return generators.getGenerateSequenceRunCode(network, networkTrainer.getLastIO(), networkTrainer.getSequence(), name);
 	}
 	
+	protected RunCode loadSoundPatch() {
+		return soundPatch.getFromFileRunCode(getSoundPatchFileName());
+	}
+
+	protected RunCode saveSoundPatch() {
+		return soundPatch.getToFileRunCode(getSoundPatchFileName());
+	}
+	
 	protected String getDirectory() {
 		return FileIO.addSlash(themeDir) + FileIO.addSlash(name);
 	}
@@ -80,6 +90,10 @@ public class Theme {
 	
 	protected String getGeneratorsFileName() {
 		return getDirectory() + "Generators.txt";
+	}
+	
+	protected String getSoundPatchFileName() {
+		return getDirectory() + "SoundPatch.txt";
 	}
 	
 	protected boolean directoryExists() {

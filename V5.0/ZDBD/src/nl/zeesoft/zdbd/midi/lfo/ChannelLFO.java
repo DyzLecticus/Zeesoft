@@ -15,7 +15,7 @@ public class ChannelLFO {
 	private int			control		= SynthConfig.FILTER;
 	private String		type		= LFO.SINE;
 	private int			cycleSteps	= 5;
-	private float		change		= -0.5F; // -1.0F - 0.0F
+	private float		change		= -0.25F; // -1.0F - 1.0F
 	
 	private long		currTick	= 0;
 	
@@ -117,15 +117,25 @@ public class ChannelLFO {
 	public List<Float> getChangesForTicks(int ticks) {
 		List<Float> r = new ArrayList<Float>();
 		lock.lock(this);
-		List<Float> cycleValues = LFO.getTickValuesForCycleStepsNoLock(rythm, type, cycleSteps);
+		long cTick = currTick;
+		List<Float> cycleValues = LFO.getTickValuesForCycleSteps(rythm, type, cycleSteps);
 		for (long t = 0; t < ticks; t++) {
-			float mod = cycleValues.get((int)currTick);
+			float mod = cycleValues.get((int)cTick);
 			r.add(mod * change);
-			currTick++;
-			if (currTick>=cycleValues.size()) {
-				currTick = 0;
+			cTick++;
+			if (cTick>=cycleValues.size()) {
+				cTick = 0;
 			}
 		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<Float> commitTicks(int ticks) {
+		List<Float> r = new ArrayList<Float>();
+		lock.lock(this);
+		currTick += ticks;
+		currTick = currTick % LFO.getTotalTicksForCycleSteps(rythm, cycleSteps);
 		lock.unlock(this);
 		return r;
 	}

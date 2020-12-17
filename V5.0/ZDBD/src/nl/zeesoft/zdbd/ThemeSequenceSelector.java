@@ -23,7 +23,6 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	
 	private String				currSequence			= "";
 	private String				nextSequence			= "";
-	private Sequence			nextMidiSequence		= null;
 	
 	private ThemeController		controller				= null;
 	
@@ -98,7 +97,6 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			lock.lock(this);
 			currSequence = "";
 			nextSequence = "";
-			nextMidiSequence = null;
 			if (event.name.equals(ThemeController.DESTROYING) && controller!=null) {
 				controller.eventPublisher.removeListener(this);
 				controller = null;
@@ -173,7 +171,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			PatternSequence sequence = controller.getSequences().get(startSequence);
 			if (sequence!=null) {
 				this.currSequence = startSequence;
-				Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+				Sequence midiSequence = controller.generateMidiSequence(sequence);
 				if (MidiSys.sequencer.isRunning()) {
 					MidiSys.sequencer.stop();
 				}
@@ -211,8 +209,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		if (controller!=null) {
 			PatternSequence sequence = controller.getSequences().get(nextSequence);
 			if (sequence!=null) {
-				nextMidiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-				MidiSys.sequencer.setNextSequence(nextMidiSequence);
+				Sequence midiSequence = controller.generateMidiSequence(sequence);
+				MidiSys.sequencer.setNextSequence(midiSequence);
 			}
 		}
 	}

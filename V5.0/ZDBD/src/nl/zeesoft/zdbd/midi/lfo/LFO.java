@@ -10,9 +10,9 @@ public class LFO {
 	public static final String	SINE			= "SINE"; 
 	public static final String	TRIANGLE		= "LINEAR"; 
 		
-	public static List<Float> getTickValuesForCycleStepsNoLock(Rythm rythm, String type, int cycleSteps) {
+	public static List<Float> getTickValuesForCycleSteps(Rythm rythm, String type, int cycleSteps) {
 		List<Float> r = new ArrayList<Float>();
-		int totalTicks = (MidiSequenceUtil.getTicksPerStep(rythm) * cycleSteps);
+		int totalTicks = getTotalTicksForCycleSteps(rythm,cycleSteps);
 		if (type.equals(SINE)) {
 			for (int t = 0; t < totalTicks; t++) {
 				double rad = (t / (double)totalTicks) * 360D;
@@ -37,5 +37,9 @@ public class LFO {
 			}
 		}
 		return r;
+	}
+	
+	public static int getTotalTicksForCycleSteps(Rythm rythm, int cycleSteps) {
+		return MidiSequenceUtil.getTicksPerStep(rythm) * cycleSteps;
 	}
 }

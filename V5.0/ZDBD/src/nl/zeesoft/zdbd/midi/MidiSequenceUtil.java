@@ -76,5 +76,4 @@ public class MidiSequenceUtil {
 			e.printStackTrace();
 		}
 	}
-
 }

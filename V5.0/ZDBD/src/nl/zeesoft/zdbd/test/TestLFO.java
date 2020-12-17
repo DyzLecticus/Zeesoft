@@ -48,11 +48,11 @@ public class TestLFO extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Rythm rythm = new Rythm();
-		List<Float> values = LFO.getTickValuesForCycleStepsNoLock(rythm, LFO.SINE, 5);
+		List<Float> values = LFO.getTickValuesForCycleSteps(rythm, LFO.SINE, 5);
 		printValues(values);
 		
 		System.out.println();
-		values = LFO.getTickValuesForCycleStepsNoLock(rythm, LFO.TRIANGLE, 3);
+		values = LFO.getTickValuesForCycleSteps(rythm, LFO.TRIANGLE, 3);
 		printValues(values);
 		
 		System.out.println();

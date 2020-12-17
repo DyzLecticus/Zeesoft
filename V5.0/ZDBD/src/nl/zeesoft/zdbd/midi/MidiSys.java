@@ -14,7 +14,6 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
-import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.midi.SoundbankLoader;
@@ -23,11 +22,9 @@ import nl.zeesoft.zdk.thread.RunCode;
 
 public class MidiSys {
 	public static Synthesizer				synthesizer			= null;
-	public static SynthConfig				synthConfig			= null;
 	public static MidiSequencer				sequencer			= null;
-	public static PatternSequenceConvertor	convertor			= null;
 	public static List<String>				loadedSoundbanks	= new ArrayList<String>();
-	
+
 	public static RunCode getInitializeRunCode() {
 		return new RunCode() {
 			@Override
@@ -42,10 +39,8 @@ public class MidiSys {
 		if (!isInitialized()) {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
-			synthConfig = new SynthConfig(synthesizer);
 			sequencer = new MidiSequencer();
 			sequencer.setSynthesizer(synthesizer);
-			convertor = new PatternSequenceConvertor();
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}

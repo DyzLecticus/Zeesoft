@@ -63,10 +63,8 @@ public class TestMidiSys extends TestObject {
 
 	@Override
 	protected void test(String[] args) {
-		MidiSys.initialize();
 		PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
-		Sequence midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
-		MidiSys.closeDevices();
+		Sequence midiSequence = sequence.toDefaultMidiSequence();
 		
 		File file = new File("dist/sequence.wav");
 		render(midiSequence, file);

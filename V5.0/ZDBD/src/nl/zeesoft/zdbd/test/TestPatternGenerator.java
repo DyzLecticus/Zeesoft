@@ -104,11 +104,11 @@ public class TestPatternGenerator extends TestObject {
 			PatternSequence generated = generator.generatedPatternSequence;
 			
 			Sequence midiSequence = null;
-			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(sequence);
+			midiSequence = sequence.toDefaultMidiSequence();
 			MidiSys.sequencer.setSequence(midiSequence);
 			MidiSys.sequencer.start();
 			
-			midiSequence = MidiSys.convertor.generateSequenceForPatternSequence(generated);
+			midiSequence = generated.toDefaultMidiSequence();
 			MidiSys.sequencer.setNextSequence(midiSequence);
 			
 			/*

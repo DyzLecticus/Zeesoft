@@ -38,6 +38,7 @@ public class MidiSequencer implements Sequencer {
 	protected List<MidiSequencerEventListener>	listeners		= new ArrayList<MidiSequencerEventListener>();
 	
 	protected MidiSequence[]					sequence		= new MidiSequence[2];
+	protected MidiSequence[]					lfoSequence		= new MidiSequence[2];
 	
 	protected boolean							paused			= false;
 	protected long								startedNs		= 0;
@@ -100,18 +101,13 @@ public class MidiSequencer implements Sequencer {
 			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
-			boolean restart = false;
 			lock.lock(this);
 			if (this.sequence[CURR]!=null && sender.isBusy()) {
-				if (seq.getTickLength() < this.sequence[CURR].getTickLength() && getCurrentTick(seq) >= seq.getTickLength()) {
-					restart = true;
-				}
+				setSequenceNoLock(NEXT,seq);
+			} else {
+				setSequenceNoLock(CURR,seq);
 			}
-			setSequenceNoLock(CURR,seq);
 			lock.unlock(this);
-			if (restart) {
-				restart();
-			}
 		}
 	}
 	

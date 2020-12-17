@@ -13,6 +13,7 @@ import javax.sound.midi.Track;
 import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;
 import nl.zeesoft.zdbd.midi.lfo.LFO;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdk.thread.Lock;
 
 public class SynthConfig {
 	public static final int			DRUM_CHANNEL		= 9;
@@ -49,17 +50,18 @@ public class SynthConfig {
 		VIB_DELAY,
 	};
 	
-	public Synthesizer				synthesizer			= null;
-	public SynthChannelConfig[]		channels 			= new SynthChannelConfig[16];
-	public List<ChannelLFO>			lfos				= new ArrayList<ChannelLFO>();
+	private Lock					lock				= new Lock();
 	
-	public SynthConfig(Synthesizer synthesizer) {
-		this.synthesizer = synthesizer;
+	private SynthChannelConfig[]	channels 			= new SynthChannelConfig[16];
+	private List<ChannelLFO>		lfos				= new ArrayList<ChannelLFO>();
+	
+	public SynthConfig() {
 		initializeDefaults();
-		configureSynthesizer();
 	}
 	
 	public void initializeDefaults() {
+		lock.lock(this);
+		lfos.clear();
 		for (int c = 0; c < channels.length; c++) {
 			channels[c] = new SynthChannelConfig();
 			channels[c].channel = c;
@@ -78,9 +80,11 @@ public class SynthConfig {
 		bass2Config.pan = 127;
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,3,-1));
+		lock.unlock(this);
 	}
 	
-	public void configureSynthesizer() {
+	public void configureSynthesizer(Synthesizer synthesizer) {
+		lock.lock(this);
 		for (int c = 0; c < channels.length; c++) {
 			SynthChannelConfig config = channels[c];
 			MidiChannel chan = synthesizer.getChannels()[c];
@@ -110,12 +114,28 @@ public class SynthConfig {
 				chan.setSolo(config.solo);
 			}
 		}
+		lock.unlock(this);
+	}
+
+	public void addInitialSynthConfig(Sequence sequence, int controlTrackNum) {
+		lock.lock(this);
+		for (SynthChannelConfig channelConfig: channels) {
+			for (Integer control: SynthConfig.CONTROLS) {
+				int value = channelConfig.getControlValue(control);
+				MidiSequenceUtil.createEventOnTrack(
+					sequence.getTracks()[controlTrackNum],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
+				);
+			}
+		}
+		lock.unlock(this);
 	}
 	
 	public void setRythm(Rythm rythm) {
+		lock.lock(this);
 		for (ChannelLFO lfo: lfos) {
 			lfo.setRythm(rythm);
 		}
+		lock.unlock(this);
 	}
 	
 	public Sequence generateSequenceForChannelLFOs(int ticks) {
@@ -126,6 +146,7 @@ public class SynthConfig {
 			e.printStackTrace();
 		}
 		if (r!=null) {
+			lock.lock(this);
 			Track track = r.getTracks()[0]; 
 			for (ChannelLFO lfo: lfos) {
 				int channel = lfo.getChannel();
@@ -134,15 +155,34 @@ public class SynthConfig {
 				int value = channels[channel].getControlValue(control);
 				long tick = 0;
 				for (Float change: changes) {
-					float chg = (change * -1F);
-					int val = value - (int)(value * chg);
+					int val = value;
+					if (change>0F) {
+						val = value + (int)(127F * change);
+						if (val>127F) {
+							val = 127;
+						}
+					} else if (change<0F) {
+						val = value - (int)(127F * (change * -1F));
+						if (val<0F) {
+							val = 0;
+						}
+					}
 					MidiSequenceUtil.createEventOnTrack(
 						track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
 					);
 					tick++;
 				}
 			}
+			lock.unlock(this);
 		}
 		return r;
+	}
+	
+	public void commitChannelLFOs(int ticks) {
+		lock.lock(this);
+		for (ChannelLFO lfo: lfos) {
+			lfo.commitTicks(ticks);
+		}
+		lock.unlock(this);
 	}
 }

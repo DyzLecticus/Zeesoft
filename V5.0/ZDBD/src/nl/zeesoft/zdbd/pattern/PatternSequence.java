@@ -3,7 +3,11 @@ package nl.zeesoft.zdbd.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.Sequence;
+
 import nl.zeesoft.zdbd.ThemeControllerSettings;
+import nl.zeesoft.zdbd.midi.SynthConfig;
+import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -78,5 +82,11 @@ public class PatternSequence {
 			}
 		}
 		return r;
+	}
+	
+	public Sequence toDefaultMidiSequence() {
+		SynthConfig synthConfig = new SynthConfig();
+		PatternSequenceConvertor convertor = new PatternSequenceConvertor();
+		return convertor.generateSequenceForPatternSequence(synthConfig, this);
 	}
 }
