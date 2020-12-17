@@ -8,7 +8,6 @@ import java.util.List;
 import javax.sound.midi.ControllerEventListener;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
@@ -31,12 +30,14 @@ public class MidiSequencer implements Sequencer {
 	private static int							NEXT			= 1;
 	
 	protected Lock								lock			= new Lock();
-	protected Synthesizer						synthesizer		= null;
-	
+
 	protected float								beatsPerMinute	= 120;
 	protected int								nsPerTick		= 520833;
+
 	protected List<MidiSequencerEventListener>	listeners		= new ArrayList<MidiSequencerEventListener>();
 	
+	protected SynthConfig						synthConfig		= null;
+
 	protected MidiSequence[]					sequence		= new MidiSequence[2];
 	protected MidiSequence[]					lfoSequence		= new MidiSequence[2];
 	
@@ -55,20 +56,12 @@ public class MidiSequencer implements Sequencer {
 			}
 			@Override
 			protected void doneCallback() {
-				lock.lock(this);
-				allSoundOff(synthesizer);
-				lock.unlock(this);
+				MidiSys.allSoundOff();
 			}
 		};
 		sender.setPriority(Thread.MAX_PRIORITY);
 		eventPublisher = new CodeRunner(getPublishSequenceSwitchRunCode());
 		calculateNsPerTickNoLock();
-	}
-	
-	public void setSynthesizer(Synthesizer synthesizer) {
-		lock.lock(this);
-		this.synthesizer = synthesizer;
-		lock.unlock(this);
 	}
 	
 	public void addListener(MidiSequencerEventListener listener) {
@@ -94,6 +87,12 @@ public class MidiSequencer implements Sequencer {
 		return r;
 	}
 	
+	public void setSynthConfig(SynthConfig synthConfig) {
+		lock.lock(this);
+		this.synthConfig = synthConfig;
+		lock.unlock(this);
+	}
+	
 	@Override
 	public void setSequence(Sequence sequence) {
 		if (sequence!=null &&
@@ -101,13 +100,21 @@ public class MidiSequencer implements Sequencer {
 			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
+			boolean generateLFO = false;
 			lock.lock(this);
 			if (this.sequence[CURR]!=null && sender.isBusy()) {
 				setSequenceNoLock(NEXT,seq);
 			} else {
+				if (lfoSequence[CURR]==null) {
+					generateLFO = true;
+				}
 				setSequenceNoLock(CURR,seq);
 			}
+			SynthConfig config = synthConfig;
 			lock.unlock(this);
+			if (config!=null && generateLFO) {
+				generateLfo(CURR,config,sequence.getTickLength());
+			}
 		}
 	}
 	
@@ -117,9 +124,17 @@ public class MidiSequencer implements Sequencer {
 			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
+			boolean generateLFO = false;
 			lock.lock(this);
+			if (lfoSequence[NEXT]==null) {
+				generateLFO = true;
+			}
 			setSequenceNoLock(NEXT,seq);
+			SynthConfig config = synthConfig;
 			lock.unlock(this);
+			if (config!=null && generateLFO) {
+				generateLfo(NEXT,config,sequence.getTickLength());
+			}
 		}
 	}
 	
@@ -156,8 +171,8 @@ public class MidiSequencer implements Sequencer {
 		if (!sender.isBusy()) {
 			Str err = new Str();
 			lock.lock(this);
-			if (synthesizer==null) {
-				err.sb().append("Synthesizer has not been set");
+			if (MidiSys.synthesizer==null) {
+				err.sb().append("Midi system has not been initialized");
 			} else if (sequence[CURR]==null) {
 				err.sb().append("Sequence has not been set");
 			}
@@ -216,6 +231,16 @@ public class MidiSequencer implements Sequencer {
 		}
 	}
 	
+	protected void generateLfo(int seq, SynthConfig config, long ticks) {
+		MidiSequence lfo = new MidiSequence(config.generateSequenceForChannelLFOs(ticks));
+		if (seq==CURR) {
+			config.commitChannelLFOs(ticks);
+		}
+		lock.lock(this);
+		lfoSequence[seq] = lfo;
+		lock.unlock(this);
+	}
+	
 	protected void setSequenceNoLock(int seq, MidiSequence sequence) {
 		this.sequence[seq] = sequence;
 	}
@@ -240,7 +265,9 @@ public class MidiSequencer implements Sequencer {
 				lock.lock(this);
 				MidiSequence pSeq = sequence[CURR];
 				MidiSequence cSeq = sequence[CURR];
-				Synthesizer synth = synthesizer;
+				MidiSequence lpSeq = lfoSequence[CURR];
+				MidiSequence lcSeq = lfoSequence[CURR];
+				Synthesizer synth = MidiSys.synthesizer;
 				long pTick = 0;
 				long cTick = 0;
 				long sTick = -1;
@@ -261,8 +288,11 @@ public class MidiSequencer implements Sequencer {
 						
 						if (sequence[NEXT]!=null) {
 							cSeq = sequence[NEXT];
+							lcSeq = lfoSequence[NEXT];
 							sequence[CURR] = cSeq;
+							lfoSequence[CURR] = lcSeq;
 							sequence[NEXT] = null;
+							lfoSequence[NEXT] = null;
 							switched = true;
 						}
 					}
@@ -274,7 +304,13 @@ public class MidiSequencer implements Sequencer {
 				if (!stop) {
 					List<MidiEvent> events = new ArrayList<MidiEvent>();
 					if (sTick>=0 && eTick>=0) {
+						if (lpSeq!=null) {
+							events.addAll(lpSeq.getMidiEventsForTicks(sTick, eTick));
+						}
 						events.addAll(pSeq.getMidiEventsForTicks(sTick, eTick));
+					}
+					if (lcSeq!=null) {
+						events.addAll(lcSeq.getMidiEventsForTicks(pTick + 1, cTick + 1));
 					}
 					events.addAll(cSeq.getMidiEventsForTicks(pTick + 1, cTick + 1));
 					for (MidiEvent event:events) {
@@ -305,6 +341,9 @@ public class MidiSequencer implements Sequencer {
 			@Override
 			protected boolean run() {
 				lock.lock(this);
+				if (synthConfig!=null) {
+					synthConfig.commitChannelLFOs(sequence[CURR].getTickLength());
+				}
 				List<MidiSequencerEventListener> list = new ArrayList<MidiSequencerEventListener>(listeners);
 				lock.unlock(this);
 				for (MidiSequencerEventListener listener: list) {
@@ -317,14 +356,6 @@ public class MidiSequencer implements Sequencer {
 				return true;
 			}
 		};
-	}
-	
-	public static void allSoundOff(Synthesizer synthesizer) {
-		MidiChannel[] channels = synthesizer.getChannels();
-		for (int c = 0; c < channels.length; c++) {
-			MidiChannel channel = channels[c];
-			channel.allSoundOff();
-		}
 	}
 
 	@Override

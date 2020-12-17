@@ -114,7 +114,7 @@ public class ChannelLFO {
 		lock.unlock(this);
 	}
 	
-	public List<Float> getChangesForTicks(int ticks) {
+	public List<Float> getChangesForTicks(long ticks) {
 		List<Float> r = new ArrayList<Float>();
 		lock.lock(this);
 		long cTick = currTick;
@@ -131,7 +131,7 @@ public class ChannelLFO {
 		return r;
 	}
 	
-	public List<Float> commitTicks(int ticks) {
+	public List<Float> commitTicks(long ticks) {
 		List<Float> r = new ArrayList<Float>();
 		lock.lock(this);
 		currTick += ticks;

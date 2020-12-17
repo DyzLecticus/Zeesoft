@@ -10,7 +10,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
-import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
@@ -50,11 +49,10 @@ public class PatternSequenceConvertor {
 		return controlTrackNum;
 	}
 	
-	public Sequence generateSequenceForPatternSequence(SynthConfig synthConfig, PatternSequence sequence) {
+	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
 		Sequence r = createSequence();
 		if (r!=null) {
 			lock.lock(this);
-			synthConfig.addInitialSynthConfig(r,controlTrackNum);
 			MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,sequence.rythm.beatsPerMinute);
 			
 			List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
@@ -76,11 +74,10 @@ public class PatternSequenceConvertor {
 		return r;
 	}
 	
-	public Sequence generateSequenceForPattern(SynthConfig synthConfig, InstrumentPattern pattern, Rythm rythm) {
+	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
 		lock.lock(this);
 		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
 		MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,rythm.beatsPerMinute);
-		synthConfig.addInitialSynthConfig(r,controlTrackNum);
 		lock.unlock(this);
 		return r;
 	}

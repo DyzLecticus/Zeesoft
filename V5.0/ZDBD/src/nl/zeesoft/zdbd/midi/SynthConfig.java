@@ -138,7 +138,7 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 	
-	public Sequence generateSequenceForChannelLFOs(int ticks) {
+	public Sequence generateSequenceForChannelLFOs(long ticks) {
 		Sequence r = null;
 		try {
 			r = new Sequence(Sequence.PPQ,MidiSequenceUtil.RESOLUTION,1);
@@ -154,6 +154,7 @@ public class SynthConfig {
 				List<Float> changes = lfo.getChangesForTicks(ticks);
 				int value = channels[channel].getControlValue(control);
 				long tick = 0;
+				int pVal = value;
 				for (Float change: changes) {
 					int val = value;
 					if (change>0F) {
@@ -167,9 +168,12 @@ public class SynthConfig {
 							val = 0;
 						}
 					}
-					MidiSequenceUtil.createEventOnTrack(
-						track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
-					);
+					if (val!=pVal) {
+						MidiSequenceUtil.createEventOnTrack(
+							track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
+						);
+					}
+					pVal = value;
 					tick++;
 				}
 			}
@@ -178,7 +182,7 @@ public class SynthConfig {
 		return r;
 	}
 	
-	public void commitChannelLFOs(int ticks) {
+	public void commitChannelLFOs(long ticks) {
 		lock.lock(this);
 		for (ChannelLFO lfo: lfos) {
 			lfo.commitTicks(ticks);

@@ -17,6 +17,8 @@ import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestThemeController extends TestObject {
+	private static boolean PLAY_SEQUENCES = false;
+	
 	public TestThemeController(Tester tester) {
 		super(tester);
 	}
@@ -93,53 +95,58 @@ public class TestThemeController extends TestObject {
 			assertNotNull(controller.getGenerator("TestGenerator").generatedPatternSequence,"Generated pattern sequence does not match expectation");
 			assertEqual(controller.getSequences().size(),2,"Number of sequences does not match expectation (2)");
 			
-			System.out.println();
-			System.out.println("Playing sequence '" + NetworkTrainer.TRAINING_SEQUENCE + "'");
 			ThemeSequenceSelector selector = new ThemeSequenceSelector();
-			MidiSys.sequencer.addListener(selector);
-			selector.setController(controller);
-			selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
-			sleep(11000);
-			MidiSys.sequencer.stop();
-			
-			sleep(1000);
-			
-			System.out.println();
-			System.out.println("Playing theme");
-			selector.startTheme("TestGenerator");
-			sleep(120000);
-			MidiSys.sequencer.stop();
+			if (PLAY_SEQUENCES) {
+				System.out.println();
+				System.out.println("Playing sequence '" + NetworkTrainer.TRAINING_SEQUENCE + "'");
+				MidiSys.sequencer.addListener(selector);
+				selector.setController(controller);
+				selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
+				sleep(11000);
+				MidiSys.sequencer.stop();
+				
+				sleep(1000);
+				
+				System.out.println();
+				System.out.println("Playing theme");
+				selector.startTheme("TestGenerator");
+				sleep(120000);
+				MidiSys.sequencer.stop();
+			}
 			
 			System.out.println();
 			Waiter.waitFor(controller, 1000);
 			chain = controller.destroy();
-			Waiter.startAndWaitFor(chain,1000);
-			assertEqual(FileIO.getActionLog().size(),26,"Action log size does not match expectation (3)");
-			
-			System.out.println();
-			ThemeController controller2 = new ThemeController();
-			selector.setController(controller);
-			chain = controller2.initialize(settings);
-			Waiter.startAndWaitFor(chain,20000);
-			settings = controller2.getSettings();
-			assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
-			assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (4)");
-			assertEqual(controller2.themeHasChanges(),false,"Theme changes do not match expectation (4)");
-			
-			System.out.println();
-			chain = controller2.newTheme("Test");
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
-			assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (5)");
-			assertEqual(controller2.themeHasChanges(),true,"Theme changes do not match expectation (5)");
-			
-			System.out.println();
-			chain = controller2.destroy();
-			Waiter.startAndWaitFor(chain,1000);
-
-			assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
-			System.out.println();
-			System.out.println(FileIO.getActionLogStr());
+			if (assertEqual(FileIO.getActionLog().size(),26,"Action log size does not match expectation (3)")) {
+				
+				System.out.println();
+				ThemeController controller2 = new ThemeController();
+				chain = controller2.initialize(settings);
+				Waiter.startAndWaitFor(chain,20000);
+				if (PLAY_SEQUENCES) {
+					selector.setController(controller2);
+				}
+				settings = controller2.getSettings();
+				assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
+				assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (4)");
+				assertEqual(controller2.themeHasChanges(),false,"Theme changes do not match expectation (4)");
+				
+				System.out.println();
+				chain = controller2.newTheme("Test");
+				Waiter.startAndWaitFor(chain,10000);
+				assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
+				assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (5)");
+				assertEqual(controller2.themeHasChanges(),true,"Theme changes do not match expectation (5)");
+				
+				System.out.println();
+				chain = controller2.destroy();
+				Waiter.startAndWaitFor(chain,10000);
+	
+				assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
+				System.out.println();
+				System.out.println(FileIO.getActionLogStr());
+			}
 		}
 	}
 }

@@ -17,7 +17,7 @@ public class SoundPatch {
 	}
 	
 	public Sequence generateMidiSequence(PatternSequence sequence) {
-		return convertor.generateSequenceForPatternSequence(synthConfig,sequence);
+		return convertor.generateSequenceForPatternSequence(sequence);
 	}
 	
 	public RunCode getFromFileRunCode(String path) {

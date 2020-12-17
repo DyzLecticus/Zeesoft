@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Soundbank;
@@ -40,7 +41,6 @@ public class MidiSys {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
 			sequencer = new MidiSequencer();
-			sequencer.setSynthesizer(synthesizer);
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}
@@ -68,8 +68,19 @@ public class MidiSys {
 	
 	public static void closeDevices() {
 		if (synthesizer!=null && synthesizer.isOpen()) {
+			allSoundOff();
 			synthesizer.close();
 			synthesizer = null;
+		}
+	}
+	
+	public static void allSoundOff() {
+		if (synthesizer!=null) {
+			MidiChannel[] channels = synthesizer.getChannels();
+			for (int c = 0; c < channels.length; c++) {
+				MidiChannel channel = channels[c];
+				channel.allSoundOff();
+			}
 		}
 	}
 

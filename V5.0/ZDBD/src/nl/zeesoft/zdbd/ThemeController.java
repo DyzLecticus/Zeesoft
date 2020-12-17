@@ -357,9 +357,16 @@ public class ThemeController implements EventListener, Waitable {
 	}
 	
 	protected void updateSequencerAndSynthesizerNoLock() {
-		MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
-		theme.soundPatch.synthConfig.setRythm(theme.rythm);
-		theme.soundPatch.synthConfig.configureSynthesizer(MidiSys.synthesizer);
+		if (theme!=null) {
+			if (MidiSys.sequencer!=null) {
+				MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+				MidiSys.sequencer.setSynthConfig(theme.soundPatch.synthConfig);
+			}
+			theme.soundPatch.synthConfig.setRythm(theme.rythm);
+			if (MidiSys.synthesizer!=null) {
+				theme.soundPatch.synthConfig.configureSynthesizer(MidiSys.synthesizer);
+			}
+		}
 	}
 
 	protected RunCode getInstallRunCode(ThemeControllerSettings settings) {
@@ -383,7 +390,6 @@ public class ThemeController implements EventListener, Waitable {
 	
 	protected void destroyMe() {
 		Logger.dbg(this,new Str("Destroying ..."));
-		MidiSys.closeDevices();
 		lock.lock(this);
 		if (theme!=null) {
 			settings.workingTheme = theme.name;
@@ -393,6 +399,7 @@ public class ThemeController implements EventListener, Waitable {
 		theme = null;
 		lock.unlock(this);
 		eventPublisher.removeListener(this);
+		MidiSys.closeDevices();
 		Logger.dbg(this,new Str("Destroyed"));
 	}
 	
