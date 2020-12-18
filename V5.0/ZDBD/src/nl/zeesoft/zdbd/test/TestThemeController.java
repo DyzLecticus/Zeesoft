@@ -17,7 +17,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestThemeController extends TestObject {
-	private static boolean PLAY_SEQUENCES = false;
+	private static boolean PLAY_SEQUENCES = true;
 	
 	public TestThemeController(Tester tester) {
 		super(tester);
@@ -143,10 +143,10 @@ public class TestThemeController extends TestObject {
 				chain = controller2.destroy();
 				Waiter.startAndWaitFor(chain,10000);
 	
-				assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 				System.out.println();
 				System.out.println(FileIO.getActionLogStr());
 			}
 		}
+		assertEqual(CodeRunnerManager.getActiverRunners().size(),0,"Number of active code runners does not match expectation");
 	}
 }

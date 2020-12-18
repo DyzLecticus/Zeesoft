@@ -77,9 +77,10 @@ public class SynthConfig {
 		bass2Config.instrument = 85;
 		bass2Config.reverb = 0;
 		bass2Config.chorus = 40;
-		bass2Config.pan = 127;
+		bass2Config.pan = 0;
+		bass2Config.resonance = 80;
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,3,-1));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,3,1));
 		lock.unlock(this);
 	}
 	
@@ -117,6 +118,7 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 
+	// TODO: Add to recorded/exported sequences
 	public void addInitialSynthConfig(Sequence sequence, int controlTrackNum) {
 		lock.lock(this);
 		for (SynthChannelConfig channelConfig: channels) {
@@ -173,7 +175,7 @@ public class SynthConfig {
 							track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
 						);
 					}
-					pVal = value;
+					pVal = val;
 					tick++;
 				}
 			}

@@ -14,6 +14,7 @@ public class MidiSequenceUtil {
 	public static final int			TEXT				= 0x01;
 	public static final int			RESOLUTION			= 960;
 	
+	// TODO: Add to recorded/exported sequences
 	public static void addTempoMetaEventToSequence(Sequence sequence, int trackNum, float beatsPerMinute) {
 		Track track = sequence.getTracks()[trackNum];
 		int tempo = (int)(60000000 / beatsPerMinute);

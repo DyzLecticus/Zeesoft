@@ -15,7 +15,7 @@ public class ChannelLFO {
 	private int			control		= SynthConfig.FILTER;
 	private String		type		= LFO.SINE;
 	private int			cycleSteps	= 5;
-	private float		change		= -0.25F; // -1.0F - 1.0F
+	private float		change		= -0.35F; // -1.0F - 1.0F
 	
 	private long		currTick	= 0;
 	
@@ -34,7 +34,7 @@ public class ChannelLFO {
 		if (cycleSteps>0) {
 			this.cycleSteps = cycleSteps;
 		}
-		if (change>=-1F && change<=0) {
+		if (change>=-1F && change<=1) {
 			this.change = change;
 		}
 	}
@@ -108,7 +108,7 @@ public class ChannelLFO {
 	
 	public void setChange(float change) {
 		lock.lock(this);
-		if (change>=-1F && change<=0) {
+		if (change>=-1F && change<=1) {
 			this.change = change;
 		}
 		lock.unlock(this);

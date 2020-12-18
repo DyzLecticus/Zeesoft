@@ -53,8 +53,6 @@ public class PatternSequenceConvertor {
 		Sequence r = createSequence();
 		if (r!=null) {
 			lock.lock(this);
-			MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,sequence.rythm.beatsPerMinute);
-			
 			List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
 			long startTick = 0;
 			for (InstrumentPattern pattern: patterns) {
@@ -77,7 +75,6 @@ public class PatternSequenceConvertor {
 	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
 		lock.lock(this);
 		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
-		MidiSequenceUtil.addTempoMetaEventToSequence(r,controlTrackNum,rythm.beatsPerMinute);
 		lock.unlock(this);
 		return r;
 	}

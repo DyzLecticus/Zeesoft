@@ -1,6 +1,8 @@
 package nl.zeesoft.zdbd.midi;
 
 public class SynthChannelConfig {
+	public static int	DEFAULT			= 63;
+	
 	public int			channel			= 0;
 	
 	public boolean		solo			= false;
@@ -8,25 +10,25 @@ public class SynthChannelConfig {
 
 	public int			instrument		= 0;
 	public int			volume			= 100;
-	public int			attack			= 64;
-	public int			decay			= 64;
-	public int			release			= 64;
+	public int			attack			= DEFAULT;
+	public int			decay			= DEFAULT;
+	public int			release			= DEFAULT;
 	
-	public int			pan				= 64;
+	public int			pan				= DEFAULT;
 	public int			pressure		= 0;
 	public int			modulation		= 0;
 	public int			chorus			= 0;
 	
-	public int			filter			= 64;
-	public int			resonance		= 64;
+	public int			filter			= DEFAULT;
+	public int			resonance		= DEFAULT;
 	public int			reverb			= 16;
 	
-	public int			vib_rate		= 64;
-	public int			vib_depth		= 64;
-	public int			vib_delay		= 64;
+	public int			vib_rate		= DEFAULT;
+	public int			vib_depth		= DEFAULT;
+	public int			vib_delay		= DEFAULT;
 	
 	public int getControlValue(int control) {
-		int r = 64;
+		int r = DEFAULT;
 		if (control==SynthConfig.VOLUME) {
 			r = volume;
 		} else if (control==SynthConfig.ATTACK) {
