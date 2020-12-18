@@ -48,7 +48,7 @@ public class InstrumentConvertors {
 				DrumSampleConvertor sample = new DrumSampleConvertor();
 				if (i==KICK) {
 					sample.midiNote = 35;
-					sample.accentVelocity = 110;
+					sample.velocity = 110;
 					sample.accentVelocity = 127;
 				} else if (i==SNARE) {
 					sample.midiNote = 50;
