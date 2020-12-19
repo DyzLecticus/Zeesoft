@@ -14,7 +14,7 @@ public class ChannelLFO {
 	private int			channel		= SynthConfig.FILTER;
 	private int			control		= SynthConfig.FILTER;
 	private String		type		= LFO.SINE;
-	private int			cycleSteps	= 5;
+	private int			cycleSteps	= 10;
 	private float		change		= -0.35F; // -1.0F - 1.0F
 	
 	private long		currTick	= 0;

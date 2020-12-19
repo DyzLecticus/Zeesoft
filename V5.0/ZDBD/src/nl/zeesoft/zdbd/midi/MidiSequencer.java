@@ -3,7 +3,11 @@ package nl.zeesoft.zdbd.midi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.sound.midi.ControllerEventListener;
 import javax.sound.midi.InvalidMidiDataException;
@@ -14,6 +18,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
@@ -26,27 +31,35 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class MidiSequencer implements Sequencer {
-	private static int							CURR			= 0;
-	private static int							NEXT			= 1;
+	protected static int						CURR				= 0;
+	protected static int						NEXT				= 1;
 	
-	protected Lock								lock			= new Lock();
+	protected Lock								lock				= new Lock();
 
-	protected float								beatsPerMinute	= 120;
-	protected int								nsPerTick		= 520833;
+	protected float								beatsPerMinute		= 120;
+	protected int								nsPerTick			= 520833;
 
-	protected List<MidiSequencerEventListener>	listeners		= new ArrayList<MidiSequencerEventListener>();
+	protected List<MidiSequencerEventListener>	listeners			= new ArrayList<MidiSequencerEventListener>();
 	
-	protected SynthConfig						synthConfig		= null;
+	protected SynthConfig						synthConfig			= null;
 
-	protected MidiSequence[]					sequence		= new MidiSequence[2];
-	protected MidiSequence[]					lfoSequence		= new MidiSequence[2];
+	protected MidiSequence[]					sequence			= new MidiSequence[2];
+	protected MidiSequence[]					lfoSequence			= new MidiSequence[2];
 	
-	protected boolean							paused			= false;
-	protected long								startedNs		= 0;
-	protected long								prevTick		= 0;
+	protected boolean							paused				= false;
+	protected long								startedNs			= 0;
+	protected long								prevTick			= 0;
+
+	protected boolean							recording			= false;
+	protected long								recordedTicks		= 0;
+	protected MidiSequence						recordBuffer		= null;
 	
-	protected CodeRunner						sender			= null;
-	protected CodeRunner						eventPublisher	= null;
+	protected Lock								recordLock			= new Lock();
+	protected MidiSequence						recordedSequence	= null;
+	
+	protected CodeRunner						sender				= null;
+	protected CodeRunner						recorder			= null;
+	protected CodeRunner						eventPublisher		= null;
 	
 	public MidiSequencer() {
 		sender = new CodeRunner(getSendEventsRunCode()) {
@@ -56,12 +69,37 @@ public class MidiSequencer implements Sequencer {
 			}
 			@Override
 			protected void doneCallback() {
+				flushRecordBuffer();
 				MidiSys.allSoundOff();
 			}
 		};
 		sender.setPriority(Thread.MAX_PRIORITY);
+		recorder = new CodeRunner(getRecorderRunCode());
+		recorder.setSleepMs(10);
+		recorder.setPriority(Thread.MIN_PRIORITY);
 		eventPublisher = new CodeRunner(getPublishSequenceSwitchRunCode());
+		eventPublisher.setPriority(Thread.MIN_PRIORITY);
 		calculateNsPerTickNoLock();
+	}
+
+	@Override
+	public void open() throws MidiUnavailableException {
+		// Always open
+	}
+
+	@Override
+	public void close() {
+		stop();
+		stopRecording();
+		sender.stop();
+		recorder.stop();
+		eventPublisher.stop();
+	}
+
+	@Override
+	public boolean isOpen() {
+		// Always open
+		return true;
 	}
 	
 	public void addListener(MidiSequencerEventListener listener) {
@@ -75,9 +113,15 @@ public class MidiSequencer implements Sequencer {
 		lock.lock(this);
 		this.beatsPerMinute = beatsPerMinute;
 		calculateNsPerTickNoLock();
+		boolean recording = this.recording;
+		long recordedTicks = this.recordedTicks;
 		lock.unlock(this);
+		recordLock.lock(this);
+		if (recording && recordedSequence!=null && recordedSequence.sequence!=null) {
+			MidiSequenceUtil.addTempoMetaEventToSequence(recordedSequence.sequence, 0, beatsPerMinute, recordedTicks);
+		}
+		recordLock.unlock(this);
 	}
-
 
 	@Override
 	public float getTempoInBPM() {
@@ -100,20 +144,23 @@ public class MidiSequencer implements Sequencer {
 			sequence.getResolution()==MidiSequenceUtil.RESOLUTION
 			) {
 			MidiSequence seq = new MidiSequence(sequence);
-			boolean generateLFO = false;
+			int generateLFO = -1;
 			lock.lock(this);
 			if (this.sequence[CURR]!=null && sender.isBusy()) {
+				if (lfoSequence[NEXT]==null) {
+					generateLFO = NEXT;
+				}
 				setSequenceNoLock(NEXT,seq);
 			} else {
 				if (lfoSequence[CURR]==null) {
-					generateLFO = true;
+					generateLFO = CURR;
 				}
 				setSequenceNoLock(CURR,seq);
 			}
 			SynthConfig config = synthConfig;
 			lock.unlock(this);
-			if (config!=null && generateLFO) {
-				generateLfo(CURR,config,sequence.getTickLength());
+			if (config!=null && generateLFO>=0) {
+				generateLfo(generateLFO,config,sequence.getTickLength());
 			}
 		}
 	}
@@ -230,6 +277,81 @@ public class MidiSequencer implements Sequencer {
 			lock.unlock(this);
 		}
 	}
+
+	@Override
+	public void startRecording() {
+		boolean start = false;
+		lock.lock(this);
+		if (!recording) {
+			start = true;
+			recording = true;
+			recordedTicks = 0;
+			recordBuffer = new MidiSequence();
+		}
+		lock.unlock(this);
+		if (start) {
+			recordLock.lock(this);
+			recordedSequence = new MidiSequence();
+			recordedSequence.sequence = MidiSequenceUtil.createSequence(3);
+			MidiSequenceUtil.addTempoMetaEventToSequence(recordedSequence.sequence, 0, beatsPerMinute, 0);
+			if (synthConfig!=null) {
+				synthConfig.addInitialSynthConfig(recordedSequence.sequence);
+			}
+			recordLock.unlock(this);
+			recorder.start();
+		}
+	}
+
+	@Override
+	public void stopRecording() {
+		lock.lock(this);
+		if (recording) {
+			recording = false;
+			recorder.stop();
+		}
+		lock.unlock(this);
+	}
+
+	@Override
+	public boolean isRecording() {
+		lock.lock(this);
+		boolean r = recording;
+		lock.unlock(this);
+		return r;
+	}
+
+	public Sequence getRecordedSequence() {
+		Sequence r = null;
+		recordLock.lock(this);
+		long lastTick = 0;
+		if (recordedSequence!=null && recordedSequence.sequence!=null) {
+			r = MidiSequenceUtil.copySequence(recordedSequence.sequence);
+			for (Entry<Long,Set<MidiEvent>> entry: recordedSequence.eventsPerTick.entrySet()) {
+				for (MidiEvent event: entry.getValue()) {
+					int trackNum = getTrackNumForMidiEvent(event);
+					if (trackNum>=0) {
+						event.setTick(entry.getKey());
+						r.getTracks()[trackNum].add(event);
+						if (lastTick < entry.getKey()) {
+							lastTick = entry.getKey();
+						}
+					}
+				}
+			}
+			MidiSequenceUtil.alignTrackEndings(r,lastTick);
+		}
+		recordLock.unlock(this);
+		return r;
+	}
+	
+	protected int getTrackNumForMidiEvent(MidiEvent event) {
+		int r = -1;
+		if (event.getMessage() instanceof ShortMessage) {
+			ShortMessage msg = (ShortMessage) event.getMessage();
+			r = SynthConfig.getTrackNumForChannel(msg.getChannel());
+		}
+		return r;
+	}
 	
 	protected void generateLfo(int seq, SynthConfig config, long ticks) {
 		MidiSequence lfo = new MidiSequence(config.generateSequenceForChannelLFOs(ticks));
@@ -248,7 +370,7 @@ public class MidiSequencer implements Sequencer {
 	protected void calculateNsPerTickNoLock() {
 		long cTick = -1;
 		if (sender.isBusy()) {
-			cTick = getCurrentTick(sequence[CURR]);
+			cTick = getCurrentTickNoLock(sequence[CURR]);
 		}
 		long msPerBeat = (int)(60000000F / beatsPerMinute);
 		nsPerTick = (int)((msPerBeat * 1000) / MidiSequenceUtil.RESOLUTION);
@@ -257,7 +379,7 @@ public class MidiSequencer implements Sequencer {
 		}
 		sender.setSleepNs(nsPerTick / 2);
 	}
-		
+
 	protected RunCode getSendEventsRunCode() {
 		return new RunCode() {
 			@Override
@@ -276,7 +398,7 @@ public class MidiSequencer implements Sequencer {
 				if (synth!=null && cSeq!=null) {
 					// Determine current ticks to play
 					pTick = prevTick;
-					cTick = getCurrentTick(pSeq);
+					cTick = getCurrentTickNoLock(pSeq);
 					
 					// Handle sequence restart
 					sTick = -1;
@@ -298,21 +420,43 @@ public class MidiSequencer implements Sequencer {
 					}
 					prevTick = cTick;
 				}
+				boolean record = recording;
 				lock.unlock(this);
+				
+				MidiSequence rSequence = new MidiSequence();
+				long rt = 0;
 				
 				boolean stop = (synth==null || cSeq==null || pSeq==null);
 				if (!stop) {
 					List<MidiEvent> events = new ArrayList<MidiEvent>();
 					if (sTick>=0 && eTick>=0) {
-						if (lpSeq!=null) {
-							events.addAll(lpSeq.getMidiEventsForTicks(sTick, eTick));
+						for (long t = sTick; t < eTick; t++) {
+							Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
+							if (lpSeq!=null) {
+								Set<MidiEvent> evts = lpSeq.getEventsForTick(t);
+								events.addAll(evts);
+								tickEvents.addAll(evts);
+							}
+							Set<MidiEvent> evts = pSeq.getEventsForTick(t);
+							events.addAll(evts);
+							tickEvents.addAll(evts);
+							rSequence.eventsPerTick.put(rt, tickEvents);
+							rt++;
 						}
-						events.addAll(pSeq.getMidiEventsForTicks(sTick, eTick));
 					}
-					if (lcSeq!=null) {
-						events.addAll(lcSeq.getMidiEventsForTicks(pTick + 1, cTick + 1));
+					for (long t = (pTick + 1); t < (cTick + 1); t++) {
+						Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
+						if (lcSeq!=null) {
+							Set<MidiEvent> evts = lcSeq.getEventsForTick(t);
+							events.addAll(evts);
+							tickEvents.addAll(evts);
+						}
+						Set<MidiEvent> evts = cSeq.getEventsForTick(t);
+						events.addAll(evts);
+						tickEvents.addAll(evts);
+						rSequence.eventsPerTick.put(rt, tickEvents);
+						rt++;
 					}
-					events.addAll(cSeq.getMidiEventsForTicks(pTick + 1, cTick + 1));
 					for (MidiEvent event:events) {
 						try {
 							synth.getReceiver().send(event.getMessage(),-1);
@@ -323,6 +467,15 @@ public class MidiSequencer implements Sequencer {
 					}
 				}
 				
+				if (record && rt>0) {
+					lock.lock(this);
+					for (long t = 0; t < rt; t++) {
+						recordBuffer.eventsPerTick.put(recordedTicks, rSequence.eventsPerTick.get(t));
+						recordedTicks++;
+					}
+					lock.unlock(this);
+				}
+
 				if (switched) {
 					eventPublisher.start();
 				}
@@ -332,8 +485,33 @@ public class MidiSequencer implements Sequencer {
 		};
 	}
 	
-	protected long getCurrentTick(MidiSequence seq) {
+	protected long getCurrentTickNoLock(MidiSequence seq) {
 		return ((System.nanoTime() - startedNs) / nsPerTick) % seq.getTickLength();
+	}
+	
+	protected RunCode getRecorderRunCode() {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				flushRecordBuffer();
+				return false;
+			}
+		};
+	}
+	
+	protected void flushRecordBuffer() {
+		HashMap<Long,Set<MidiEvent>> events = new HashMap<Long,Set<MidiEvent>>(); 
+		lock.lock(this);
+		if (recordBuffer!=null) {
+			events = new HashMap<Long,Set<MidiEvent>>(recordBuffer.eventsPerTick);
+			recordBuffer.eventsPerTick.clear();
+		}
+		lock.unlock(this);
+		if (events!=null && events.size()>0) {
+			recordLock.lock(this);
+			recordedSequence.eventsPerTick.putAll(events);
+			recordLock.unlock(this);
+		}
 	}
 	
 	protected RunCode getPublishSequenceSwitchRunCode() {
@@ -362,22 +540,6 @@ public class MidiSequencer implements Sequencer {
 	public Info getDeviceInfo() {
 		// Not implemented
 		return null;
-	}
-
-	@Override
-	public void open() throws MidiUnavailableException {
-		// Not implemented
-	}
-
-	@Override
-	public void close() {
-		// Not implemented
-	}
-
-	@Override
-	public boolean isOpen() {
-		// Not implemented
-		return true;
 	}
 
 	@Override
@@ -414,22 +576,6 @@ public class MidiSequencer implements Sequencer {
 	public List<Transmitter> getTransmitters() {
 		// Not implemented
 		return null;
-	}
-
-	@Override
-	public void startRecording() {
-		// TODO Implement
-	}
-
-	@Override
-	public void stopRecording() {
-		// TODO Implement
-	}
-
-	@Override
-	public boolean isRecording() {
-		// TODO Implement
-		return false;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package nl.zeesoft.zdbd.midi.convertors;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
@@ -21,32 +20,24 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatternSequenceConvertor {
-	public static final String		CONTROL_TRACK		= "Control";
-	
 	protected Lock					lock				= new Lock();
 	
 	protected InstrumentConvertors	convertors			= new InstrumentConvertors();
-	protected List<String>			trackNames			= new ArrayList<String>();
-	protected int					controlTrackNum		= 0;
-
-	public PatternSequenceConvertor() {
+	
+	public static List<String> getTrackNames() {
+		List<String> r = new ArrayList<String>();
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
 			if (!inst.name().equals(Octave.NAME) &&
 				!inst.name().equals(Note.NAME)
 				) {
-				trackNames.add(inst.name());
+				r.add(inst.name());
 			}
 		}
-		controlTrackNum = trackNames.size();
-		trackNames.add("Control");
+		return r;
 	}
 	
-	public List<String> getTrackNames() {
-		return new ArrayList<String>(trackNames);
-	}
-	
-	public int getControlTrackNum() {
-		return controlTrackNum;
+	public static int getTrackNum(String name) {
+		return getTrackNames().indexOf(name);
 	}
 	
 	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
@@ -87,13 +78,7 @@ public class PatternSequenceConvertor {
 	}
 	
 	protected Sequence createSequence() {
-		Sequence r = null;
-		try {
-			r = new Sequence(Sequence.PPQ,MidiSequenceUtil.RESOLUTION,trackNames.size());
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
-		}
-		return r;
+		return MidiSequenceUtil.createSequence(getTrackNames().size());
 	}
 	
 	protected void addNotesToSequence(Sequence sequence, InstrumentPattern pattern, Rythm rythm) {

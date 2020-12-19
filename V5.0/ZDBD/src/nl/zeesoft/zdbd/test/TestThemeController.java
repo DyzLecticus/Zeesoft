@@ -2,10 +2,13 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
+import javax.sound.midi.Sequence;
+
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeControllerSettings;
 import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdbd.generate.Generator;
+import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdk.FileIO;
@@ -106,12 +109,17 @@ public class TestThemeController extends TestObject {
 				MidiSys.sequencer.stop();
 				
 				sleep(1000);
+				MidiSys.sequencer.startRecording();
 				
 				System.out.println();
 				System.out.println("Playing theme");
 				selector.startTheme("TestGenerator");
 				sleep(120000);
 				MidiSys.sequencer.stop();
+				
+				MidiSys.sequencer.stopRecording();
+				Sequence midiSequence = MidiSys.sequencer.getRecordedSequence();
+				MidiSequenceUtil.renderSequenceToAudioFile(midiSequence,"dist/generated.wav");
 			}
 			
 			System.out.println();

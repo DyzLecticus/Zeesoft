@@ -41,6 +41,8 @@ public class MidiSys {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
 			sequencer = new MidiSequencer();
+			SynthConfig config = new SynthConfig();
+			config.configureSynthesizer(synthesizer);
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}
@@ -82,6 +84,16 @@ public class MidiSys {
 				channel.allSoundOff();
 			}
 		}
+	}
+
+	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(List<String> paths) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		List<RunCode> codes = new ArrayList<RunCode>();
+		for (String path: paths) {
+			codes.add(getLoadSoundbankRunCode(path));
+		}
+		r.addAll(codes);
+		return r;
 	}
 
 	public static CodeRunnerChain getCodeRunnerChainForSoundbankFiles(String... paths) {

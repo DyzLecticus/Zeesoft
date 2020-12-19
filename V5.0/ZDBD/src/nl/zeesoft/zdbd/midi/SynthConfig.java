@@ -3,7 +3,6 @@ package nl.zeesoft.zdbd.midi;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
@@ -80,7 +79,7 @@ public class SynthConfig {
 		bass2Config.pan = 0;
 		bass2Config.resonance = 80;
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,3,1));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
 		lock.unlock(this);
 	}
 	
@@ -119,14 +118,17 @@ public class SynthConfig {
 	}
 
 	// TODO: Add to recorded/exported sequences
-	public void addInitialSynthConfig(Sequence sequence, int controlTrackNum) {
+	public void addInitialSynthConfig(Sequence sequence) {
 		lock.lock(this);
 		for (SynthChannelConfig channelConfig: channels) {
-			for (Integer control: SynthConfig.CONTROLS) {
-				int value = channelConfig.getControlValue(control);
-				MidiSequenceUtil.createEventOnTrack(
-					sequence.getTracks()[controlTrackNum],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
-				);
+			int trackNum = getTrackNumForChannel(channelConfig.channel);
+			if (trackNum>=0) {
+				for (Integer control: SynthConfig.CONTROLS) {
+					int value = channelConfig.getControlValue(control);
+					MidiSequenceUtil.createEventOnTrack(
+						sequence.getTracks()[trackNum],ShortMessage.CONTROL_CHANGE,channelConfig.channel,control,value,0
+					);
+				}
 			}
 		}
 		lock.unlock(this);
@@ -141,12 +143,7 @@ public class SynthConfig {
 	}
 	
 	public Sequence generateSequenceForChannelLFOs(long ticks) {
-		Sequence r = null;
-		try {
-			r = new Sequence(Sequence.PPQ,MidiSequenceUtil.RESOLUTION,1);
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
-		}
+		Sequence r = MidiSequenceUtil.createSequence(1);
 		if (r!=null) {
 			lock.lock(this);
 			Track track = r.getTracks()[0]; 
@@ -172,7 +169,7 @@ public class SynthConfig {
 					}
 					if (val!=pVal) {
 						MidiSequenceUtil.createEventOnTrack(
-							track,ShortMessage.CONTROL_CHANGE, channel, control, val, tick
+							track, ShortMessage.CONTROL_CHANGE, channel, control, val, tick
 						);
 					}
 					pVal = val;
@@ -190,5 +187,17 @@ public class SynthConfig {
 			lfo.commitTicks(ticks);
 		}
 		lock.unlock(this);
+	}
+	
+	public static int getTrackNumForChannel(int channel) {
+		int r = -1;
+		if (channel==DRUM_CHANNEL) {
+			r = 0;
+		} else if (channel==BASS_CHANNEL_1) {
+			r = 1;
+		} else if (channel==BASS_CHANNEL_2) {
+			r = 2;
+		}
+		return r;
 	}
 }
