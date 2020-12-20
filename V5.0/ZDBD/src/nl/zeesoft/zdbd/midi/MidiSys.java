@@ -43,6 +43,7 @@ public class MidiSys {
 			sequencer = new MidiSequencer();
 			SynthConfig config = new SynthConfig();
 			config.configureSynthesizer(synthesizer);
+			sequencer.setSynthConfig(config);
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}

@@ -38,8 +38,8 @@ public class InstrumentConvertors {
 				bass.layers.add(layer1);
 				BassLayerConvertor layer2 = new BassLayerConvertor();
 				layer2.channel = SynthConfig.BASS_CHANNEL_2;
-				layer2.velocity = 50;
-				layer2.accentVelocity = 60;
+				layer2.velocity = 40;
+				layer2.accentVelocity = 50;
 				bass.layers.add(layer2);
 				convertors.put(name, bass);
 			} else {

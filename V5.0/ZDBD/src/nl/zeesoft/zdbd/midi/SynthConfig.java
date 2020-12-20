@@ -73,7 +73,7 @@ public class SynthConfig {
 		bass1Config.decay = 32;
 		bass1Config.filter = 16;
 		SynthChannelConfig bass2Config = channels[BASS_CHANNEL_2];
-		bass2Config.instrument = 85;
+		bass2Config.instrument = 84;
 		bass2Config.reverb = 0;
 		bass2Config.chorus = 40;
 		bass2Config.pan = 0;
@@ -123,6 +123,9 @@ public class SynthConfig {
 		for (SynthChannelConfig channelConfig: channels) {
 			int trackNum = getTrackNumForChannel(channelConfig.channel);
 			if (trackNum>=0) {
+				MidiSequenceUtil.createEventOnTrack(
+					sequence.getTracks()[trackNum],ShortMessage.PROGRAM_CHANGE,channelConfig.channel,channelConfig.instrument,0,0
+				);
 				for (Integer control: SynthConfig.CONTROLS) {
 					int value = channelConfig.getControlValue(control);
 					MidiSequenceUtil.createEventOnTrack(

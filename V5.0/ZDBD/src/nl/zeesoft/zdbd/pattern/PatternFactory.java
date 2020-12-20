@@ -20,9 +20,7 @@ public class PatternFactory {
 		pattern.num = patternNum;
 	
 		pattern.setKick(0,PatternInstrument.ACCENT);
-		pattern.setKick(4,PatternInstrument.ACCENT);
 		pattern.setKick(8,PatternInstrument.ACCENT);
-		pattern.setKick(12,PatternInstrument.ACCENT);
 		if (patternNum>0) {
 			pattern.setKick(14,PatternInstrument.ON);
 		}

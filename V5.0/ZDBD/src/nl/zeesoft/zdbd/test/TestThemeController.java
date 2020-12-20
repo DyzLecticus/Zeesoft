@@ -20,7 +20,8 @@ import nl.zeesoft.zdk.thread.CodeRunnerManager;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestThemeController extends TestObject {
-	private static boolean PLAY_SEQUENCES = true;
+	private static boolean	PLAY_SEQUENCES	= true;
+	private static int		PLAY_SECONDS	= 120;
 	
 	public TestThemeController(Tester tester) {
 		super(tester);
@@ -114,7 +115,7 @@ public class TestThemeController extends TestObject {
 				System.out.println();
 				System.out.println("Playing theme");
 				selector.startTheme("TestGenerator");
-				sleep(120000);
+				sleep(PLAY_SECONDS * 1000);
 				MidiSys.sequencer.stop();
 				
 				MidiSys.sequencer.stopRecording();

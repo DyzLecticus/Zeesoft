@@ -11,7 +11,7 @@ public class ChannelLFO {
 	private Lock		lock		= new Lock();
 	
 	private Rythm		rythm		= new Rythm();
-	private int			channel		= SynthConfig.FILTER;
+	private int			channel		= SynthConfig.BASS_CHANNEL_2;
 	private int			control		= SynthConfig.FILTER;
 	private String		type		= LFO.SINE;
 	private int			cycleSteps	= 10;
