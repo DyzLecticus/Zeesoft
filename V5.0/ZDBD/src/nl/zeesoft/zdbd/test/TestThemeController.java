@@ -21,7 +21,7 @@ import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestThemeController extends TestObject {
 	private static boolean	PLAY_SEQUENCES	= true;
-	private static int		PLAY_SECONDS	= 120;
+	private static int		PLAY_SECONDS	= 300;
 	
 	public TestThemeController(Tester tester) {
 		super(tester);

@@ -31,6 +31,7 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class MidiSequencer implements Sequencer {
+	protected static int						INITIAL_BUFFER_SIZE	= 123456;
 	protected static int						CURR				= 0;
 	protected static int						NEXT				= 1;
 	
@@ -56,6 +57,7 @@ public class MidiSequencer implements Sequencer {
 	
 	protected Lock								recordLock			= new Lock();
 	protected MidiSequence						recordedSequence	= null;
+	protected long								recordedSeqTicks	= 0;
 	
 	protected CodeRunner						sender				= null;
 	protected CodeRunner						recorder			= null;
@@ -94,6 +96,11 @@ public class MidiSequencer implements Sequencer {
 		sender.stop();
 		recorder.stop();
 		eventPublisher.stop();
+
+		recordLock.lock(this);
+		recordedSequence = null;
+		recordedSeqTicks = 0;
+		recordLock.unlock(this);
 	}
 
 	@Override
@@ -116,11 +123,13 @@ public class MidiSequencer implements Sequencer {
 		boolean recording = this.recording;
 		long recordedTicks = this.recordedTicks;
 		lock.unlock(this);
-		recordLock.lock(this);
-		if (recording && recordedSequence!=null && recordedSequence.sequence!=null) {
-			MidiSequenceUtil.addTempoMetaEventToSequence(recordedSequence.sequence, 0, beatsPerMinute, recordedTicks);
+		if (recording) {
+			recordLock.lock(this);
+			if (recordedSequence!=null && recordedSequence.sequence!=null) {
+				MidiSequenceUtil.addTempoMetaEventToSequence(recordedSequence.sequence, 0, beatsPerMinute, recordedTicks);
+			}
+			recordLock.unlock(this);
 		}
-		recordLock.unlock(this);
 	}
 
 	@Override
@@ -297,6 +306,11 @@ public class MidiSequencer implements Sequencer {
 			if (synthConfig!=null) {
 				synthConfig.addInitialSynthConfig(recordedSequence.sequence);
 			}
+			// Initialize buffer to prevent dynamic memory scaling from interrupting sender
+			for (long t = 0; t < INITIAL_BUFFER_SIZE; t++) {
+				recordedSequence.eventsPerTick.put(t, new HashSet<MidiEvent>());
+			}
+			recordedSeqTicks = 0;
 			recordLock.unlock(this);
 			recorder.start();
 		}
@@ -323,22 +337,20 @@ public class MidiSequencer implements Sequencer {
 	public Sequence getRecordedSequence() {
 		Sequence r = null;
 		recordLock.lock(this);
-		long lastTick = 0;
 		if (recordedSequence!=null && recordedSequence.sequence!=null) {
 			r = MidiSequenceUtil.copySequence(recordedSequence.sequence);
 			for (Entry<Long,Set<MidiEvent>> entry: recordedSequence.eventsPerTick.entrySet()) {
-				for (MidiEvent event: entry.getValue()) {
-					int trackNum = getTrackNumForMidiEvent(event);
-					if (trackNum>=0) {
-						event.setTick(entry.getKey());
-						r.getTracks()[trackNum].add(event);
-						if (lastTick < entry.getKey()) {
-							lastTick = entry.getKey();
+				if (entry.getKey()<=recordedSeqTicks) {
+					for (MidiEvent event: entry.getValue()) {
+						int trackNum = getTrackNumForMidiEvent(event);
+						if (trackNum>=0) {
+							event.setTick(entry.getKey());
+							r.getTracks()[trackNum].add(event);
 						}
 					}
 				}
 			}
-			MidiSequenceUtil.alignTrackEndings(r,lastTick);
+			MidiSequenceUtil.alignTrackEndings(r,recordedSeqTicks);
 		}
 		recordLock.unlock(this);
 		return r;
@@ -510,6 +522,18 @@ public class MidiSequencer implements Sequencer {
 		if (events!=null && events.size()>0) {
 			recordLock.lock(this);
 			recordedSequence.eventsPerTick.putAll(events);
+			long prev = recordedSeqTicks;
+			for (Long tick: events.keySet()) {
+				if (tick > recordedSeqTicks) {
+					recordedSeqTicks = tick;
+				}
+			}
+			for (long t = prev; t < recordedSeqTicks; t++) {
+				if (recordedSequence.eventsPerTick.get(t).size()==0) {
+					recordedSequence.eventsPerTick.remove(t);
+				}
+			}
+			System.out.println("Recorded ticks: " + recordedSeqTicks + ", size:" + recordedSequence.eventsPerTick.size());
 			recordLock.unlock(this);
 		}
 	}

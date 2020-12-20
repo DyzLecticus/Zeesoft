@@ -40,10 +40,6 @@ public class MidiSys {
 		if (!isInitialized()) {
 			Logger.dbg(new MidiSys(), new Str("Initializing MIDI system ..."));
 			openDevices();
-			sequencer = new MidiSequencer();
-			SynthConfig config = new SynthConfig();
-			config.configureSynthesizer(synthesizer);
-			sequencer.setSynthConfig(config);
 			Logger.dbg(new MidiSys(), new Str("Initialized MIDI system"));
 		}
 	}
@@ -64,12 +60,21 @@ public class MidiSys {
 			} else {
 				Logger.err(new MidiSys(),new Str("Synthesizer device is not supported"));
 			}
+			if (synthesizer!=null) {
+				sequencer = new MidiSequencer();
+				SynthConfig config = new SynthConfig();
+				config.configureSynthesizer(synthesizer);
+				sequencer.setSynthConfig(config);
+			}
 		} catch (MidiUnavailableException e) {
 			Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
 		}
 	}
 	
 	public static void closeDevices() {
+		if (sequencer!=null && sequencer.isOpen()) {
+			sequencer.close();
+		}
 		if (synthesizer!=null && synthesizer.isOpen()) {
 			allSoundOff();
 			synthesizer.close();
