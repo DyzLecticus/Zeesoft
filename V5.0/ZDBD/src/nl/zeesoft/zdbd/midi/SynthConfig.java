@@ -117,7 +117,6 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 
-	// TODO: Add to recorded/exported sequences
 	public void addInitialSynthConfig(Sequence sequence) {
 		lock.lock(this);
 		for (SynthChannelConfig channelConfig: channels) {

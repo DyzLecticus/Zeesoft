@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import javax.sound.midi.Sequence;
 
 import nl.zeesoft.zdbd.generate.Generator;
+import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -27,30 +28,34 @@ import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waitable;
 
 public class ThemeController implements EventListener, Waitable {
-	public static String				INITIALIZING			= "INITIALIZING";
-	public static String				INITIALIZED				= "INITIALIZED";
-	public static String				INITIALIZED_AND_LOADED	= "INITIALIZED_AND_LOADED";
+	public static String				INITIALIZING				= "INITIALIZING";
+	public static String				INITIALIZED					= "INITIALIZED";
+	public static String				INITIALIZED_AND_LOADED		= "INITIALIZED_AND_LOADED";
 	
-	public static String				INITIALIZING_THEME		= "INITIALIZING_THEME";
-	public static String				INITIALIZED_THEME		= "INITIALIZED_THEME";
-	public static String				SAVING_THEME			= "SAVING_THEME";
-	public static String				SAVED_THEME				= "SAVED_THEME";
-	public static String				LOADING_THEME			= "LOADING_THEME";
-	public static String				LOADED_THEME			= "LOADED_THEME";
+	public static String				INITIALIZING_THEME			= "INITIALIZING_THEME";
+	public static String				INITIALIZED_THEME			= "INITIALIZED_THEME";
+	public static String				SAVING_THEME				= "SAVING_THEME";
+	public static String				SAVED_THEME					= "SAVED_THEME";
+	public static String				LOADING_THEME				= "LOADING_THEME";
+	public static String				LOADED_THEME				= "LOADED_THEME";
 	
-	public static String				TRAINING_NETWORK		= "TRAINING_NETWORK";
-	public static String				TRAINED_NETWORK			= "TRAINED_NETWORK";
-	public static String				GENERATING_SEQUENCE		= "GENERATING_SEQUENCE";
-	public static String				GENERATED_SEQUENCE		= "GENERATED_SEQUENCE";
+	public static String				CHANGED_TRAINING_SEQUENCE	= "CHAINGED_TRAINING_SEQUENCE";
+	public static String				TRAINING_NETWORK			= "TRAINING_NETWORK";
+	public static String				TRAINED_NETWORK				= "TRAINED_NETWORK";
+	public static String				GENERATING_SEQUENCE			= "GENERATING_SEQUENCE";
+	public static String				GENERATED_SEQUENCE			= "GENERATED_SEQUENCE";
 	
-	public static String				DESTROYING				= "DESTROYING";
-	public static String				DESTROYED				= "DESTROYED";
+	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
+	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
 	
-	public EventPublisher				eventPublisher			= new EventPublisher();
+	public static String				DESTROYING					= "DESTROYING";
+	public static String				DESTROYED					= "DESTROYED";
 	
-	protected Lock						lock					= new Lock();
-	protected Busy						busy					= new Busy(this);
-	protected ThemeControllerSettings	settings				= null;
+	public EventPublisher				eventPublisher				= new EventPublisher();
+	
+	protected Lock						lock						= new Lock();
+	protected Busy						busy						= new Busy(this);
+	protected ThemeControllerSettings	settings					= null;
 	
 	protected Theme						theme					= null;
 	protected long						savedTheme				= 0;
@@ -135,12 +140,17 @@ public class ThemeController implements EventListener, Waitable {
 	}
 	
 	public void setTrainingSequence(PatternSequence sequence) {
+		boolean changed = false;
 		lock.lock(this);
 		if (theme!=null) {
 			sequence.rythm.copyFrom(theme.rythm);
 			theme.networkTrainer.setSequence(sequence);
+			changed = true;
 		}
 		lock.unlock(this);
+		if (changed) {
+			eventPublisher.publishEvent(this, CHANGED_TRAINING_SEQUENCE, NetworkTrainer.TRAINING_SEQUENCE);
+		}
 	}
 	
 	public PatternSequence getTrainingSequence() {
@@ -278,6 +288,10 @@ public class ThemeController implements EventListener, Waitable {
 		return getSaveThemeRunnerChain(name);
 	}
 	
+	public CodeRunnerChain exportRecordingTo(String path, boolean midi) {
+		return getExportRecordingRunnerChain(path, midi);
+	}
+	
 	public CodeRunnerChain loadTheme(String name) {
 		return getLoadThemeRunnerChain(name);
 	}
@@ -344,6 +358,12 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(GENERATING_SEQUENCE)) {
 			// Ignore
 		} else if (event.name.equals(GENERATED_SEQUENCE)) {
+			lock.lock(this);
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(EXPORTING_RECORDING)) {
+			MidiSys.sequencer.stop();
+		} else if (event.name.equals(EXPORTED_RECORDING)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
@@ -588,6 +608,26 @@ public class ThemeController implements EventListener, Waitable {
 			r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
 			r.add(theme.generateSequence(name));
 			r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, name));
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getExportRecordingRunnerChain(String path, boolean midi) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (theme!=null && !busy.isBusy()) {
+			Sequence midiSequence = MidiSys.sequencer.getRecordedSequence();
+			if (midiSequence!=null) {
+				busy.setBusy(true);
+				r.add(eventPublisher.getPublishEventRunCode(this, EXPORTING_RECORDING));
+				if (midi) {
+					r.add(MidiSequenceUtil.getRenderSequenceToMidiFileRunCode(midiSequence, path));
+				} else {
+					r.add(MidiSequenceUtil.getRenderSequenceToAudioFileRunCode(midiSequence, path));
+				}
+				r.add(eventPublisher.getPublishEventRunCode(this, EXPORTED_RECORDING, path));
+			}
 		}
 		lock.unlock(this);
 		return r;

@@ -2,13 +2,10 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
-import javax.sound.midi.Sequence;
-
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeControllerSettings;
 import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdbd.generate.Generator;
-import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdk.FileIO;
@@ -21,7 +18,7 @@ import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestThemeController extends TestObject {
 	private static boolean	PLAY_SEQUENCES	= true;
-	private static int		PLAY_SECONDS	= 300;
+	private static int		PLAY_SECONDS	= 30;
 	
 	public TestThemeController(Tester tester) {
 		super(tester);
@@ -91,7 +88,7 @@ public class TestThemeController extends TestObject {
 			
 			System.out.println();
 			chain = controller.trainNetwork();
-			Waiter.startAndWaitFor(chain,30000);
+			Waiter.startAndWaitFor(chain,60000);
 			
 			System.out.println();
 			chain = controller.generateSequence("TestGenerator");
@@ -119,8 +116,13 @@ public class TestThemeController extends TestObject {
 				MidiSys.sequencer.stop();
 				
 				MidiSys.sequencer.stopRecording();
-				Sequence midiSequence = MidiSys.sequencer.getRecordedSequence();
-				MidiSequenceUtil.renderSequenceToAudioFile(midiSequence,"dist/generated.wav");
+				
+				Waiter.waitFor(controller, 10000);
+				
+				chain = controller.exportRecordingTo("dist/generated.wav",false);
+				Waiter.startAndWaitFor(chain,10000);
+				chain = controller.exportRecordingTo("dist/generated.mid",true);
+				Waiter.startAndWaitFor(chain,3000);
 			}
 			
 			System.out.println();

@@ -533,7 +533,6 @@ public class MidiSequencer implements Sequencer {
 					recordedSequence.eventsPerTick.remove(t);
 				}
 			}
-			System.out.println("Recorded ticks: " + recordedSeqTicks + ", size:" + recordedSequence.eventsPerTick.size());
 			recordLock.unlock(this);
 		}
 	}

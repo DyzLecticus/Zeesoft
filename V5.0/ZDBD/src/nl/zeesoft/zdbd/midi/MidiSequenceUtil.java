@@ -1,6 +1,7 @@
 package nl.zeesoft.zdbd.midi;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -21,6 +22,7 @@ import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class MidiSequenceUtil {
@@ -49,7 +51,6 @@ public class MidiSequenceUtil {
 		return r;
 	}
 
-	// TODO: Add to recorded/exported sequences
 	public static void addTempoMetaEventToSequence(Sequence sequence, int trackNum, float beatsPerMinute, long tick) {
 		Track track = sequence.getTracks()[trackNum];
 		int tempo = (int)(60000000 / beatsPerMinute);
@@ -115,20 +116,45 @@ public class MidiSequenceUtil {
 			e.printStackTrace();
 		}
 	}
+
+	public static RunCode getRenderSequenceToMidiFileRunCode(Sequence sequence, String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				renderSequenceToMidiFile(sequence, path);
+				return true;
+			}
+		};
+	}
 	
+	public static void renderSequenceToMidiFile(Sequence sequence, String path) {
+		File file = new File(path);
+        int[] fileTypes = MidiSystem.getMidiFileTypes(sequence);
+        if (fileTypes.length > 0) {
+			try {
+				MidiSystem.write(sequence,fileTypes[0],file);
+			} catch (IOException e) {
+				Logger.err(new MidiSequenceUtil(), new Str("Caught IO exception while writing MIDI file"), e);
+			}
+        }
+	}
+
+	public static RunCode getRenderSequenceToAudioFileRunCode(Sequence sequence, String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				renderSequenceToAudioFile(sequence, path);
+				return true;
+			}
+		};
+	}
+
 	public static void renderSequenceToAudioFile(Sequence sequence, String path) {
 		if (MidiSys.synthesizer!=null && MidiSys.synthesizer instanceof AudioSynthesizer) {
 			MidiSequenceUtil self = new MidiSequenceUtil();
-
 			MidiSys.sequencer.stop();
-			
+			MidiSys.closeSynthesizer();
 			File file = new File(path);
-			Str msg = new Str("Rendering sequence to: ");
-			msg.sb().append(file.getPath());
-			msg.sb().append(" ...");
-			Logger.dbg(self, msg);
-			
-			MidiSys.closeDevices();
 			try {
 				AudioSynthesizer synth = (AudioSynthesizer) MidiSystem.getSynthesizer();
 				AudioInputStream stream = synth.openStream(null, null);
@@ -148,7 +174,7 @@ public class MidiSequenceUtil {
 			} catch (Exception e) {
 				Logger.err(self,new Str("Caught exception while rendering sequence"),e);
 			}
-			MidiSys.initialize();
+			MidiSys.openDevices();
 			CodeRunnerChain chain = MidiSys.getCodeRunnerChainForSoundbankFiles(MidiSys.loadedSoundbanks);
 			Waiter.startAndWaitFor(chain,10000);
 		}
@@ -192,7 +218,7 @@ public class MidiSequenceUtil {
 			MidiMessage msg = selevent.getMessage();
 			if (msg instanceof MetaMessage) {
 				if (divtype == Sequence.PPQ)
-					if (((MetaMessage) msg).getType() == 0x51) {
+					if (((MetaMessage) msg).getType() == TEMPO) {
 						byte[] data = ((MetaMessage) msg).getData();
 						mpq = ((data[0] & 0xff) << 16)
 								| ((data[1] & 0xff) << 8) | (data[2] & 0xff);
