@@ -57,8 +57,8 @@ public class ThemeController implements EventListener, Waitable {
 	protected Busy						busy						= new Busy(this);
 	protected ThemeControllerSettings	settings					= null;
 	
-	protected Theme						theme					= null;
-	protected long						savedTheme				= 0;
+	protected Theme						theme						= null;
+	protected long						savedTheme					= 0;
 	
 	public ThemeController() {
 		eventPublisher.addListener(this);
