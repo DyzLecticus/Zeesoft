@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.gui;
 import java.awt.Window;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import nl.zeesoft.zdbd.EventListener;
 import nl.zeesoft.zdbd.ThemeController;
@@ -12,6 +13,12 @@ public abstract class FrameObject implements EventListener {
 	protected JFrame				frame		= null;
 	
 	public FrameObject(ThemeController controller) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			JFrame.setDefaultLookAndFeelDecorated(true);
+		} catch (Exception e) {
+			// Ignore
+		}
 		this.controller = controller;
 		controller.eventPublisher.addListener(this);
 		frame = new JFrame();
