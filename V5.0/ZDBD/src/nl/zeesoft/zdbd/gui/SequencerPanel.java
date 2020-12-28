@@ -116,11 +116,11 @@ public class SequencerPanel implements ActionListener {
 	}
 	
 	public void refresh() {
+		List<String> sequences = controller.getSequenceNames();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				Object selectedItem = sequence.getSelectedItem();
 				sequence.removeAllItems();
-				List<String> sequences = controller.getSequenceNames();
 				for (String name: sequences) {
 					sequence.addItem(name);
 				}
