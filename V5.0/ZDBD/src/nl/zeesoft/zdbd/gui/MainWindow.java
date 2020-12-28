@@ -18,9 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
-import nl.zeesoft.zdbd.Event;
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeControllerSettings;
 import nl.zeesoft.zdbd.ThemeSequenceSelector;
@@ -43,26 +41,46 @@ public class MainWindow extends FrameObject implements ActionListener {
 	
 	private ThemeSequenceSelector	selector			= new ThemeSequenceSelector();
 	private SequencerPanel			sequencerPanel		= new SequencerPanel();
-	private ProgressHandler			progressHandler		= new ProgressHandler();
-	
+	private ProgressHandler			progressHandler		= new ProgressHandler(this);
 	
 	public MainWindow(ThemeController controller, ThemeControllerSettings settings) {
 		super(controller);
 		this.settings = settings;
+		selector.setController(controller);
+		sequencerPanel.initialize(controller,selector);
+		controller.eventPublisher.addListener(progressHandler);
 	}
 
-	@Override
-	public void handleEvent(Event event) {
-		progressHandler.getLabel().setText(event.name);
+	public void refresh() {
 		updateTitle();
 		sequencerPanel.refresh();
 	}
 
 	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals(QUIT)) {
+			handleQuitRequest();
+		} else if (e.getActionCommand().equals(LOAD)) {
+			handleLoadRequest();
+		} else if (e.getActionCommand().equals(SAVE)) {
+			handleSaveRequest(false);
+		} else if (e.getActionCommand().equals(SAVE_AS)) {
+			handleSaveRequest(true);
+		} else if (e.getActionCommand().equals(DELETE)) {
+			handleDeleteRequest();
+		} else if (e.getActionCommand().equals(NEW)) {
+			handleNewRequest();
+		}
+	}
+
+	@Override
 	public void initialize() {
-		selector.setController(controller);
-		sequencerPanel.initialize(controller,selector);
-		
+		super.initialize();
+		initializeController();
+	}
+	
+	@Override
+	protected void initializeFrame() {
 		frame.setTitle(NAME);
 		
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -87,48 +105,18 @@ public class MainWindow extends FrameObject implements ActionListener {
 		frame.setLocation(50,50);
 		
 		frame.setContentPane(constructMainPanel());
+		refresh();
 		
 		frame.setVisible(true);
-		
+	}
+	
+	protected void initializeController() {
 		CodeRunnerChain chain = controller.initialize(settings);
 		if (chain!=null) {
 			progressHandler.startChain(chain);
 		} else {
 			// TODO: Self destruct message
 			System.exit(1);
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (
-			e.getActionCommand().equals(QUIT) ||
-			e.getActionCommand().equals(LOAD) ||
-			e.getActionCommand().equals(SAVE) ||
-			e.getActionCommand().equals(SAVE_AS) ||
-			e.getActionCommand().equals(DELETE) ||
-			e.getActionCommand().equals(NEW)
-			) {
-			SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-				@Override
-				public String doInBackground() {
-					if (e.getActionCommand().equals(QUIT)) {
-						handleQuitRequest();
-					} else if (e.getActionCommand().equals(LOAD)) {
-						handleLoadRequest();
-					} else if (e.getActionCommand().equals(SAVE)) {
-						handleSaveRequest(false);
-					} else if (e.getActionCommand().equals(SAVE_AS)) {
-						handleSaveRequest(true);
-					} else if (e.getActionCommand().equals(DELETE)) {
-						handleDeleteRequest();
-					} else if (e.getActionCommand().equals(NEW)) {
-						handleNewRequest();
-					}
-					return "";
-				}
-			};
-			sw.execute();
 		}
 	}
 	
@@ -370,10 +358,10 @@ public class MainWindow extends FrameObject implements ActionListener {
 	    	names,
 	    	""
 	    );
-		if (response!=null) {
-        	if (!checkBusy()) {
-				CodeRunnerChain chain = controller.deleteTheme(response);
-	            progressHandler.startChain(chain);
+	    if (response!=null) {
+			if (!checkBusy()) {
+        		CodeRunnerChain chain = controller.deleteTheme(response);
+				progressHandler.startChain(chain);
         	}
 		}
 	}
@@ -381,7 +369,6 @@ public class MainWindow extends FrameObject implements ActionListener {
 	protected JPanel constructMainPanel() {
 		JPanel pane = new JPanel();
 		pane.setLayout(new GridBagLayout());
-
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -468,6 +455,6 @@ public class MainWindow extends FrameObject implements ActionListener {
 			public void run() {
 				frame.setTitle(title.toString());
 			}
-        });
+		});
 	}
 }

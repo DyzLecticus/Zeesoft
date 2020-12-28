@@ -1,29 +1,35 @@
 package nl.zeesoft.zdbd.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
+import javax.swing.Timer;
 
-import nl.zeesoft.zdk.thread.CodeRunner;
+import nl.zeesoft.zdbd.Event;
+import nl.zeesoft.zdbd.EventListener;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.ProgressListener;
 import nl.zeesoft.zdk.thread.RunCode;
 
-public class ProgressHandler implements ProgressListener {
+public class ProgressHandler implements EventListener, ProgressListener, ActionListener {
 	private Lock			lock	= new Lock();
+	private MainWindow		window	= null;
+	
 	private JLabel			label	= new JLabel();
 	private JProgressBar	bar		= new JProgressBar(0,100);
+	
+	private String			text	= "";
 	private int				todo	= 0;
 	private int				done	= 0;
 
-	private CodeRunner		cleanUp = null;
-	private int				counter	= 0;
-
-	public ProgressHandler() {
-		cleanUp = new CodeRunner(getCleanUpRunCode());
-		cleanUp.setSleepMs(1000);
+	private Timer			timer	= null;
+	
+	public ProgressHandler(MainWindow window) {
+		this.window = window;
 	}
 	
 	public JLabel getLabel() {
@@ -33,83 +39,75 @@ public class ProgressHandler implements ProgressListener {
 	public JProgressBar getBar() {
 		return bar;
 	}
+
+	@Override
+	public void handleEvent(Event event) {
+		lock.lock(this);
+		this.text = event.name;
+		refresh(done,todo,text);
+		lock.unlock(this);
+	}
 	
 	@Override
 	public void initialized(int todo) {
 		lock.lock(this);
 		this.todo = todo;
 		this.done = 0;
+		refresh(done,todo,text);
 		lock.unlock(this);
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				bar.setValue(0);
-			}
-        });
 	}
 
 	@Override
 	public void progressed(int steps) {
 		lock.lock(this);
 		done += steps;
-		float perc = ((float)done / (float)todo);
+		refresh(done,todo,text);
 		lock.unlock(this);
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				bar.setValue((int)(perc * 100));
-			}
-        });
 	}
 
 	public void startChain(CodeRunnerChain chain) {
-		final ProgressListener listener = this;
-		SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-			@Override
-			public String doInBackground() {
-				cleanUp.stop();
-				chain.addProgressListener(listener);
-				chain.add(getStartCleanUpRunCode());
-				chain.start();
-				return "";
-	       }
-		};
-		sw.execute();
-	}
-
-	protected RunCode getStartCleanUpRunCode() {
-		return new RunCode() {
+		lock.lock(this);
+		if (timer!=null) {
+			timer.stop();
+			timer = null;
+		}
+		lock.unlock(this);
+		final ProgressHandler self = this;
+		chain.add(new RunCode() {
 			@Override
 			protected boolean run() {
+				window.refresh();
 				lock.lock(this);
-				counter	= 0;
+				timer = new Timer(1000,self);
+				timer.start();
 				lock.unlock(this);
-				cleanUp.start();
 				return true;
 			}
-		};
+		});
+		chain.addProgressListener(this);
+		chain.start();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource()==timer) {
+			lock.lock(this);
+			text = "";
+			done = 0;
+			timer.stop();
+			timer = null;
+			refresh(0,1,"");
+			lock.unlock(this);
+		}
 	}
 	
-	protected RunCode getCleanUpRunCode() {
-		return new RunCode() {
-			@Override
-			protected boolean run() {
-				boolean done = false;
-				lock.lock(this);
-				counter++;
-				if (counter>1) {
-					counter = 0;
-					done = true;
-				}
-				lock.unlock(this);
-				if (done) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							label.setText("");
-							bar.setValue(0);
-						}
-	                });
-				}
-				return done;
+	protected void refresh(int done, int todo, String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				label.setText(text);
+				float perc = ((float)done / (float)todo);
+				bar.setValue((int)(perc * 100));
 			}
-		};
+		});
 	}
 }

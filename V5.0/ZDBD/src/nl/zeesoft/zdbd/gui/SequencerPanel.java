@@ -15,114 +15,125 @@ import javax.swing.SwingWorker;
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdk.thread.Lock;
 
 public class SequencerPanel implements ActionListener {
-	public static String				PLAY_SEQUENCE	= "PLAY_SEQUENCE";
-	public static String				PLAY_THEME		= "PLAY_THEME";
-	public static String				STOP			= "STOP";
+	public static String					PLAY_SEQUENCE	= "PLAY_SEQUENCE";
+	public static String					PLAY_THEME		= "PLAY_THEME";
+	public static String					STOP			= "STOP";
 	
-	protected ThemeController			controller		= null;
-	protected ThemeSequenceSelector		selector		= null;
-	protected JPanel					pane			= null;
-	protected JComboBox<String>			sequence		= null;
+	protected Lock							lock			= new Lock();
+	protected ThemeController				controller		= null;
+	protected ThemeSequenceSelector			selector		= null;
+	protected JPanel						pane			= null;
+	protected JComboBox<String>				sequence		= null;
+	protected long							lastAction		= 0;
 	
 	public JPanel getPanel() {
+		if (pane==null) {
+			pane = new JPanel();
+			pane.setLayout(new GridBagLayout());
+			
+			GridBagConstraints c = new GridBagConstraints();
+			c.anchor = GridBagConstraints.LINE_START;
+			c.gridx = 0;
+			c.gridy = 0;
+			sequence = new JComboBox<String>();
+			pane.add(sequence,c);
+			
+			c = new GridBagConstraints();
+			c.anchor = GridBagConstraints.LINE_START;
+			c.gridx = 1;
+			c.gridy = 0;
+			JButton button = new JButton();
+			button.setText("Play sequence");
+			button.setActionCommand(PLAY_SEQUENCE);
+			button.addActionListener(this);
+			pane.add(button,c);
+			
+			c = new GridBagConstraints();
+			c.anchor = GridBagConstraints.LINE_START;
+			c.gridx = 2;
+			c.gridy = 0;
+			button = new JButton();
+			button.setText("Play theme");
+			button.setActionCommand(PLAY_THEME);
+			button.addActionListener(this);
+			pane.add(button,c);
+			
+			c = new GridBagConstraints();
+			c.anchor = GridBagConstraints.LINE_START;
+			c.gridx = 3;
+			c.gridy = 0;
+			button = new JButton();
+			button.setText("Stop");
+			button.setActionCommand(STOP);
+			button.addActionListener(this);
+			
+			pane.add(button,c);
+		}
 		return pane;
 	}
 	
 	public void initialize(ThemeController controller, ThemeSequenceSelector selector) {
 		this.controller = controller;
 		this.selector = selector;
-		pane = new JPanel();
-		pane.setLayout(new GridBagLayout());
-		
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridx = 0;
-		c.gridy = 0;
-		sequence = new JComboBox<String>();
-		pane.add(sequence,c);
-		
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridx = 1;
-		c.gridy = 0;
-		JButton button = new JButton();
-		button.setText("Play sequence");
-		button.setActionCommand(PLAY_SEQUENCE);
-		button.addActionListener(this);
-		pane.add(button,c);
-		
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridx = 2;
-		c.gridy = 0;
-		button = new JButton();
-		button.setText("Play theme");
-		button.setActionCommand(PLAY_THEME);
-		button.addActionListener(this);
-		pane.add(button,c);
-		
-		c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridx = 3;
-		c.gridy = 0;
-		button = new JButton();
-		button.setText("Stop");
-		button.setActionCommand(STOP);
-		button.addActionListener(this);
-		
-		pane.add(button,c);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (e.getActionCommand().equals(PLAY_SEQUENCE)) {
-					String name = (String) sequence.getSelectedItem();
-					if (name!=null && name.length()>0) {
-						SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-							@Override
-							public String doInBackground() {
-								selector.startSequence(name);
-								return "";
-							}
-						};
-						sw.execute();
-					}
-				} else if (e.getActionCommand().equals(PLAY_THEME)) {
-					String name = (String) sequence.getSelectedItem();
-					if (name!=null && name.length()>0) {
-						SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-							@Override
-							public String doInBackground() {
-								selector.startTheme(name);
-								return "";
-							}
-						};
-						sw.execute();
-					}
-				} else if (e.getActionCommand().equals(STOP)) {
-					SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+		lock.lock(this);
+		long last = lastAction;
+		lock.unlock(this);
+		
+		if (System.currentTimeMillis() - last>100) {
+			lock.lock(this);
+			lastAction = System.currentTimeMillis();
+			lock.unlock(this);
+			
+			if (e.getActionCommand().equals(PLAY_SEQUENCE)) {
+				String name = (String) sequence.getSelectedItem();
+				if (name!=null && name.length()>0) {
+					SwingWorker<Object,Object> sw = new SwingWorker<Object,Object>() {
 						@Override
-						public String doInBackground() {
-							if (MidiSys.sequencer.isRunning()) {
-								MidiSys.sequencer.stop();
-							}
-							return "";
+						protected Object doInBackground() throws Exception {
+							selector.startSequence(name);
+							return null;
 						}
 					};
 					sw.execute();
 				}
+			} else if (e.getActionCommand().equals(PLAY_THEME)) {
+				String name = (String) sequence.getSelectedItem();
+				if (name!=null && name.length()>0) {
+					SwingWorker<Object,Object> sw = new SwingWorker<Object,Object>() {
+						@Override
+						protected Object doInBackground() throws Exception {
+							selector.startTheme(name);
+							return null;
+						}
+					};
+					sw.execute();
+				}
+			} else if (e.getActionCommand().equals(STOP)) {
+				SwingWorker<Object,Object> sw = new SwingWorker<Object,Object>() {
+					@Override
+					protected Object doInBackground() throws Exception {
+						if (MidiSys.sequencer.isRunning()) {
+							MidiSys.sequencer.stop();
+						}
+						return null;
+					}
+				};
+				sw.execute();
 			}
-		});
+		}
 	}
 	
 	public void refresh() {
-		List<String> sequences = controller.getSequenceNames();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				List<String> sequences = controller.getSequenceNames();
 				Object selectedItem = sequence.getSelectedItem();
 				sequence.removeAllItems();
 				for (String name: sequences) {
@@ -136,6 +147,6 @@ public class SequencerPanel implements ActionListener {
 					}
 				}
 			}
-        });
+		});
 	}
 }

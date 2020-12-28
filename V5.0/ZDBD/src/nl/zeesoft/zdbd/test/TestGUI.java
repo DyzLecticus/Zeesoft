@@ -1,5 +1,7 @@
 package nl.zeesoft.zdbd.test;
 
+import javax.swing.SwingUtilities;
+
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeControllerSettings;
 import nl.zeesoft.zdbd.gui.MainWindow;
@@ -51,7 +53,12 @@ public class TestGUI extends TestObject {
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		MainWindow window = new MainWindow(controller, settings);
 		window.initialize();
-		assertEqual(window.getFrame().getTitle(),MainWindow.NAME,"Main window title does not match expectation");
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				assertEqual(window.getFrame().getTitle(),MainWindow.NAME,"Main window title does not match expectation");
+			}
+		});
 		
 		sleep(60000 * 60);
 		System.exit(0);

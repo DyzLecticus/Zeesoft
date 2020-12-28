@@ -3,12 +3,12 @@ package nl.zeesoft.zdbd.gui;
 import java.awt.Window;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import nl.zeesoft.zdbd.EventListener;
 import nl.zeesoft.zdbd.ThemeController;
 
-public abstract class FrameObject implements EventListener {
+public abstract class FrameObject {
 	protected ThemeController		controller	= null;
 	protected JFrame				frame		= null;
 	
@@ -20,7 +20,6 @@ public abstract class FrameObject implements EventListener {
 			// Ignore
 		}
 		this.controller = controller;
-		controller.eventPublisher.addListener(this);
 		frame = new JFrame();
 	}
 	
@@ -32,7 +31,22 @@ public abstract class FrameObject implements EventListener {
 		return frame;
 	}
 
-	public abstract void initialize();
+	public void initialize() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					JFrame.setDefaultLookAndFeelDecorated(true);
+				} catch (Exception e) {
+					// Ignore
+				}
+				frame = new JFrame();
+				initializeFrame();
+			}
+		});
+	}
+	
+	protected abstract void initializeFrame();
 	
 	public static void positionFrameOverFrame(Window top,Window bottom) {
 		int x = (bottom.getX() + (bottom.getWidth() / 2)) - (top.getWidth() / 2);

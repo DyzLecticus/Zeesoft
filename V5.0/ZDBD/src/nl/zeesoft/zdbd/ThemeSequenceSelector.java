@@ -12,7 +12,6 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
-import nl.zeesoft.zdk.thread.Waiter;
 
 public class ThemeSequenceSelector implements MidiSequencerEventListener, EventListener {
 	private Lock				lock					= new Lock();
@@ -171,15 +170,11 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			Logger.err(this, new Str("Midi system is not initialized"));
 		} else if (controller==null) {
 			Logger.err(this, new Str("Theme controller has not been set"));
-		} else if (!controller.isBusy()) {
+		} else if (!controller.isBusy() && !MidiSys.sequencer.isRunning()) {
 			PatternSequence sequence = controller.getSequences().get(startSequence);
 			if (sequence!=null) {
 				this.currSequence = startSequence;
 				Sequence midiSequence = controller.generateMidiSequence(sequence);
-				if (MidiSys.sequencer.isRunning()) {
-					MidiSys.sequencer.stop();
-					Waiter.waitFor(MidiSys.sequencer,100);
-				}
 				MidiSys.sequencer.setSequence(midiSequence);
 				MidiSys.sequencer.start();
 				if (selectNextSequence) {
