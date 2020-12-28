@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Str;
  * Synchronization lock 
  */
 public class Lock {
-	private Object			lockedBy	= null;
+	private Object	lockedBy	= null;
 	
 	public synchronized void lock(Object source) {
 		while (isLocked()) {

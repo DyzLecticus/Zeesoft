@@ -22,7 +22,6 @@ public class FileIO {
 	private static final SortedMap<String,Str>	fileData	= new TreeMap<String,Str>();
 	private static final List<String>			paths		= new ArrayList<String>();
 	private static final List<Str>				actionLog	= new ArrayList<Str>();
-	
 
 	public static Str mkDirs(String path) {
 		path = addSlash(cleanPath(path));
@@ -95,6 +94,40 @@ public class FileIO {
 			} else {
 				err = new Str("Directory already exists: ");
 				err.sb().append(newPath);
+			}
+		}
+		return err;
+	}
+
+	public static Str deleteDir(String path, boolean removeFiles) {
+		path = addSlash(cleanPath(path));
+		Str err = checkFileExists(path,false);
+		if (err.length()==0) {
+			if (removeFiles) {
+				List<File> files = listFiles(path);
+				for (File file: files) {
+					err = deleteFile(path + file.getName());
+					if (err.length()>0) {
+						break;
+					}
+				}
+			}
+			if (err.length()==0) {
+				if (mockIO) {
+					FileIO self = new FileIO();
+					lock.lock(self);
+					if (paths.contains(path)) {
+						paths.remove(path);
+						addActionLogNoLock(DELETE,path);
+					}
+					lock.unlock(self);
+				} else {
+					File dir = new File(path);
+					if (!dir.delete()) {
+						err.sb().append("Failed to delete directory: ");
+						err.sb().append(path);
+					}
+				}
 			}
 		}
 		return err;

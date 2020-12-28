@@ -132,11 +132,17 @@ public class CodeRunnerChain implements Waitable {
 		Exception exception = null;
 		lock.lock(this);
 		List<RunCode> codes = getCodesNoLock();
+		for (ProgressListener listener: progressListeners) {
+			listener.initialized(codes.size());
+		}
 		for (RunCode code: codes) {
 			code.tryRunCatch();
 			exception = code.getException();
 			if (exception!=null) {
 				break;
+			}
+			for (ProgressListener listener: progressListeners) {
+				listener.progressed(1);
 			}
 		}
 		lock.unlock(this);
