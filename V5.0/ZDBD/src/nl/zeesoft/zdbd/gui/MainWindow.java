@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import nl.zeesoft.zdbd.Event;
 import nl.zeesoft.zdbd.ThemeController;
@@ -100,18 +101,34 @@ public class MainWindow extends FrameObject implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(QUIT)) {
-			handleQuitRequest();
-		} else if (e.getActionCommand().equals(LOAD)) {
-			handleLoadRequest();
-		} else if (e.getActionCommand().equals(SAVE)) {
-			handleSaveRequest(false);
-		} else if (e.getActionCommand().equals(SAVE_AS)) {
-			handleSaveRequest(true);
-		} else if (e.getActionCommand().equals(DELETE)) {
-			handleDeleteRequest();
-		} else if (e.getActionCommand().equals(NEW)) {
-			handleNewRequest();
+		if (
+			e.getActionCommand().equals(QUIT) ||
+			e.getActionCommand().equals(LOAD) ||
+			e.getActionCommand().equals(SAVE) ||
+			e.getActionCommand().equals(SAVE_AS) ||
+			e.getActionCommand().equals(DELETE) ||
+			e.getActionCommand().equals(NEW)
+			) {
+			SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+				@Override
+				public String doInBackground() {
+					if (e.getActionCommand().equals(QUIT)) {
+						handleQuitRequest();
+					} else if (e.getActionCommand().equals(LOAD)) {
+						handleLoadRequest();
+					} else if (e.getActionCommand().equals(SAVE)) {
+						handleSaveRequest(false);
+					} else if (e.getActionCommand().equals(SAVE_AS)) {
+						handleSaveRequest(true);
+					} else if (e.getActionCommand().equals(DELETE)) {
+						handleDeleteRequest();
+					} else if (e.getActionCommand().equals(NEW)) {
+						handleNewRequest();
+					}
+					return "";
+		       }
+			};
+			sw.execute();
 		}
 	}
 	
@@ -280,7 +297,7 @@ public class MainWindow extends FrameObject implements ActionListener {
 	
 	protected void handleSaveRequest(boolean saveAs) {
 		if (!saveAs && controller.getName().length()>0) {
-        	if (!checkBusy()) {
+        	if (controller.themeHasChanges() && !checkBusy()) {
 				CodeRunnerChain chain = controller.saveTheme();
 	            progressHandler.startChain(chain);
         	}
