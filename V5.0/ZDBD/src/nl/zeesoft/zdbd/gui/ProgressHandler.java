@@ -2,6 +2,8 @@ package nl.zeesoft.zdbd.gui;
 
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
@@ -36,24 +38,37 @@ public class ProgressHandler implements ProgressListener {
 	public void initialized(int todo) {
 		this.todo = todo;
 		this.done = 0;
-		bar.setValue(0);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				bar.setValue(0);
+			}
+        });
 	}
 
 	@Override
 	public void progressed(int steps) {
 		done += steps;
 		float perc = ((float)done / (float)todo);
-		bar.setValue((int)(perc * 100));
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				bar.setValue((int)(perc * 100));
+			}
+        });
 	}
 
 	public void startChain(CodeRunnerChain chain) {
-		cleanUp.stop();
-		lock.lock(this);
-		counter	= 0;
-		lock.unlock(this);
-		chain.addProgressListener(this);
-		chain.add(getStartCleanUpRunCode());
-		chain.start();
+		final ProgressListener listener = this;
+		SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+			@Override
+			public String doInBackground() {
+				cleanUp.stop();
+				chain.addProgressListener(listener);
+				chain.add(getStartCleanUpRunCode());
+				chain.start();
+				return "";
+	       }
+		};
+		sw.execute();
 	}
 
 	protected RunCode getStartCleanUpRunCode() {
@@ -82,8 +97,12 @@ public class ProgressHandler implements ProgressListener {
 				}
 				lock.unlock(this);
 				if (done) {
-					label.setText("");
-					bar.setValue(0);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							label.setText("");
+							bar.setValue(0);
+						}
+	                });
 				}
 				return done;
 			}

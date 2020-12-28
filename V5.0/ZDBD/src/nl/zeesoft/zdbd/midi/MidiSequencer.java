@@ -28,9 +28,10 @@ import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.RunCode;
+import nl.zeesoft.zdk.thread.Waitable;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class MidiSequencer implements Sequencer {
+public class MidiSequencer implements Sequencer, Waitable {
 	protected static int						INITIAL_BUFFER_SIZE	= 123456;
 	protected static int						CURR				= 0;
 	protected static int						NEXT				= 1;
@@ -252,6 +253,11 @@ public class MidiSequencer implements Sequencer {
 	@Override
 	public boolean isRunning() {
 		return sender.isBusy();
+	}
+
+	@Override
+	public boolean isBusy() {
+		return isRunning();
 	}
 	
 	public void pause() {

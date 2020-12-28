@@ -149,7 +149,11 @@ public class TestThemeController extends TestObject {
 				assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
 				assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (5)");
 				assertEqual(controller2.themeHasChanges(),true,"Theme changes do not match expectation (5)");
-				
+
+				chain = controller2.deleteTheme("Demo");
+				Waiter.startAndWaitFor(chain,10000);
+				assertEqual(FileIO.getActionLog().size(),72,"Action log size does not match expectation (6)");
+
 				System.out.println();
 				chain = controller2.destroy();
 				Waiter.startAndWaitFor(chain,10000);

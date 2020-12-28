@@ -38,6 +38,8 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				SAVED_THEME					= "SAVED_THEME";
 	public static String				LOADING_THEME				= "LOADING_THEME";
 	public static String				LOADED_THEME				= "LOADED_THEME";
+	public static String				DELETING_THEME				= "DELETING_THEME";
+	public static String				DELETED_THEME				= "DELETED_THEME";
 	
 	public static String				CHANGED_TRAINING_SEQUENCE	= "CHAINGED_TRAINING_SEQUENCE";
 	public static String				TRAINING_NETWORK			= "TRAINING_NETWORK";
@@ -97,14 +99,8 @@ public class ThemeController implements EventListener, Waitable {
 	}
 	
 	public List<String> listThemes() {
-		List<String> r = new ArrayList<String>();
 		lock.lock(this);
-		if (settings!=null) {
-			List<File> directories = FileIO.listDirectories(settings.getThemeDir());
-			for (File dir: directories) {
-				r.add(dir.getName());
-			}
-		}
+		List<String> r = listThemesNoLock();
 		lock.unlock(this);
 		return r;
 	}
@@ -203,7 +199,9 @@ public class ThemeController implements EventListener, Waitable {
 					r.add(gen.name);
 				}
 			}
-			r.add(NetworkTrainer.TRAINING_SEQUENCE);
+			if (theme.networkTrainer.getSequence().getSequencedPatterns().size()>0) {
+				r.add(NetworkTrainer.TRAINING_SEQUENCE);
+			}
 		}
 		lock.unlock(this);
 		return r;
@@ -214,7 +212,10 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			r.putAll(theme.generators.getSequences());
-			r.put(NetworkTrainer.TRAINING_SEQUENCE,theme.networkTrainer.getSequence());
+			PatternSequence seq = theme.networkTrainer.getSequence();
+			if (seq.getSequencedPatterns().size()>0) {
+				r.put(NetworkTrainer.TRAINING_SEQUENCE,seq);
+			}
 		}
 		lock.unlock(this);
 		return r;
@@ -296,6 +297,10 @@ public class ThemeController implements EventListener, Waitable {
 		return getLoadThemeRunnerChain(name);
 	}
 	
+	public CodeRunnerChain deleteTheme(String name) {
+		return getDeleteThemeRunnerChain(name);
+	}
+	
 	public CodeRunnerChain destroy() {
 		return getDestroyRunnerChain();
 	}
@@ -340,6 +345,12 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(SAVED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(DELETING_THEME)) {
+			// Ignore
+		} else if (event.name.equals(DELETED_THEME)) {
+			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
@@ -586,6 +597,30 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	protected CodeRunnerChain getDeleteThemeRunnerChain(String name) {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (!busy.isBusy() && listThemesNoLock().contains(name)) {
+			busy.setBusy(true);
+			Theme thm = null;
+			if (theme!=null && theme.name.equals(name)) {
+				thm = theme;
+				savedTheme = 0;
+			} else {
+				thm = new Theme();
+				thm.themeDir = settings.getThemeDir();
+				thm.name = name;
+			}
+			if (thm.directoryExists()) {
+				r.add(eventPublisher.getPublishEventRunCode(this, DELETING_THEME));
+				r.add(thm.getDeleteDirRunCode());
+				r.add(eventPublisher.getPublishEventRunCode(this, DELETED_THEME));
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	protected CodeRunnerChain getTrainNetworkRunnerChain() {
 		CodeRunnerChain r = new CodeRunnerChain();
 		lock.lock(this);
@@ -651,6 +686,17 @@ public class ThemeController implements EventListener, Waitable {
 		}
 		lock.unlock(this);
 		
+		return r;
+	}
+	
+	protected List<String> listThemesNoLock() {
+		List<String> r = new ArrayList<String>();
+		if (settings!=null) {
+			List<File> directories = FileIO.listDirectories(settings.getThemeDir());
+			for (File dir: directories) {
+				r.add(dir.getName());
+			}
+		}
 		return r;
 	}
 }

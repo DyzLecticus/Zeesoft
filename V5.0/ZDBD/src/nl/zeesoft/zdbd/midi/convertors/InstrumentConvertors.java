@@ -1,26 +1,26 @@
 package nl.zeesoft.zdbd.midi.convertors;
 
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdbd.midi.SynthConfig;
 
 public class InstrumentConvertors {
-	public static final int							KICK				= 0;
-	public static final int							SNARE				= 1;
-	public static final int							CLOSED_HIHAT		= 2;
-	public static final int							OPEN_HIHAT			= 3;
-	public static final int							RIDE				= 4;
-	public static final int							CRASH				= 5;
-	public static final int							PERCUSSION1			= 6;
-	public static final int							PERCUSSION2			= 7;
-	public static final int							BASS				= 8;
+	public static final int				KICK				= 0;
+	public static final int				SNARE				= 1;
+	public static final int				CLOSED_HIHAT		= 2;
+	public static final int				OPEN_HIHAT			= 3;
+	public static final int				RIDE				= 4;
+	public static final int				CRASH				= 5;
+	public static final int				PERCUSSION1			= 6;
+	public static final int				PERCUSSION2			= 7;
+	public static final int				BASS				= 8;
 	
-	public static final String[]					INSTRUMENT_NAMES	= {
+	public static final String[]		INSTRUMENT_NAMES	= {
 		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass"
 	};
 	
-	private SortedMap<String,InstrumentConvertor>	convertors			= new TreeMap<String,InstrumentConvertor>();
+	private List<InstrumentConvertor>	convertors			= new ArrayList<InstrumentConvertor>();
 
 	public InstrumentConvertors() {
 		initializeDefaults();
@@ -41,7 +41,7 @@ public class InstrumentConvertors {
 				layer2.velocity = 40;
 				layer2.accentVelocity = 50;
 				bass.layers.add(layer2);
-				convertors.put(name, bass);
+				convertors.add(bass);
 			} else {
 				DrumConvertor drum = new DrumConvertor();
 				drum.name = name;
@@ -94,13 +94,20 @@ public class InstrumentConvertors {
 					sample.accentHold = 0.2F;
 				}
 				drum.samples.add(sample);
-				convertors.put(name, drum);
+				convertors.add(drum);
 			}
 		}
 	}
 	
 	public InstrumentConvertor get(String name) {
-		return convertors.get(name);
+		InstrumentConvertor r = null;
+		for (InstrumentConvertor convertor: convertors) {
+			if (convertor.name.equals(name)) {
+				r = convertor;
+				break;
+			}
+		}
+		return r;
 	}
 	
 	public static String getInstrumentName(int index) {

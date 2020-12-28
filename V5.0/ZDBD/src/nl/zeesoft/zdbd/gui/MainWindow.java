@@ -17,10 +17,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import nl.zeesoft.zdbd.Event;
 import nl.zeesoft.zdbd.ThemeController;
 import nl.zeesoft.zdbd.ThemeControllerSettings;
+import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
@@ -32,12 +34,16 @@ public class MainWindow extends FrameObject implements ActionListener {
 	private static final String		LOAD				= "LOAD";
 	private static final String		SAVE				= "SAVE";
 	private static final String		SAVE_AS				= "SAVE_AS";
+	private static final String		DELETE				= "DELETE";
 	private static final String		NEW					= "NEW";
 	private static final String		DEMO				= "DEMO";
 	
 	private ThemeControllerSettings	settings			= null;
 	
+	private ThemeSequenceSelector	selector			= new ThemeSequenceSelector();
+	private SequencerPanel			sequencerPanel		= new SequencerPanel();
 	private ProgressHandler			progressHandler		= new ProgressHandler();
+	
 	
 	public MainWindow(ThemeController controller, ThemeControllerSettings settings) {
 		super(controller);
@@ -48,10 +54,14 @@ public class MainWindow extends FrameObject implements ActionListener {
 	public void handleEvent(Event event) {
 		progressHandler.getLabel().setText(event.name);
 		updateTitle();
+		sequencerPanel.refresh();
 	}
 
 	@Override
 	public void initialize() {
+		selector.setController(controller);
+		sequencerPanel.initialize(controller,selector);
+		
 		frame.setTitle(NAME);
 		
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -98,6 +108,8 @@ public class MainWindow extends FrameObject implements ActionListener {
 			handleSaveRequest(false);
 		} else if (e.getActionCommand().equals(SAVE_AS)) {
 			handleSaveRequest(true);
+		} else if (e.getActionCommand().equals(DELETE)) {
+			handleDeleteRequest();
 		} else if (e.getActionCommand().equals(NEW)) {
 			handleNewRequest();
 		}
@@ -135,18 +147,73 @@ public class MainWindow extends FrameObject implements ActionListener {
 		item.addActionListener(this);
 		fileMenu.add(item);
 
+		item = new JMenuItem("Delete",KeyEvent.VK_D);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,evt));
+		item.setActionCommand(DELETE);
+		item.addActionListener(this);
+		fileMenu.add(item);
+
 		item = new JMenuItem("New",KeyEvent.VK_N);
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,evt));
 		item.setActionCommand(NEW);
 		item.addActionListener(this);
 		fileMenu.add(item);
 
+		// TODO: Handle demo load
 		item = new JMenuItem("Demo",KeyEvent.VK_D);
 		item.setActionCommand(DEMO);
 		item.addActionListener(this);
 		fileMenu.add(item);
 		
+		evt = 0;
+		JMenu sequencerMenu = new JMenu("Sequencer");
+		sequencerMenu.setMnemonic(KeyEvent.VK_S);
+		bar.add(sequencerMenu);
+		
+		item = new JMenuItem("Play sequence",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,evt));
+		item.setActionCommand(SequencerPanel.PLAY_SEQUENCE);
+		item.addActionListener(sequencerPanel);
+		sequencerMenu.add(item);
+
+		item = new JMenuItem("Play theme",KeyEvent.VK_T);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6,evt));
+		item.setActionCommand(SequencerPanel.PLAY_THEME);
+		item.addActionListener(sequencerPanel);
+		sequencerMenu.add(item);
+
+		/* TODO: Record toggle
+		item = new JMenuItem("Continue",KeyEvent.VK_C);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7,evt));
+		item.setActionCommand(CONTINUE_PLAYING);
+		item.addActionListener(sequencerPanel);
+		sequencerMenu.add(item);
+		*/
+
+		item = new JMenuItem("Stop",KeyEvent.VK_S);
+		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8,evt));
+		item.setActionCommand(SequencerPanel.STOP);
+		item.addActionListener(sequencerPanel);
+		sequencerMenu.add(item);
+
 		return bar;
+	}
+	
+	protected boolean checkNotChanged() {
+		boolean r = !controller.themeHasChanges();
+		if (!r) {
+	    	int response = JOptionPane.showConfirmDialog(
+        		frame,
+    			"The current theme has changes.\nDo you want to continue?",
+    			"Continue?",
+    			JOptionPane.YES_NO_OPTION,
+    			JOptionPane.QUESTION_MESSAGE
+    		);
+            if (response == JOptionPane.YES_OPTION) {
+            	r = true;
+            }
+		}
+		return r;
 	}
 	
 	protected boolean checkBusy() {
@@ -158,13 +225,16 @@ public class MainWindow extends FrameObject implements ActionListener {
 	}
 	
 	protected void handleQuitRequest() {
-    	int response = JOptionPane.showConfirmDialog(
-    		frame,
-			"Are you sure you want to quit?",
-			"Quit?",
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE
-		);
+		int response = JOptionPane.YES_OPTION;
+		if (controller.themeHasChanges()) {
+	    	response = JOptionPane.showConfirmDialog(
+	    		frame,
+				"The current theme has changes.\nAre you sure you want to quit?",
+				"Quit?",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE
+			);
+		}
         if (response == JOptionPane.YES_OPTION) {
         	if (!checkBusy()) {
 	            CodeRunnerChain chain = controller.destroy();
@@ -178,31 +248,33 @@ public class MainWindow extends FrameObject implements ActionListener {
 	            });
 	            progressHandler.startChain(chain);
         	}
-        }
+		}
 	}
 	
 	protected void handleLoadRequest() {
-		List<String> themes =  controller.listThemes();
-		String[] names = new String[themes.size()];
-		int i = 0;
-		for (String name: themes) {
-			names[i] = name;
-			i++;
-		}
-	    String response = (String) JOptionPane.showInputDialog(
-	    	frame,
-	    	"Select a theme to load",
-	    	"Load theme",
-	    	JOptionPane.QUESTION_MESSAGE,
-	    	null,
-	    	names,
-	    	""
-	    );
-		if (response!=null) {
-        	if (!checkBusy()) {
-				CodeRunnerChain chain = controller.loadTheme(response);
-	            progressHandler.startChain(chain);
-        	}
+		if (checkNotChanged()) {
+			List<String> themes =  controller.listThemes();
+			String[] names = new String[themes.size()];
+			int i = 0;
+			for (String name: themes) {
+				names[i] = name;
+				i++;
+			}
+		    String response = (String) JOptionPane.showInputDialog(
+		    	frame,
+		    	"Select a theme to load",
+		    	"Load theme",
+		    	JOptionPane.QUESTION_MESSAGE,
+		    	null,
+		    	names,
+		    	""
+		    );
+			if (response!=null) {
+	        	if (!checkBusy()) {
+					CodeRunnerChain chain = controller.loadTheme(response);
+		            progressHandler.startChain(chain);
+	        	}
+			}
 		}
 	}
 	
@@ -215,51 +287,92 @@ public class MainWindow extends FrameObject implements ActionListener {
 		} else {
 			String response = (String)JOptionPane.showInputDialog(
                 frame,
-                "Save theme as",
                 "Specify the name of the theme",
+                "Save theme as",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 null,
                 controller.getName()
             );
 	        if (response != null) {
-	        	if (!checkBusy()) {
-		            CodeRunnerChain chain = controller.saveThemeAs(response);
-		            progressHandler.startChain(chain);
+        		boolean save = true;
+        		if (controller.listThemes().contains(response)) {
+        	    	int overWrite = JOptionPane.showConfirmDialog(
+    	        		frame,
+    	    			"A theme named '" + response + "' already exists.\nDo you want to overwrite the existing theme?",
+    	    			"Overwrite theme?",
+    	    			JOptionPane.YES_NO_OPTION,
+    	    			JOptionPane.QUESTION_MESSAGE
+    	    		);
+        	    	save = (overWrite == JOptionPane.YES_OPTION);
+        		}
+        		if (save) {
+    	        	if (!checkBusy()) {
+			            CodeRunnerChain chain = controller.saveThemeAs(response);
+			            progressHandler.startChain(chain);
+	        		}
 	        	}
 	        }
 		}
 	}
 	
 	protected void handleNewRequest() {
-		String response = (String)JOptionPane.showInputDialog(
-            frame,
-            "New theme",
-            "Specify the name of the theme",
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            null,
-            ""
-        );
-        if (response != null && response.length()>0) {
+		if (checkNotChanged()) {
+			String response = (String)JOptionPane.showInputDialog(
+	            frame,
+	            "Specify the name of the theme",
+	            "New theme",
+	            JOptionPane.PLAIN_MESSAGE,
+	            null,
+	            null,
+	            ""
+	        );
+	        if (response != null && response.length()>0) {
+	        	if (!checkBusy()) {
+		            CodeRunnerChain chain = controller.newTheme(response);
+		            progressHandler.startChain(chain);
+	        	}
+	        }
+		}
+	}
+	
+	protected void handleDeleteRequest() {
+		List<String> themes =  controller.listThemes();
+		String[] names = new String[themes.size()];
+		int i = 0;
+		for (String name: themes) {
+			names[i] = name;
+			i++;
+		}
+	    String response = (String) JOptionPane.showInputDialog(
+	    	frame,
+	    	"Select a theme to delete",
+	    	"Delete theme",
+	    	JOptionPane.QUESTION_MESSAGE,
+	    	null,
+	    	names,
+	    	""
+	    );
+		if (response!=null) {
         	if (!checkBusy()) {
-	            CodeRunnerChain chain = controller.newTheme(response);
+				CodeRunnerChain chain = controller.deleteTheme(response);
 	            progressHandler.startChain(chain);
         	}
-        }
+		}
 	}
 	
 	protected JPanel constructMainPanel() {
 		JPanel pane = new JPanel();
 		pane.setLayout(new GridBagLayout());
 
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 1;
 		c.insets = new Insets(5,5,5,5);
-		pane.add(constructHeaderPanel(), c);
+		pane.add(sequencerPanel.getPanel(), c);
 		
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
@@ -331,6 +444,13 @@ public class MainWindow extends FrameObject implements ActionListener {
 			title.sb().append(" - ");
 			title.sb().append(name);
 		}
-		frame.setTitle(title.toString());
+		if (controller.themeHasChanges()) {
+			title.sb().append("*");
+		}
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				frame.setTitle(title.toString());
+			}
+        });
 	}
 }

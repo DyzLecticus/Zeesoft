@@ -111,4 +111,16 @@ public class Theme {
 		code.params[0] = getDirectory();
 		return code;
 	}
+	
+	protected RunCode getDeleteDirRunCode() {
+		RunCode code = new RunCode() {
+			@Override
+			protected boolean run() {
+				FileIO.deleteDir((String)params[0], true);
+				return true;
+			}
+		};
+		code.params[0] = getDirectory();
+		return code;
+	}
 }

@@ -48,6 +48,7 @@ public class TestGUI extends TestObject {
 		
 		ThemeController controller = new ThemeController();
 		ThemeControllerSettings settings = new ThemeControllerSettings();
+		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		MainWindow window = new MainWindow(controller, settings);
 		window.initialize();
 		assertEqual(window.getFrame().getTitle(),MainWindow.NAME,"Main window title does not match expectation");
