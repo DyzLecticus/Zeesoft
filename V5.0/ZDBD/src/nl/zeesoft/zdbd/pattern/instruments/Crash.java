@@ -4,6 +4,10 @@ public class Crash extends PatternInstrument {
 	public static String	NAME	= "Crash";
 	public static int		GROUP	= 1;
 	
+	public Crash() {
+		
+	}
+	
 	public Crash(int index) {
 		super(index);
 	}

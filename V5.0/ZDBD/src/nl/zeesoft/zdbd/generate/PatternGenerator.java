@@ -8,7 +8,6 @@ import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
-import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
@@ -229,9 +228,6 @@ public class PatternGenerator {
 				value = PatternInstrument.OFF;
 			}
 			r[inst.index] = (int) value;
-			if (inst.name().equals(Note.NAME)) {
-				//System.out.println("Predicted note: " + r[inst.index]);
-			}
 		}
 		return r;
 	}

@@ -4,6 +4,10 @@ public class Octave extends PatternInstrument {
 	public static String	NAME	= "Octave";
 	public static int		GROUP	= 2;
 	
+	public Octave() {
+		
+	}
+	
 	public Octave(int index) {
 		super(index);
 	}

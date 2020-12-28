@@ -4,6 +4,10 @@ public class Hihat extends PatternInstrument {
 	public static String	NAME	= "Hihat";
 	public static int		GROUP	= 1;
 	
+	public Hihat() {
+		
+	}
+	
 	public Hihat(int index) {
 		super(index);
 	}

@@ -253,17 +253,22 @@ public class PersistableCollection extends CompleteCollection {
 				@SuppressWarnings("unchecked")
 				List<Object> idList = (List<Object>) Reflector.getFieldValue(object, field);
 				if (idList!=null && idList.size()>0) {
+					boolean isExpanded = false;
 					for (Object id: idList) {
 						if (id instanceof Str) {
 							Object child = getInternalObjectNoLock((Str) id);
 							if (child!=null) {
 								children.add(child);
 							}
+						} else {
+							isExpanded = true;
 						}
 					}
-					Reflector.setFieldValue(object, field, children);
-					for (Object child: children) {
-						expandObjectChildrenNoLock(child);
+					if (!isExpanded) {
+						Reflector.setFieldValue(object, field, children);
+						for (Object child: children) {
+							expandObjectChildrenNoLock(child);
+						}
 					}
 				}
 			}

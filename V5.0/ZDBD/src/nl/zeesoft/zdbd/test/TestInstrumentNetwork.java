@@ -55,12 +55,28 @@ public class TestInstrumentNetwork extends TestObject {
 	@Override
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
+
+		PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();
+		NetworkTrainer trainer = new NetworkTrainer();
+		trainer.setSequence(sequence);
+		trainer.toFile("trainer.txt");
+		
+		Str str = new Str();
+		str.fromFile("trainer.txt");
+		System.out.println(str);
+		
+		trainer = new NetworkTrainer();
+		trainer.fromFile("trainer.txt");
+		PatternSequence loadedSequence = trainer.getSequence();
+		
+		if (!assertEqual(loadedSequence.equals(sequence),true,"Loaded sequence does not match original")) {
+			return;
+		}
 		
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
 		System.out.println(config.getDescription());
 		
 		if (assertEqual(config.check(),new Str(),"Network configuration error does not match expectation")) {
-		
 			Network network = createAndTrainNetwork();
 			
 			NetworkIO lastIO = network.getLastIO();

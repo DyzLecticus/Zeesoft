@@ -36,8 +36,10 @@ public class ProgressHandler implements ProgressListener {
 	
 	@Override
 	public void initialized(int todo) {
+		lock.lock(this);
 		this.todo = todo;
 		this.done = 0;
+		lock.unlock(this);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				bar.setValue(0);
@@ -47,8 +49,10 @@ public class ProgressHandler implements ProgressListener {
 
 	@Override
 	public void progressed(int steps) {
+		lock.lock(this);
 		done += steps;
 		float perc = ((float)done / (float)todo);
+		lock.unlock(this);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				bar.setValue((int)(perc * 100));

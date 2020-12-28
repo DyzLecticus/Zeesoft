@@ -4,6 +4,10 @@ public class Ride extends PatternInstrument {
 	public static String	NAME	= "Ride";
 	public static int		GROUP	= 1;
 	
+	public Ride() {
+		
+	}
+	
 	public Ride(int index) {
 		super(index);
 	}

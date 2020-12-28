@@ -4,6 +4,10 @@ public class Snare extends PatternInstrument {
 	public static String	NAME	= "Snare";
 	public static int		GROUP	= 1;
 	
+	public Snare() {
+		
+	}
+	
 	public Snare(int index) {
 		super(index);
 	}

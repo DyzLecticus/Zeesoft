@@ -126,7 +126,7 @@ public class MainWindow extends FrameObject implements ActionListener {
 						handleNewRequest();
 					}
 					return "";
-		       }
+				}
 			};
 			sw.execute();
 		}

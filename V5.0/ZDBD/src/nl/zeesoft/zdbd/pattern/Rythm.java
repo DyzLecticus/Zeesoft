@@ -24,6 +24,31 @@ public class Rythm {
 		this.beatsPerMinute = rythm.beatsPerMinute;
 		this.beatsPerPattern = rythm.beatsPerPattern;
 		this.stepsPerBeat = rythm.stepsPerBeat;
+		for (int s = 0; s < this.stepDelays.length; s++) {
+			this.stepDelays[s] = rythm.stepDelays[s];
+		}
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean r = false;
+		if (obj instanceof Rythm) {
+			Rythm other = (Rythm) obj;
+			if (other.beatsPerMinute == this.beatsPerMinute &&
+				other.beatsPerPattern == this.beatsPerPattern &&
+				other.stepsPerBeat == this.stepsPerBeat &&
+				other.stepDelays.length == this.stepDelays.length
+				) {
+				r = true;
+				for (int s = 0; s < this.stepDelays.length; s++) {
+					if (other.stepDelays[s]!=this.stepDelays[s]) {
+						r = false;
+						break;
+					}
+				}
+			}
+		}
+		return r;
 	}
 	
 	public int getStepsPerPattern() {

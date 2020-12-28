@@ -4,6 +4,10 @@ public class Bass extends PatternInstrument {
 	public static String	NAME	= "Bass";
 	public static int		GROUP	= 2;
 	
+	public Bass() {
+		
+	}
+	
 	public Bass(int index) {
 		super(index);
 	}

@@ -77,42 +77,46 @@ public class SequencerPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(PLAY_SEQUENCE)) {
-			String name = (String) sequence.getSelectedItem();
-			if (name!=null && name.length()>0) {
-				SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-					@Override
-					public String doInBackground() {
-						selector.startSequence(name);
-						return "";
-			       }
-				};
-				sw.execute();
-			}
-		} else if (e.getActionCommand().equals(PLAY_THEME)) {
-			String name = (String) sequence.getSelectedItem();
-			if (name!=null && name.length()>0) {
-				SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-					@Override
-					public String doInBackground() {
-						selector.startTheme(name);
-						return "";
-			       }
-				};
-				sw.execute();
-			}
-		} else if (e.getActionCommand().equals(STOP)) {
-			SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
-				@Override
-				public String doInBackground() {
-					if (MidiSys.sequencer.isRunning()) {
-						MidiSys.sequencer.stop();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (e.getActionCommand().equals(PLAY_SEQUENCE)) {
+					String name = (String) sequence.getSelectedItem();
+					if (name!=null && name.length()>0) {
+						SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+							@Override
+							public String doInBackground() {
+								selector.startSequence(name);
+								return "";
+							}
+						};
+						sw.execute();
 					}
-					return "";
-		       }
-			};
-			sw.execute();
-		}
+				} else if (e.getActionCommand().equals(PLAY_THEME)) {
+					String name = (String) sequence.getSelectedItem();
+					if (name!=null && name.length()>0) {
+						SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+							@Override
+							public String doInBackground() {
+								selector.startTheme(name);
+								return "";
+							}
+						};
+						sw.execute();
+					}
+				} else if (e.getActionCommand().equals(STOP)) {
+					SwingWorker<String, Object> sw = new SwingWorker<String, Object>() {
+						@Override
+						public String doInBackground() {
+							if (MidiSys.sequencer.isRunning()) {
+								MidiSys.sequencer.stop();
+							}
+							return "";
+						}
+					};
+					sw.execute();
+				}
+			}
+		});
 	}
 	
 	public void refresh() {

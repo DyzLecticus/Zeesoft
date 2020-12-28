@@ -111,7 +111,8 @@ public class NetworkTrainer implements Waitable {
 		float minClAcc = 0F;
 		
 		lock.lock(this);
-		if (!busy.isBusy()) {
+		trainingSet = sequence.getNetworkIO();
+		if (!busy.isBusy() && trainingSet.size()>0) {
 			busy.setBusy(true);
 			train = true;
 			this.lastIO = null;
@@ -125,8 +126,7 @@ public class NetworkTrainer implements Waitable {
 			if (startTrainTemporalMemory >= startTrainClassifiers) {
 				startTrainTemporalMemory = (startTrainClassifiers - 1);
 			}
-						
-			trainingSet = sequence.getNetworkIO();
+			
 			startTrainTM = startTrainTemporalMemory;
 			startTrainCL = startTrainClassifiers;
 			maxCycles = maxTrainCycles;

@@ -36,6 +36,36 @@ public class PatternSequence {
 			this.sequence[i] = seq.sequence[i];
 		}
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		boolean r = false;
+		if (obj instanceof PatternSequence) {
+			PatternSequence other = (PatternSequence) obj;
+			if (other.rythm.equals(this.rythm) &&
+				other.patterns.size() == this.patterns.size()
+				) {
+				r = true;
+				for (int s = 0; s < sequence.length; s++) {
+					if (other.sequence[s]!=this.sequence[s]) {
+						r = false;
+						break;
+					}
+				}
+				if (r) {
+					for (int p = 0; p < this.patterns.size(); p++) {
+						InstrumentPattern pA = this.patterns.get(p);
+						InstrumentPattern pB = other.patterns.get(p);
+						if (!pA.equals(pB)) {
+							r = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return r;
+	}
 	
 	public void clear() {
 		patterns.clear();
@@ -57,7 +87,10 @@ public class PatternSequence {
 		List<InstrumentPattern> r = new ArrayList<InstrumentPattern>();
 		for (int i = 0; i < sequence.length; i++) {
 			if (sequence[i]>= 0 && sequence[i] < patterns.size()) {
-				r.add(patterns.get(sequence[i]));
+				InstrumentPattern pattern = patterns.get(sequence[i]);
+				if (pattern!=null && !pattern.isEmpty()) {
+					r.add(pattern);
+				}
 			}
 		}
 		return r;

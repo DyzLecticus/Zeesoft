@@ -46,6 +46,44 @@ public class InstrumentPattern {
 			i++;
 		}
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		boolean r = false;
+		if (obj instanceof InstrumentPattern) {
+			InstrumentPattern other = (InstrumentPattern) obj;
+			if (other.num == this.num &&
+				other.instruments.size() == this.instruments.size()
+				) {
+				r = true;
+				for (int i = 0; i < this.instruments.size(); i++) {
+					PatternInstrument iA = this.instruments.get(i);
+					PatternInstrument iB = other.instruments.get(i);
+					if (!iA.equals(iB)) {
+						r = false;
+						break;
+					}
+				}
+			}
+		}
+		return r;
+	}
+	
+	public boolean isEmpty() {
+		boolean r = true;
+		for (PatternInstrument inst: instruments) {
+			for (int s = 0; s < inst.stepValues.length; s++) {
+				if (inst.stepValues[s]!=PatternInstrument.OFF) {
+					r = false;
+					break;
+				}
+			}
+			if (!r) {
+				break;
+			}
+		}
+		return r;
+	}
 	
 	public List<String> getInstrumentNames() {
 		List<String> r = new ArrayList<String>();
