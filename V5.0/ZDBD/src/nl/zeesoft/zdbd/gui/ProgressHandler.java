@@ -8,8 +8,8 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import nl.zeesoft.zdbd.Event;
-import nl.zeesoft.zdbd.EventListener;
+import nl.zeesoft.zdbd.theme.Event;
+import nl.zeesoft.zdbd.theme.EventListener;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.ProgressListener;

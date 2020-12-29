@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import nl.zeesoft.zdbd.ThemeController;
+import nl.zeesoft.zdbd.theme.ThemeController;
 
 public abstract class FrameObject {
 	protected ThemeController		controller	= null;

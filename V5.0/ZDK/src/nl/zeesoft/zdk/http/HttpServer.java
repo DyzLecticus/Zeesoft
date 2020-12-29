@@ -56,6 +56,16 @@ public class HttpServer {
 		return error;
 	}
 	
+	public boolean isOpen() {
+		boolean r = false;
+		lock.lock(this);
+		if (socket!=null && !socket.isClosed()) {
+			r = true;
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public Str close() {
 		Str error = new Str();
 		List<HttpConnection> openConnections = null;

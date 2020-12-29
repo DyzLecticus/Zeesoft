@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 
-public class HtmlResponse {
+public class HtmlResponse extends ResponseObject {
 	public String			title			= "";
 	public String			onload			= "";
 	public String			faviconPath		= "favicon.ico";
@@ -15,6 +15,7 @@ public class HtmlResponse {
 	public List<String>		scriptFiles 	= new ArrayList<String>();
 	public List<String>		styleFiles		= new ArrayList<String>();
 
+	@Override
 	public Str render() {
 		Str r = new Str();
 		r.sb().append("<html>");

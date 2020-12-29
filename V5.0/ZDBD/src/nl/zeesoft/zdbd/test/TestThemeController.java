@@ -2,12 +2,12 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdbd.ThemeController;
-import nl.zeesoft.zdbd.ThemeControllerSettings;
-import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
+import nl.zeesoft.zdbd.theme.ThemeController;
+import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
+import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;

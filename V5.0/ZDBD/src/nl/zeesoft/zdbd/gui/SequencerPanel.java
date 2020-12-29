@@ -12,9 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import nl.zeesoft.zdbd.ThemeController;
-import nl.zeesoft.zdbd.ThemeSequenceSelector;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.theme.ThemeController;
+import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class SequencerPanel implements ActionListener {

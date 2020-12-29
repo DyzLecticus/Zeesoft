@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.Lock;
@@ -147,6 +148,7 @@ public class HttpConnection {
 			}
 			int contentLength = request.getContentLength();
 			
+			boolean error = false;
 			if ((request.method.equals("POST") || request.method.equals("PUT")) && contentLength>0) {
 				int c = 0;
 				for (int i = 0; i < contentLength; i++) {
@@ -155,38 +157,45 @@ public class HttpConnection {
 						request.body.sb().append((char) c);
 					} catch (IOException ex) {
 						config.error(this,new Str("Exception occurred while reading POST request body"),ex);
+						error = true;
+						break;
 					}
 				}
 			}
-			if (request.keepConnectionAlive()) {
+			if (!error && request.keepConnectionAlive()) {
 				try {
 					sock.setKeepAlive(true);
 				} catch (SocketException ex) {
 					config.error(this,new Str("Failed to enable keep alive on connection"),ex);
 				}
 			}
-			HttpResponse response = new HttpResponse();
-			try {
-				requestHandler.handleRequest(request,response);
-			} catch(Exception ex) {
-				response.code = HttpURLConnection.HTTP_INTERNAL_ERROR;
-				response.message = ex.toString();
+			if (!error) {
+				HttpResponse response = new HttpResponse();
+				try {
+					requestHandler.handleRequest(request,response);
+				} catch(Exception ex) {
+					response.code = HttpURLConnection.HTTP_INTERNAL_ERROR;
+					response.message = "Caught exception while handling request";
+					Logger.err(this, new Str(response.message), ex);
+				}
+				if (config.getLogger().isDebug() && config.isDebugLogHeaders()) {
+					Str msg = new Str("Request/response headers (Port: ");
+					msg.sb().append(config.getPort());
+					msg.sb().append(");");
+					msg.sb().append("\n");
+					msg.sb().append("<<<");
+					msg.sb().append("\n");
+					msg.sb().append(request.toHeaderStr());
+					msg.sb().append("\n");
+					msg.sb().append(">>>");
+					msg.sb().append("\n");
+					msg.sb().append(response.toHeaderStr());
+					config.debug(this, msg);
+				}
+				handleResponse(request,response);
+			} else {
+				close();
 			}
-			if (config.getLogger().isDebug() && config.isDebugLogHeaders()) {
-				Str msg = new Str("Request/response headers (Port: ");
-				msg.sb().append(config.getPort());
-				msg.sb().append(");");
-				msg.sb().append("\n");
-				msg.sb().append("<<<");
-				msg.sb().append("\n");
-				msg.sb().append(request.toHeaderStr());
-				msg.sb().append("\n");
-				msg.sb().append(">>>");
-				msg.sb().append("\n");
-				msg.sb().append(response.toHeaderStr());
-				config.debug(this, msg);
-			}
-			handleResponse(request,response);
 		} else {
 			close();
 		}

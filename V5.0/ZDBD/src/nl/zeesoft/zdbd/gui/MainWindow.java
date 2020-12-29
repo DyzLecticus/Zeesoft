@@ -19,9 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import nl.zeesoft.zdbd.ThemeController;
-import nl.zeesoft.zdbd.ThemeControllerSettings;
-import nl.zeesoft.zdbd.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.theme.ThemeController;
+import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
+import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;

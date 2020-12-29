@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd;
+package nl.zeesoft.zdbd.theme;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -379,9 +379,12 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(DESTROYING)) {
-			MidiSys.sequencer.stop();
+			if (MidiSys.isInitialized()) {
+				MidiSys.sequencer.stop();
+			}
 		} else if (event.name.equals(DESTROYED)) {
 			lock.lock(this);
+			eventPublisher.removeListener(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		}
@@ -421,15 +424,16 @@ public class ThemeController implements EventListener, Waitable {
 	
 	protected void destroyMe() {
 		Logger.dbg(this,new Str("Destroying ..."));
-		lock.lock(this);
-		if (theme!=null) {
-			settings.workingTheme = theme.name;
+		if (settings!=null) {
+			lock.lock(this);
+			if (theme!=null) {
+				settings.workingTheme = theme.name;
+			}
+			settings.toFile();
+			settings = null;
+			theme = null;
+			lock.unlock(this);
 		}
-		settings.toFile();
-		settings = null;
-		theme = null;
-		lock.unlock(this);
-		eventPublisher.removeListener(this);
 		MidiSys.closeDevices();
 		Logger.dbg(this,new Str("Destroyed"));
 	}

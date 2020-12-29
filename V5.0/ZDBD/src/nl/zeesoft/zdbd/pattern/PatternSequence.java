@@ -5,9 +5,9 @@ import java.util.List;
 
 import javax.sound.midi.Sequence;
 
-import nl.zeesoft.zdbd.ThemeControllerSettings;
 import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
+import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 

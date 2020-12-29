@@ -1,21 +1,18 @@
 package nl.zeesoft.zdbd.test;
 
-import javax.swing.SwingUtilities;
-
-import nl.zeesoft.zdbd.gui.MainWindow;
-import nl.zeesoft.zdbd.theme.ThemeController;
+import nl.zeesoft.zdbd.App;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
-public class TestGUI extends TestObject {
-	public TestGUI(Tester tester) {
+public class TestApp extends TestObject {
+	public TestApp(Tester tester) {
 		super(tester);
 	}
 
 	public static void main(String[] args) {
-		(new TestGUI(new Tester())).runTest(args);
+		(new TestApp(new Tester())).runTest(args);
 	}
 
 	@Override
@@ -48,19 +45,16 @@ public class TestGUI extends TestObject {
 	protected void test(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		ThemeController controller = new ThemeController();
 		ThemeControllerSettings settings = new ThemeControllerSettings();
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
-		MainWindow window = new MainWindow(controller, settings);
-		window.initialize();
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				assertEqual(window.getFrame().getTitle(),MainWindow.NAME,"Main window title does not match expectation");
-			}
-		});
 		
-		sleep(60000 * 60);
-		System.exit(0);
+		App app = new App();
+		boolean started = app.start(settings);
+		assertEqual(started,true,"Failed to start the app");
+		if (started) {
+			sleep(60000);
+			
+			app.stop();
+		}
 	}
 }
