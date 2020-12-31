@@ -25,7 +25,7 @@ public class StateJs extends ResponseObject {
 		append(r,"            elem.innerHTML = html;");
 		append(r,"        }");
 		append(r,"        if (obj.donePercentage<1) {");
-		append(r,"            setTimeout(function() { state.refresh(); }, 100);");
+		append(r,"            setTimeout(function() { state.refresh(); }, 200);");
 		append(r,"        } else if (obj.donePercentage==1) {");
 		append(r,"            theme.refresh();");
 		append(r,"            setTimeout(function() { state.clear(); }, 1000);");

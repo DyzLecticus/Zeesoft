@@ -40,6 +40,7 @@ public class MenuJs extends ResponseObject {
 		append(r,"    if (elem!=null && elem.value.length>0) {");
 		append(r,"        main.xhr.postText(\"/state.txt\",\"SAVE_AS:\" + elem.value,function() { state.refresh(); },main.xhr.alertErrorCallback);");
 		append(r,"        modal.hide();");
+		append(r,"        theme.refresh();");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"menu.delete = function() {");
@@ -48,6 +49,22 @@ public class MenuJs extends ResponseObject {
 		append(r,"};");
 		append(r,"menu.new = function() {");
 		append(r,"    console.log(\"New request!\");");
+		append(r,"    modal.load(\"NewTheme\");");
+		append(r,"};");
+		append(r,"menu.newTheme = function() {");
+		append(r,"    console.log(\"New theme request!\");");
+		append(r,"    var elem = window.document.getElementById(\"themeName\");");
+		append(r,"    var bpmElem = window.document.getElementById(\"themeBPM\");");
+		append(r,"    if (elem!=null && elem.value.length>0) {");
+		append(r,"        var bpm = 120;");
+		append(r,"        if (bpmElem!=null && bpmElem.value>0) {");
+		append(r,"            bpm = bpmElem.value;");
+		append(r,"        }");
+		append(r,"        var body = \"NEW:\" + elem.value + \":\" + bpm;");
+		append(r,"        main.xhr.postText(\"/state.txt\",body,function() { state.refresh(); },main.xhr.alertErrorCallback);");
+		append(r,"        modal.hide();");
+		append(r,"        theme.refresh();");
+		append(r,"    }");
 		append(r,"};");
 		return r;
 	}

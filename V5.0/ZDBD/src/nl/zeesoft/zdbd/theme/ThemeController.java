@@ -530,6 +530,9 @@ public class ThemeController implements EventListener, Waitable {
 			theme.name = name;
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);
+				PatternSequence sequence = theme.networkTrainer.getSequence();
+				sequence.rythm.copyFrom(rythm);
+				theme.networkTrainer.setSequence(sequence);
 			}
 			codes.add(theme.initializeNetwork());
 			

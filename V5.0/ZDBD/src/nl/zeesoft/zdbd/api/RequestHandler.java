@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
@@ -18,6 +19,7 @@ import nl.zeesoft.zdbd.api.javascript.QuitJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpRequest;
@@ -104,14 +106,7 @@ public class RequestHandler extends HttpRequestHandler {
 				response.body = new Str("OK");
 			} else if (request.body.startsWith("SAVE_AS:")) {
 				Str name = request.body.split(":").get(1);
-				name.replace(" ","_");
-				if (name.length()>32) {
-					name = name.substring(0,32);
-				}
-				if (name.length()==0 || !name.isAlphaNumeric(false,true)) {
-					Str err = new Str("Theme name must be alphanumeric. Underscores are allowed.");
-					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
-				} else {
+				if (checkThemeName(name,response)) {
 					monitor.startChain(controller.saveThemeAs(name.toString()));
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = new Str("OK");
@@ -124,6 +119,16 @@ public class RequestHandler extends HttpRequestHandler {
 					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 				} else {
 					monitor.startChain(controller.deleteTheme(name));
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
+			} else if (request.body.startsWith("NEW:")) {
+				List<Str> elems = request.body.split(":");
+				Str name = elems.get(1);
+				if (checkThemeName(name,response)) {
+					Rythm rythm = new Rythm();
+					rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
+					monitor.startChain(controller.newTheme(name.toString(), rythm));
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = new Str("OK");
 				}
@@ -144,6 +149,9 @@ public class RequestHandler extends HttpRequestHandler {
 				List<String> names = controller.listThemes();
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = (new DeleteTheme(names)).render();
+			} else if (name.equals("NewTheme")) {
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new NewTheme("",120)).render();
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
@@ -173,5 +181,35 @@ public class RequestHandler extends HttpRequestHandler {
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
+	}
+	
+	protected boolean checkThemeName(Str name, HttpResponse response) {
+		boolean r = true;
+		name.replace(" ","_");
+		if (name.length()>32) {
+			name = name.substring(0,32);
+		}
+		if (name.length()==0 || !name.isAlphaNumeric(false,true)) {
+			Str err = new Str("Theme name must be alphanumeric. Underscores are allowed.");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		}
+		return r;
+	}
+	
+	protected float parseBeatsPerMinute(Str bpm) {
+		float r = 120;
+		try {
+			r = Integer.parseInt(bpm.toString());
+		} catch(NumberFormatException ex) {
+			r = 120;
+		}
+		if (r < 6) {
+			r = 6;
+		}
+		if (r > 240) {
+			r = 240;
+		}
+		return r;
 	}
 }

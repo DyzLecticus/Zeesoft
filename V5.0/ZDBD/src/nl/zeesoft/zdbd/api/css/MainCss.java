@@ -9,19 +9,32 @@ public class MainCss extends ResponseObject {
 		Str r = new Str();
 		
 		append(r,".row {");
-		append(r,"    width:100%;");
 		append(r,"    display:inline-block;");
+		append(r,"    width:100%;");
+		append(r,"}");
+		append(r,".row:after {");
+		append(r,"    content:\"\";");
+		append(r,"    display:table;");
+		append(r,"    clear: both;");
 		append(r,"}");
 		append(r,".column-left {");
-		append(r,"    width:auto;");
 		append(r,"    float:left;");
+		append(r,"    width:auto;");
 		append(r,"}");
 		append(r,".column-right {");
-		append(r,"    width:auto;");
 		append(r,"    float:right;");
+		append(r,"    width:auto;");
 		append(r,"}");
 		append(r,".column-padding {");
 		append(r,"    padding:2px;");
+		append(r,"}");
+		append(r,".column-label {");
+		append(r,"    display:block;");
+		append(r,"    width:128px;");
+		append(r,"}");
+		append(r,".column-label-small {");
+		append(r,"    display:block;");
+		append(r,"    width:96px;");
 		append(r,"}");
 		
 		append(r,".hidden {");

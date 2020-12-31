@@ -25,6 +25,7 @@ public class SelectHtml extends ResponseObject {
 	
 	public SelectOption addOption(String label, String value) {
 		SelectOption r = new SelectOption();
+		r.id = name + options.size();
 		r.name = name;
 		r.label = label;
 		r.value = value;
@@ -35,7 +36,7 @@ public class SelectHtml extends ResponseObject {
 	@Override
 	public Str render() {
 		Str r = new Str();
-		append(r,"<div class=\"row\">");
+		append(r,"<div class=\"row column-padding\">");
 		r.sb().append(title);
 		r.sb().append("</div>");
 		for (SelectOption option: options) {

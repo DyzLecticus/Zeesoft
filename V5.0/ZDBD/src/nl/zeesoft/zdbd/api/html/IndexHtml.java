@@ -26,21 +26,35 @@ public class IndexHtml extends HtmlResponse {
 		
 		append(r,"<div id=\"menu\">");
 		append(r,"<div class=\"row\">");
-		append(r,"<div class=\"column-left column-padding\">");
-		r.sb().append("App:&nbsp;");
-		r.sb().append("<input type=\"button\" value=\"Quit\" onclick=\"menu.quit();\" />");
-		r.sb().append("</div>");
-		append(r,"<div class=\"column-right column-padding\" id=\"state\"></div>");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<label class=\"column-label-small\">App</label>");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"Quit\" onclick=\"menu.quit();\" />");
+			append(r,"</div>");
+			append(r,"<div class=\"column-right column-padding\" id=\"state\"></div>");
 		append(r,"</div>\n");
 		
-		append(r,"<div class=\"row column-padding\">");
-		r.sb().append("Theme:&nbsp;");
-		r.sb().append("<input type=\"button\" value=\"Load\" onclick=\"menu.load();\" />");
-		r.sb().append("<input type=\"button\" value=\"Save\" onclick=\"menu.save();\" />");
-		r.sb().append("<input type=\"button\" value=\"Save as\" onclick=\"menu.saveAs();\" />");
-		r.sb().append("<input type=\"button\" value=\"Delete\" onclick=\"menu.delete();\" />");
-		r.sb().append("<input type=\"button\" value=\"New\" onclick=\"menu.new();\" />");
-		r.sb().append("</div>\n");
+		append(r,"<div class=\"row\">");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<label class=\"column-label-small\">Theme</label>");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"Load\" onclick=\"menu.load();\" />");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"Save\" onclick=\"menu.save();\" />");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"Save as\" onclick=\"menu.saveAs();\" />");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"Delete\" onclick=\"menu.delete();\" />");
+			append(r,"</div>\n");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"New\" onclick=\"menu.new();\" />");
+			append(r,"</div>\n");
+		append(r,"</div>\n");
 		append(r,"</div>"); // end menu
 
 		append(r,"<hr />");

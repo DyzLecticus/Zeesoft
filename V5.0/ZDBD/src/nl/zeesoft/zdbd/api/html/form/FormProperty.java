@@ -18,7 +18,11 @@ public class FormProperty extends ResponseObject {
 		Str r = new Str();
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,label);
+		append(r,"<label class=\"column-label\" for=\"");
+		r.sb().append(name);
+		r.sb().append("\">");
+		r.sb().append(label.replace(" ", "&nbsp;"));
+		r.sb().append("</label>");
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
 		if (renderAs.equals(TEXT)) {
@@ -39,7 +43,7 @@ public class FormProperty extends ResponseObject {
 			r.sb().append(" type=\"");
 			if (renderAs.equals(TEXT_INPUT)) {
 				r.sb().append("text");
-			} else if (renderAs.equals(TEXT_INPUT)) {
+			} else if (renderAs.equals(NUMBER_INPUT)) {
 				r.sb().append("number");
 			}
 			r.sb().append("\"");
