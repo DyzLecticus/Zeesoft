@@ -200,6 +200,33 @@ public class Str implements Comparable<Str>{
 		return r;
 	}
 	
+	public boolean isAlphabetic(boolean space, boolean underscore) {
+		return isType(true,false,space,underscore);
+	}
+	
+	public boolean isNumeric(boolean space, boolean underscore) {
+		return isType(false,true,space,underscore);
+	}
+	
+	public boolean isAlphaNumeric(boolean space, boolean underscore) {
+		return isType(true,true,space,underscore);
+	}
+	
+	public static boolean isAlphabetic(String str, boolean space, boolean underscore) {
+		Str t = new Str(str);
+		return t.isType(true,false,space,underscore);
+	}
+	
+	public static boolean isNumeric(String str, boolean space, boolean underscore) {
+		Str t = new Str(str);
+		return t.isType(false,true,space,underscore);
+	}
+	
+	public static boolean isAlphaNumeric(String str, boolean space, boolean underscore) {
+		Str t = new Str(str);
+		return t.isType(true,true,space,underscore);
+	}
+	
 	public Str replace(String search, String replace) {
 		return replace(new Str(search),new Str(replace));
 	}
@@ -468,5 +495,30 @@ public class Str implements Comparable<Str>{
 		}
 		sb = nsb;
 		return this;
+	}
+	
+	private boolean isType(boolean alphabetic, boolean numeric, boolean space, boolean underscore) {
+		boolean r = true;
+		for (int i = 0; i < sb.length(); i++) {
+			char c = sb.charAt(i);
+			if (!(c >= 'a' && c <= 'z') &&
+				!(c >= 'A' && c <= 'Z') &&
+				!(c >= '0' && c <= '9') &&
+				!(c == ' ') &&
+				!(c == '_')
+				) {
+				r = false;
+				break;
+			} else if (
+				(!alphabetic && ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) ||
+				(!numeric && (c >= '0' && c <= '9')) ||
+				(!space && c == ' ') ||
+				(!underscore && c == '_')
+				) {
+				r = false;
+				break;
+			}
+		}
+		return r;		
 	}
 }
