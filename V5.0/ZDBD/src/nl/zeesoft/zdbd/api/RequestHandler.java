@@ -1,16 +1,22 @@
 package nl.zeesoft.zdbd.api;
 
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
+import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
+import nl.zeesoft.zdbd.api.html.select.LoadTheme;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
+import nl.zeesoft.zdbd.api.javascript.ModalJs;
 import nl.zeesoft.zdbd.api.javascript.QuitJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
+import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdk.Str;
@@ -18,7 +24,6 @@ import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
-import nl.zeesoft.zdk.thread.CodeRunnerChain;
 
 public class RequestHandler extends HttpRequestHandler {
 	protected ThemeController		controller		= null;
@@ -36,9 +41,11 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/bye.html", (new ByeHtml()).render());
 		
 		pathResponses.put("/main.js", (new MainJs()).render());
+		pathResponses.put("/modal.js", (new ModalJs()).render());
 		pathResponses.put("/state.js", (new StateJs()).render());
 		pathResponses.put("/menu.js", (new MenuJs()).render());
 		pathResponses.put("/quit.js", (new QuitJs()).render());
+		pathResponses.put("/theme.js", (new ThemeJs()).render());
 		
 		pathResponses.put("/main.css", (new MainCss()).render());
 	}
@@ -47,14 +54,14 @@ public class RequestHandler extends HttpRequestHandler {
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
 		Str body = pathResponses.get(request.path);
 		if (body!=null) {
-			response.code = 200;
+			response.code = HttpURLConnection.HTTP_OK;
 			response.body = body;
 			if (request.path.endsWith(".css")) {
 				response.headers.addContentTypeHeader("text/css");
 			}
 		} else {
 			if (request.path.equals("/state.txt")) {
-				response.code = 200;
+				response.code = HttpURLConnection.HTTP_OK;
 				response.body = monitor.getStateResponse();
 			} else if (request.path.equals("/theme.txt")) {
 				if (controller.getName().length()==0 || 
@@ -68,7 +75,7 @@ public class RequestHandler extends HttpRequestHandler {
 					handleGetThemeRequest(request,response);
 				}
 			} else {
-				setError(response,HttpURLConnection.HTTP_NOT_FOUND,new Str("Not found"));
+				setNotFoundError(response,new Str("Not found"));
 			}
 		}
 	}
@@ -77,19 +84,71 @@ public class RequestHandler extends HttpRequestHandler {
 	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
 		if (request.path.equals("/state.txt")) {
 			if (request.body.toString().equals("QUIT")) {
-				response.code = 200;
+				response.code = HttpURLConnection.HTTP_OK;
 				response.body = new Str("OK");
 				System.exit(0);
+			} else if (request.body.startsWith("LOAD:")) {
+				String name = request.body.split(":").get(1).toString();
+				List<String> names = controller.listThemes();
+				if (name.length()==0 || !names.contains(name)) {
+					Str err = new Str("The specified theme does not exist");
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+				} else {
+					monitor.startChain(controller.loadTheme(name));
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
 			} else if (request.body.toString().equals("SAVE")) {
-				CodeRunnerChain chain = controller.saveTheme();
-				monitor.startChain(chain);
-				response.code = 200;
+				monitor.startChain(controller.saveTheme());
+				response.code = HttpURLConnection.HTTP_OK;
 				response.body = new Str("OK");
+			} else if (request.body.startsWith("SAVE_AS:")) {
+				Str name = request.body.split(":").get(1);
+				name.replace(" ","_");
+				if (name.length()>32) {
+					name = name.substring(0,32);
+				}
+				if (name.length()==0 || !name.isAlphaNumeric(false,true)) {
+					Str err = new Str("Theme name must be alphanumeric. Underscores are allowed.");
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+				} else {
+					monitor.startChain(controller.saveThemeAs(name.toString()));
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
+			} else if (request.body.startsWith("DELETE:")) {
+				String name = request.body.split(":").get(1).toString();
+				List<String> names = controller.listThemes();
+				if (name.length()==0 || !names.contains(name)) {
+					Str err = new Str("The specified theme does not exist");
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+				} else {
+					monitor.startChain(controller.deleteTheme(name));
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
 			} else {
 				setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 			}
+		} else if (request.path.equals("/modal.txt")) {
+			String name = request.body.toString();
+			if (name.equals("LoadTheme")) {
+				List<String> names = controller.listThemes();
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new LoadTheme(names)).render();
+			} else if (name.equals("SaveThemeAs")) {
+				String value = controller.getName();
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new SaveThemeAs(value)).render();
+			} else if (name.equals("DeleteTheme")) {
+				List<String> names = controller.listThemes();
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new DeleteTheme(names)).render();
+			} else {
+				setNotFoundError(response,new Str("Not found"));
+			}
 		} else {
-			setError(response,HttpURLConnection.HTTP_NOT_FOUND,new Str("Not found"));
+			setNotFoundError(response,new Str("Not found"));
 		}
 	}
 	
@@ -112,7 +171,7 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("stepsPerBeat:");
 		r.sb().append(sequence.rythm.stepsPerBeat);
 		
-		response.code = 200;
+		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
 	}
 }

@@ -9,6 +9,7 @@ public class MainCss extends ResponseObject {
 		Str r = new Str();
 		
 		append(r,".row {");
+		append(r,"    width:100%;");
 		append(r,"    display:inline-block;");
 		append(r,"}");
 		append(r,".column-left {");
@@ -17,12 +18,20 @@ public class MainCss extends ResponseObject {
 		append(r,"}");
 		append(r,".column-right {");
 		append(r,"    width:auto;");
-		append(r,"    float:left;");
+		append(r,"    float:right;");
 		append(r,"}");
 		append(r,".column-padding {");
 		append(r,"    padding:2px;");
 		append(r,"}");
 		
+		append(r,".hidden {");
+		append(r,"    display:none;");
+		append(r,"    visibility:hidden;");
+		append(r,"}");
+		append(r,".visible {");
+		append(r,"    display:block;");
+		append(r,"    visibility:visible;");
+		append(r,"}");
 		
 		return r;
 	}

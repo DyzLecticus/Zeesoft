@@ -43,6 +43,9 @@ public class MainJs extends ResponseObject {
 		append(r,"main.xhr.defaultErrorCallback = function(xhr) {");
 		append(r,"    console.error(\"Post request response error: \" + xhr.status + \" \" + xhr.responseText);");
 		append(r,"};");
+		append(r,"main.xhr.alertErrorCallback = function(xhr) {");
+		append(r,"    alert(xhr.responseText);");
+		append(r,"};");
 		append(r,"main.xhr.parseResponseText = function(text) {");
 		append(r,"    var obj = {};");
 		append(r,"    try {");
