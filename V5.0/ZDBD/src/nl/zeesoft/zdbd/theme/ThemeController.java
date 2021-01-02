@@ -653,11 +653,17 @@ public class ThemeController implements EventListener, Waitable {
 		CodeRunnerChain r = new CodeRunnerChain();
 		lock.lock(this);
 		if (theme!=null && !busy.isBusy() &&
-			theme.networkTrainer.changedSequenceSinceTraining()) {
-			busy.setBusy(true);
-			r.add(eventPublisher.getPublishEventRunCode(this, TRAINING_NETWORK));
-			r.add(theme.trainNetwork());
-			r.add(eventPublisher.getPublishEventRunCode(this, TRAINED_NETWORK));
+			theme.networkTrainer.changedSequenceSinceTraining()
+			) {
+			List<RunCode> codes = theme.trainNetwork().getCodes();
+			if (codes.size()>0) {
+				busy.setBusy(true);
+				r.add(eventPublisher.getPublishEventRunCode(this, TRAINING_NETWORK));
+				for (RunCode code: codes) {
+					r.add(code);
+				}
+				r.add(eventPublisher.getPublishEventRunCode(this, TRAINED_NETWORK));
+			}
 		}
 		lock.unlock(this);
 		return r;

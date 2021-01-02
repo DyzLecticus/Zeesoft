@@ -8,6 +8,7 @@ import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Theme {
@@ -47,8 +48,8 @@ public class Theme {
 		return network.getInitializeAndLoadRunCode(networkConfiguration,false);
 	}
 	
-	public RunCode trainNetwork() {
-		return networkTrainer.getTrainNetworkRunCode(network);
+	public CodeRunnerChain trainNetwork() {
+		return networkTrainer.getTrainNetworkChain(network);
 	}
 	
 	protected RunCode saveNetwork() {

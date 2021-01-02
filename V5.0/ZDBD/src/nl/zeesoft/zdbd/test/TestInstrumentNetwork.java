@@ -16,6 +16,8 @@ import nl.zeesoft.zdk.neural.processors.Classifier;
 import nl.zeesoft.zdk.neural.processors.ProcessorIO;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
+import nl.zeesoft.zdk.thread.CodeRunnerChain;
+import nl.zeesoft.zdk.thread.Waiter;
 
 public class TestInstrumentNetwork extends TestObject {
 	public TestInstrumentNetwork(Tester tester) {
@@ -109,7 +111,9 @@ public class TestInstrumentNetwork extends TestObject {
 			System.out.println("Training network ...");
 			NetworkTrainer trainer = new NetworkTrainer();
 			trainer.setSequence(sequence);
-			trainer.trainNetwork(network);
+			//trainer.trainNetwork(network);
+			CodeRunnerChain chain = trainer.getTrainNetworkChain(network);
+			Waiter.startAndWaitFor(chain, 60000);
 			System.out.println("Trained network");
 			
 			if (FileIO.checkDirectory(config.directory).length()==0 && trainer.getLastIO()!=null) {

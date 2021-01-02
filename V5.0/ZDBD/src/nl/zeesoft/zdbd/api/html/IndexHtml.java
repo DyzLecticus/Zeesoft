@@ -29,13 +29,13 @@ public class IndexHtml extends HtmlResponse {
 		
 		append(r,"<div id=\"menu\">");
 		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-right column-padding\" id=\"state\"></div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <label class=\"column-label-small\">App</label>");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" value=\"Quit\" onclick=\"menu.quit();\" />");
 		append(r,"    </div>");
-		append(r,"    <div class=\"column-right column-padding\" id=\"state\"></div>");
 		append(r,"</div>");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
