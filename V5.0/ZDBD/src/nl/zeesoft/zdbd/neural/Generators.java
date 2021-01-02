@@ -6,6 +6,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
+import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -19,6 +23,10 @@ public class Generators {
 	
 	protected List<Generator>		generators	= new ArrayList<Generator>();
 	protected long					changed		= System.currentTimeMillis();
+	
+	public Generators() {
+		initializeDefaults();
+	}
 
 	public void copyFrom(Generators gens) {
 		lock.lock(this);
@@ -28,6 +36,33 @@ public class Generators {
 		}
 		changed	= System.currentTimeMillis();
 		lock.unlock(this);
+	}
+	
+	public void initializeDefaults() {
+		Generator gen = null;
+		for (int i = 1; i <= 4; i++) {
+			gen = new Generator();
+			gen.name = "Maintain " + i;
+			if (i>=3) {
+				gen.setSkipInstruments(Bass.NAME, Note.NAME);
+			}
+			put(gen);
+		}
+
+		gen = new Generator();
+		gen.name = "Free form";
+		gen.maintainBeat = 0;
+		gen.maintainFeedback = false;
+		gen.setSkipInstruments(Ride.NAME, Note.NAME);
+		put(gen);
+
+		gen = new Generator();
+		gen.name = "Undistorted";
+		gen.group1Distortion = 0;
+		gen.group2Distortion = 0;
+		gen.maintainBeat = 0;
+		gen.setSkipInstruments(Ride.NAME, Crash.NAME, Note.NAME);
+		put(gen);
 	}
 	
 	public int size() {
@@ -147,15 +182,22 @@ public class Generators {
 		PatternSequence r = null;
 		lock.lock(this);
 		Generator gen = null;
+		Generator copy = null;
 		if (!busy.isBusy()) {
 			busy.setBusy(true);
 			gen = getNoLock(name);
+			if (gen!=null) {
+				copy = gen.copy();
+			}
 		}
 		lock.unlock(this);
-		if (gen!=null) {
-			gen.generatePatternSequence(network,lastIO,trainingSequence);
+		if (copy!=null) {
+			copy.generatePatternSequence(network,lastIO,trainingSequence);
 			lock.lock(this);
-			r = gen.generatedPatternSequence.copy();
+			if (copy.generatedPatternSequence!=null) {
+				gen.generatedPatternSequence = copy.generatedPatternSequence;
+				r = gen.generatedPatternSequence;
+			}
 			changed = System.currentTimeMillis();
 			busy.setBusy(false);
 			lock.unlock(this);
@@ -199,6 +241,7 @@ public class Generators {
 		for (Generator gen: generators) {
 			if (gen.name.equals(name)) {
 				r = gen;
+				break;
 			}
 		}
 		return r;

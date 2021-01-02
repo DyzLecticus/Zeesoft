@@ -11,6 +11,8 @@ public class FormProperty extends ResponseObject {
 	public static String	TEXT_INPUT		= "TEXT_INPUT";
 	public static String	NUMBER_INPUT	= "NUMBER_INPUT";
 	public static String	CHECKBOX_INPUT	= "CHECKBOX_INPUT";
+	public static String	BUTTON_INPUT	= "BUTTON_INPUT";
+	public static String	BUTTON_DISABLED	= "BUTTON_DISABLED";
 	public static String	SELECT			= "SELECT";
 	
 	public String			name			= "";
@@ -39,7 +41,9 @@ public class FormProperty extends ResponseObject {
 		} else if (
 			renderAs.equals(TEXT_INPUT) ||
 			renderAs.equals(NUMBER_INPUT) ||
-			renderAs.equals(CHECKBOX_INPUT)
+			renderAs.equals(CHECKBOX_INPUT) ||
+			renderAs.equals(BUTTON_INPUT) ||
+			renderAs.equals(BUTTON_DISABLED)
 			) {
 			Str val = new Str();
 			if (value!=null) {
@@ -63,14 +67,26 @@ public class FormProperty extends ResponseObject {
 				r.sb().append("number");
 			} else if (renderAs.equals(CHECKBOX_INPUT)) {
 				r.sb().append("checkbox");
+			} else if (renderAs.equals(BUTTON_INPUT) || renderAs.equals(BUTTON_DISABLED)) {
+				r.sb().append("button");
 			}
 			r.sb().append("\"");
+			if ((renderAs.equals(BUTTON_INPUT) || renderAs.equals(BUTTON_DISABLED))
+				&& param!=null
+				) {
+				r.sb().append(" onclick=\"");
+				r.sb().append(param);
+				r.sb().append("\"");
+			}
 			if (onChange.length()>0) {
 				r.sb().append(" onchange=\"");
 				r.sb().append(onChange);
 				r.sb().append("\"");
 			}
 			r.sb().append(val.sb());
+			if (renderAs.equals(BUTTON_DISABLED)) {
+				r.sb().append(" DISABLED");
+			}
 			r.sb().append(" />");
 		} else if (renderAs.equals(SELECT)) {
 			if (value instanceof ArrayList) {

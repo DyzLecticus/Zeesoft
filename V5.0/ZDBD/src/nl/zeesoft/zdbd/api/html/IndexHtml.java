@@ -18,6 +18,7 @@ public class IndexHtml extends HtmlResponse {
 		scriptFiles.add("/theme.js");
 		scriptFiles.add("/sequencer.js");
 		scriptFiles.add("/network.js");
+		scriptFiles.add("/generators.js");
 	}
 	
 	@Override
@@ -76,7 +77,9 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>"); // end network
 		append(r,"<div id=\"statistics\"></div>");
 		append(r,"</div>"); // end network
-		
+
+		append(r,"<div id=\"generators\"></div>");
+
 		append(r,"</div>"); // end app
 		return r;
 	}

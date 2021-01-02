@@ -45,6 +45,8 @@ public class SequencerJs extends ResponseObject {
 		append(r,"        cb = function() { theme.refresh(); };");
 		append(r,"    } else if (property.id.indexOf(\"Sequence\")>0) {");
 		append(r,"        cb = function() { sequencer.refresh(); };");
+		append(r,"    } else if (property.type==\"checkbox\") {");
+		append(r,"        cb = function() { sequencer.refresh(); };");
 		append(r,"    }");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",body,cb);");
 		append(r,"}");

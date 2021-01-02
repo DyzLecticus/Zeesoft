@@ -15,9 +15,6 @@ import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
-import nl.zeesoft.zdbd.pattern.instruments.Bass;
-import nl.zeesoft.zdbd.pattern.instruments.Crash;
-import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -280,6 +277,10 @@ public class ThemeController implements EventListener, Waitable {
 		return getGenerateSequenceRunnerChain(name);
 	}
 	
+	public CodeRunnerChain generateSequences() {
+		return getGenerateSequenceRunnerChain("*");
+	}
+	
 	public boolean themeHasChanges() {
 		boolean r = false;
 		lock.lock(this);
@@ -489,28 +490,6 @@ public class ThemeController implements EventListener, Waitable {
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
 			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
-
-			Generator gen = new Generator();
-			gen.name = "Maintain beat and feedback";
-			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
-			theme.generators.put(gen);
-
-			gen = new Generator();
-			gen.name = "Free form";
-			gen.maintainBeat = 0;
-			gen.maintainFeedback = false;
-			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
-			theme.generators.put(gen);
-
-			gen = new Generator();
-			gen.name = "Free form, undistorted";
-			gen.group1Distortion = 0;
-			gen.group2Distortion = 0;
-			gen.maintainBeat = 0;
-			gen.maintainFeedback = false;
-			gen.setSkipInstruments(Ride.NAME, Crash.NAME, Bass.NAME);
-			theme.generators.put(gen);
-			
 			codes.add(theme.initializeNetwork());
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));
@@ -674,9 +653,18 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null && !busy.isBusy()) {
 			busy.setBusy(true);
-			r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
-			r.add(theme.generateSequence(name));
-			r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, name));
+			if (name.equals("*")) {
+				List<Generator> generators = theme.generators.list();
+				for (Generator generator: generators) {
+					r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
+					r.add(theme.generateSequence(generator.name));
+					r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, generator.name));
+				}
+			} else {
+				r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
+				r.add(theme.generateSequence(name));
+				r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, name));
+			}
 		}
 		lock.unlock(this);
 		return r;

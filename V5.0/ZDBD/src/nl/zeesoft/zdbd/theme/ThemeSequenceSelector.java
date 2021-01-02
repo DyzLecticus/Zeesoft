@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.api.html.form.SequencerControl;
 import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
@@ -16,9 +17,9 @@ import nl.zeesoft.zdk.thread.Lock;
 public class ThemeSequenceSelector implements MidiSequencerEventListener, EventListener {
 	private Lock				lock					= new Lock();
 	
-	private boolean				hold					= true;
-	private boolean				selectRandom			= true;
-	private boolean				selectTrainingSequence	= true;
+	private boolean				hold					= false;
+	private boolean				selectRandom			= false;
+	private boolean				selectTrainingSequence	= false;
 	private boolean				regenerateOnPlay		= true;
 	
 	private String				currSequence			= "";
@@ -173,6 +174,22 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		lock.unlock(this);
 		return r;
 	}
+	
+	public SequencerControl getSequencerControl(int bpm) {
+		lock.lock(this);
+		SequencerControl r = new SequencerControl(
+				bpm,
+				controller.getSequenceNames(),
+				currSequence,
+				nextSequence,
+				hold,
+				selectRandom,
+				selectTrainingSequence,
+				regenerateOnPlay
+			);
+		lock.unlock(this);
+		return r;
+	}
 
 	protected void startTheme(String startSequence, boolean selectNextSequence) {
 		lock.lock(this);
@@ -232,24 +249,24 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		String r = currSequence;
 		if (!hold) {
 			List<String> sequenceNames = controller.getSequenceNames();
-			sequenceNames.remove(currSequence);
 			if (!selectTrainingSequence) {
 				sequenceNames.remove(NetworkTrainer.TRAINING_SEQUENCE);
 			}
 			if (sequenceNames.size()>1) {
 				if (selectRandom) {
+					sequenceNames.remove(currSequence);
 					r = sequenceNames.get(Rand.getRandomInt(0, sequenceNames.size() - 1));
 				} else {
-					int currIdx = -1;
+					boolean next = false;
 					int nextIdx = 0;
 					int i = 0;
 					for (String name: sequenceNames) {
-						if (currIdx>=0 && i>currIdx) {
+						if (next) {
 							nextIdx = i;
 							break;
 						}
 						if (name.equals(currSequence)) {
-							currIdx = i;
+							next = true;
 						}
 						i++;
 					}

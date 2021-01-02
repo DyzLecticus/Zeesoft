@@ -8,13 +8,14 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.GeneratorOverview;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
-import nl.zeesoft.zdbd.api.html.form.SequencerControl;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
 import nl.zeesoft.zdbd.api.javascript.BindingsJs;
+import nl.zeesoft.zdbd.api.javascript.GeneratorsJs;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
@@ -60,6 +61,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		pathResponses.put("/network.js", (new NetworkJs()).render());
+		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
 		
 		pathResponses.put("/main.css", (new MainCss()).render());
 	}
@@ -88,18 +90,8 @@ public class RequestHandler extends HttpRequestHandler {
 					if (rythm!=null) {
 						bpm = (int)rythm.beatsPerMinute;
 					}
-					SequencerControl control = new SequencerControl(
-						bpm,
-						controller.getSequenceNames(),
-						selector.getCurrentSequence(),
-						selector.getNextSequence(),
-						selector.isHold(),
-						selector.isSelectRandom(),
-						selector.isSelectSelectTrainingSequence(),
-						selector.isRegenerateOnPlay()
-					);
 					response.code = HttpURLConnection.HTTP_OK;
-					response.body = control.render();
+					response.body = selector.getSequencerControl(bpm).render();
 				}
 			} else if (request.path.equals("/network.txt")) {
 				if (checkInitialized(response)) {
@@ -111,6 +103,16 @@ public class RequestHandler extends HttpRequestHandler {
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = statistics.render();
 				}
+			} else if (request.path.equals("/generators.txt")) {
+				if (checkInitialized(response)) {
+					boolean generate = !controller.changedTrainingSequenceSinceTraining();
+					if (generate && monitor.getDonePercentage()<1F) {
+						generate = false;
+					}
+					GeneratorOverview generators = new GeneratorOverview(controller.getGenerators(),generate);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = generators.render();
+				}
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
@@ -120,140 +122,15 @@ public class RequestHandler extends HttpRequestHandler {
 	@Override
 	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
 		if (request.path.equals("/state.txt")) {
-			if (request.body.toString().equals("QUIT")) {
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
-				System.exit(0);
-			} else if (request.body.startsWith("LOAD:")) {
-				String name = request.body.split(":").get(1).toString();
-				List<String> names = controller.listThemes();
-				if (name.length()==0 || !names.contains(name)) {
-					Str err = new Str("The specified theme does not exist");
-					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
-				} else {
-					monitor.startChain(controller.loadTheme(name));
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else if (request.body.toString().equals("SAVE")) {
-				monitor.startChain(controller.saveTheme());
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
-			} else if (request.body.startsWith("SAVE_AS:")) {
-				Str name = request.body.split(":").get(1);
-				if (checkThemeName(name,response)) {
-					monitor.startChain(controller.saveThemeAs(name.toString()));
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else if (request.body.startsWith("DELETE:")) {
-				String name = request.body.split(":").get(1).toString();
-				List<String> names = controller.listThemes();
-				if (name.length()==0 || !names.contains(name)) {
-					Str err = new Str("The specified theme does not exist");
-					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
-				} else {
-					monitor.startChain(controller.deleteTheme(name));
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else if (request.body.startsWith("NEW:")) {
-				List<Str> elems = request.body.split(":");
-				Str name = elems.get(1);
-				if (checkThemeName(name,response)) {
-					Rythm rythm = new Rythm();
-					rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
-					monitor.startChain(controller.newTheme(name.toString(), rythm));
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else {
-				setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
-			}
+			handlePostStateRequest(request,response);
 		} else if (request.path.equals("/modal.txt")) {
-			String name = request.body.toString();
-			if (name.equals("LoadTheme")) {
-				List<String> names = controller.listThemes();
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new LoadTheme(names)).render();
-			} else if (name.equals("SaveThemeAs")) {
-				String value = controller.getName();
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new SaveThemeAs(value)).render();
-			} else if (name.equals("DeleteTheme")) {
-				List<String> names = controller.listThemes();
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new DeleteTheme(names)).render();
-			} else if (name.equals("NewTheme")) {
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new NewTheme("",120)).render();
-			} else {
-				setNotFoundError(response,new Str("Not found"));
-			}
+			handlePostModalRequest(request,response);
 		} else if (request.path.equals("/sequencer.txt")) {
-			if (request.body.toString().equals("PLAY_SEQUENCE")) {
-				String name = selector.getCurrentSequence();
-				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
-					if (checkSequenceName(name,response)) {
-						selector.startSequence(name);
-						response.code = HttpURLConnection.HTTP_OK;
-						response.body = new Str("OK");
-					}
-				} else {
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else if (request.body.toString().equals("PLAY_THEME")) {
-				String name = selector.getCurrentSequence();
-				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
-					if (checkSequenceName(name,response)) {
-						selector.startTheme(name);
-						response.code = HttpURLConnection.HTTP_OK;
-						response.body = new Str("OK");
-					}
-				} else {
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
-				}
-			} else if (request.body.toString().equals("STOP")) {
-				if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
-					MidiSys.sequencer.stop();
-				}
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
-			} else if (request.body.startsWith("SET_PROPERTY:")) {
-				List<Str> elems = request.body.split(":");
-				String name = elems.get(1).toString();
-				if (name.equals("beatsPerMinute")) {
-					controller.setBeatsPerMinute(parseBeatsPerMinute(elems.get(2)));;
-				} else if (name.equals("currentSequence")) {
-					selector.setCurrentSequence(elems.get(2).toString());
-				} else if (name.equals("nextSequence")) {
-					selector.setNextSequence(elems.get(2).toString());
-				} else if (name.equals("hold")) {
-					selector.setHold(parseBoolean(elems.get(2)));
-				} else if (name.equals("selectRandom")) {
-					selector.setSelectRandom(parseBoolean(elems.get(2)));
-				} else if (name.equals("selectTrainingSequence")) {
-					selector.setSelectTrainingSequence(parseBoolean(elems.get(2)));
-				} else if (name.equals("regenerateOnPlay")) {
-					selector.setRegenerateOnPlay(parseBoolean(elems.get(2)));
-				} else {
-					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
-				}
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
-			} else {
-				setNotFoundError(response,new Str("Not found"));
-			}
+			handlePostSequencerRequest(request,response);
 		} else if (request.path.equals("/network.txt")) {
-			if (request.body.toString().equals("TRAIN")) {
-				monitor.startChain(controller.trainNetwork());
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
-			} else {
-				setNotFoundError(response,new Str("Not found"));
-			}
+			handlePostNetworkRequest(request,response);
+		} else if (request.path.equals("/generators.txt")) {
+			handlePostGeneratorsRequest(request,response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -300,6 +177,170 @@ public class RequestHandler extends HttpRequestHandler {
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
 	}
+
+	protected void handlePostStateRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.toString().equals("QUIT")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = new Str("OK");
+			System.exit(0);
+		} else if (request.body.startsWith("LOAD:")) {
+			String name = request.body.split(":").get(1).toString();
+			List<String> names = controller.listThemes();
+			if (name.length()==0 || !names.contains(name)) {
+				Str err = new Str("The specified theme does not exist");
+				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			} else {
+				monitor.startChain(controller.loadTheme(name));
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else if (request.body.toString().equals("SAVE")) {
+			monitor.startChain(controller.saveTheme());
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = new Str("OK");
+		} else if (request.body.startsWith("SAVE_AS:")) {
+			Str name = request.body.split(":").get(1);
+			if (checkThemeName(name,response)) {
+				monitor.startChain(controller.saveThemeAs(name.toString()));
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else if (request.body.startsWith("DELETE:")) {
+			String name = request.body.split(":").get(1).toString();
+			List<String> names = controller.listThemes();
+			if (name.length()==0 || !names.contains(name)) {
+				Str err = new Str("The specified theme does not exist");
+				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			} else {
+				monitor.startChain(controller.deleteTheme(name));
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else if (request.body.startsWith("NEW:")) {
+			List<Str> elems = request.body.split(":");
+			Str name = elems.get(1);
+			if (checkThemeName(name,response)) {
+				Rythm rythm = new Rythm();
+				rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
+				monitor.startChain(controller.newTheme(name.toString(), rythm));
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
+	
+	protected void handlePostModalRequest(HttpRequest request, HttpResponse response) {
+		String name = request.body.toString();
+		if (name.equals("LoadTheme")) {
+			List<String> names = controller.listThemes();
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new LoadTheme(names)).render();
+		} else if (name.equals("SaveThemeAs")) {
+			String value = controller.getName();
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new SaveThemeAs(value)).render();
+		} else if (name.equals("DeleteTheme")) {
+			List<String> names = controller.listThemes();
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new DeleteTheme(names)).render();
+		} else if (name.equals("NewTheme")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new NewTheme("",120)).render();
+		} else {
+			setNotFoundError(response,new Str("Not found"));
+		}
+	}
+
+	protected void handlePostSequencerRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.toString().equals("PLAY_SEQUENCE")) {
+			String name = selector.getCurrentSequence();
+			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
+				if (checkSequenceName(name,response)) {
+					selector.startSequence(name);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
+			} else {
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else if (request.body.toString().equals("PLAY_THEME")) {
+			String name = selector.getCurrentSequence();
+			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
+				if (checkSequenceName(name,response)) {
+					selector.startTheme(name);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
+				}
+			} else {
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else if (request.body.toString().equals("STOP")) {
+			if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
+				MidiSys.sequencer.stop();
+			}
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = new Str("OK");
+		} else if (request.body.startsWith("SET_PROPERTY:")) {
+			List<Str> elems = request.body.split(":");
+			String name = elems.get(1).toString();
+			boolean error = false;
+			if (name.equals("beatsPerMinute")) {
+				controller.setBeatsPerMinute(parseBeatsPerMinute(elems.get(2)));;
+			} else if (name.equals("currentSequence")) {
+				selector.setCurrentSequence(elems.get(2).toString());
+			} else if (name.equals("nextSequence")) {
+				selector.setNextSequence(elems.get(2).toString());
+			} else if (name.equals("hold")) {
+				selector.setHold(parseBoolean(elems.get(2)));
+			} else if (name.equals("selectRandom")) {
+				selector.setSelectRandom(parseBoolean(elems.get(2)));
+			} else if (name.equals("selectTrainingSequence")) {
+				selector.setSelectTrainingSequence(parseBoolean(elems.get(2)));
+			} else if (name.equals("regenerateOnPlay")) {
+				selector.setRegenerateOnPlay(parseBoolean(elems.get(2)));
+			} else {
+				setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+				error = true;
+			}
+			if (!error) {
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else {
+			setNotFoundError(response,new Str("Not found"));
+		}
+	}
+
+	protected void handlePostNetworkRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.toString().equals("TRAIN")) {
+			monitor.startChain(controller.trainNetwork());
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = new Str("OK");
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
+
+	protected void handlePostGeneratorsRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.toString().equals("GENERATE_ALL")) {
+			monitor.startChain(controller.generateSequences());
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = new Str("OK");
+		} else if (request.body.startsWith("GENERATE:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				monitor.startChain(controller.generateSequence(name));
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
 	
 	protected boolean checkInitialized(HttpResponse response) {
 		boolean r = true;
@@ -337,6 +378,16 @@ public class RequestHandler extends HttpRequestHandler {
 			r = false;
 		} else if (!controller.getSequenceNames().contains(name)) {
 			Str err = new Str("Selected sequence not found");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		}
+		return r;
+	}
+	
+	protected boolean checkGeneratorName(String name, HttpResponse response) {
+		boolean r = true;
+		if (controller.getGenerator(name)==null) {
+			Str err = new Str("Specified generator not found");
 			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			r = false;
 		}

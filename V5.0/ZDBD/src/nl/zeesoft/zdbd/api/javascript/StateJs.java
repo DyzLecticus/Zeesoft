@@ -40,6 +40,7 @@ public class StateJs extends ResponseObject {
 		append(r,"    theme.refresh();");
 		append(r,"    sequencer.refresh();");
 		append(r,"    network.refresh();");
+		append(r,"    generators.refresh();");
 		append(r,"};");
 		append(r,"state.onload = function() {");
 		append(r,"    state.refresh();");

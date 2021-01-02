@@ -73,6 +73,7 @@ public class Generator {
 		if (lastIO!=null) {
 			Logger.dbg(this, new Str("Generating sequence ..."));
 			network.setSequential(true);
+			network.setProcessorLearn("*", false);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", group1Distortion);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", group2Distortion);
 
@@ -88,6 +89,7 @@ public class Generator {
 			generatedPatternSequence = r;
 			
 			network.setSequential(false);
+			network.setProcessorLearn("*", true);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", 0F);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", 0F);
 			Logger.dbg(this, new Str("Generated sequence"));

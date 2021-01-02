@@ -2,6 +2,7 @@ package nl.zeesoft.zdbd;
 
 import nl.zeesoft.zdbd.api.ControllerMonitor;
 import nl.zeesoft.zdbd.api.ServerConfig;
+import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
 import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
@@ -62,6 +63,9 @@ public class App {
 				CodeRunnerChain chain = controller.initialize(settings);
 				monitor.startChain(chain);
 				r = Waiter.waitFor(chain, 60000);
+				if (MidiSys.isInitialized()) {
+					MidiSys.sequencer.addListener(selector);
+				}
 				if (!r) {
 					error = new Str("Failed to start app within 60 seconds");
 					Logger.err(this, error);
@@ -76,11 +80,12 @@ public class App {
 					app.stop(); 
 				} 
 			});
-		} else {
-			stop();
 		}
 		lock.unlock(this);
-
+		
+		if (!r) {
+			stop();
+		}
 		return r;
 	}
 	

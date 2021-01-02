@@ -28,9 +28,9 @@ public class NetworkJs extends ResponseObject {
 		append(r,"        } else {");
 		append(r,"            elem.value = \"Train\";");
 		append(r,"        }");
-		append(r,"    }");
-		append(r,"    if (obj.isTraining==\"true\") {");
-		append(r,"        setTimeout(function() { network.refresh(); }, 1000);");
+		append(r,"        if (obj.isTraining) {");
+		append(r,"            setTimeout(function() { network.refresh(); }, 1000);");
+		append(r,"        }");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"network.errorCallback = function(response) {");
