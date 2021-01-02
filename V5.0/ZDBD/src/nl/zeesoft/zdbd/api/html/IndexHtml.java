@@ -61,11 +61,10 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>"); // end menu
 
 		append(r,"<hr />");
-
 		append(r,"<div id=\"theme\" class=\"row\"></div>");
-		
 		append(r,"<div id=\"sequencer\"></div>");
-		
+
+		append(r,"<hr />");
 		append(r,"<div id=\"network\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
@@ -74,10 +73,11 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" />");
 		append(r,"    </div>");
-		append(r,"</div>"); // end network
+		append(r,"</div>");
 		append(r,"<div id=\"statistics\"></div>");
 		append(r,"</div>"); // end network
 
+		append(r,"<hr />");
 		append(r,"<div id=\"generators\"></div>");
 
 		append(r,"</div>"); // end app

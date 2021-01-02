@@ -46,6 +46,10 @@ public class MainCss extends ResponseObject {
 		append(r,"    display:block;");
 		append(r,"    width:96px;");
 		append(r,"}");
+		append(r,".column-number {");
+		append(r,"    text-align:right;");
+		append(r,"    width:96px;");
+		append(r,"}");
 		
 		append(r,".hidden {");
 		append(r,"    display:none;");

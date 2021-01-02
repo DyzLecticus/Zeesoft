@@ -30,7 +30,7 @@ public class GeneratorOverview extends FormHtml {
 		if (regenerate) {
 			value += "*";
 		}
-		addProperty("generateAll", "Generators", value, renderAs, "generators.generateAll()");
+		addProperty("generateAll", "Generators", value, renderAs, "generators.generateAll();");
 	}
 	
 	@Override
@@ -43,7 +43,16 @@ public class GeneratorOverview extends FormHtml {
 	
 	public static Str renderGenerators(List<Generator> generators, boolean generate) {
 		Str r = new Str();
+		int i = 0;
 		for (Generator generator: generators) {
+			String upDisabled = "";
+			String downDisabled = "";
+			if (i==0) {
+				upDisabled = " DISABLED";
+			} else if (i==(generators.size()-1)) {
+				downDisabled = " DISABLED";
+			}
+			
 			append(r,"<div class=\"row\">");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<label class=\"column-label\">");
@@ -68,10 +77,14 @@ public class GeneratorOverview extends FormHtml {
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Up\" onclick=\"generators.moveUp('");
 			r.sb().append(generator.name);
-			r.sb().append("');\" />");
-			append(r,"<input type=\"button\" value=\"Down\" onclick=\"generators.moveUp('");
+			r.sb().append("');\"");
+			r.sb().append(upDisabled);
+			r.sb().append(" />");
+			append(r,"<input type=\"button\" value=\"Down\" onclick=\"generators.moveDown('");
 			r.sb().append(generator.name);
-			r.sb().append("');\" />");
+			r.sb().append("');\"");
+			r.sb().append(downDisabled);
+			r.sb().append(" />");
 			append(r,"</div>");
 			
 			append(r,"<div class=\"column-right column-padding\">");
@@ -80,6 +93,8 @@ public class GeneratorOverview extends FormHtml {
 			r.sb().append("');\" />");
 			append(r,"</div>");
 			append(r,"</div>");
+			
+			i++;
 		}
 		return r;
 	}

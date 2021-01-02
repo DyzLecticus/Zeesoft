@@ -17,7 +17,7 @@ public class ThemeJs extends ResponseObject {
 		//append(r,"        console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"theme\");");
 		append(r,"    if (elem!=null) {");
-		append(r,"        var html = '<div class=\"column-left column-padding column-label\">Theme</div>';");
+		append(r,"        var html = '<div class=\"column-left column-padding column-label\">Name</div>';");
 		append(r,"        html += '<div class=\"column-left column-padding\">';");
 		append(r,"        html += \"<b>\";");
 		append(r,"        html += obj.name;");

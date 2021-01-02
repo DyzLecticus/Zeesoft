@@ -214,7 +214,23 @@ public class ThemeController implements EventListener, Waitable {
 		lock.unlock(this);
 		return r;
 	}
+
+	public void moveGenerator(String name, boolean up) {
+		lock.lock(this);
+		if (theme!=null) {
+			int index = theme.generators.indexOf(name);
+			if (up && index>0) {
+				index--;
+				theme.generators.set(name, index);
+			} else if (!up && index<(theme.generators.size() - 1)) {
+				index++;
+				theme.generators.set(name, index);
+			}
+		}
+		lock.unlock(this);
+	}
 	
+
 	public List<String> getSequenceNames() {
 		List<String> r = new ArrayList<String>();
 		lock.lock(this);

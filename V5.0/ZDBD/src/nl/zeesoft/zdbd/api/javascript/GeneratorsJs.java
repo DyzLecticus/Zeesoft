@@ -37,6 +37,21 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    var cb = function() { generators.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/generators.txt\",\"GENERATE:\" + name,cb,main.xhr.alertErrorCallback);");
 		append(r,"};");
+		append(r,"generators.moveUp = function(name) {");
+		append(r,"    generators.move(\"MOVE_UP\",name);");
+		append(r,"};");
+		append(r,"generators.moveDown = function(name) {");
+		append(r,"    generators.move(\"MOVE_DOWN\",name);");
+		append(r,"};");
+		append(r,"generators.move = function(direction,name) {");
+		append(r,"    main.xhr.postText(\"/generators.txt\",direction + \":\" + name,generators.refresh,main.xhr.alertErrorCallback);");
+		append(r,"};");
+		append(r,"generators.delete = function(name) {");
+		append(r,"    var d = confirm(\"Are you sure you want to delete the generator?\");");
+		append(r,"    if (d==true) {");
+		append(r,"        main.xhr.postText(\"/generators.txt\",\"DELETE:\" + name,generators.refresh,main.xhr.alertErrorCallback);");
+		append(r,"    }");
+		append(r,"};");
 		return r;
 	}
 }

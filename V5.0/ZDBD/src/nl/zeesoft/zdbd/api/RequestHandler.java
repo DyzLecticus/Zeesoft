@@ -179,8 +179,7 @@ public class RequestHandler extends HttpRequestHandler {
 
 	protected void handlePostStateRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("QUIT")) {
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = new Str("OK");
+			setPostOk(response);
 			System.exit(0);
 		} else if (request.body.startsWith("LOAD:")) {
 			String name = request.body.split(":").get(1).toString();
@@ -190,19 +189,16 @@ public class RequestHandler extends HttpRequestHandler {
 				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			} else {
 				monitor.startChain(controller.loadTheme(name));
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("SAVE")) {
 			monitor.startChain(controller.saveTheme());
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = new Str("OK");
+			setPostOk(response);
 		} else if (request.body.startsWith("SAVE_AS:")) {
 			Str name = request.body.split(":").get(1);
 			if (checkThemeName(name,response)) {
 				monitor.startChain(controller.saveThemeAs(name.toString()));
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else if (request.body.startsWith("DELETE:")) {
 			String name = request.body.split(":").get(1).toString();
@@ -212,8 +208,7 @@ public class RequestHandler extends HttpRequestHandler {
 				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			} else {
 				monitor.startChain(controller.deleteTheme(name));
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else if (request.body.startsWith("NEW:")) {
 			List<Str> elems = request.body.split(":");
@@ -222,8 +217,7 @@ public class RequestHandler extends HttpRequestHandler {
 				Rythm rythm = new Rythm();
 				rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
 				monitor.startChain(controller.newTheme(name.toString(), rythm));
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
@@ -258,31 +252,26 @@ public class RequestHandler extends HttpRequestHandler {
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
 				if (checkSequenceName(name,response)) {
 					selector.startSequence(name);
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
+					setPostOk(response);
 				}
 			} else {
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("START")) {
 			String name = selector.getCurrentSequence();
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
 				if (checkSequenceName(name,response)) {
 					selector.start();
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = new Str("OK");
+					setPostOk(response);
 				}
 			} else {
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("STOP")) {
 			if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
 				MidiSys.sequencer.stop();
 			}
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = new Str("OK");
+			setPostOk(response);
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
 			String name = elems.get(1).toString();
@@ -307,7 +296,7 @@ public class RequestHandler extends HttpRequestHandler {
 			}
 			if (!error) {
 				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
 			}
 		} else {
 			setNotFoundError(response,new Str("Not found"));
@@ -317,8 +306,7 @@ public class RequestHandler extends HttpRequestHandler {
 	protected void handlePostNetworkRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("TRAIN")) {
 			monitor.startChain(controller.trainNetwork());
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = new Str("OK");
+			setPostOk(response);
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 		}
@@ -327,14 +315,30 @@ public class RequestHandler extends HttpRequestHandler {
 	protected void handlePostGeneratorsRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("GENERATE_ALL")) {
 			monitor.startChain(controller.generateSequences());
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = new Str("OK");
+			setPostOk(response);
 		} else if (request.body.startsWith("GENERATE:")) {
 			String name = request.body.split(":").get(1).toString();
 			if (checkGeneratorName(name,response)) {
 				monitor.startChain(controller.generateSequence(name));
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = new Str("OK");
+				setPostOk(response);
+			}
+		} else if (request.body.startsWith("MOVE_UP:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				controller.moveGenerator(name,true);
+				setPostOk(response);
+			}
+		} else if (request.body.startsWith("MOVE_DOWN:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				controller.moveGenerator(name,false);
+				setPostOk(response);
+			}
+		} else if (request.body.startsWith("DELETE:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				controller.removeGenerator(name);
+				setPostOk(response);
 			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
@@ -411,5 +415,10 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected boolean parseBoolean(Str value) {
 		return Boolean.parseBoolean(value.toLowerCase().toString());
+	}
+	
+	protected void setPostOk(HttpResponse response) {
+		response.code = HttpURLConnection.HTTP_OK;
+		response.body = new Str("OK");
 	}
 }

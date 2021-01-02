@@ -103,7 +103,7 @@ public class Generators {
 		Generator gen = getNoLock(name);
 		if (gen!=null) {
 			generators.remove(gen);
-			generators.set(index,gen);
+			generators.add(index,gen);
 			changed	= System.currentTimeMillis();
 		}
 		lock.unlock(this);

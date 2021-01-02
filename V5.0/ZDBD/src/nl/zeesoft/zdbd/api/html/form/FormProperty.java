@@ -33,10 +33,18 @@ public class FormProperty extends ResponseObject {
 		r.sb().append(label.replace(" ", "&nbsp;"));
 		r.sb().append("</label>");
 		append(r,"</div>");
-		append(r,"<div class=\"column-left column-padding\">");
 		if (renderAs.equals(TEXT)) {
+			Str cls = new Str(" class=\"column-left column-padding");
 			if (value!=null) {
-				append(r,value.toString());
+				if (value instanceof Integer) {
+					cls.sb().append(" column-number");
+				}
+				cls.sb().append("\"");
+				append(r,"<div");
+				r.sb().append(cls);
+				r.sb().append(">");
+				r.sb().append(value.toString());
+				r.sb().append("</div>");
 			}
 		} else if (
 			renderAs.equals(TEXT_INPUT) ||
@@ -45,6 +53,7 @@ public class FormProperty extends ResponseObject {
 			renderAs.equals(BUTTON_INPUT) ||
 			renderAs.equals(BUTTON_DISABLED)
 			) {
+			append(r,"<div class=\"column-left column-padding\">");
 			Str val = new Str();
 			if (value!=null) {
 				if (renderAs.equals(CHECKBOX_INPUT)) {
@@ -88,7 +97,9 @@ public class FormProperty extends ResponseObject {
 				r.sb().append(" DISABLED");
 			}
 			r.sb().append(" />");
+			append(r,"</div>");
 		} else if (renderAs.equals(SELECT)) {
+			append(r,"<div class=\"column-left column-padding\">");
 			if (value instanceof ArrayList) {
 				@SuppressWarnings("unchecked")
 				List<Object> values = (ArrayList<Object>) value;
@@ -114,8 +125,8 @@ public class FormProperty extends ResponseObject {
 				}
 				append(r,"</select>");
 			}
+			append(r,"</div>");
 		}
-		append(r,"</div>");
 		append(r,"</div>");
 		return r;
 	}
