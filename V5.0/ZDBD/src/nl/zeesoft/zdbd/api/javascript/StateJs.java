@@ -41,12 +41,14 @@ public class StateJs extends ResponseObject {
 		append(r,"state.refreshApp = function() {");
 		append(r,"    theme.refresh();");
 		append(r,"    sequencer.refresh();");
+		append(r,"    network.refresh();");
 		append(r,"};");
 		append(r,"state.onload = function() {");
 		append(r,"    state.refresh();");
 		append(r,"    if (bindings) {");
 		append(r,"        bindings.onload();");
 		append(r,"    }");
+		append(r,"    state.refreshApp();");
 		append(r,"};");
 		return r;
 	}

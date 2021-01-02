@@ -33,9 +33,7 @@ public class ModalJs extends ResponseObject {
 		append(r,"};");
 		append(r,"modal.loadCallback = function(response) {");
 		//append(r,"    console.log(response);");
-		append(r,"    if (response.status==200) {");
-		append(r,"        modal.show(response.responseText);");
-		append(r,"    }");
+		append(r,"    modal.show(response.responseText);");
 		append(r,"};");
 		return r;
 	}

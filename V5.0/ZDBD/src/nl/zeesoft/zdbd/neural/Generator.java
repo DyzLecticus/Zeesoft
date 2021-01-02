@@ -1,10 +1,9 @@
-package nl.zeesoft.zdbd.generate;
+package nl.zeesoft.zdbd.neural;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Note;

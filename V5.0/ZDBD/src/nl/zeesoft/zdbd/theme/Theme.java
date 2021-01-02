@@ -1,7 +1,7 @@
 package nl.zeesoft.zdbd.theme;
 
-import nl.zeesoft.zdbd.generate.Generators;
 import nl.zeesoft.zdbd.midi.SoundPatch;
+import nl.zeesoft.zdbd.neural.Generators;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.Rythm;

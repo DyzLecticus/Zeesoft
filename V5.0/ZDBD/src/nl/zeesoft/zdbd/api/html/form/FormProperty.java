@@ -34,7 +34,7 @@ public class FormProperty extends ResponseObject {
 		append(r,"<div class=\"column-left column-padding\">");
 		if (renderAs.equals(TEXT)) {
 			if (value!=null) {
-				append(r,toString());
+				append(r,value.toString());
 			}
 		} else if (
 			renderAs.equals(TEXT_INPUT) ||

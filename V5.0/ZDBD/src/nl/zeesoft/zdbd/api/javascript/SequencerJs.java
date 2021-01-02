@@ -13,11 +13,9 @@ public class SequencerJs extends ResponseObject {
 		append(r,"};");
 		append(r,"sequencer.refreshCallback = function(response) {");
 		//append(r,"    console.log(response);");
-		append(r,"    if (response.status==200) {");
-		append(r,"        var elem = window.document.getElementById(\"sequencer\");");
-		append(r,"        if (elem!=null) {");
-		append(r,"            elem.innerHTML = response.responseText;");
-		append(r,"        }");
+		append(r,"    var elem = window.document.getElementById(\"sequencer\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        elem.innerHTML = response.responseText;");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"sequencer.errorCallback = function(response) {");

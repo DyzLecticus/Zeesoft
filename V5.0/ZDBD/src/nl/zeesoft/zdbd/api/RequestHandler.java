@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
 import nl.zeesoft.zdbd.api.html.form.SequencerControl;
@@ -17,6 +18,7 @@ import nl.zeesoft.zdbd.api.javascript.BindingsJs;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
+import nl.zeesoft.zdbd.api.javascript.NetworkJs;
 import nl.zeesoft.zdbd.api.javascript.QuitJs;
 import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
@@ -57,6 +59,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/quit.js", (new QuitJs()).render());
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
+		pathResponses.put("/network.js", (new NetworkJs()).render());
 		
 		pathResponses.put("/main.css", (new MainCss()).render());
 	}
@@ -75,34 +78,39 @@ public class RequestHandler extends HttpRequestHandler {
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = monitor.getStateResponse();
 			} else if (request.path.equals("/theme.txt")) {
-				if (controller.getName().length()==0 || 
-					controller.getTrainingSequence()==null ||
-					monitor.getText().equals(ThemeController.INITIALIZING)
-					) {
-					setError(response,HttpURLConnection.HTTP_UNAVAILABLE,
-						new Str("Initializing application. Please try again later.")
-					);
-				} else {
-					handleGetThemeRequest(request,response);
+				if (checkInitialized(response)) {
+					handleGetThemeRequest(response);
 				}
 			} else if (request.path.equals("/sequencer.txt")) {
-				int bpm = 120;
-				Rythm rythm = controller.getRythm();
-				if (rythm!=null) {
-					bpm = (int)rythm.beatsPerMinute;
+				if (checkInitialized(response)) {
+					int bpm = 120;
+					Rythm rythm = controller.getRythm();
+					if (rythm!=null) {
+						bpm = (int)rythm.beatsPerMinute;
+					}
+					SequencerControl control = new SequencerControl(
+						bpm,
+						controller.getSequenceNames(),
+						selector.getCurrentSequence(),
+						selector.getNextSequence(),
+						selector.isHold(),
+						selector.isSelectRandom(),
+						selector.isSelectSelectTrainingSequence(),
+						selector.isRegenerateOnPlay()
+					);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = control.render();
 				}
-				SequencerControl control = new SequencerControl(
-					bpm,
-					controller.getSequenceNames(),
-					selector.getCurrentSequence(),
-					selector.getNextSequence(),
-					selector.isHold(),
-					selector.isSelectRandom(),
-					selector.isSelectSelectTrainingSequence(),
-					selector.isRegenerateOnPlay()
-				);
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = control.render();
+			} else if (request.path.equals("/network.txt")) {
+				if (checkInitialized(response)) {
+					handleGetNetworkRequest(response);
+				}
+			} else if (request.path.equals("/networkStatistics.txt")) {
+				if (checkInitialized(response)) {
+					NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics());
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = statistics.render();
+				}
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
@@ -235,20 +243,36 @@ public class RequestHandler extends HttpRequestHandler {
 				}
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = new Str("OK");
+			} else {
+				setNotFoundError(response,new Str("Not found"));
+			}
+		} else if (request.path.equals("/network.txt")) {
+			if (request.body.toString().equals("TRAIN")) {
+				monitor.startChain(controller.trainNetwork());
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			} else {
+				setNotFoundError(response,new Str("Not found"));
 			}
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
 	}
 	
-	protected void handleGetThemeRequest(HttpRequest request, HttpResponse response) {
+	protected void handleGetThemeRequest(HttpResponse response) {
 		Str r = new Str();
 		r.sb().append("name:");
 		r.sb().append(controller.getName());
 		
+		int bpm = 120;
+		Rythm rythm = controller.getRythm();
+		if (rythm!=null) {
+			bpm = (int) rythm.beatsPerMinute;
+		}
+		
 		r.sb().append("\n");
 		r.sb().append("beatsPerMinute:");
-		r.sb().append(controller.getRythm().beatsPerMinute);
+		r.sb().append(bpm);
 
 		PatternSequence sequence = controller.getTrainingSequence();
 
@@ -264,6 +288,33 @@ public class RequestHandler extends HttpRequestHandler {
 		response.body = r;
 	}
 	
+	protected void handleGetNetworkRequest(HttpResponse response) {
+		Str r = new Str();
+		r.sb().append("isTraining:");
+		r.sb().append(monitor.getText().equals(ThemeController.TRAINING_NETWORK));
+		
+		r.sb().append("\n");
+		r.sb().append("needsTraining:");
+		r.sb().append(controller.changedTrainingSequenceSinceTraining());
+		
+		response.code = HttpURLConnection.HTTP_OK;
+		response.body = r;
+	}
+	
+	protected boolean checkInitialized(HttpResponse response) {
+		boolean r = true;
+		if (controller.getName().length()==0 || 
+			controller.getTrainingSequence()==null ||
+			monitor.getText().equals(ThemeController.INITIALIZING)
+			) {
+			setError(response,HttpURLConnection.HTTP_UNAVAILABLE,
+				new Str("Initializing application. Please try again later.")
+			);
+			r = false;
+		}
+		return r;
+	}
+
 	protected boolean checkThemeName(Str name, HttpResponse response) {
 		boolean r = true;
 		name.replace(" ","_");

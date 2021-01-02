@@ -2,8 +2,8 @@ package nl.zeesoft.zdbd.test;
 
 import java.util.List;
 
-import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;

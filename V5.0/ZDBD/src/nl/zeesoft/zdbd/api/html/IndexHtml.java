@@ -17,6 +17,7 @@ public class IndexHtml extends HtmlResponse {
 		scriptFiles.add("/menu.js");
 		scriptFiles.add("/theme.js");
 		scriptFiles.add("/sequencer.js");
+		scriptFiles.add("/network.js");
 	}
 	
 	@Override
@@ -63,6 +64,15 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div id=\"theme\" class=\"column-padding\"></div>");
 		
 		append(r,"<div id=\"sequencer\"></div>");
+		
+		append(r,"<div id=\"network\">");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" />");
+		append(r,"    </div>");
+		append(r,"</div>"); // end network
+		append(r,"<div id=\"statistics\"></div>");
+		append(r,"</div>"); // end network
 		
 		append(r,"</div>"); // end app
 		return r;

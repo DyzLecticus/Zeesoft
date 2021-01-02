@@ -2,8 +2,8 @@ package nl.zeesoft.zdbd.test;
 
 import javax.sound.midi.Sequence;
 
-import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;

@@ -49,7 +49,7 @@ public class BindingsJs extends ResponseObject {
 		append(r,"        }");
 		append(r,"        e.stopPropagation();");
 		append(r,"    } else if (!e.shiftKey && !e.ctrlKey && !e.altKey) {");
-		append(r,"        console.log(e);");
+		//append(r,"        console.log(e);");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"bindings.onload = function() {");

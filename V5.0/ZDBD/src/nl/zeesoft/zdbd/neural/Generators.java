@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.generate;
+package nl.zeesoft.zdbd.neural;
 
 import java.util.ArrayList;
 import java.util.List;

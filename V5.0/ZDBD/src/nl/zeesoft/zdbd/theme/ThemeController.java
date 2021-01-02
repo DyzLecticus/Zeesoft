@@ -8,9 +8,9 @@ import java.util.TreeMap;
 
 import javax.sound.midi.Sequence;
 
-import nl.zeesoft.zdbd.generate.Generator;
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
@@ -21,6 +21,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.neural.model.ModelStatistics;
 import nl.zeesoft.zdk.thread.Busy;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
@@ -159,6 +160,30 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public boolean changedTrainingSequenceSinceTraining() {
+		boolean r = false;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.networkTrainer.changedSequenceSinceTraining();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public CodeRunnerChain trainNetwork() {
+		return getTrainNetworkRunnerChain();
+	}
+	
+	public ModelStatistics getNetworkStatistics() {
+		ModelStatistics r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.network.getStatistics();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void putGenerator(Generator generator) {
 		if (!generator.name.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
 			lock.lock(this);
@@ -249,10 +274,6 @@ public class ThemeController implements EventListener, Waitable {
 		}
 		lock.unlock(this);
 		return r;
-	}
-	
-	public CodeRunnerChain trainNetwork() {
-		return getTrainNetworkRunnerChain();
 	}
 	
 	public CodeRunnerChain generateSequence(String name) {

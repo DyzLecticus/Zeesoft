@@ -8,6 +8,15 @@ public class MainCss extends ResponseObject {
 	public Str render() {
 		Str r = new Str();
 		
+		append(r,"body {");
+		append(r,"    font-family: Tahoma, sans-serif;");
+		append(r,"    font-size: 16px;");
+		append(r,"}");
+		append(r,"input, select {");
+		append(r,"    font-family: inherit;");
+		append(r,"    font-size: 16px;");
+		append(r,"}");
+		
 		append(r,".row {");
 		append(r,"    display:inline-block;");
 		append(r,"    width:100%;");
@@ -30,7 +39,7 @@ public class MainCss extends ResponseObject {
 		append(r,"}");
 		append(r,".column-label {");
 		append(r,"    display:block;");
-		append(r,"    width:128px;");
+		append(r,"    width:160px;");
 		append(r,"}");
 		append(r,".column-label-small {");
 		append(r,"    display:block;");

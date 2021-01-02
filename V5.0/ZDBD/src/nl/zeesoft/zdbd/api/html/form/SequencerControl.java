@@ -4,7 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Str;
 
-public class SequencerControl extends FormHtml{	
+public class SequencerControl extends FormHtml {	
 	public SequencerControl(int beatsPerMinute, List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay) {
 		if (!names.contains(currentSequence)) {
