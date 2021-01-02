@@ -44,6 +44,9 @@ public class StateJs extends ResponseObject {
 		append(r,"};");
 		append(r,"state.onload = function() {");
 		append(r,"    state.refresh();");
+		append(r,"    if (bindings) {");
+		append(r,"        bindings.onload();");
+		append(r,"    }");
 		append(r,"};");
 		return r;
 	}

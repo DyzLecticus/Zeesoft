@@ -8,7 +8,7 @@ public class SequencerControl extends FormHtml{
 	public SequencerControl(int beatsPerMinute, List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay) {
 		if (!names.contains(currentSequence)) {
-			names.add(currentSequence);
+			names.add(0,currentSequence);
 		}
 		addProperty("beatsPerMinute", "Beats per minute", beatsPerMinute, FormProperty.NUMBER_INPUT);
 		addProperty("currentSequence", "Play sequence", names, FormProperty.SELECT, currentSequence);

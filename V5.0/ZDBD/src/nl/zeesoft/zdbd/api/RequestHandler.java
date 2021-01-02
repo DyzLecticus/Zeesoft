@@ -13,6 +13,7 @@ import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
 import nl.zeesoft.zdbd.api.html.form.SequencerControl;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
+import nl.zeesoft.zdbd.api.javascript.BindingsJs;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
@@ -51,6 +52,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/main.js", (new MainJs()).render());
 		pathResponses.put("/modal.js", (new ModalJs()).render());
 		pathResponses.put("/state.js", (new StateJs()).render());
+		pathResponses.put("/bindings.js", (new BindingsJs()).render());
 		pathResponses.put("/menu.js", (new MenuJs()).render());
 		pathResponses.put("/quit.js", (new QuitJs()).render());
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
@@ -183,22 +185,34 @@ public class RequestHandler extends HttpRequestHandler {
 		} else if (request.path.equals("/sequencer.txt")) {
 			if (request.body.toString().equals("PLAY_SEQUENCE")) {
 				String name = selector.getCurrentSequence();
-				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning() &&
-					checkSequenceName(name,response)
-					) {
-					selector.startSequence(name);
+				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
+					if (checkSequenceName(name,response)) {
+						selector.startSequence(name);
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = new Str("OK");
+					}
+				} else {
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
 				}
 			} else if (request.body.toString().equals("PLAY_THEME")) {
 				String name = selector.getCurrentSequence();
-				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning() &&
-					checkSequenceName(name,response)
-					) {
-					selector.startTheme(name);
+				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
+					if (checkSequenceName(name,response)) {
+						selector.startTheme(name);
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = new Str("OK");
+					}
+				} else {
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = new Str("OK");
 				}
 			} else if (request.body.toString().equals("STOP")) {
 				if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
 					MidiSys.sequencer.stop();
 				}
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
 			} else if (request.body.startsWith("SET_PROPERTY:")) {
 				List<Str> elems = request.body.split(":");
 				String name = elems.get(1).toString();

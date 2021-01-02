@@ -50,12 +50,12 @@ public class FormHtml extends ResponseObject {
 		if (onOkClick.length()>0 || onCancelClick.length()>0) {
 			append(r,"<div class=\"column-right column-padding\">");
 			if (onOkClick.length()>0) {
-				append(r,"<input type=\"button\" value=\"Ok\" onclick=\"");
+				append(r,"<input id=\"formOk\" type=\"button\" value=\"Ok\" onclick=\"");
 				r.sb().append(onOkClick);
 				r.sb().append("\" />");
 			}
 			if (onCancelClick.length()>0) {
-				append(r,"<input type=\"button\" value=\"Cancel\" onclick=\"");
+				append(r,"<input id=\"formCancel\" type=\"button\" value=\"Cancel\" onclick=\"");
 				r.sb().append(onCancelClick);
 				r.sb().append("\" />");
 			}
