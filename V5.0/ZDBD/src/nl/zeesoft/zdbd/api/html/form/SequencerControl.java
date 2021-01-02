@@ -34,8 +34,10 @@ public class SequencerControl extends FormHtml {
 		Str r = new Str();
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,"<input type=\"button\" value=\"Play sequence\" onclick=\"sequencer.playSequence();\" />");
-		append(r,"<input type=\"button\" value=\"Play theme\" onclick=\"sequencer.playTheme();\" />");
+		append(r,"<label class=\"column-label\">Sequencer</label>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<input type=\"button\" value=\"Play\" onclick=\"sequencer.playTheme();\" />");
 		append(r,"<input type=\"button\" value=\"Stop\" onclick=\"sequencer.stop();\" />");
 		append(r,"</div>");
 		append(r,"</div>");

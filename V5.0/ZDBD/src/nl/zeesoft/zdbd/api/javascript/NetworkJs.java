@@ -18,12 +18,12 @@ public class NetworkJs extends ResponseObject {
 		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"trainNetwork\");");
 		append(r,"    if (elem!=null) {");
-		append(r,"        if (obj.isTraining==\"true\" || obj.needsTraining==\"false\") {");
+		append(r,"        if (obj.isTraining || !obj.needsTraining) {");
 		append(r,"            elem.disabled = true;");
 		append(r,"        } else {");
 		append(r,"            elem.disabled = false;");
 		append(r,"        }");
-		append(r,"        if (obj.needsTraining==\"true\") {");
+		append(r,"        if (obj.needsTraining) {");
 		append(r,"            elem.value = \"Train*\";");
 		append(r,"        } else {");
 		append(r,"            elem.value = \"Train\";");

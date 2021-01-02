@@ -55,6 +55,11 @@ public class MainJs extends ResponseObject {
 		append(r,"        for (var i = 0; i < lines.length; i++) {");
 		append(r,"            var keyValue = lines[i].split(\":\");");
 		append(r,"            obj[keyValue[0]] = keyValue[1];");
+		append(r,"            if (obj[keyValue[0]]==\"true\") {");
+		append(r,"                obj[keyValue[0]] = true;");
+		append(r,"            } else if (obj[keyValue[0]]==\"false\") {");
+		append(r,"                obj[keyValue[0]] = false;");
+		append(r,"            }");
 		append(r,"        }");
 		append(r,"    } catch (err) {");
 		append(r,"        obj = {};");

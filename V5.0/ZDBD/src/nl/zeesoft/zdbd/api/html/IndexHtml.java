@@ -61,12 +61,15 @@ public class IndexHtml extends HtmlResponse {
 
 		append(r,"<hr />");
 
-		append(r,"<div id=\"theme\" class=\"column-padding\"></div>");
+		append(r,"<div id=\"theme\" class=\"row\"></div>");
 		
 		append(r,"<div id=\"sequencer\"></div>");
 		
 		append(r,"<div id=\"network\">");
 		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label\">Network</label >");
+		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" />");
 		append(r,"    </div>");

@@ -20,6 +20,7 @@ public class MainCss extends ResponseObject {
 		append(r,".row {");
 		append(r,"    display:inline-block;");
 		append(r,"    width:100%;");
+		append(r,"    min-height:32px;");
 		append(r,"}");
 		append(r,".row:after {");
 		append(r,"    content:\"\";");

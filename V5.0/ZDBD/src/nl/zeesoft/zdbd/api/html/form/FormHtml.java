@@ -46,8 +46,8 @@ public class FormHtml extends ResponseObject {
 	
 	public static Str renderOkCancel(String onOkClick, String onCancelClick) {
 		Str r = new Str();
-		append(r,"<div class=\"row\">");
 		if (onOkClick.length()>0 || onCancelClick.length()>0) {
+			append(r,"<div class=\"row\">");
 			append(r,"<div class=\"column-right column-padding\">");
 			if (onOkClick.length()>0) {
 				append(r,"<input id=\"formOk\" type=\"button\" value=\"Ok\" onclick=\"");
@@ -60,8 +60,8 @@ public class FormHtml extends ResponseObject {
 				r.sb().append("\" />");
 			}
 			append(r,"</div>");
+			append(r,"</div>");
 		}
-		append(r,"</div>");
 		return r;
 	}
 }
