@@ -38,7 +38,7 @@ public class ThemeJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"};");
 		append(r,"theme.clear = function() {");
-		append(r,"    var elem = window.document.getElementById(\"state\");");
+		append(r,"    var elem = window.document.getElementById(\"theme\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = \"\";");
 		append(r,"    }");

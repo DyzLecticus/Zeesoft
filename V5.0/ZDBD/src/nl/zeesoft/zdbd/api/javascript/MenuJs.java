@@ -40,7 +40,7 @@ public class MenuJs extends ResponseObject {
 		append(r,"    if (elem!=null && elem.value.length>0) {");
 		append(r,"        main.xhr.postText(\"/state.txt\",\"SAVE_AS:\" + elem.value,function() { state.refresh(); },main.xhr.alertErrorCallback);");
 		append(r,"        modal.hide();");
-		append(r,"        theme.refresh();");
+		append(r,"        state.refreshApp();");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"menu.delete = function() {");
@@ -63,7 +63,7 @@ public class MenuJs extends ResponseObject {
 		append(r,"        var body = \"NEW:\" + elem.value + \":\" + bpm;");
 		append(r,"        main.xhr.postText(\"/state.txt\",body,function() { state.refresh(); },main.xhr.alertErrorCallback);");
 		append(r,"        modal.hide();");
-		append(r,"        theme.refresh();");
+		append(r,"        state.refreshApp();");
 		append(r,"    }");
 		append(r,"};");
 		return r;

@@ -79,6 +79,16 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		startTheme(startSequence,true);
 	}
 	
+	public void setCurrentSequence(String currentSequence) {
+		if (currentSequence.length()>0 && !this.currSequence.equals(currentSequence)) {
+			lock.lock(this);
+			this.currSequence = currentSequence;
+			this.nextSequence = selectNextSequenceNoLock();
+			changedNextSequenceNoLock();
+			lock.unlock(this);
+		}
+	}
+	
 	public void setNextSequence(String nextSequence) {
 		if (nextSequence.length()>0 && !this.nextSequence.equals(nextSequence)) {
 			lock.lock(this);
@@ -171,6 +181,9 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		} else if (controller==null) {
 			Logger.err(this, new Str("Theme controller has not been set"));
 		} else if (!controller.isBusy() && !MidiSys.sequencer.isRunning()) {
+			if (startSequence.length()==0) {
+				startSequence = currSequence;
+			}
 			PatternSequence sequence = controller.getSequences().get(startSequence);
 			if (sequence!=null) {
 				this.currSequence = startSequence;

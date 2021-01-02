@@ -4,6 +4,7 @@ import nl.zeesoft.zdbd.api.ControllerMonitor;
 import nl.zeesoft.zdbd.api.ServerConfig;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
+import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -31,9 +32,12 @@ public class App {
 		controller = new ThemeController();
 		// Create the controller monitor
 		ControllerMonitor monitor = new ControllerMonitor(controller);
+		// Create the sequence selector
+		ThemeSequenceSelector selector = new ThemeSequenceSelector();
+		selector.setController(controller);
 		
 		// Create the server configuration
-		ServerConfig config = new ServerConfig(controller,monitor);
+		ServerConfig config = new ServerConfig(controller,monitor,selector);
 		config.setLogger(Logger.logger);
 		config.setFilePath(settings.workDir);
 		

@@ -20,11 +20,16 @@ public class FormHtml extends ResponseObject {
 	}
 	
 	public FormProperty addProperty(String name, String label, Object value, String renderAs) {
+		return addProperty(name, label, value, renderAs, null);
+	}
+	
+	public FormProperty addProperty(String name, String label, Object value, String renderAs, Object param) {
 		FormProperty r = new FormProperty();
 		r.name = name;
 		r.label = label;
 		r.value = value;
 		r.renderAs = renderAs;
+		r.param = param;
 		properties.add(r);
 		return r;
 	}

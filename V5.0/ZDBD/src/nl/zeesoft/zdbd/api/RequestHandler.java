@@ -10,17 +10,21 @@ import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
+import nl.zeesoft.zdbd.api.html.form.SequencerControl;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
 import nl.zeesoft.zdbd.api.javascript.QuitJs;
+import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
+import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.theme.ThemeController;
+import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
@@ -28,15 +32,17 @@ import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 
 public class RequestHandler extends HttpRequestHandler {
-	protected ThemeController		controller		= null;
-	protected ControllerMonitor		monitor			= null;
+	protected ThemeController			controller		= null;
+	protected ControllerMonitor			monitor			= null;
+	protected ThemeSequenceSelector		selector		= null;
 	
 	protected SortedMap<String,Str>	pathResponses	= new TreeMap<String,Str>();
 	
-	protected RequestHandler(HttpServerConfig config, ThemeController controller, ControllerMonitor monitor) {
+	protected RequestHandler(HttpServerConfig config, ThemeController controller, ControllerMonitor monitor, ThemeSequenceSelector selector) {
 		super(config);
 		this.controller = controller;
 		this.monitor = monitor;
+		this.selector = selector;
 		
 		pathResponses.put("/", (new IndexHtml()).render());
 		pathResponses.put("/index.html", (new IndexHtml()).render());
@@ -48,6 +54,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/menu.js", (new MenuJs()).render());
 		pathResponses.put("/quit.js", (new QuitJs()).render());
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
+		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		
 		pathResponses.put("/main.css", (new MainCss()).render());
 	}
@@ -76,6 +83,24 @@ public class RequestHandler extends HttpRequestHandler {
 				} else {
 					handleGetThemeRequest(request,response);
 				}
+			} else if (request.path.equals("/sequencer.txt")) {
+				int bpm = 120;
+				Rythm rythm = controller.getRythm();
+				if (rythm!=null) {
+					bpm = (int)rythm.beatsPerMinute;
+				}
+				SequencerControl control = new SequencerControl(
+					bpm,
+					controller.getSequenceNames(),
+					selector.getCurrentSequence(),
+					selector.getNextSequence(),
+					selector.isHold(),
+					selector.isSelectRandom(),
+					selector.isSelectSelectTrainingSequence(),
+					selector.isRegenerateOnPlay()
+				);
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = control.render();
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
@@ -155,6 +180,48 @@ public class RequestHandler extends HttpRequestHandler {
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
+		} else if (request.path.equals("/sequencer.txt")) {
+			if (request.body.toString().equals("PLAY_SEQUENCE")) {
+				String name = selector.getCurrentSequence();
+				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning() &&
+					checkSequenceName(name,response)
+					) {
+					selector.startSequence(name);
+				}
+			} else if (request.body.toString().equals("PLAY_THEME")) {
+				String name = selector.getCurrentSequence();
+				if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning() &&
+					checkSequenceName(name,response)
+					) {
+					selector.startTheme(name);
+				}
+			} else if (request.body.toString().equals("STOP")) {
+				if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
+					MidiSys.sequencer.stop();
+				}
+			} else if (request.body.startsWith("SET_PROPERTY:")) {
+				List<Str> elems = request.body.split(":");
+				String name = elems.get(1).toString();
+				if (name.equals("beatsPerMinute")) {
+					controller.setBeatsPerMinute(parseBeatsPerMinute(elems.get(2)));;
+				} else if (name.equals("currentSequence")) {
+					selector.setCurrentSequence(elems.get(2).toString());
+				} else if (name.equals("nextSequence")) {
+					selector.setNextSequence(elems.get(2).toString());
+				} else if (name.equals("hold")) {
+					selector.setHold(parseBoolean(elems.get(2)));
+				} else if (name.equals("selectRandom")) {
+					selector.setSelectRandom(parseBoolean(elems.get(2)));
+				} else if (name.equals("selectTrainingSequence")) {
+					selector.setSelectTrainingSequence(parseBoolean(elems.get(2)));
+				} else if (name.equals("regenerateOnPlay")) {
+					selector.setRegenerateOnPlay(parseBoolean(elems.get(2)));
+				} else {
+					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+				}
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = new Str("OK");
+			}
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -165,11 +232,11 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("name:");
 		r.sb().append(controller.getName());
 		
-		PatternSequence sequence = controller.getTrainingSequence();
-
 		r.sb().append("\n");
 		r.sb().append("beatsPerMinute:");
-		r.sb().append(sequence.rythm.beatsPerMinute);
+		r.sb().append(controller.getRythm().beatsPerMinute);
+
+		PatternSequence sequence = controller.getTrainingSequence();
 
 		r.sb().append("\n");
 		r.sb().append("beatsPerPattern:");
@@ -197,6 +264,20 @@ public class RequestHandler extends HttpRequestHandler {
 		return r;
 	}
 	
+	protected boolean checkSequenceName(String name, HttpResponse response) {
+		boolean r = true;
+		if (name.length()==0) {
+			Str err = new Str("Select a sequence to play");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		} else if (!controller.getSequenceNames().contains(name)) {
+			Str err = new Str("Selected sequence not found");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		}
+		return r;
+	}
+	
 	protected float parseBeatsPerMinute(Str bpm) {
 		float r = 120;
 		try {
@@ -211,5 +292,9 @@ public class RequestHandler extends HttpRequestHandler {
 			r = 240;
 		}
 		return r;
+	}
+	
+	protected boolean parseBoolean(Str value) {
+		return Boolean.parseBoolean(value.toLowerCase().toString());
 	}
 }

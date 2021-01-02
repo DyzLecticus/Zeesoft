@@ -12,7 +12,9 @@ public class MainJs extends ResponseObject {
 		append(r,"main.xhr.onReadyStateChange = function(xhr,successCallback,errorCallback) {");
 		append(r,"    if (xhr.readyState == 4) {");
 		append(r,"        if (xhr.status == 200) {");
-		append(r,"            successCallback(xhr);");
+		append(r,"            if (successCallback) {");
+		append(r,"                successCallback(xhr);");
+		append(r,"            }");
 		append(r,"        } else if (errorCallback!=null) {");
 		append(r,"            errorCallback(xhr);");
 		append(r,"        } else {");

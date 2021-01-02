@@ -15,6 +15,7 @@ public class IndexHtml extends HtmlResponse {
 		scriptFiles.add("/state.js");
 		scriptFiles.add("/menu.js");
 		scriptFiles.add("/theme.js");
+		scriptFiles.add("/sequencer.js");
 	}
 	
 	@Override
@@ -38,30 +39,33 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div class=\"row\">");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<label class=\"column-label-small\">Theme</label>");
-			append(r,"</div>\n");
+			append(r,"</div>");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Load\" onclick=\"menu.load();\" />");
-			append(r,"</div>\n");
+			append(r,"</div>");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Save\" onclick=\"menu.save();\" />");
-			append(r,"</div>\n");
+			append(r,"</div>");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Save as\" onclick=\"menu.saveAs();\" />");
-			append(r,"</div>\n");
+			append(r,"</div>");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Delete\" onclick=\"menu.delete();\" />");
-			append(r,"</div>\n");
+			append(r,"</div>");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"New\" onclick=\"menu.new();\" />");
-			append(r,"</div>\n");
+			append(r,"</div>");
 		append(r,"</div>\n");
 		append(r,"</div>"); // end menu
 
 		append(r,"<hr />");
 
 		append(r,"<div id=\"theme\" class=\"column-padding\">");
-		
 		append(r,"</div>"); // end theme
+		
+		append(r,"<div id=\"sequencer\">");
+		append(r,"</div>"); // end sequencer
+
 		
 		append(r,"</div>"); // end app
 		return r;

@@ -27,7 +27,7 @@ public class StateJs extends ResponseObject {
 		append(r,"        if (obj.donePercentage<1) {");
 		append(r,"            setTimeout(function() { state.refresh(); }, 200);");
 		append(r,"        } else if (obj.donePercentage==1) {");
-		append(r,"            theme.refresh();");
+		append(r,"            state.refreshApp();");
 		append(r,"            setTimeout(function() { state.clear(); }, 1000);");
 		append(r,"        }");
 		append(r,"    }");
@@ -37,6 +37,10 @@ public class StateJs extends ResponseObject {
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = \"\";");
 		append(r,"    }");
+		append(r,"};");
+		append(r,"state.refreshApp = function() {");
+		append(r,"    theme.refresh();");
+		append(r,"    sequencer.refresh();");
 		append(r,"};");
 		append(r,"state.onload = function() {");
 		append(r,"    state.refresh();");
