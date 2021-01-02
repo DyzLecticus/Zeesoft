@@ -50,11 +50,11 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",body,cb);");
 		append(r,"}");
-		append(r,"sequencer.playSequence = function() {");
-		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"PLAY_SEQUENCE\",sequencer.refresh,main.xhr.alertErrorCallback);");
+		append(r,"sequencer.startSequence = function() {");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START_SEQUENCE\",sequencer.refresh,main.xhr.alertErrorCallback);");
 		append(r,"}");
-		append(r,"sequencer.playTheme = function() {");
-		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"PLAY_THEME\",sequencer.refresh,main.xhr.alertErrorCallback);");
+		append(r,"sequencer.startTheme = function() {");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START\",sequencer.refresh,main.xhr.alertErrorCallback);");
 		append(r,"}");
 		append(r,"sequencer.stop = function() {");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"STOP\",sequencer.refresh,main.xhr.alertErrorCallback);");

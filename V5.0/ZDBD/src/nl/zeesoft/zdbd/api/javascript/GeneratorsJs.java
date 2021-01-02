@@ -30,12 +30,10 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"};");
 		append(r,"generators.generateAll = function() {");
-		append(r,"    console.log(\"Generate all!\");");
 		append(r,"    var cb = function() { generators.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/generators.txt\",\"GENERATE_ALL\",cb,main.xhr.alertErrorCallback);");
 		append(r,"};");
 		append(r,"generators.generateSequence = function(name) {");
-		append(r,"    console.log(\"Generate '\" + name + \"'!\");");
 		append(r,"    var cb = function() { generators.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/generators.txt\",\"GENERATE:\" + name,cb,main.xhr.alertErrorCallback);");
 		append(r,"};");

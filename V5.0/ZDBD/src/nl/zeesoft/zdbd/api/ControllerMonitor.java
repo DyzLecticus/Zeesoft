@@ -22,7 +22,9 @@ public class ControllerMonitor implements EventListener, ProgressListener {
 	@Override
 	public void handleEvent(Event event) {
 		lock.lock(this);
-		this.text = event.name;
+		if (!event.name.equals(ThemeController.DONE)) {
+			this.text = event.name;
+		}
 		lock.unlock(this);
 	}
 	

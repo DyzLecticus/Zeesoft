@@ -9,14 +9,28 @@ public class GeneratorOverview extends FormHtml {
 	private List<Generator> generators 	= null;
 	private boolean			generate	= false;
 	
-	public GeneratorOverview(List<Generator> generators, boolean generate) {
+	public GeneratorOverview(List<Generator> generators, boolean regenerate, boolean generate) {
 		this.generators = generators;
 		this.generate = generate;
 		String renderAs = FormProperty.BUTTON_INPUT;
 		if (!generate) {
 			renderAs = FormProperty.BUTTON_DISABLED;
 		}
-		addProperty("generateAll", "Generators", "Generate sequences", renderAs, "generators.generateAll()");
+		String value = "Generate sequences";
+		if (!regenerate) {
+			boolean gen = true;
+			for (Generator generator: generators) {
+				if (generator.generatedPatternSequence!=null) {
+					gen = false;
+					break;
+				}
+			}
+			regenerate = gen;
+		}
+		if (regenerate) {
+			value += "*";
+		}
+		addProperty("generateAll", "Generators", value, renderAs, "generators.generateAll()");
 	}
 	
 	@Override

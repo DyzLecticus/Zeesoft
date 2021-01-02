@@ -42,12 +42,16 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				CHANGED_TRAINING_SEQUENCE	= "CHAINGED_TRAINING_SEQUENCE";
 	public static String				TRAINING_NETWORK			= "TRAINING_NETWORK";
 	public static String				TRAINED_NETWORK				= "TRAINED_NETWORK";
+	public static String				GENERATING_SEQUENCES		= "GENERATING_SEQUENCES";
+	public static String				GENERATED_SEQUENCES			= "GENERATED_SEQUENCES";
 	public static String				GENERATING_SEQUENCE			= "GENERATING_SEQUENCE";
 	public static String				GENERATED_SEQUENCE			= "GENERATED_SEQUENCE";
 	
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
-	
+
+	public static String				DONE						= "DONE";
+
 	public static String				DESTROYING					= "DESTROYING";
 	public static String				DESTROYED					= "DESTROYED";
 	
@@ -388,18 +392,20 @@ public class ThemeController implements EventListener, Waitable {
 			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
-		} else if (event.name.equals(GENERATING_SEQUENCE)) {
-			// Ignore
-		} else if (event.name.equals(GENERATED_SEQUENCE)) {
-			lock.lock(this);
-			busy.setBusy(false);
-			lock.unlock(this);
 		} else if (event.name.equals(EXPORTING_RECORDING)) {
 			MidiSys.sequencer.stop();
 		} else if (event.name.equals(EXPORTED_RECORDING)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
+		} else if (event.name.equals(GENERATING_SEQUENCES)) {
+			// Ignore
+		} else if (event.name.equals(GENERATED_SEQUENCES)) {
+			// Ignore
+		} else if (event.name.equals(GENERATING_SEQUENCE)) {
+			// Ignore
+		} else if (event.name.equals(GENERATED_SEQUENCE)) {
+			// Ignore
 		} else if (event.name.equals(DESTROYING)) {
 			if (MidiSys.isInitialized()) {
 				MidiSys.sequencer.stop();
@@ -407,6 +413,10 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(DESTROYED)) {
 			lock.lock(this);
 			eventPublisher.removeListener(this);
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(DONE)) {
+			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		}
@@ -656,14 +666,17 @@ public class ThemeController implements EventListener, Waitable {
 			if (name.equals("*")) {
 				List<Generator> generators = theme.generators.list();
 				for (Generator generator: generators) {
-					r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
+					r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCES));
 					r.add(theme.generateSequence(generator.name));
 					r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, generator.name));
 				}
+				r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCES));
+				r.add(eventPublisher.getPublishEventRunCode(this, DONE, GENERATED_SEQUENCES));
 			} else {
 				r.add(eventPublisher.getPublishEventRunCode(this, GENERATING_SEQUENCE));
 				r.add(theme.generateSequence(name));
 				r.add(eventPublisher.getPublishEventRunCode(this, GENERATED_SEQUENCE, name));
+				r.add(eventPublisher.getPublishEventRunCode(this, DONE, GENERATED_SEQUENCE));
 			}
 		}
 		lock.unlock(this);

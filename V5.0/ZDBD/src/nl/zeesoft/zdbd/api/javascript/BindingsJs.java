@@ -28,10 +28,10 @@ public class BindingsJs extends ResponseObject {
 		append(r,"        menu.new();");
 		append(r,"        e.stopPropagation();");
 		append(r,"    } else if (e.key == \" \" && e.shiftKey && e.ctrlKey && !e.altKey) {");
-		append(r,"        sequencer.playSequence();");
+		append(r,"        sequencer.startSequence();");
 		append(r,"        e.stopPropagation();");
 		append(r,"    } else if (e.key == \" \" && e.shiftKey && !e.ctrlKey && !e.altKey) {");
-		append(r,"        sequencer.playTheme();");
+		append(r,"        sequencer.startTheme();");
 		append(r,"        e.stopPropagation();");
 		append(r,"    } else if (e.key == \" \" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
 		append(r,"        sequencer.stop();");

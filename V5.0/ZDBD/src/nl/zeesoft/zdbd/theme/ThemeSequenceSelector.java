@@ -71,6 +71,21 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		this.regenerateOnPlay = regenerateOnPlay;
 		lock.unlock(this);
 	}
+	
+	public void start() {
+		lock.lock(this);
+		if (!MidiSys.isInitialized()) {
+			Logger.err(this, new Str("Midi system is not initialized"));
+		} else if (controller==null) {
+			Logger.err(this, new Str("Theme controller has not been set"));
+		} else if (!controller.isBusy() && currSequence.length()>0 && !MidiSys.sequencer.isRunning()) {
+			MidiSys.sequencer.start();
+			if (regenerateOnPlay && !currSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
+				controller.generateSequence(currSequence).start();
+			}
+		}
+		lock.unlock(this);
+	}
 
 	public void startSequence(String name) {
 		startTheme(name,false);
@@ -84,6 +99,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		if (currentSequence.length()>0 && !this.currSequence.equals(currentSequence)) {
 			lock.lock(this);
 			this.currSequence = currentSequence;
+			changedCurrentSequenceNoLock();
 			this.nextSequence = selectNextSequenceNoLock();
 			changedNextSequenceNoLock();
 			lock.unlock(this);
@@ -111,6 +127,23 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			if (event.name.equals(ThemeController.DESTROYING) && controller!=null) {
 				controller.eventPublisher.removeListener(this);
 				controller = null;
+			}
+			lock.unlock(this);
+		} else if (
+			event.name.equals(ThemeController.GENERATED_SEQUENCES)
+			) {
+			lock.lock(this);
+			if ((currSequence.length()==0 || currSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) && 
+				!MidiSys.sequencer.isRunning()
+				) {
+				List<String> sequences = controller.getSequenceNames();
+				sequences.remove(NetworkTrainer.TRAINING_SEQUENCE);
+				if (sequences.size()>=1) {
+					currSequence = sequences.get(0);
+					changedCurrentSequenceNoLock();
+					nextSequence = selectNextSequenceNoLock();
+					changedNextSequenceNoLock();
+				}
 			}
 			lock.unlock(this);
 		} else if (
@@ -178,15 +211,15 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	public SequencerControl getSequencerControl(int bpm) {
 		lock.lock(this);
 		SequencerControl r = new SequencerControl(
-				bpm,
-				controller.getSequenceNames(),
-				currSequence,
-				nextSequence,
-				hold,
-				selectRandom,
-				selectTrainingSequence,
-				regenerateOnPlay
-			);
+			bpm,
+			controller.getSequenceNames(),
+			currSequence,
+			nextSequence,
+			hold,
+			selectRandom,
+			selectTrainingSequence,
+			regenerateOnPlay
+		);
 		lock.unlock(this);
 		return r;
 	}
@@ -204,8 +237,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			PatternSequence sequence = controller.getSequences().get(startSequence);
 			if (sequence!=null) {
 				this.currSequence = startSequence;
-				Sequence midiSequence = controller.generateMidiSequence(sequence);
-				MidiSys.sequencer.setSequence(midiSequence);
+				changedCurrentSequenceNoLock();
 				MidiSys.sequencer.start();
 				if (selectNextSequence) {
 					this.nextSequence = selectNextSequenceNoLock();
@@ -232,6 +264,16 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		changedNextSequenceNoLock();
 		if (regenerateOnPlay && !currSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
 			controller.generateSequence(currSequence).start();
+		}
+	}
+	
+	protected void changedCurrentSequenceNoLock() {
+		if (controller!=null && !MidiSys.sequencer.isRunning()) {
+			PatternSequence sequence = controller.getSequences().get(currSequence);
+			if (sequence!=null) {
+				Sequence midiSequence = controller.generateMidiSequence(sequence);
+				MidiSys.sequencer.setSequence(midiSequence);
+			}
 		}
 	}
 	

@@ -98,41 +98,23 @@ public class RequestHandler extends HttpRequestHandler {
 					handleGetNetworkRequest(response);
 				}
 			} else if (request.path.equals("/networkStatistics.txt")) {
-				if (checkInitialized(response)) {
-					NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics());
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = statistics.render();
-				}
+				NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics());
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = statistics.render();
 			} else if (request.path.equals("/generators.txt")) {
 				if (checkInitialized(response)) {
+					boolean regenerate = false;
 					boolean generate = !controller.changedTrainingSequenceSinceTraining();
 					if (generate && monitor.getDonePercentage()<1F) {
 						generate = false;
 					}
-					GeneratorOverview generators = new GeneratorOverview(controller.getGenerators(),generate);
+					GeneratorOverview generators = new GeneratorOverview(controller.getGenerators(),regenerate,generate);
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = generators.render();
 				}
 			} else {
 				setNotFoundError(response,new Str("Not found"));
 			}
-		}
-	}
-
-	@Override
-	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
-		if (request.path.equals("/state.txt")) {
-			handlePostStateRequest(request,response);
-		} else if (request.path.equals("/modal.txt")) {
-			handlePostModalRequest(request,response);
-		} else if (request.path.equals("/sequencer.txt")) {
-			handlePostSequencerRequest(request,response);
-		} else if (request.path.equals("/network.txt")) {
-			handlePostNetworkRequest(request,response);
-		} else if (request.path.equals("/generators.txt")) {
-			handlePostGeneratorsRequest(request,response);
-		} else {
-			setNotFoundError(response,new Str("Not found"));
 		}
 	}
 	
@@ -176,6 +158,23 @@ public class RequestHandler extends HttpRequestHandler {
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
+	}
+
+	@Override
+	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
+		if (request.path.equals("/state.txt")) {
+			handlePostStateRequest(request,response);
+		} else if (request.path.equals("/modal.txt")) {
+			handlePostModalRequest(request,response);
+		} else if (request.path.equals("/sequencer.txt")) {
+			handlePostSequencerRequest(request,response);
+		} else if (request.path.equals("/network.txt")) {
+			handlePostNetworkRequest(request,response);
+		} else if (request.path.equals("/generators.txt")) {
+			handlePostGeneratorsRequest(request,response);
+		} else {
+			setNotFoundError(response,new Str("Not found"));
+		}
 	}
 
 	protected void handlePostStateRequest(HttpRequest request, HttpResponse response) {
@@ -254,7 +253,7 @@ public class RequestHandler extends HttpRequestHandler {
 	}
 
 	protected void handlePostSequencerRequest(HttpRequest request, HttpResponse response) {
-		if (request.body.toString().equals("PLAY_SEQUENCE")) {
+		if (request.body.toString().equals("START_SEQUENCE")) {
 			String name = selector.getCurrentSequence();
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
 				if (checkSequenceName(name,response)) {
@@ -266,11 +265,11 @@ public class RequestHandler extends HttpRequestHandler {
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = new Str("OK");
 			}
-		} else if (request.body.toString().equals("PLAY_THEME")) {
+		} else if (request.body.toString().equals("START")) {
 			String name = selector.getCurrentSequence();
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
 				if (checkSequenceName(name,response)) {
-					selector.startTheme(name);
+					selector.start();
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = new Str("OK");
 				}
