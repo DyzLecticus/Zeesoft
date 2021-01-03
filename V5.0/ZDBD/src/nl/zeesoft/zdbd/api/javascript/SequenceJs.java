@@ -24,7 +24,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"};");
 		append(r,"sequence.errorCallback = function(response) {");
 		append(r,"    if (response.status==503) {");
-		append(r,"        setTimeout(function() { sequencer.refresh(); }, 500);");
+		append(r,"        setTimeout(function() { sequence.refresh(); }, 500);");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"sequence.clear = function() {");

@@ -10,6 +10,7 @@ public class SequencerJs extends ResponseObject {
 		append(r,"var sequencer = sequencer || {};");
 		append(r,"sequencer.refresh = function() {");
 		append(r,"    main.xhr.getText(\"/sequencerControl.txt\",sequencer.refreshCallback,sequencer.errorCallback);");
+		append(r,"    sequencer.refreshState();");
 		append(r,"};");
 		append(r,"sequencer.refreshCallback = function(response) {");
 		//append(r,"    console.log(response);");
@@ -75,12 +76,10 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",body,cb);");
 		append(r,"}");
 		append(r,"sequencer.startSequence = function() {");
-		append(r,"    var cb = function() { sequencer.refresh(); sequencer.refreshState(); };");
-		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START_SEQUENCE\",cb,main.xhr.alertErrorCallback);");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START_SEQUENCE\",sequencer.refresh,main.xhr.alertErrorCallback);");
 		append(r,"}");
 		append(r,"sequencer.startTheme = function() {");
-		append(r,"    var cb = function() { sequencer.refresh(); sequencer.refreshState(); };");
-		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START\",cb,main.xhr.alertErrorCallback);");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"START\",sequencer.refresh,main.xhr.alertErrorCallback);");
 		append(r,"}");
 		append(r,"sequencer.stop = function() {");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"STOP\",sequencer.refresh,main.xhr.alertErrorCallback);");
