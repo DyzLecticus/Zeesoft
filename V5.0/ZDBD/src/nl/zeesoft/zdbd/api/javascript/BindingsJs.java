@@ -27,13 +27,13 @@ public class BindingsJs extends ResponseObject {
 		append(r,"    } else if (e.key == \"5\" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
 		append(r,"        menu.new();");
 		append(r,"        e.stopPropagation();");
-		append(r,"    } else if (e.key == \" \" && e.shiftKey && e.ctrlKey && !e.altKey) {");
+		append(r,"    } else if (e.key == \"6\" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
 		append(r,"        sequencer.startSequence();");
 		append(r,"        e.stopPropagation();");
-		append(r,"    } else if (e.key == \" \" && e.shiftKey && !e.ctrlKey && !e.altKey) {");
+		append(r,"    } else if (e.key == \"7\" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
 		append(r,"        sequencer.startTheme();");
 		append(r,"        e.stopPropagation();");
-		append(r,"    } else if (e.key == \" \" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
+		append(r,"    } else if (e.key == \"8\" && !e.shiftKey && e.ctrlKey && !e.altKey) {");
 		append(r,"        sequencer.stop();");
 		append(r,"        e.stopPropagation();");
 		append(r,"    } else if (e.code == \"Enter\" && !e.shiftKey && e.ctrlKey && !e.altKey) {");

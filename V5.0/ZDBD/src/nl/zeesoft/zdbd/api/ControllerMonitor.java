@@ -75,7 +75,7 @@ public class ControllerMonitor implements EventListener, ProgressListener {
 	}
 	
 	protected float getDonePercentageNoLock() {
-		float r = 0;
+		float r = 1;
 		if (todo>0) {
 			r = ((float)done / (float)todo);
 		}

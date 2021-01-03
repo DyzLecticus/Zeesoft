@@ -14,7 +14,7 @@ public class ThemeJs extends ResponseObject {
 		append(r,"theme.refreshCallback = function(response) {");
 		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
-		//append(r,"        console.log(obj);");
+		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"theme\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        var html = '<div class=\"column-left column-padding column-label\">Name</div>';");

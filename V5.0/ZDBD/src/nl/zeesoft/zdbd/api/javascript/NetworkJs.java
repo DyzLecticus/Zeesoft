@@ -8,8 +8,14 @@ public class NetworkJs extends ResponseObject {
 	public Str render() {
 		Str r = new Str();
 		append(r,"var network = network || {};");
+		append(r,"network.showStats = false;");
 		append(r,"network.refresh = function() {");
 		append(r,"    main.xhr.getText(\"/network.txt\",network.refreshCallback,network.errorCallback);");
+		append(r,"    if (network.showStats) {");
+		append(r,"        network.refreshStatistics();");
+		append(r,"    }");
+		append(r,"};");
+		append(r,"network.refreshStatistics = function() {");
 		append(r,"    main.xhr.getText(\"/networkStatistics.txt\",network.refreshStatisticsCallback,network.errorCallback);");
 		append(r,"};");
 		append(r,"network.refreshCallback = function(response) {");
@@ -54,6 +60,22 @@ public class NetworkJs extends ResponseObject {
 		append(r,"network.train = function() {");
 		append(r,"    var cb = function() { network.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/network.txt\",\"TRAIN\",cb,main.xhr.alertErrorCallback);");
+		append(r,"};");
+		append(r,"network.toggleShowStats = function() {");
+		append(r,"    network.showStats = !network.showStats;");
+		append(r,"    if (network.showStats) {");
+		append(r,"        network.refreshStatistics();");
+		append(r,"    } else {");
+		append(r,"        network.clear();");
+		append(r,"    }");
+		append(r,"    var elem = window.document.getElementById(\"showNetworkStatistics\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        if (network.showStats) {");
+		append(r,"            elem.value = \"-\";");
+		append(r,"        } else {");
+		append(r,"            elem.value = \"+\";");
+		append(r,"        }");
+		append(r,"    }");
 		append(r,"};");
 		return r;
 	}

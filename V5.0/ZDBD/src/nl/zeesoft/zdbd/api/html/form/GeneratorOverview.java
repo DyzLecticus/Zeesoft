@@ -53,7 +53,11 @@ public class GeneratorOverview extends FormHtml {
 				downDisabled = " DISABLED";
 			}
 			
-			append(r,"<div class=\"row\">");
+			append(r,"<div class=\"row");
+			if (i % 2==0) {
+				r.sb().append(" row-highlight");
+			}
+			r.sb().append("\">");
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<label class=\"column-label\">");
 			r.sb().append(generator.name);

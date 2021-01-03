@@ -40,15 +40,24 @@ public class Generators {
 	
 	public void initializeDefaults() {
 		Generator gen = null;
-		for (int i = 1; i <= 4; i++) {
-			gen = new Generator();
-			gen.name = "Maintain " + i;
-			if (i>=3) {
-				gen.setSkipInstruments(Bass.NAME, Note.NAME);
-			}
-			put(gen);
-		}
-
+		gen = new Generator();
+		gen.name = "Maintain A1";
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain A2";
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain B1";
+		gen.setSkipInstruments(Bass.NAME, Note.NAME);
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain B2";
+		gen.setSkipInstruments(Bass.NAME, Note.NAME);
+		put(gen);
+		
 		gen = new Generator();
 		gen.name = "Free form";
 		gen.maintainBeat = 0;

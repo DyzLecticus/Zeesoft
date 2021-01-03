@@ -12,10 +12,12 @@ import nl.zeesoft.zdbd.api.html.form.GeneratorOverview;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
+import nl.zeesoft.zdbd.api.html.form.SequenceEditor;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
 import nl.zeesoft.zdbd.api.javascript.BindingsJs;
 import nl.zeesoft.zdbd.api.javascript.GeneratorsJs;
+import nl.zeesoft.zdbd.api.javascript.IndexJs;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
@@ -25,6 +27,7 @@ import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.theme.ThemeController;
@@ -51,19 +54,23 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/", (new IndexHtml()).render());
 		pathResponses.put("/index.html", (new IndexHtml()).render());
 		pathResponses.put("/bye.html", (new ByeHtml()).render());
+
+		pathResponses.put("/main.css", (new MainCss()).render());
 		
+		pathResponses.put("/index.js", (new IndexJs()).render());
+
 		pathResponses.put("/main.js", (new MainJs()).render());
 		pathResponses.put("/modal.js", (new ModalJs()).render());
 		pathResponses.put("/state.js", (new StateJs()).render());
 		pathResponses.put("/bindings.js", (new BindingsJs()).render());
 		pathResponses.put("/menu.js", (new MenuJs()).render());
-		pathResponses.put("/quit.js", (new QuitJs()).render());
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
+		pathResponses.put("/sequence.js", (new SequencerJs()).render());
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		pathResponses.put("/network.js", (new NetworkJs()).render());
 		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
 		
-		pathResponses.put("/main.css", (new MainCss()).render());
+		pathResponses.put("/quit.js", (new QuitJs()).render());
 	}
 
 	@Override
@@ -85,6 +92,23 @@ public class RequestHandler extends HttpRequestHandler {
 				}
 			} else if (request.path.equals("/sequencer.txt")) {
 				if (checkInitialized(response)) {
+					Str res = new Str();
+					res.sb().append("isRunning:");
+					res.sb().append(MidiSys.sequencer.isRunning());
+
+					res.sb().append("\n");
+					res.sb().append("currentSequence:");
+					res.sb().append(selector.getCurrentSequence());
+					
+					res.sb().append("\n");
+					res.sb().append("nextSequence:");
+					res.sb().append(selector.getNextSequence());
+					
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = res;
+				}
+			} else if (request.path.equals("/sequencerControl.txt")) {
+				if (checkInitialized(response)) {
 					int bpm = 120;
 					Rythm rythm = controller.getRythm();
 					if (rythm!=null) {
@@ -92,6 +116,12 @@ public class RequestHandler extends HttpRequestHandler {
 					}
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = selector.getSequencerControl(bpm).render();
+				}
+			} else if (request.path.equals("/sequenceEditor.txt")) {
+				if (checkInitialized(response)) {
+					SequenceEditor editor = new SequenceEditor(controller.getTrainingSequence(),0);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = editor.render();
 				}
 			} else if (request.path.equals("/network.txt")) {
 				if (checkInitialized(response)) {
@@ -248,8 +278,8 @@ public class RequestHandler extends HttpRequestHandler {
 
 	protected void handlePostSequencerRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("START_SEQUENCE")) {
-			String name = selector.getCurrentSequence();
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
+				String name = NetworkTrainer.TRAINING_SEQUENCE;
 				if (checkSequenceName(name,response)) {
 					selector.startSequence(name);
 					setPostOk(response);

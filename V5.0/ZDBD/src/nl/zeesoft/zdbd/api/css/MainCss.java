@@ -27,6 +27,9 @@ public class MainCss extends ResponseObject {
 		append(r,"    display:table;");
 		append(r,"    clear: both;");
 		append(r,"}");
+		append(r,".row-highlight {");
+		append(r,"    background-color:#f0f0f0;");
+		append(r,"}");
 		append(r,".column-left {");
 		append(r,"    float:left;");
 		append(r,"    width:auto;");
