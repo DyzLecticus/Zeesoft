@@ -151,9 +151,15 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			event.name.equals(ThemeController.GENERATED_SEQUENCE)
 			) {
 			lock.lock(this);
-			if (event.param!=null && event.param.toString().equals(nextSequence)) {
-				changedNextSequenceNoLock();
-				Logger.dbg(this, new Str("Updated next sequence"));
+			if (event.param!=null) {
+				if (event.param.toString().equals(currSequence) && !MidiSys.sequencer.isRunning()) {
+					changedCurrentSequenceNoLock();
+					Logger.dbg(this, new Str("Updated current sequence"));
+				}
+				if (event.param.toString().equals(nextSequence)) {
+					changedNextSequenceNoLock();
+					Logger.dbg(this, new Str("Updated next sequence"));
+				}
 			}
 			lock.unlock(this);
 		}

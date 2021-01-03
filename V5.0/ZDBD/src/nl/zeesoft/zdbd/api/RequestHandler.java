@@ -28,6 +28,7 @@ import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.theme.ThemeController;
@@ -198,6 +199,8 @@ public class RequestHandler extends HttpRequestHandler {
 			handlePostModalRequest(request,response);
 		} else if (request.path.equals("/sequencer.txt")) {
 			handlePostSequencerRequest(request,response);
+		} else if (request.path.equals("/sequenceEditor.txt")) {
+			handlePostSequenceEditorRequest(request,response);
 		} else if (request.path.equals("/network.txt")) {
 			handlePostNetworkRequest(request,response);
 		} else if (request.path.equals("/generators.txt")) {
@@ -326,6 +329,38 @@ public class RequestHandler extends HttpRequestHandler {
 			}
 			if (!error) {
 				response.code = HttpURLConnection.HTTP_OK;
+				setPostOk(response);
+			}
+		} else {
+			setNotFoundError(response,new Str("Not found"));
+		}
+	}
+
+	protected void handlePostSequenceEditorRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.startsWith("SET_SEQUENCE_PATTERN:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int sequenceIndex = Integer.parseInt(elems.get(1).toString());
+			int sequencePattern = Integer.parseInt(elems.get(2).toString());
+			sequence.sequence[sequenceIndex] = sequencePattern;
+			controller.setTrainingSequence(sequence);
+			setPostOk(response);
+		} else if (request.body.startsWith("SET_PATTERN_STEP_VALUE:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int patternIndex = Integer.parseInt(elems.get(1).toString());
+			String instrumentName = elems.get(2).toString();
+			int step = Integer.parseInt(elems.get(3).toString());
+			int value = Integer.parseInt(elems.get(4).toString());
+			if (patternIndex<4) {
+				while (patternIndex>=sequence.patterns.size()) {
+					InstrumentPattern pattern = new InstrumentPattern();
+					pattern.num = sequence.patterns.size();
+					sequence.patterns.add(pattern);
+				}
+				InstrumentPattern pattern = sequence.patterns.get(patternIndex);
+				pattern.setStepValue(instrumentName, step, value);
+				controller.setTrainingSequence(sequence);
 				setPostOk(response);
 			}
 		} else {

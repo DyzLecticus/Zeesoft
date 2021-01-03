@@ -4,6 +4,7 @@ import nl.zeesoft.zdbd.midi.convertors.MidiNote;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Str;
 
 public class SequenceEditor extends FormHtml {
@@ -65,30 +66,42 @@ public class SequenceEditor extends FormHtml {
 				}
 				r.sb().append("\">");
 				for (String name: pattern.getInstrumentNames()) {
-					append(r,"<div class=\"column-left column-padding\">");
 					int value = pattern.getStepValue(name,s);
+					append(r,"<div class=\"column-left column-padding\">");
 					if (name.equals(Note.NAME)) {
 						append(r,renderNoteSelect("",value,""));
 					} else {
 						append(r,"<input type=\"button\" value=\"");
 						r.sb().append(value);
+						r.sb().append("\" class=\"pattern-step ");
+						if (InstrumentPattern.isAccent(value)) { 
+							r.sb().append("yellow");
+						} else if (value!=PatternInstrument.OFF) {
+							r.sb().append("orange");
+						}
+						r.sb().append("\" onclick=\"sequence.clickedStepValue(this)\"");
+						r.sb().append("\" id=\"");
+						r.sb().append(name);
+						r.sb().append("-");
+						r.sb().append(s);
 						r.sb().append("\" />");
 					}
 					append(r,"</div>");
 				}
 				append(r,"</div>");
 			}
+			append(r,"</div>");
 		}
 		
 		return r;
 	}
 	
-	protected static Str renderSequencePatternSelect(PatternSequence sequence, int num) {
-		return renderPatternSelect("sequencePattern" + num,sequence.sequence[num],true,"");
+	protected static Str renderSequencePatternSelect(PatternSequence sequence, int index) {
+		return renderPatternSelect("sequencePattern-" + index,sequence.sequence[index],true,"sequence.changedSequencePatternSelect(this);");
 	}
 	
 	protected static Str renderPatternSelect(int sel) {
-		return renderPatternSelect("patternSelect",sel,false,"sequence.changedPatternSelect();");
+		return renderPatternSelect("patternSelect",sel,false,"sequence.changedPatternSelect(this);");
 	}
 	
 	protected static Str renderPatternSelect(String id, int sel, boolean addZero, String onChange) {
@@ -96,6 +109,11 @@ public class SequenceEditor extends FormHtml {
 		append(r,"<select id=\"");
 		r.sb().append(id);
 		r.sb().append("\"");
+		if (onChange.length()>0) {
+			r.sb().append(" onchange=\"");
+			r.sb().append(onChange);
+			r.sb().append("\"");
+		}
 		r.sb().append(">");
 		if (addZero) {
 			append(r,"    <option value=\"-1\" ");

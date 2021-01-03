@@ -63,6 +63,15 @@ public class MainCss extends ResponseObject {
 		append(r,"    visibility:visible;");
 		append(r,"}");
 		
+		append(r,".pattern-step {");
+		append(r,"    width:32px;");
+		append(r,"}");
+		append(r,".orange {");
+		append(r,"    background-color:#ff9900;");
+		append(r,"}");
+		append(r,".yellow {");
+		append(r,"    background-color:#ffee00;");
+		append(r,"}");
 		return r;
 	}
 }

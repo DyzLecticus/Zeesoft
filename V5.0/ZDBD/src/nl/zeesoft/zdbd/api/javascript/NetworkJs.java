@@ -47,7 +47,7 @@ public class NetworkJs extends ResponseObject {
 		append(r,"network.refreshStatisticsCallback = function(response) {");
 		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"statistics\");");
-		append(r,"    if (elem!=null) {");
+		append(r,"    if (elem!=null && network.showStats) {");
 		append(r,"        elem.innerHTML = response.responseText;");
 		append(r,"    }");
 		append(r,"};");
