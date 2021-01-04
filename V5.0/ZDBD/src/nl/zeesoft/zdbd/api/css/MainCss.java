@@ -55,7 +55,7 @@ public class MainCss extends ResponseObject {
 		append(r,"}");
 		
 		append(r,".show-hide {");
-		append(r,"    min-width:28px;");
+		append(r,"    width:28px;");
 		append(r,"}");
 		append(r,".hidden {");
 		append(r,"    display:none;");
@@ -66,9 +66,13 @@ public class MainCss extends ResponseObject {
 		append(r,"    visibility:visible;");
 		append(r,"}");
 		
+		append(r,".instrument-label {");
+		append(r,"    display:block;");
+		append(r,"    width:32px;");
+		append(r,"}");
 		append(r,".pattern-step {");
 		append(r,"    border:2px outset;");
-		append(r,"    min-width:32px;");
+		append(r,"    width:32px;");
 		append(r,"}");
 		
 		append(r,".grey {");

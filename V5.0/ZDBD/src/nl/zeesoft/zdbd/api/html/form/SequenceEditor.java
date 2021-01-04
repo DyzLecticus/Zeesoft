@@ -5,6 +5,8 @@ import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
 import nl.zeesoft.zdk.Str;
 
 public class SequenceEditor extends FormHtml {
@@ -28,7 +30,7 @@ public class SequenceEditor extends FormHtml {
 		Str r = new Str();
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,"<label class=\"column-label\">Sequence</label>");
+		append(r,"<label class=\"column-label\">Pattern sequence</label>");
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,renderSequencePatternSelect(sequence,0));
@@ -40,11 +42,27 @@ public class SequenceEditor extends FormHtml {
 		
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,"<label class=\"column-label\">Pattern</label>");
+		append(r,"<label class=\"column-label\">Edit pattern</label>");
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,renderPatternSelect(0));
 		append(r,"</div>");
+		append(r,"</div>");
+
+		append(r,"<div class=\"row\">");
+		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+			append(r,"<div class=\"column-left column-padding\">");
+			String label = inst.name().substring(0,2).toUpperCase();
+			if (inst.name().equals(Percussion1.NAME)) {
+				label = "P1";
+			} else if (inst.name().equals(Percussion2.NAME)) {
+				label = "P2";
+			}
+			append(r,"<label class=\"instrument-label\">");
+			r.sb().append(label);
+			r.sb().append("</label>");
+			append(r,"</div>");
+		}
 		append(r,"</div>");
 
 		for (int p = 0; p < sequence.sequence.length; p++) {
@@ -69,7 +87,7 @@ public class SequenceEditor extends FormHtml {
 					int value = pattern.getStepValue(name,s);
 					append(r,"<div class=\"column-left column-padding\">");
 					if (name.equals(Note.NAME)) {
-						append(r,renderNoteSelect("",value,""));
+						append(r,renderNoteSelect(name + "-" + s,value,"sequence.changedStepValue(this);"));
 					} else {
 						append(r,"<input type=\"button\" value=\"");
 						r.sb().append(value);
@@ -153,6 +171,11 @@ public class SequenceEditor extends FormHtml {
 		append(r,"<select id=\"");
 		r.sb().append(id);
 		r.sb().append("\"");
+		if (onChange.length()>0) {
+			r.sb().append(" onchange=\"");
+			r.sb().append(onChange);
+			r.sb().append("\"");
+		}
 		r.sb().append(">");
 		for (int n = 0; n < MidiNote.NOTE_CODES.length; n++) {
 			append(r,"    <option value=\"");

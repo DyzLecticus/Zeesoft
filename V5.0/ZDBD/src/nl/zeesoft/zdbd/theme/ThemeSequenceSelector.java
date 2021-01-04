@@ -141,6 +141,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 				if (sequences.size()>=1) {
 					currSequence = sequences.get(0);
 					changedCurrentSequenceNoLock();
+					hold = false;
 					nextSequence = selectNextSequenceNoLock();
 					changedNextSequenceNoLock();
 				}
@@ -242,15 +243,16 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			}
 			PatternSequence sequence = controller.getSequences().get(startSequence);
 			if (sequence!=null) {
-				this.currSequence = startSequence;
+				currSequence = startSequence;
 				changedCurrentSequenceNoLock();
 				MidiSys.sequencer.start();
 				if (selectNextSequence) {
-					this.nextSequence = selectNextSequenceNoLock();
+					nextSequence = selectNextSequenceNoLock();
 				} else {
-					this.nextSequence = startSequence;
+					hold = true;
+					nextSequence = startSequence;
 				}
-				this.changedNextSequenceNoLock();
+				changedNextSequenceNoLock();
 				if (regenerateOnPlay && !startSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
 					controller.generateSequence(startSequence).start();
 				}

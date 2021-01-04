@@ -25,7 +25,6 @@ public class FormProperty extends ResponseObject {
 	@Override
 	public Str render() {
 		Str r = new Str();
-		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,"<label class=\"column-label\" for=\"");
 		r.sb().append(name);
@@ -130,7 +129,6 @@ public class FormProperty extends ResponseObject {
 			}
 			append(r,"</div>");
 		}
-		append(r,"</div>");
 		return r;
 	}
 }

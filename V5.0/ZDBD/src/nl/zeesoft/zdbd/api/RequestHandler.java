@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
-import nl.zeesoft.zdbd.api.html.form.GeneratorOverview;
+import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
@@ -94,20 +94,7 @@ public class RequestHandler extends HttpRequestHandler {
 				}
 			} else if (request.path.equals("/sequencer.txt")) {
 				if (checkInitialized(response)) {
-					Str res = new Str();
-					res.sb().append("isRunning:");
-					res.sb().append(MidiSys.sequencer.isRunning());
-
-					res.sb().append("\n");
-					res.sb().append("currentSequence:");
-					res.sb().append(selector.getCurrentSequence());
-					
-					res.sb().append("\n");
-					res.sb().append("nextSequence:");
-					res.sb().append(selector.getNextSequence());
-					
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = res;
+					handleGetSequencerRequest(response);
 				}
 			} else if (request.path.equals("/sequencerControl.txt")) {
 				if (checkInitialized(response)) {
@@ -145,7 +132,7 @@ public class RequestHandler extends HttpRequestHandler {
 					if (generate && monitor.getDonePercentage()<1F) {
 						generate = false;
 					}
-					GeneratorOverview generators = new GeneratorOverview(controller.getGenerators(),regenerate,generate);
+					GeneratorList generators = new GeneratorList(controller.getGenerators(),regenerate,generate);
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = generators.render();
 				}
@@ -184,22 +171,36 @@ public class RequestHandler extends HttpRequestHandler {
 		response.body = r;
 	}
 	
+	protected void handleGetSequencerRequest(HttpResponse response) {
+		Str r = new Str();
+		r.sb().append("isRunning:");
+		r.sb().append(MidiSys.sequencer.isRunning());
+
+		r.sb().append("\n");
+		r.sb().append("currentSequence:");
+		r.sb().append(selector.getCurrentSequence());
+		
+		r.sb().append("\n");
+		r.sb().append("nextSequence:");
+		r.sb().append(selector.getNextSequence());
+		
+		response.code = HttpURLConnection.HTTP_OK;
+		response.body = r;
+	}
+	
 	protected void handleGetNetworkRequest(HttpResponse response) {
 		Str r = new Str();
 		r.sb().append("isTraining:");
 		r.sb().append(monitor.getText().equals(ThemeController.TRAINING_NETWORK));
 		
-		boolean needsTraining = controller.changedTrainingSequenceSinceTraining();
 		r.sb().append("\n");
 		r.sb().append("needsTraining:");
-		r.sb().append(needsTraining);
+		r.sb().append(controller.changedTrainingSequenceSinceTraining());
 		
 		PatternSequence sequence = controller.getTrainingSequence();
-		boolean canTrain = needsTraining && sequence.getSequencedPatterns().size()>0;
-		
 		r.sb().append("\n");
 		r.sb().append("canTrain:");
-		r.sb().append(canTrain);
+		r.sb().append(sequence.getSequencedPatterns().size()>0 && monitor.getDonePercentage()==1);
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
@@ -384,8 +385,12 @@ public class RequestHandler extends HttpRequestHandler {
 
 	protected void handlePostNetworkRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("TRAIN")) {
-			monitor.startChain(controller.trainNetwork());
-			setPostOk(response);
+			if (!controller.isBusy()) {
+				monitor.startChain(controller.trainNetwork());
+				setPostOk(response);
+			} else {
+				setBusyError(response,"Unable to train the network right now. Please try again later.");
+			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 		}
@@ -393,13 +398,21 @@ public class RequestHandler extends HttpRequestHandler {
 
 	protected void handlePostGeneratorsRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("GENERATE_ALL")) {
-			monitor.startChain(controller.generateSequences());
-			setPostOk(response);
+			if (!controller.isBusy()) {
+				monitor.startChain(controller.generateSequences());
+				setPostOk(response);
+			} else {
+				setBusyError(response,"Unable to generate sequences right now. Please try again later.");
+			}
 		} else if (request.body.startsWith("GENERATE:")) {
 			String name = request.body.split(":").get(1).toString();
 			if (checkGeneratorName(name,response)) {
-				monitor.startChain(controller.generateSequence(name));
-				setPostOk(response);
+				if (!controller.isBusy()) {
+					monitor.startChain(controller.generateSequence(name));
+					setPostOk(response);
+				} else {
+					setBusyError(response,"Unable to generate sequences right now. Please try again later.");
+				}
 			}
 		} else if (request.body.startsWith("MOVE_UP:")) {
 			String name = request.body.split(":").get(1).toString();
@@ -430,9 +443,7 @@ public class RequestHandler extends HttpRequestHandler {
 			controller.getTrainingSequence()==null ||
 			monitor.getText().equals(ThemeController.INITIALIZING)
 			) {
-			setError(response,HttpURLConnection.HTTP_UNAVAILABLE,
-				new Str("Initializing application. Please try again later.")
-			);
+			setBusyError(response,"Initializing application. Please try again later.");
 			r = false;
 		}
 		return r;
@@ -500,4 +511,9 @@ public class RequestHandler extends HttpRequestHandler {
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = new Str("OK");
 	}
+	
+	protected void setBusyError(HttpResponse response, String msg) {
+		setError(response,HttpURLConnection.HTTP_UNAVAILABLE,new Str(msg));
+	}
 }
+

@@ -5,11 +5,11 @@ import java.util.List;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdk.Str;
 
-public class GeneratorOverview extends FormHtml {
+public class GeneratorList extends FormHtml {
 	private List<Generator> generators 	= null;
 	private boolean			generate	= false;
 	
-	public GeneratorOverview(List<Generator> generators, boolean regenerate, boolean generate) {
+	public GeneratorList(List<Generator> generators, boolean regenerate, boolean generate) {
 		this.generators = generators;
 		this.generate = generate;
 		String renderAs = FormProperty.BUTTON_INPUT;
@@ -36,7 +36,12 @@ public class GeneratorOverview extends FormHtml {
 	@Override
 	public Str render() {
 		Str r = new Str();
-		append(r,super.render());
+		append(r,"<div class=\"row\">");
+		append(r,properties.get(0).render());
+		append(r,"<div class=\"column-right column-padding\">");
+		append(r,"<input type=\"button\" class=\"show-hide\" id=\"showGeneratorList\" value=\"+\" onclick=\"generators.toggleShowList(this);\" />");
+		append(r,"</div>");
+		append(r,"</div>");
 		append(r,renderGenerators(generators,generate));
 		return r;
 	}
@@ -44,6 +49,7 @@ public class GeneratorOverview extends FormHtml {
 	public static Str renderGenerators(List<Generator> generators, boolean generate) {
 		Str r = new Str();
 		int i = 0;
+		append(r,"<div id=\"generatorList\" class=\"hidden\">");
 		for (Generator generator: generators) {
 			String upDisabled = "";
 			String downDisabled = "";
@@ -100,6 +106,7 @@ public class GeneratorOverview extends FormHtml {
 			
 			i++;
 		}
+		append(r,"</div>");
 		return r;
 	}
 }

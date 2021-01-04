@@ -8,6 +8,7 @@ public class GeneratorsJs extends ResponseObject {
 	public Str render() {
 		Str r = new Str();
 		append(r,"var generators = generators || {};");
+		append(r,"generators.showList = false;");
 		append(r,"generators.refresh = function() {");
 		append(r,"    main.xhr.getText(\"/generators.txt\",generators.refreshCallback,generators.errorCallback);");
 		append(r,"};");
@@ -27,6 +28,22 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    var elem = window.document.getElementById(\"generators\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = \"\";");
+		append(r,"    }");
+		append(r,"};");
+		append(r,"generators.toggleShowList = function(property) {");
+		append(r,"    generators.showList = !generators.showList;");
+		append(r,"    var elem = window.document.getElementById(\"generatorList\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        if (generators.showList) {");
+		append(r,"            elem.classList.remove(\"hidden\");");
+		append(r,"        } else {");
+		append(r,"            elem.classList.add(\"hidden\");");
+		append(r,"        }");
+		append(r,"    }");
+		append(r,"    if (generators.showList) {");
+		append(r,"        property.value = \"-\";");
+		append(r,"    } else {");
+		append(r,"        property.value = \"+\";");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"generators.generateAll = function() {");

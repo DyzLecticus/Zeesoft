@@ -38,7 +38,9 @@ public class FormHtml extends ResponseObject {
 	public Str render() {
 		Str r = new Str();
 		for (FormProperty property: properties) {
+			append(r,"<div class=\"row\">");
 			append(r,property.render());
+			append(r,"</div>");
 		}
 		append(r,renderOkCancel(onOkClick,onCancelClick));
 		return r;
