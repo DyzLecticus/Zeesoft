@@ -189,12 +189,13 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("isTraining:");
 		r.sb().append(monitor.getText().equals(ThemeController.TRAINING_NETWORK));
 		
+		boolean needsTraining = controller.changedTrainingSequenceSinceTraining();
 		r.sb().append("\n");
 		r.sb().append("needsTraining:");
-		r.sb().append(controller.changedTrainingSequenceSinceTraining());
+		r.sb().append(needsTraining);
 		
 		PatternSequence sequence = controller.getTrainingSequence();
-		boolean canTrain = sequence.getSequencedPatterns().size()>0;
+		boolean canTrain = needsTraining && sequence.getSequencedPatterns().size()>0;
 		
 		r.sb().append("\n");
 		r.sb().append("canTrain:");
