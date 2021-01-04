@@ -67,7 +67,7 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <input type=\"button\" value=\"Stop\" onclick=\"sequencer.stop();\" />");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-right column-padding\">");
-		append(r,"    <input type=\"button\" id=\"showTrainingSequence\" value=\"+\" onclick=\"sequence.toggleShow();\" />");
+		append(r,"    <input type=\"button\" class=\"show-hide\" id=\"showTrainingSequence\" value=\"+\" onclick=\"sequence.toggleShow();\" />");
 		append(r,"    </div>");
 		append(r,"</div>");
 		append(r,"<div id=\"sequenceEditor\"></div>");
@@ -83,7 +83,7 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" />");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-right column-padding\">");
-		append(r,"    <input type=\"button\" id=\"showNetworkStatistics\" value=\"+\" onclick=\"network.toggleShowStats();\" />");
+		append(r,"    <input type=\"button\" class=\"show-hide\" id=\"showNetworkStatistics\" value=\"+\" onclick=\"network.toggleShowStats();\" />");
 		append(r,"    </div>");
 		append(r,"</div>");
 		append(r,"<div id=\"statistics\"></div>");

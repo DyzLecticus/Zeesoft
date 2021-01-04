@@ -19,6 +19,7 @@ import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.model.ModelStatistics;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.thread.Busy;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
@@ -180,6 +181,16 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			r = theme.network.getStatistics();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public NetworkIO getLastIO() {
+		NetworkIO r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.networkTrainer.getLastIO();
 		}
 		lock.unlock(this);
 		return r;

@@ -36,7 +36,10 @@ public class FormProperty extends ResponseObject {
 		if (renderAs.equals(TEXT)) {
 			Str cls = new Str(" class=\"column-left column-padding");
 			if (value!=null) {
-				if (value instanceof Integer) {
+				if (value instanceof Integer ||
+					value instanceof Float ||
+					value.toString().endsWith("%")
+					) {
 					cls.sb().append(" column-number");
 				}
 				cls.sb().append("\"");

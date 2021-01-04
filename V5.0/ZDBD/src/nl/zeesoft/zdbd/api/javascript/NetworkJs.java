@@ -10,10 +10,13 @@ public class NetworkJs extends ResponseObject {
 		append(r,"var network = network || {};");
 		append(r,"network.showStats = false;");
 		append(r,"network.refresh = function() {");
-		append(r,"    main.xhr.getText(\"/network.txt\",network.refreshCallback,network.errorCallback);");
+		append(r,"    network.refreshHeader();");
 		append(r,"    if (network.showStats) {");
 		append(r,"        network.refreshStatistics();");
 		append(r,"    }");
+		append(r,"};");
+		append(r,"network.refreshHeader = function() {");
+		append(r,"    main.xhr.getText(\"/network.txt\",network.refreshCallback,network.errorCallback);");
 		append(r,"};");
 		append(r,"network.refreshStatistics = function() {");
 		append(r,"    main.xhr.getText(\"/networkStatistics.txt\",network.refreshStatisticsCallback,network.errorCallback);");
@@ -24,7 +27,7 @@ public class NetworkJs extends ResponseObject {
 		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"trainNetwork\");");
 		append(r,"    if (elem!=null) {");
-		append(r,"        if (obj.isTraining || !obj.needsTraining) {");
+		append(r,"        if (obj.isTraining || !obj.canTrain) {");
 		append(r,"            elem.disabled = true;");
 		append(r,"        } else {");
 		append(r,"            elem.disabled = false;");

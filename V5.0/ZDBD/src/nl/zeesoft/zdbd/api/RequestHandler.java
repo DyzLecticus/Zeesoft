@@ -38,6 +38,7 @@ import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class RequestHandler extends HttpRequestHandler {
 	protected ThemeController			controller		= null;
@@ -129,7 +130,12 @@ public class RequestHandler extends HttpRequestHandler {
 					handleGetNetworkRequest(response);
 				}
 			} else if (request.path.equals("/networkStatistics.txt")) {
-				NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics());
+				float accuracy = 0;
+				NetworkIO lastIO = controller.getLastIO();
+				if (lastIO!=null) {
+					accuracy = lastIO.getAverageClassifierAccuracy(false);
+				}
+				NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics(),accuracy);
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = statistics.render();
 			} else if (request.path.equals("/generators.txt")) {
@@ -186,6 +192,13 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("\n");
 		r.sb().append("needsTraining:");
 		r.sb().append(controller.changedTrainingSequenceSinceTraining());
+		
+		PatternSequence sequence = controller.getTrainingSequence();
+		boolean canTrain = sequence.getSequencedPatterns().size()>0;
+		
+		r.sb().append("\n");
+		r.sb().append("canTrain:");
+		r.sb().append(canTrain);
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;

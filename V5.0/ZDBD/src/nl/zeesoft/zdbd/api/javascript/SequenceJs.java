@@ -40,7 +40,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    body += index;");
 		append(r,"    body += \":\";");
 		append(r,"    body += value;");
-		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,function() {},sequence.errorCallback);");
+		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,network.refreshHeader,sequence.errorCallback);");
 		append(r,"}");
 		append(r,"sequence.changedPatternSelect = function(property) {");
 		append(r,"    var select = property.options[property.selectedIndex].value;");
@@ -73,8 +73,8 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    if (newValue>maxValue) {");
 		append(r,"        newValue = 0;");
 		append(r,"    }");
-		append(r,"    var oldClass=\"\";");
-		append(r,"    var newClass=\"\";");
+		append(r,"    var oldClass=\"grey\";");
+		append(r,"    var newClass=\"grey\";");
 		append(r,"    if (value!=0) {");
 		append(r,"        if (value % 2 == 0) {");
 		append(r,"            oldClass = \"yellow\";");
@@ -104,7 +104,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    body += step;");
 		append(r,"    body += \":\";");
 		append(r,"    body += newValue;");
-		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,function() {},sequence.errorCallback);");
+		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,network.refreshHeader,sequence.errorCallback);");
 		append(r,"}");
 		append(r,"sequence.toggleShow = function() {");
 		append(r,"    sequence.show = !sequence.show;");

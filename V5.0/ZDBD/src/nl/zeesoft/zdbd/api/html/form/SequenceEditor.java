@@ -78,6 +78,8 @@ public class SequenceEditor extends FormHtml {
 							r.sb().append("yellow");
 						} else if (value!=PatternInstrument.OFF) {
 							r.sb().append("orange");
+						} else {
+							r.sb().append("grey");
 						}
 						r.sb().append("\" onclick=\"sequence.clickedStepValue(this)\"");
 						r.sb().append("\" id=\"");
