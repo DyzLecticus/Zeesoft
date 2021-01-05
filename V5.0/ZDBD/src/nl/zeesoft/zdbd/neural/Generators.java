@@ -107,6 +107,16 @@ public class Generators {
 		return r;
 	}
 	
+	public void rename(String name, String newName) {
+		lock.lock(this);
+		Generator gen = getNoLock(name);
+		if (gen!=null) {
+			gen.name = newName;
+			changed	= System.currentTimeMillis();
+		}
+		lock.unlock(this);
+	}
+	
 	public void set(String name, int index) {
 		lock.lock(this);
 		Generator gen = getNoLock(name);

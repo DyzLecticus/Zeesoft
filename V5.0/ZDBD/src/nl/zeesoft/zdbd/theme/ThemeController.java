@@ -241,6 +241,33 @@ public class ThemeController implements EventListener, Waitable {
 		lock.unlock(this);
 	}
 	
+	public List<Generator> getGenerators() {
+		List<Generator> r = new ArrayList<Generator>();
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.list();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void renameGenerator(String name,String newName) {
+		lock.lock(this);
+		if (theme!=null) {
+			theme.generators.rename(name, newName);
+		}
+		lock.unlock(this);
+	}
+	
+	public Generator removeGenerator(String name) {
+		Generator r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.generators.remove(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
 
 	public List<String> getSequenceNames() {
 		List<String> r = new ArrayList<String>();
@@ -279,26 +306,6 @@ public class ThemeController implements EventListener, Waitable {
 		lock.lock(this);
 		if (theme!=null) {
 			r = theme.soundPatch.generateMidiSequence(sequence);
-		}
-		lock.unlock(this);
-		return r;
-	}
-	
-	public Generator removeGenerator(String name) {
-		Generator r = null;
-		lock.lock(this);
-		if (theme!=null) {
-			r = theme.generators.remove(name);
-		}
-		lock.unlock(this);
-		return r;
-	}
-	
-	public List<Generator> getGenerators() {
-		List<Generator> r = new ArrayList<Generator>();
-		lock.lock(this);
-		if (theme!=null) {
-			r = theme.generators.list();
 		}
 		lock.unlock(this);
 		return r;

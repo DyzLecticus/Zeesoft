@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
@@ -27,6 +28,7 @@ import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
@@ -127,12 +129,7 @@ public class RequestHandler extends HttpRequestHandler {
 				response.body = statistics.render();
 			} else if (request.path.equals("/generators.txt")) {
 				if (checkInitialized(response)) {
-					boolean regenerate = false;
-					boolean generate = !controller.changedTrainingSequenceSinceTraining();
-					if (generate && monitor.getDonePercentage()<1F) {
-						generate = false;
-					}
-					GeneratorList generators = new GeneratorList(controller.getGenerators(),regenerate,generate);
+					GeneratorList generators = new GeneratorList(controller.getGenerators());
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = generators.render();
 				}
@@ -220,6 +217,8 @@ public class RequestHandler extends HttpRequestHandler {
 			handlePostNetworkRequest(request,response);
 		} else if (request.path.equals("/generators.txt")) {
 			handlePostGeneratorsRequest(request,response);
+		} else if (request.path.equals("/generator.txt")) {
+			handlePostGeneratorRequest(request,response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -343,7 +342,6 @@ public class RequestHandler extends HttpRequestHandler {
 				error = true;
 			}
 			if (!error) {
-				response.code = HttpURLConnection.HTTP_OK;
 				setPostOk(response);
 			}
 		} else {
@@ -437,6 +435,57 @@ public class RequestHandler extends HttpRequestHandler {
 		}
 	}
 	
+	protected void handlePostGeneratorRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.startsWith("EDIT:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				Generator generator = controller.getGenerator(name);
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new GeneratorEditor(generator)).render();
+			}
+		} else if (request.body.startsWith("SET_PROPERTY:")) {
+			List<Str> elems = request.body.split(":");
+			String name = request.body.split(":").get(1).toString();
+			if (checkGeneratorName(name,response)) {
+				String newName = "";
+				Generator generator = controller.getGenerator(name);
+				String propertyName = elems.get(2).toString();
+				boolean error = false;
+				// TODO: Handle skip instrument changes
+				if (propertyName.equals("name")) {
+					newName = elems.get(3).toString();
+				} else if (propertyName.equals("group1Distortion")) {
+					generator.group1Distortion = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("group2Distortion")) {
+					generator.group2Distortion = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("randomChunkOffset")) {
+					generator.randomChunkOffset = parseBoolean(elems.get(3));
+				} else if (propertyName.equals("mixStart")) {
+					generator.mixStart = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("mixEnd")) {
+					generator.mixEnd = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("maintainBeat")) {
+					generator.maintainBeat = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("maintainFeedback")) {
+					generator.maintainFeedback = parseBoolean(elems.get(3));
+				} else {
+					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					error = true;
+				}
+				if (!error) {
+					if (newName.length()>0) {
+						controller.renameGenerator(name, newName);
+					} else {
+						controller.putGenerator(generator);
+					}
+					setPostOk(response);
+				}
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
+	
 	protected boolean checkInitialized(HttpResponse response) {
 		boolean r = true;
 		if (controller.getName().length()==0 || 
@@ -505,6 +554,22 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected boolean parseBoolean(Str value) {
 		return Boolean.parseBoolean(value.toLowerCase().toString());
+	}
+	
+	protected float parsePercentage(Str perc) {
+		float r = 0;
+		try {
+			r = Float.parseFloat(perc.toString());
+		} catch(NumberFormatException ex) {
+			r = 0;
+		}
+		if (r < 0) {
+			r = 0;
+		}
+		if (r > 1) {
+			r = 1;
+		}
+		return r;
 	}
 	
 	protected void setPostOk(HttpResponse response) {

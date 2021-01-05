@@ -10,6 +10,7 @@ public class FormProperty extends ResponseObject {
 	public static String	TEXT			= "TEXT";
 	public static String	TEXT_INPUT		= "TEXT_INPUT";
 	public static String	NUMBER_INPUT	= "NUMBER_INPUT";
+	public static String	ANY_INPUT		= "ANY_INPUT";
 	public static String	CHECKBOX_INPUT	= "CHECKBOX_INPUT";
 	public static String	BUTTON_INPUT	= "BUTTON_INPUT";
 	public static String	BUTTON_DISABLED	= "BUTTON_DISABLED";
@@ -51,6 +52,7 @@ public class FormProperty extends ResponseObject {
 		} else if (
 			renderAs.equals(TEXT_INPUT) ||
 			renderAs.equals(NUMBER_INPUT) ||
+			renderAs.equals(ANY_INPUT) ||
 			renderAs.equals(CHECKBOX_INPUT) ||
 			renderAs.equals(BUTTON_INPUT) ||
 			renderAs.equals(BUTTON_DISABLED)
@@ -76,6 +78,8 @@ public class FormProperty extends ResponseObject {
 				r.sb().append("text");
 			} else if (renderAs.equals(NUMBER_INPUT)) {
 				r.sb().append("number");
+			} else if (renderAs.equals(ANY_INPUT)) {
+				r.sb().append("any");
 			} else if (renderAs.equals(CHECKBOX_INPUT)) {
 				r.sb().append("checkbox");
 			} else if (renderAs.equals(BUTTON_INPUT) || renderAs.equals(BUTTON_DISABLED)) {

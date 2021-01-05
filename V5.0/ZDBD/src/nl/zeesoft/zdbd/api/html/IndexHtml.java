@@ -90,7 +90,20 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>"); // end network
 
 		append(r,"<hr />");
-		append(r,"<div id=\"generators\"></div>");
+		append(r,"<div id=\"generators\">");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label\">Generators</label >");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" id=\"generateAll\" value=\"Generate sequences\" onclick=\"generators.generateAll();\" />");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-right column-padding\">");
+		append(r,"    <input type=\"button\" class=\"show-hide\" value=\"+\" onclick=\"generators.toggleShowList(this);\" />");
+		append(r,"    </div>");
+		append(r,"</div>");
+		append(r,"<div id=\"generatorList\"></div>");
+		append(r,"</div>"); // end generators
 
 		append(r,"</div>"); // end app
 		return r;

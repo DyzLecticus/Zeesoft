@@ -7,49 +7,48 @@ import nl.zeesoft.zdk.Str;
 
 public class GeneratorList extends FormHtml {
 	private List<Generator> generators 	= null;
-	private boolean			generate	= false;
 	
-	public GeneratorList(List<Generator> generators, boolean regenerate, boolean generate) {
+	public GeneratorList(List<Generator> generators) {
 		this.generators = generators;
-		this.generate = generate;
+		/*
 		String renderAs = FormProperty.BUTTON_INPUT;
 		if (!generate) {
 			renderAs = FormProperty.BUTTON_DISABLED;
 		}
 		String value = "Generate sequences";
 		if (!regenerate) {
-			boolean gen = true;
 			for (Generator generator: generators) {
-				if (generator.generatedPatternSequence!=null) {
-					gen = false;
+				if (generator.generatedPatternSequence==null) {
+					regenerate = true;
 					break;
 				}
 			}
-			regenerate = gen;
 		}
 		if (regenerate) {
 			value += "*";
 		}
 		addProperty("generateAll", "Generators", value, renderAs, "generators.generateAll();");
+		*/
 	}
 	
 	@Override
 	public Str render() {
 		Str r = new Str();
+		/*
 		append(r,"<div class=\"row\">");
 		append(r,properties.get(0).render());
 		append(r,"<div class=\"column-right column-padding\">");
 		append(r,"<input type=\"button\" class=\"show-hide\" id=\"showGeneratorList\" value=\"+\" onclick=\"generators.toggleShowList(this);\" />");
 		append(r,"</div>");
+		*/
 		append(r,"</div>");
-		append(r,renderGenerators(generators,generate));
+		append(r,renderGenerators(generators));
 		return r;
 	}
 	
-	public static Str renderGenerators(List<Generator> generators, boolean generate) {
+	public static Str renderGenerators(List<Generator> generators) {
 		Str r = new Str();
 		int i = 0;
-		append(r,"<div id=\"generatorList\" class=\"hidden\">");
 		for (Generator generator: generators) {
 			String upDisabled = "";
 			String downDisabled = "";
@@ -71,17 +70,10 @@ public class GeneratorList extends FormHtml {
 			append(r,"</div>");
 			
 			append(r,"<div class=\"column-left column-padding\">");
-			append(r,"<input type=\"button\" value=\"Generate");
-			if (generator.generatedPatternSequence==null) {
-				r.sb().append("*");
-			}
-			r.sb().append("\" onclick=\"generators.generateSequence('");
+			append(r,"<input type=\"button\" value=\"Edit");
+			r.sb().append("\" onclick=\"generators.edit('");
 			r.sb().append(generator.name);
-			r.sb().append("');\"");
-			if (!generate) {
-				r.sb().append(" DISABLED");
-			}
-			r.sb().append(" />");
+			r.sb().append("');\"/>");
 			append(r,"</div>");
 			
 			append(r,"<div class=\"column-left column-padding\">");
@@ -106,7 +98,6 @@ public class GeneratorList extends FormHtml {
 			
 			i++;
 		}
-		append(r,"</div>");
 		return r;
 	}
 }
