@@ -78,6 +78,10 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    modal.hide();");
 		append(r,"};");
 		append(r,"generators.propertyChange = function(property) {");
+		append(r,"    if (property.id==\"name\" && property.value.length==0) {");
+		append(r,"        alert(\"Generator name is mandatory\");");
+		append(r,"        return;");
+		append(r,"    }");
 		append(r,"    var body = \"SET_PROPERTY:\";");
 		append(r,"    body += generators.editName;");
 		append(r,"    body += \":\";");
@@ -92,9 +96,9 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    var cb = null;");
 		append(r,"    if (property.id==\"name\") {");
-		append(r,"        cb = function() { generators.editName = property.value; };");
+		append(r,"        cb = function() { generators.editName = property.value; generators.refresh(); };");
 		append(r,"    }");
-		append(r,"    main.xhr.postText(\"/generator.txt\",body,cb);");
+		append(r,"    main.xhr.postText(\"/generator.txt\",body,cb,main.xhr.alertErrorCallback);");
 		append(r,"}");
 		return r;
 	}

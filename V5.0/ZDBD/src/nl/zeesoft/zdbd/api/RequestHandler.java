@@ -468,6 +468,9 @@ public class RequestHandler extends HttpRequestHandler {
 					generator.maintainBeat = parsePercentage(elems.get(3));
 				} else if (propertyName.equals("maintainFeedback")) {
 					generator.maintainFeedback = parseBoolean(elems.get(3));
+				} else if (propertyName.startsWith("skip-")) {
+					String instName = propertyName.substring(5);
+					generator.setSkipInstrument(instName, parseBoolean(elems.get(3)));
 				} else {
 					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 					error = true;

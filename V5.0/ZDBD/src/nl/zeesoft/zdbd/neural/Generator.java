@@ -68,6 +68,28 @@ public class Generator {
 			skipInstruments[n] = names[n];
 		}
 	}
+
+	public void setSkipInstrument(String name, boolean skip) {
+		if (skip && !skipInstrumentsContains(name)) {
+			String[] newSkip = new String[skipInstruments.length + 1];
+			for (int n = 0; n < skipInstruments.length; n++) {
+				newSkip[n] = skipInstruments[n];
+			}
+			newSkip[skipInstruments.length] = name;
+			skipInstruments = newSkip;
+		} else if (!skip && skipInstrumentsContains(name)) {
+			String[] newSkip = new String[skipInstruments.length - 1];
+			int i = 0;
+			for (int n = 0; n < skipInstruments.length; n++) {
+				if (!skipInstruments[n].equals(name)) {
+					newSkip[i] = skipInstruments[n];
+				} else {
+					i++;
+				}
+			}
+			skipInstruments = newSkip;
+		}
+	}
 	
 	public void generatePatternSequence(Network network, NetworkIO lastIO, PatternSequence trainingSequence) {
 		if (lastIO!=null) {
