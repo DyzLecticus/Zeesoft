@@ -47,6 +47,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 
 	protected MidiSequence[]					sequence			= new MidiSequence[2];
 	protected MidiSequence[]					lfoSequence			= new MidiSequence[2];
+	protected MixState[]						mixState			= new MixState[2];
 	
 	protected boolean							paused				= false;
 	protected long								startedNs			= 0;
@@ -82,6 +83,8 @@ public class MidiSequencer implements Sequencer, Waitable {
 		recorder.setPriority(Thread.MIN_PRIORITY);
 		eventPublisher = new CodeRunner(getPublishSequenceSwitchRunCode());
 		eventPublisher.setPriority(Thread.MIN_PRIORITY);
+		mixState[CURR] = new MixState();
+		mixState[NEXT] = new MixState();
 		calculateNsPerTickNoLock();
 	}
 
@@ -192,6 +195,24 @@ public class MidiSequencer implements Sequencer, Waitable {
 			if (config!=null && generateLFO) {
 				generateLfo(NEXT,config,sequence.getTickLength());
 			}
+		}
+	}
+	
+	public void setMixState(MixState state) {
+		if (state!=null) {
+			state = state.copy();
+			lock.lock(this);
+			mixState[CURR] = state;
+			lock.unlock(this);
+		}
+	}
+	
+	public void setNextMixState(MixState state) {
+		if (state!=null) {
+			state = state.copy();
+			lock.lock(this);
+			mixState[NEXT] = state;
+			lock.unlock(this);
 		}
 	}
 	
@@ -400,6 +421,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 
 	protected RunCode getSendEventsRunCode() {
 		return new RunCode() {
+			//private MixState prevMixState = new MixState();
 			@Override
 			protected boolean run() {
 				lock.lock(this);
@@ -407,6 +429,8 @@ public class MidiSequencer implements Sequencer, Waitable {
 				MidiSequence cSeq = sequence[CURR];
 				MidiSequence lpSeq = lfoSequence[CURR];
 				MidiSequence lcSeq = lfoSequence[CURR];
+				MixState pMix = mixState[CURR].copy();
+				MixState cMix = pMix;
 				Synthesizer synth = MidiSys.synthesizer;
 				long pTick = 0;
 				long cTick = 0;
@@ -433,6 +457,11 @@ public class MidiSequencer implements Sequencer, Waitable {
 							lfoSequence[CURR] = lcSeq;
 							sequence[NEXT] = null;
 							lfoSequence[NEXT] = null;
+							if (mixState[NEXT]!=null) {
+								cMix = mixState[NEXT];
+								mixState[CURR] = cMix;
+								mixState[NEXT] = cMix.copy();
+							}
 							switched = true;
 						}
 					}
@@ -451,11 +480,11 @@ public class MidiSequencer implements Sequencer, Waitable {
 						for (long t = sTick; t < eTick; t++) {
 							Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
 							if (lpSeq!=null) {
-								Set<MidiEvent> evts = lpSeq.getEventsForTick(t);
+								Set<MidiEvent> evts = lpSeq.getEventsForTick(t,pMix);
 								events.addAll(evts);
 								tickEvents.addAll(evts);
 							}
-							Set<MidiEvent> evts = pSeq.getEventsForTick(t);
+							Set<MidiEvent> evts = pSeq.getEventsForTick(t,pMix);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 							rSequence.eventsPerTick.put(rt, tickEvents);
@@ -465,11 +494,11 @@ public class MidiSequencer implements Sequencer, Waitable {
 					for (long t = (pTick + 1); t < (cTick + 1); t++) {
 						Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
 						if (lcSeq!=null) {
-							Set<MidiEvent> evts = lcSeq.getEventsForTick(t);
+							Set<MidiEvent> evts = lcSeq.getEventsForTick(t,cMix);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 						}
-						Set<MidiEvent> evts = cSeq.getEventsForTick(t);
+						Set<MidiEvent> evts = cSeq.getEventsForTick(t,cMix);
 						events.addAll(evts);
 						tickEvents.addAll(evts);
 						rSequence.eventsPerTick.put(rt, tickEvents);

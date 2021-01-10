@@ -104,11 +104,12 @@ public class MainJs extends ResponseObject {
 		append(r,"            elem.opacity += 0.1;");
 		append(r,"            elem.style.opacity = elem.opacity;");
 		append(r,"        }");
-		append(r,"        console.log(elem.style.opacity);");
+		//append(r,"        console.log(elem.style.opacity);");
 		append(r,"        if (elem.opacity<1) {");
 		append(r,"            setTimeout(function() { main.dom.fadeIn(id) }, 50);");
 		append(r,"        } else {");
 		append(r,"            elem.opacity = 1;");
+		append(r,"            elem.style.opacity = 1;");
 		append(r,"        }");
 		append(r,"    }");
 		append(r,"};");
@@ -127,11 +128,12 @@ public class MainJs extends ResponseObject {
 		append(r,"            elem.opacity -= 0.1;");
 		append(r,"            elem.style.opacity = elem.opacity;");
 		append(r,"        }");
-		append(r,"        console.log(elem.style.opacity);");
+		//append(r,"        console.log(elem.style.opacity);");
 		append(r,"        if (elem.opacity>0) {");
 		append(r,"            setTimeout(function() { main.dom.fadeOut(id) }, 50);");
 		append(r,"        } else {");
 		append(r,"            elem.opacity = 0;");
+		append(r,"            elem.style.opacity = 0;");
 		append(r,"        }");
 		append(r,"    }");
 		append(r,"};");

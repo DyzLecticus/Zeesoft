@@ -87,6 +87,9 @@ public class MainCss extends ResponseObject {
 		append(r,".grey {");
 		append(r,"    background-color:#dedede;");
 		append(r,"}");
+		append(r,".red {");
+		append(r,"    background-color:#ff0000;");
+		append(r,"}");
 		append(r,".orange {");
 		append(r,"    background-color:#ff9900;");
 		append(r,"}");

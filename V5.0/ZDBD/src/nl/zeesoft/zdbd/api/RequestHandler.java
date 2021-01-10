@@ -1,6 +1,7 @@
 package nl.zeesoft.zdbd.api;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -29,11 +30,14 @@ import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.midi.MixState;
+import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
 import nl.zeesoft.zdk.Str;
@@ -185,6 +189,32 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("\n");
 		r.sb().append("nextSequence:");
 		r.sb().append(selector.getNextSequence());
+		
+		MixState mix = selector.getCurrentMix();
+		List<Integer> channels = new ArrayList<Integer>();
+		channels.add(SynthConfig.DRUM_CHANNEL);
+		channels.add(SynthConfig.BASS_CHANNEL_1);
+		channels.add(SynthConfig.BASS_CHANNEL_2);
+		for (Integer channel: channels) {
+			r.sb().append("\n");
+			r.sb().append("mute-channel-");
+			r.sb().append(channel);
+			r.sb().append(":");
+			r.sb().append(mix.muteChannels[channel]);
+		}
+		int index = 0;
+		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+			if (index<mix.muteDrums.length) {
+				r.sb().append("\n");
+				r.sb().append("mute-drum-");
+				r.sb().append(inst.name());
+				r.sb().append(":");
+				r.sb().append(mix.muteDrums[index]);
+			} else {
+				break;
+			}
+			index++;
+		}
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
@@ -383,6 +413,39 @@ public class RequestHandler extends HttpRequestHandler {
 			if (!error) {
 				setPostOk(response);
 			}
+		} else if (request.body.startsWith("TOGGLE_MUTE:")) {
+			List<Str> elems = request.body.split(":");
+			List<Str> idElems = elems.get(1).split("-");
+			boolean current = idElems.get(0).toString().equals("mute");
+			MixState state = null;
+			if (current) {
+				state = selector.getCurrentMix();
+			} else {
+				state = selector.getNextMix();
+			}
+ 			if (elems.get(1).contains("-channel-")) {
+				int channel = Integer.parseInt(idElems.get(2).toString());
+				if (channel<state.muteChannels.length) {
+					state.muteChannels[channel] = parseBoolean(elems.get(2));
+				}
+			} else if (elems.get(1).contains("-drum-")) {
+				int index = 0;
+				for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+					if (inst.name().equals(idElems.get(2).toString())) {
+						break;
+					}
+					index++;
+				}
+				if (index<state.muteDrums.length) {
+					state.muteDrums[index] = parseBoolean(elems.get(2));
+				}
+			}
+			if (current) {
+				selector.setCurrentMix(state);
+			} else {
+				selector.setNextMix(state);
+			}
+			setPostOk(response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}

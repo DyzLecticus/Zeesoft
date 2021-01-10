@@ -7,6 +7,7 @@ import javax.sound.midi.Sequence;
 import nl.zeesoft.zdbd.api.html.form.SequencerControl;
 import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.Logger;
@@ -24,6 +25,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	
 	private String				currSequence			= "";
 	private String				nextSequence			= "";
+	private MixState			currMix					= new MixState();
+	private MixState			nextMix					= new MixState();
 	
 	private ThemeController		controller				= null;
 	
@@ -114,6 +117,51 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			lock.unlock(this);
 		}
 	}
+	
+	public void setCurrentMix(MixState state) {
+		if (state!=null) {
+			state = state.copy();
+			lock.lock(this);
+			currMix = state;
+			lock.unlock(this);
+			if (MidiSys.sequencer!=null) {
+				MidiSys.sequencer.setMixState(state);
+			}
+		}
+	}
+	
+	public void setNextMix(MixState state) {
+		if (state!=null) {
+			state = state.copy();
+			lock.lock(this);
+			nextMix = state;
+			lock.unlock(this);
+			if (MidiSys.sequencer!=null) {
+				MidiSys.sequencer.setNextMixState(state);
+			}
+		}
+	}
+	
+	public MixState getCurrentMix() {
+		MixState r = null;
+		lock.lock(this);
+		if (currMix!=null) {
+			r = currMix.copy();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public MixState getNextMix() {
+		MixState r = null;
+		lock.lock(this);
+		if (nextMix!=null) {
+			r = nextMix.copy();
+		}
+		lock.unlock(this);
+		return r;
+	}
+
 	
 	@Override
 	public void handleEvent(Event event) {
@@ -225,7 +273,9 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			hold,
 			selectRandom,
 			selectTrainingSequence,
-			regenerateOnPlay
+			regenerateOnPlay,
+			currMix,
+			nextMix
 		);
 		lock.unlock(this);
 		return r;
@@ -270,6 +320,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		currSequence = nextSequence;
 		nextSequence = selectNextSequenceNoLock();
 		changedNextSequenceNoLock();
+		currMix = nextMix.copy();
+		nextMix = currMix.copy();
 		if (regenerateOnPlay && !currSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) {
 			controller.generateSequence(currSequence).start();
 		}
