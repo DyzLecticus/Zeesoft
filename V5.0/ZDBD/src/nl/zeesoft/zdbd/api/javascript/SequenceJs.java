@@ -1,8 +1,10 @@
 package nl.zeesoft.zdbd.api.javascript;
 
 import nl.zeesoft.zdbd.api.ResponseObject;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Str;
 
 public class SequenceJs extends ResponseObject {
@@ -19,7 +21,9 @@ public class SequenceJs extends ResponseObject {
 		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"sequenceEditor\");");
 		append(r,"    if (elem!=null && sequence.show) {");
-		append(r,"        main.dom.startFadeIn(\"sequenceEditor\");");
+		append(r,"        if (elem.innerHTML==null || elem.innerHTML == \"\") {");
+		append(r,"            main.dom.startFadeIn(\"sequenceEditor\");");
+		append(r,"        }");
 		append(r,"        elem.innerHTML = response.responseText;");
 		append(r,"    }");
 		append(r,"};");
@@ -56,6 +60,33 @@ public class SequenceJs extends ResponseObject {
 		append(r,"            elem.classList.remove(\"hidden\");");
 		append(r,"        }");
 		append(r,"    }");
+		append(r,"}");
+		append(r,"sequence.clickedClearPattern = function() {");
+		append(r,"    elem = window.document.getElementById(\"patternSelect\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        var selected = elem.options[elem.selectedIndex].value;");
+		append(r,"        var c = confirm(\"Are you sure you want clear the pattern?\");");
+		append(r,"        if (c==true) {");
+		append(r,"            var body = \"CLEAR:\" + selected;");
+		append(r,"            var cb = sequence.clearPatternCallback;");
+		append(r,"            main.xhr.postText(\"/sequenceEditor.txt\",body,cb,main.xhr.alertErrorCallback);");
+		append(r,"        }");
+		append(r,"    }");
+		append(r,"}");
+		append(r,"sequence.clearPatternCallback = function() {");
+		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+			append(r,"    for (var i = 0; i < 64; i++) {");
+			append(r,"        elem = window.document.getElementById(\"" + inst.name()+ "-\" + i);");
+			append(r,"        if (elem!=null) {");
+			append(r,"            elem.value = 0;");
+			append(r,"            if (elem.nodeName!=\"SELECT\") {");
+			append(r,"                elem.classList.add(\"grey\");");
+			append(r,"            }");
+			append(r,"            elem.classList.remove(\"yellow\");");
+			append(r,"            elem.classList.remove(\"orange\");");
+			append(r,"        }");
+			append(r,"    }");
+		}
 		append(r,"}");
 		append(r,"sequence.clickedStepValue = function(property) {");
 		//append(r,"    console.log(property.id + \"=\" + property.value)");

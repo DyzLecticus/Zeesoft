@@ -47,8 +47,11 @@ public class SequenceEditor extends FormHtml {
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,renderPatternSelect(0));
 		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<input type=\"button\" value=\"Clear\" onclick=\"sequence.clickedClearPattern();\" />");
 		append(r,"</div>");
-
+		append(r,"</div>");
+		
 		append(r,"<div class=\"row\">");
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
 			append(r,"<div class=\"column-left column-padding\">");

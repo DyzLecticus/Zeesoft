@@ -40,7 +40,7 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				DELETING_THEME				= "DELETING_THEME";
 	public static String				DELETED_THEME				= "DELETED_THEME";
 	
-	public static String				CHANGED_TRAINING_SEQUENCE	= "CHAINGED_TRAINING_SEQUENCE";
+	public static String				CHANGED_TRAINING_SEQUENCE	= "CHANGED_TRAINING_SEQUENCE";
 	public static String				TRAINING_NETWORK			= "TRAINING_NETWORK";
 	public static String				TRAINED_NETWORK				= "TRAINED_NETWORK";
 	public static String				GENERATING_SEQUENCES		= "GENERATING_SEQUENCES";
@@ -421,7 +421,7 @@ public class ThemeController implements EventListener, Waitable {
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
-			MidiSys.sequencer.pause();
+			MidiSys.sequencer.stop();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
 			lock.lock(this);
 			busy.setBusy(false);

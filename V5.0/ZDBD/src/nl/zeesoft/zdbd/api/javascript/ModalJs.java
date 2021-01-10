@@ -11,6 +11,7 @@ public class ModalJs extends ResponseObject {
 		append(r,"modal.show = function(html) {");
 		append(r,"    var elem = window.document.getElementById(\"modal\");");
 		append(r,"    if (elem!=null) {");
+		append(r,"        main.dom.startFadeIn(\"modal\");");
 		append(r,"        elem.innerHTML = html;");
 		append(r,"    }");
 		append(r,"    var elem = window.document.getElementById(\"app\");");
