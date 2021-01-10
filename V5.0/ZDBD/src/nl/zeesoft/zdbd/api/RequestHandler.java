@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.ByeHtml;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.AddGenerator;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
@@ -127,6 +128,10 @@ public class RequestHandler extends HttpRequestHandler {
 				NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics(),accuracy);
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = statistics.render();
+			} else if (request.path.equals("/generatorStatus.txt")) {
+				if (checkInitialized(response)) {
+					handleGetGeneratorStatusRequest(response);
+				}
 			} else if (request.path.equals("/generators.txt")) {
 				if (checkInitialized(response)) {
 					GeneratorList generators = new GeneratorList(controller.getGenerators());
@@ -198,6 +203,20 @@ public class RequestHandler extends HttpRequestHandler {
 		r.sb().append("\n");
 		r.sb().append("canTrain:");
 		r.sb().append(sequence.getSequencedPatterns().size()>0 && monitor.getDonePercentage()==1);
+		
+		response.code = HttpURLConnection.HTTP_OK;
+		response.body = r;
+	}
+	
+	protected void handleGetGeneratorStatusRequest(HttpResponse response) {
+		Str r = new Str();
+		r.sb().append("isGenerating:");
+		r.sb().append(monitor.getText().equals(ThemeController.GENERATING_SEQUENCES));
+		
+		boolean canGenerate = !monitor.getText().equals(ThemeController.TRAINING_NETWORK) && controller.getLastIO()!=null;		
+		r.sb().append("\n");
+		r.sb().append("canGenerate:");
+		r.sb().append(canGenerate);
 		
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
@@ -436,7 +455,47 @@ public class RequestHandler extends HttpRequestHandler {
 	}
 	
 	protected void handlePostGeneratorRequest(HttpRequest request, HttpResponse response) {
-		if (request.body.startsWith("EDIT:")) {
+		if (request.body.toString().equals("ADD")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new AddGenerator()).render();
+		} else if (request.body.startsWith("SAVE")) {
+			String name = request.body.split("\n").get(1).split(":").get(1).toString();
+			name = name.replace(":",";");
+			name = name.trim();
+			Generator gen = controller.getGenerator(name);
+			if (gen==null) {
+				gen = new Generator();
+				gen.name = name;
+				List<Str> lines = request.body.split("\n");
+				for (Str line: lines) {
+					List<Str> kv = line.split(":");
+					String prop = kv.get(0).toString();
+					if (prop.equals("group1Distortion")) {
+						gen.group1Distortion = parsePercentage(kv.get(1));
+					} else if (prop.equals("group2Distortion")) {
+						gen.group2Distortion = parsePercentage(kv.get(1));
+					} else if (prop.equals("randomChunkOffset")) {
+						gen.randomChunkOffset = parseBoolean(kv.get(1));
+					} else if (prop.equals("mixStart")) {
+						gen.mixStart = parsePercentage(kv.get(1));
+					} else if (prop.equals("mixEnd")) {
+						gen.mixEnd = parsePercentage(kv.get(1));
+					} else if (prop.equals("maintainBeat")) {
+						gen.maintainBeat = parsePercentage(kv.get(1));
+					} else if (prop.equals("maintainFeedback")) {
+						gen.maintainFeedback = parseBoolean(kv.get(1));
+					} else if (prop.startsWith("skip-")) {
+						gen.setSkipInstrument(prop.substring(5),parseBoolean(kv.get(1)));
+					}
+				}
+				controller.putGenerator(gen);
+				setPostOk(response);
+			} else {
+				Str err = new Str("Generator already exists with name: ");
+				err.sb().append(name);
+				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			}
+		} else if (request.body.startsWith("EDIT:")) {
 			String name = request.body.split(":").get(1).toString();
 			if (checkGeneratorName(name,response)) {
 				Generator generator = controller.getGenerator(name);
@@ -451,7 +510,6 @@ public class RequestHandler extends HttpRequestHandler {
 				Generator generator = controller.getGenerator(name);
 				String propertyName = elems.get(2).toString();
 				boolean error = false;
-				// TODO: Handle skip instrument changes
 				if (propertyName.equals("name")) {
 					newName = elems.get(3).toString();
 				} else if (propertyName.equals("group1Distortion")) {
@@ -469,15 +527,19 @@ public class RequestHandler extends HttpRequestHandler {
 				} else if (propertyName.equals("maintainFeedback")) {
 					generator.maintainFeedback = parseBoolean(elems.get(3));
 				} else if (propertyName.startsWith("skip-")) {
-					String instName = propertyName.substring(5);
-					generator.setSkipInstrument(instName, parseBoolean(elems.get(3)));
+					generator.setSkipInstrument(propertyName.substring(5), parseBoolean(elems.get(3)));
 				} else {
 					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 					error = true;
 				}
 				if (!error) {
 					if (newName.length()>0) {
-						controller.renameGenerator(name, newName);
+						newName = newName.replace(":",";");
+						newName = newName.trim();
+						Str err = controller.renameGenerator(name, newName);
+						if (err.length()>0) {
+							setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+						}
 					} else {
 						controller.putGenerator(generator);
 					}

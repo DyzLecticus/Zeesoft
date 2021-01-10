@@ -6,10 +6,12 @@ import java.util.List;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
-import nl.zeesoft.zdk.Str;
 
 public class GeneratorEditor extends FormHtml {
 	public GeneratorEditor(Generator generator) {
+		okLabel = "Done";
+		onOkClick = "generators.editDone();";
+		
 		addProperty("name", "Name", generator.name, FormProperty.TEXT_INPUT);
 		addProperty("group1Distortion", "Group 1 distortion", generator.group1Distortion, FormProperty.ANY_INPUT);
 		addProperty("group2Distortion", "Group 2 distortion", generator.group2Distortion, FormProperty.ANY_INPUT);
@@ -32,23 +34,5 @@ public class GeneratorEditor extends FormHtml {
 		for (FormProperty property: properties) {
 			property.onChange = "generators.propertyChange(this);";
 		}
-	}
-	
-	@Override
-	public Str render() {
-		Str r = new Str();
-		append(r,super.render());
-		append(r,renderDoneButton());
-		return r;
-	}
-	
-	public static Str renderDoneButton() {
-		Str r = new Str();
-		append(r,"<div class=\"row\">");
-		append(r,"<div class=\"column-right column-padding\">");
-		append(r,"<input type=\"button\" id=\"formOk\" value=\"Done\" onclick=\"generators.editDone();\" />");
-		append(r,"</div>");
-		append(r,"</div>");
-		return r;
 	}
 }

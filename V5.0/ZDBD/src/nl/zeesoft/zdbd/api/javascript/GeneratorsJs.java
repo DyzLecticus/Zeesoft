@@ -1,6 +1,8 @@
 package nl.zeesoft.zdbd.api.javascript;
 
 import nl.zeesoft.zdbd.api.ResponseObject;
+import nl.zeesoft.zdbd.pattern.InstrumentPattern;
+import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Str;
 
 public class GeneratorsJs extends ResponseObject {
@@ -11,8 +13,28 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"generators.editName = \"\";");
 		append(r,"generators.showList = false;");
 		append(r,"generators.refresh = function() {");
+		append(r,"    generators.refreshStatus();");
 		append(r,"    if (generators.showList) {");
 		append(r,"        main.xhr.getText(\"/generators.txt\",generators.refreshCallback,generators.errorCallback);");
+		append(r,"    }");
+		append(r,"};");
+		append(r,"generators.refreshStatus = function() {");
+		append(r,"    main.xhr.getText(\"/generatorStatus.txt\",generators.refreshStatusCallback,generators.errorCallback);");
+		append(r,"};");
+		append(r,"generators.refreshStatusCallback = function(response) {");
+		//append(r,"    console.log(response);");
+		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
+		//append(r,"    console.log(obj);");
+		append(r,"    var elem = window.document.getElementById(\"generateSequences\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        if (obj.isGenerating || !obj.canGenerate) {");
+		append(r,"            elem.disabled = true;");
+		append(r,"        } else {");
+		append(r,"            elem.disabled = false;");
+		append(r,"        }");
+		append(r,"        if (obj.isGenerating) {");
+		append(r,"            setTimeout(function() { generators.refreshStatus(); }, 1000);");
+		append(r,"        }");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"generators.refreshCallback = function(response) {");
@@ -87,19 +109,37 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    body += \":\";");
 		append(r,"    body += property.id;");
 		append(r,"    body += \":\";");
-		append(r,"    if (property.nodeName==\"SELECT\") {");
-		append(r,"        body += property.options[property.selectedIndex].value;");
-		append(r,"    } else if (property.type==\"text\" || property.type==\"number\" || property.type==\"any\") {");
-		append(r,"        body += property.value;");
-		append(r,"    } else if (property.type==\"checkbox\") {");
-		append(r,"        body += property.checked;");
-		append(r,"    }");
+		append(r,"    body += main.dom.getElementValue(property.id);");
 		append(r,"    var cb = null;");
 		append(r,"    if (property.id==\"name\") {");
 		append(r,"        cb = function() { generators.editName = property.value; generators.refresh(); };");
 		append(r,"    }");
 		append(r,"    main.xhr.postText(\"/generator.txt\",body,cb,main.xhr.alertErrorCallback);");
 		append(r,"}");
+		append(r,"generators.add = function() {");
+		append(r,"    generators.editName = \"\";");
+		append(r,"    main.xhr.postText(\"/generator.txt\",\"ADD\",generators.editCallback,main.xhr.alertErrorCallback);");
+		append(r,"};");
+		append(r,"generators.addCancel = function() {");
+		append(r,"    modal.hide();");
+		append(r,"};");
+		append(r,"generators.addDone = function() {");
+		append(r,"    var name = main.dom.getElementValue(\"name\");");
+		append(r,"    if (name==null || name.length==0) {");
+		append(r,"        alert(\"Generator name is mandatory\");");
+		append(r,"        return;");
+		append(r,"    }");
+		append(r,"    var ids = [\"name\",\"group1Distortion\",\"group2Distortion\",\"randomChunkOffset\",\"mixStart\",\"mixEnd\",\"maintainBeat\",\"maintainFeedback\"];");
+		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
+			append(r,"    ids[ids.length] = \"skip-");
+			r.sb().append(inst.name());
+			r.sb().append("\";");
+		}
+		append(r,"    var obj = main.dom.buildBodyText(ids);");
+		//append(r,"    console.log(obj);");
+		append(r,"    var cb = function() { modal.hide(); generators.refresh(); };");
+		append(r,"    main.xhr.postText(\"/generator.txt\",\"SAVE\\n\" + obj,cb,main.xhr.alertErrorCallback);");
+		append(r,"};");
 		return r;
 	}
 }

@@ -251,12 +251,19 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
-	public void renameGenerator(String name,String newName) {
+	public Str renameGenerator(String name,String newName) {
+		Str r = new Str();
 		lock.lock(this);
 		if (theme!=null) {
-			theme.generators.rename(name, newName);
+			if (theme.generators.get(newName)!=null) {
+				r.sb().append("Generator already exists with name: ");
+				r.sb().append(newName);
+			} else {
+				theme.generators.rename(name, newName);
+			}
 		}
 		lock.unlock(this);
+		return r;
 	}
 	
 	public Generator removeGenerator(String name) {

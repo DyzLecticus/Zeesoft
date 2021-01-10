@@ -67,6 +67,28 @@ public class MainJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    return obj;");
 		append(r,"};");
+		append(r,"main.dom = {};");
+		append(r,"main.dom.getElementValue = function(id) {");
+		append(r,"    var r = null;");
+		append(r,"    var elem = window.document.getElementById(id);");
+		append(r,"    if (elem!=null) {");
+		append(r,"        if (elem.nodeName==\"SELECT\") {");
+		append(r,"            r = elem.options[elem.selectedIndex].value;");
+		append(r,"        } else if (elem.type==\"text\" || elem.type==\"number\" || elem.type==\"any\") {");
+		append(r,"            r = elem.value;");
+		append(r,"        } else if (elem.type==\"checkbox\") {");
+		append(r,"            r = elem.checked;");
+		append(r,"        }");
+		append(r,"    }");
+		append(r,"    return r;");
+		append(r,"};");
+		append(r,"main.dom.buildBodyText = function(ids) {");
+		append(r,"    var r = \"\";");
+		append(r,"    for (var i = 0; i < ids.length; i++) {");
+		append(r,"        r += ids[i] + \":\" + main.dom.getElementValue(ids[i]) + \"\\n\";");
+		append(r,"    }");
+		append(r,"    return r;");
+		append(r,"};");
 		return r;
 	}
 }

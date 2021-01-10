@@ -42,7 +42,7 @@ public class SelectHtml extends ResponseObject {
 		for (SelectOption option: options) {
 			append(r,option.render());
 		}
-		append(r,FormHtml.renderOkCancel(onOkClick,onCancelClick));
+		append(r,FormHtml.renderOkCancel("Ok",onOkClick,onCancelClick));
 		return r;
 	}
 }

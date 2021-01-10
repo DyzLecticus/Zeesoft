@@ -10,39 +10,13 @@ public class GeneratorList extends FormHtml {
 	
 	public GeneratorList(List<Generator> generators) {
 		this.generators = generators;
-		/*
-		String renderAs = FormProperty.BUTTON_INPUT;
-		if (!generate) {
-			renderAs = FormProperty.BUTTON_DISABLED;
-		}
-		String value = "Generate sequences";
-		if (!regenerate) {
-			for (Generator generator: generators) {
-				if (generator.generatedPatternSequence==null) {
-					regenerate = true;
-					break;
-				}
-			}
-		}
-		if (regenerate) {
-			value += "*";
-		}
-		addProperty("generateAll", "Generators", value, renderAs, "generators.generateAll();");
-		*/
 	}
 	
 	@Override
 	public Str render() {
 		Str r = new Str();
-		/*
-		append(r,"<div class=\"row\">");
-		append(r,properties.get(0).render());
-		append(r,"<div class=\"column-right column-padding\">");
-		append(r,"<input type=\"button\" class=\"show-hide\" id=\"showGeneratorList\" value=\"+\" onclick=\"generators.toggleShowList(this);\" />");
-		append(r,"</div>");
-		*/
-		append(r,"</div>");
 		append(r,renderGenerators(generators));
+		append(r,renderAddGeneratorButton());
 		return r;
 	}
 	
@@ -98,6 +72,19 @@ public class GeneratorList extends FormHtml {
 			
 			i++;
 		}
+		return r;
+	}
+	
+	public static Str renderAddGeneratorButton() {
+		Str r = new Str();
+		append(r,"<div class=\"row\">");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<label class=\"column-label\"></label>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<input type=\"button\" value=\"Add\" onclick=\"generators.add();\" />");
+		append(r,"</div>");
+		append(r,"</div>");
 		return r;
 	}
 }

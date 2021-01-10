@@ -65,29 +65,34 @@ public class Generator {
 	public void setSkipInstruments(String ... names) {
 		skipInstruments = new String[names.length];
 		for (int n = 0; n < names.length; n++) {
-			skipInstruments[n] = names[n];
+			if (names[n]!=null && names[n].length()>0) {
+				skipInstruments[n] = names[n];
+			}
 		}
 	}
 
 	public void setSkipInstrument(String name, boolean skip) {
-		if (skip && !skipInstrumentsContains(name)) {
-			String[] newSkip = new String[skipInstruments.length + 1];
-			for (int n = 0; n < skipInstruments.length; n++) {
-				newSkip[n] = skipInstruments[n];
-			}
-			newSkip[skipInstruments.length] = name;
-			skipInstruments = newSkip;
-		} else if (!skip && skipInstrumentsContains(name)) {
-			String[] newSkip = new String[skipInstruments.length - 1];
-			int i = 0;
-			for (int n = 0; n < skipInstruments.length; n++) {
-				if (!skipInstruments[n].equals(name)) {
-					newSkip[i] = skipInstruments[n];
-				} else {
-					i++;
+		if (name!=null && name.length()>0) {
+			if (skip && !skipInstrumentsContains(name)) {
+				String[] newSkip = new String[skipInstruments.length + 1];
+				for (int n = 0; n < skipInstruments.length; n++) {
+					newSkip[n] = skipInstruments[n];
 				}
+				newSkip[skipInstruments.length] = name;
+				skipInstruments = newSkip;
+			} else if (!skip && skipInstrumentsContains(name)) {
+				String[] newSkip = new String[skipInstruments.length - 1];
+				if (newSkip.length>0) {
+					int i = 0;
+					for (int n = 0; n < skipInstruments.length; n++) {
+						if (!skipInstruments[n].equals(name)) {
+							newSkip[i] = skipInstruments[n];
+							i++;
+						}
+					}
+				}
+				skipInstruments = newSkip;
 			}
-			skipInstruments = newSkip;
 		}
 	}
 	
@@ -280,7 +285,7 @@ public class Generator {
 	protected boolean skipInstrumentsContains(String name) {
 		boolean r = false;
 		for (int i = 0; i < skipInstruments.length; i++) {
-			if (skipInstruments[i].equals(name)) {
+			if (skipInstruments[i]!=null && skipInstruments[i].equals(name)) {
 				r = true;
 				break;
 			}

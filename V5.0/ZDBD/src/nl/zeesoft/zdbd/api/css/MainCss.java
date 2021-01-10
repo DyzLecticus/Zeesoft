@@ -45,6 +45,10 @@ public class MainCss extends ResponseObject {
 		append(r,"    display:block;");
 		append(r,"    width:160px;");
 		append(r,"}");
+		append(r,".column-label-header {");
+		append(r,"    display:block;");
+		append(r,"    width:136px;");
+		append(r,"}");
 		append(r,".column-label-small {");
 		append(r,"    display:block;");
 		append(r,"    width:96px;");
@@ -55,7 +59,12 @@ public class MainCss extends ResponseObject {
 		append(r,"}");
 		
 		append(r,".show-hide {");
-		append(r,"    width:28px;");
+		append(r,"    width:20px;");
+		append(r,"    height:20px;");
+		append(r,"    font-size:12px;");
+		append(r,"    line-height:0px;");
+		append(r,"    margin:0;");
+		append(r,"    padding:0;");
 		append(r,"}");
 		append(r,".hidden {");
 		append(r,"    display:none;");

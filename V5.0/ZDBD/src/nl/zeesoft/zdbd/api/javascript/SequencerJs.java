@@ -58,13 +58,7 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    var body = \"SET_PROPERTY:\";");
 		append(r,"    body += property.id;");
 		append(r,"    body += \":\";");
-		append(r,"    if (property.nodeName==\"SELECT\") {");
-		append(r,"        body += property.options[property.selectedIndex].value;");
-		append(r,"    } else if (property.type==\"text\" || property.type==\"number\") {");
-		append(r,"        body += property.value;");
-		append(r,"    } else if (property.type==\"checkbox\") {");
-		append(r,"        body += property.checked;");
-		append(r,"    }");
+		append(r,"    body += main.dom.getElementValue(property.id);");
 		append(r,"    var cb = null;");
 		append(r,"    if (property.id==\"beatsPerMinute\") {");
 		append(r,"        cb = function() { theme.refresh(); };");
