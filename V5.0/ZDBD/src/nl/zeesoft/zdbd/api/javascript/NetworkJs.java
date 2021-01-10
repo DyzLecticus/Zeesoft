@@ -67,6 +67,7 @@ public class NetworkJs extends ResponseObject {
 		append(r,"network.toggleShowStats = function() {");
 		append(r,"    network.showStats = !network.showStats;");
 		append(r,"    if (network.showStats) {");
+		append(r,"        main.dom.startFadeIn(\"statistics\");");
 		append(r,"        network.refreshStatistics();");
 		append(r,"    } else {");
 		append(r,"        network.clear();");

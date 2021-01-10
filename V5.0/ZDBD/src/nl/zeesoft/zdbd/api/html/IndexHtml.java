@@ -20,7 +20,7 @@ public class IndexHtml extends HtmlResponse {
 		
 		append(r,"<div id=\"menu\">");
 		append(r,"<div class=\"row\">");
-		append(r,"    <div class=\"column-right column-padding\" id=\"state\"></div>");
+		append(r,"    <div class=\"column-right column-padding hidden\" id=\"state\"></div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <label class=\"column-label-small\">App</label>");
 		append(r,"    </div>");
@@ -106,6 +106,10 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>"); // end generators
 
 		append(r,"</div>"); // end app
+
+		append(r,"<div id=\"footer\" class=\"footer grey\">");
+		append(r,"    <div id=\"progressBar\" class=\"progressBar blue\"></div>");
+		append(r,"</div>"); // end footer
 		return r;
 	}
 }

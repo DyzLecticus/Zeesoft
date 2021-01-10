@@ -38,6 +38,7 @@ public class NetworkTrainer implements Waitable {
 	protected long				trainingStarted				= 0;
 
 	protected NetworkIO			lastIO						= null;
+	protected Str				lastIOStr					= new Str();
 	
 	public void copyFrom(NetworkTrainer trainer) {
 		lock.lock(this);
@@ -185,6 +186,11 @@ public class NetworkTrainer implements Waitable {
 	public void fromFile(String path) {
 		NetworkTrainer trainer = (NetworkTrainer) PersistableCollection.fromFile(path);
 		if (trainer!=null) {
+			trainer.lastIO = null;
+			if (trainer.lastIOStr.length()>0) {
+				trainer.lastIO = new NetworkIO();
+				trainer.lastIO.fromStr(trainer.lastIOStr);
+			}
 			copyFrom(trainer);
 		}
 	}
@@ -200,7 +206,14 @@ public class NetworkTrainer implements Waitable {
 	}
 	
 	public void toFile(String path) {
+		lastIOStr = new Str();
+		NetworkIO tmp = lastIO;
+		if (lastIO!=null) {
+			lastIOStr = lastIO.toStr();
+			lastIO = null;
+		}
 		PersistableCollection.toFile(this, path);
+		lastIO = tmp; 
 	}
 
 	@Override

@@ -22,6 +22,8 @@ public class MenuJs extends ResponseObject {
 		append(r,"    if (elem!=null && elem.value!=null && elem.value.length>0) {");
 		append(r,"        main.xhr.postText(\"/state.txt\",\"LOAD:\" + elem.value,function() { state.refresh(); },main.xhr.alertErrorCallback);");
 		append(r,"        modal.hide();");
+		append(r,"    } else {");
+		append(r,"        alert(\"Select a theme to load\");");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"menu.save = function() {");
@@ -40,6 +42,17 @@ public class MenuJs extends ResponseObject {
 		append(r,"};");
 		append(r,"menu.delete = function() {");
 		append(r,"    modal.load(\"DeleteTheme\");");
+		append(r,"};");
+		append(r,"menu.deleteTheme = function() {");
+		append(r,"    var elem = window.document.querySelector('input[name=\"selectTheme\"]:checked');");
+		append(r,"    if (elem!=null && elem.value!=null && elem.value.length>0) {");
+		append(r,"        var body = \"DELETE:\" + elem.value;");
+		append(r,"        main.xhr.postText(\"/state.txt\",body,function() { state.refresh(); },main.xhr.alertErrorCallback);");
+		append(r,"        modal.hide();");
+		append(r,"        state.refreshApp();");
+		append(r,"    } else {");
+		append(r,"        alert(\"Select a theme to delete\");");
+		append(r,"    }");
 		append(r,"};");
 		append(r,"menu.new = function() {");
 		append(r,"    modal.load(\"NewTheme\");");

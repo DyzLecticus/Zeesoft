@@ -93,6 +93,26 @@ public class MainCss extends ResponseObject {
 		append(r,".yellow {");
 		append(r,"    background-color:#ffee00;");
 		append(r,"}");
+		append(r,".blue {");
+		append(r,"    background-color:#0000ff;");
+		append(r,"}");
+		
+		append(r,".footer {");
+		append(r,"    position:fixed;");
+		append(r,"    left:0;");
+		append(r,"    bottom:0;");
+		append(r,"    height:20px;");
+		append(r,"    width:100%;");
+		append(r,"}");
+		append(r,".progressBar {");
+		append(r,"    width:0%;");
+		append(r,"    height:16px;");
+		append(r,"    margin:2px;");
+		append(r,"    font-size:12px;");
+		append(r,"    text-align:center;");
+		append(r,"    color:#ffffff;");
+		append(r,"}");
+		
 		return r;
 	}
 }

@@ -19,6 +19,7 @@ public class SequenceJs extends ResponseObject {
 		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"sequenceEditor\");");
 		append(r,"    if (elem!=null && sequence.show) {");
+		append(r,"        main.dom.startFadeIn(\"sequenceEditor\");");
 		append(r,"        elem.innerHTML = response.responseText;");
 		append(r,"    }");
 		append(r,"};");
@@ -57,7 +58,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"}");
 		append(r,"sequence.clickedStepValue = function(property) {");
-		append(r,"    console.log(property.id + \"=\" + property.value)");
+		//append(r,"    console.log(property.id + \"=\" + property.value)");
 		append(r,"    var elems = property.id.split(\"-\");");
 		append(r,"    var name = elems[0];");
 		append(r,"    var step = parseInt(elems[1],10);");

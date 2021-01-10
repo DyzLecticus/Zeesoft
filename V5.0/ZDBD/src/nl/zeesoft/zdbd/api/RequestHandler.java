@@ -254,17 +254,29 @@ public class RequestHandler extends HttpRequestHandler {
 				Str err = new Str("The specified theme does not exist");
 				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			} else {
-				monitor.startChain(controller.loadTheme(name));
-				setPostOk(response);
+				if (!controller.isBusy()) {
+					monitor.startChain(controller.loadTheme(name));
+					setPostOk(response);
+				} else {
+					setBusyError(response,"Unable to load the theme right now. Please try again later");
+				}
 			}
 		} else if (request.body.toString().equals("SAVE")) {
-			monitor.startChain(controller.saveTheme());
-			setPostOk(response);
+			if (!controller.isBusy()) {
+				monitor.startChain(controller.saveTheme());
+				setPostOk(response);
+			} else {
+				setBusyError(response,"Unable to save the theme right now. Please try again later");
+			}
 		} else if (request.body.startsWith("SAVE_AS:")) {
 			Str name = request.body.split(":").get(1);
 			if (checkThemeName(name,response)) {
-				monitor.startChain(controller.saveThemeAs(name.toString()));
-				setPostOk(response);
+				if (!controller.isBusy()) {
+					monitor.startChain(controller.saveThemeAs(name.toString()));
+					setPostOk(response);
+				} else {
+					setBusyError(response,"Unable to save the theme right now. Please try again later");
+				}
 			}
 		} else if (request.body.startsWith("DELETE:")) {
 			String name = request.body.split(":").get(1).toString();
@@ -273,8 +285,12 @@ public class RequestHandler extends HttpRequestHandler {
 				Str err = new Str("The specified theme does not exist");
 				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			} else {
-				monitor.startChain(controller.deleteTheme(name));
-				setPostOk(response);
+				if (!controller.isBusy()) {
+					monitor.startChain(controller.deleteTheme(name));
+					setPostOk(response);
+				} else {
+					setBusyError(response,"Unable to delete the theme right now. Please try again later");
+				}
 			}
 		} else if (request.body.startsWith("NEW:")) {
 			List<Str> elems = request.body.split(":");
@@ -282,8 +298,12 @@ public class RequestHandler extends HttpRequestHandler {
 			if (checkThemeName(name,response)) {
 				Rythm rythm = new Rythm();
 				rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
-				monitor.startChain(controller.newTheme(name.toString(), rythm));
-				setPostOk(response);
+				if (!controller.isBusy()) {
+					monitor.startChain(controller.newTheme(name.toString(), rythm));
+					setPostOk(response);
+				} else {
+					setBusyError(response,"Unable to initialize a new theme right now. Please try again later");
+				}
 			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
@@ -646,4 +666,3 @@ public class RequestHandler extends HttpRequestHandler {
 		setError(response,HttpURLConnection.HTTP_UNAVAILABLE,new Str(msg));
 	}
 }
-

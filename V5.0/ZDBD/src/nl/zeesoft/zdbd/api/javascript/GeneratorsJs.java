@@ -58,6 +58,7 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"generators.toggleShowList = function(property) {");
 		append(r,"    generators.showList = !generators.showList;");
 		append(r,"    if (generators.showList) {");
+		append(r,"        main.dom.startFadeIn(\"generatorList\");");
 		append(r,"        generators.refresh();");
 		append(r,"        property.value = \"-\";");
 		append(r,"    } else {");
