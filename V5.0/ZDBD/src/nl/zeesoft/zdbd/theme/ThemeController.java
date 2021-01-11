@@ -43,6 +43,8 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				CHANGED_TRAINING_SEQUENCE	= "CHANGED_TRAINING_SEQUENCE";
 	public static String				TRAINING_NETWORK			= "TRAINING_NETWORK";
 	public static String				TRAINED_NETWORK				= "TRAINED_NETWORK";
+	public static String				RESETTING_NETWORK			= "RESETTING_NETWORK";
+	public static String				RESET_NETWORK				= "RESET_NETWORK";
 	public static String				GENERATING_SEQUENCES		= "GENERATING_SEQUENCES";
 	public static String				GENERATED_SEQUENCES			= "GENERATED_SEQUENCES";
 	public static String				GENERATING_SEQUENCE			= "GENERATING_SEQUENCE";
@@ -174,6 +176,10 @@ public class ThemeController implements EventListener, Waitable {
 	
 	public CodeRunnerChain trainNetwork() {
 		return getTrainNetworkRunnerChain();
+	}
+	
+	public CodeRunnerChain resetNetwork() {
+		return getResetNetworkRunnerChain();
 	}
 	
 	public ModelStatistics getNetworkStatistics() {
@@ -423,6 +429,12 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(TRAINING_NETWORK)) {
 			MidiSys.sequencer.stop();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
+			lock.lock(this);
+			busy.setBusy(false);
+			lock.unlock(this);
+		} else if (event.name.equals(RESETTING_NETWORK)) {
+			MidiSys.sequencer.stop();
+		} else if (event.name.equals(RESET_NETWORK)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
@@ -692,6 +704,19 @@ public class ThemeController implements EventListener, Waitable {
 				}
 				r.add(eventPublisher.getPublishEventRunCode(this, TRAINED_NETWORK));
 			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	protected CodeRunnerChain getResetNetworkRunnerChain() {
+		CodeRunnerChain r = new CodeRunnerChain();
+		lock.lock(this);
+		if (theme!=null && !busy.isBusy()) {
+			busy.setBusy(true);
+			r.add(eventPublisher.getPublishEventRunCode(this, RESETTING_NETWORK));
+			r.addAll(theme.resetNetwork());
+			r.add(eventPublisher.getPublishEventRunCode(this, RESET_NETWORK));
 		}
 		lock.unlock(this);
 		return r;

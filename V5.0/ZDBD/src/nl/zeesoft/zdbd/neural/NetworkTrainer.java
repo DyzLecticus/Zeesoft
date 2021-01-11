@@ -258,6 +258,13 @@ public class NetworkTrainer implements Waitable {
 		lock.unlock(this);
 		return r;
 	}
+
+	public void reset() {
+		lock.lock(this);
+		lastIO = null;
+		trainedNetwork = 0;
+		lock.unlock(this);
+	}
 	
 	protected void trainCycle(Network network, int cycle) {
 		lock.lock(this);

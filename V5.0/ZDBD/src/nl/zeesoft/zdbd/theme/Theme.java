@@ -1,5 +1,8 @@
 package nl.zeesoft.zdbd.theme;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.neural.Generators;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
@@ -50,6 +53,14 @@ public class Theme {
 	
 	public CodeRunnerChain trainNetwork() {
 		return networkTrainer.getTrainNetworkChain(network);
+	}
+	
+	public List<RunCode> resetNetwork() {
+		network = new Network();
+		List<RunCode> r = new ArrayList<RunCode>();
+		r.add(network.getInitializeRunCode(networkConfiguration, true));
+		r.add(getResetNetworkTrainerRunCode());
+		return r;
 	}
 	
 	protected RunCode saveNetwork() {
@@ -118,6 +129,18 @@ public class Theme {
 			@Override
 			protected boolean run() {
 				FileIO.deleteDir((String)params[0], true);
+				return true;
+			}
+		};
+		code.params[0] = getDirectory();
+		return code;
+	}
+	
+	protected RunCode getResetNetworkTrainerRunCode() {
+		RunCode code = new RunCode() {
+			@Override
+			protected boolean run() {
+				networkTrainer.reset();
 				return true;
 			}
 		};

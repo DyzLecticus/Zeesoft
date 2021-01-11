@@ -25,6 +25,14 @@ public class NetworkJs extends ResponseObject {
 		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
 		//append(r,"    console.log(obj);");
+		append(r,"    var elem = window.document.getElementById(\"resetNetwork\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        if (obj.isTraining || !obj.canTrain || obj.needsTraining) {");
+		append(r,"            elem.disabled = true;");
+		append(r,"        } else {");
+		append(r,"            elem.disabled = false;");
+		append(r,"        }");
+		append(r,"    }");
 		append(r,"    var elem = window.document.getElementById(\"trainNetwork\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        if (obj.isTraining || !obj.canTrain) {");
@@ -63,6 +71,13 @@ public class NetworkJs extends ResponseObject {
 		append(r,"network.train = function() {");
 		append(r,"    var cb = function() { network.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/network.txt\",\"TRAIN\",cb,main.xhr.alertErrorCallback);");
+		append(r,"};");
+		append(r,"network.reset = function() {");
+		append(r,"    var c = confirm(\"Are you sure you want to reset the network?\");");
+		append(r,"    if (c==true) {");
+		append(r,"        var cb = function() { network.refresh(); state.refresh(); };");
+		append(r,"        main.xhr.postText(\"/network.txt\",\"RESET\",cb,main.xhr.alertErrorCallback);");
+		append(r,"    }");
 		append(r,"};");
 		append(r,"network.toggleShowStats = function() {");
 		append(r,"    network.showStats = !network.showStats;");

@@ -516,6 +516,13 @@ public class RequestHandler extends HttpRequestHandler {
 			} else {
 				setBusyError(response,"Unable to train the network right now. Please try again later.");
 			}
+		} else if (request.body.toString().equals("RESET")) {
+			if (!controller.isBusy()) {
+				monitor.startChain(controller.resetNetwork());
+				setPostOk(response);
+			} else {
+				setBusyError(response,"Unable to reset the network right now. Please try again later.");
+			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 		}

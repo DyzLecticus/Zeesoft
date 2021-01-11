@@ -85,6 +85,9 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" DISABLED />");
 		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" id=\"resetNetwork\" value=\"Reset\" onclick=\"network.reset();\" DISABLED />");
+		append(r,"    </div>");
 		append(r,"</div>");
 		append(r,"<div id=\"statistics\"></div>");
 		append(r,"</div>"); // end network
