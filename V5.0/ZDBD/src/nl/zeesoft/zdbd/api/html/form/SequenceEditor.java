@@ -49,6 +49,8 @@ public class SequenceEditor extends FormHtml {
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,"<input type=\"button\" value=\"Clear\" onclick=\"sequence.clickedClearPattern();\" />");
+		append(r,"<input type=\"button\" value=\"Copy\" onclick=\"sequence.copyPattern();\" />");
+		append(r,"<input type=\"button\" value=\"Paste\" onclick=\"sequence.pastePattern();\" />");
 		append(r,"</div>");
 		append(r,"</div>");
 		

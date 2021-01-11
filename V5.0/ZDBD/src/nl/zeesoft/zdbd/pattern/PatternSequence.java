@@ -75,6 +75,14 @@ public class PatternSequence {
 		sequence[3] = -1;
 	}
 	
+	public void addEmptyPatterns() {
+		while (patterns.size() < sequence.length) {
+			InstrumentPattern pattern = new InstrumentPattern();
+			pattern.num = patterns.size();
+			patterns.add(pattern);
+		}
+	}
+	
 	public ThemeControllerSettings fromFile(String path) {
 		return (ThemeControllerSettings) PersistableCollection.fromFile(path);
 	}

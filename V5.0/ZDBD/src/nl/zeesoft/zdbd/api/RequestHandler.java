@@ -460,15 +460,32 @@ public class RequestHandler extends HttpRequestHandler {
 			sequence.sequence[sequenceIndex] = sequencePattern;
 			controller.setTrainingSequence(sequence);
 			setPostOk(response);
+		} else if (request.body.startsWith("COPY:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int patternIndexC = Integer.parseInt(elems.get(1).toString());
+			int patternIndexP = Integer.parseInt(elems.get(2).toString());
+			if (patternIndexC<sequence.sequence.length && patternIndexP<sequence.sequence.length) {
+				sequence.addEmptyPatterns();
+				InstrumentPattern patternC = sequence.patterns.get(patternIndexC);
+				sequence.patterns.set(patternIndexP, patternC.copy());
+				controller.setTrainingSequence(sequence);
+				setPostOk(response);
+			} else {
+				setNotFoundError(response,new Str("Not found"));
+			}
 		} else if (request.body.startsWith("CLEAR:")) {
 			PatternSequence sequence = controller.getTrainingSequence();
 			List<Str> elems = request.body.split(":");
 			int patternIndex = Integer.parseInt(elems.get(1).toString());
-			if (patternIndex<sequence.patterns.size()) {
+			if (patternIndex<sequence.sequence.length) {
+				sequence.addEmptyPatterns();
 				InstrumentPattern pattern = sequence.patterns.get(patternIndex);
 				pattern.clear();
 				controller.setTrainingSequence(sequence);
 				setPostOk(response);
+			} else {
+				setNotFoundError(response,new Str("Not found"));
 			}
 		} else if (request.body.startsWith("SET_PATTERN_STEP_VALUE:")) {
 			PatternSequence sequence = controller.getTrainingSequence();
@@ -477,16 +494,14 @@ public class RequestHandler extends HttpRequestHandler {
 			String instrumentName = elems.get(2).toString();
 			int step = Integer.parseInt(elems.get(3).toString());
 			int value = Integer.parseInt(elems.get(4).toString());
-			if (patternIndex<sequence.patterns.size()) {
-				while (patternIndex>=sequence.patterns.size()) {
-					InstrumentPattern pattern = new InstrumentPattern();
-					pattern.num = sequence.patterns.size();
-					sequence.patterns.add(pattern);
-				}
+			if (patternIndex<sequence.sequence.length) {
+				sequence.addEmptyPatterns();
 				InstrumentPattern pattern = sequence.patterns.get(patternIndex);
 				pattern.setStepValue(instrumentName, step, value);
 				controller.setTrainingSequence(sequence);
 				setPostOk(response);
+			} else {
+				setNotFoundError(response,new Str("Not found"));
 			}
 		} else {
 			setNotFoundError(response,new Str("Not found"));
