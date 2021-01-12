@@ -26,18 +26,11 @@ public class Theme {
 	protected SoundPatch		soundPatch				= new SoundPatch();
 	
 	protected void setShuffle(float percentage) {
-		if (percentage > 0.5F) {
-			percentage = 0.5F;
-		}
-		for (int i = 0; i < rythm.stepDelays.length; i++) {
-			if (i%2==0) {
-				rythm.stepDelays[i] = 0;
-			} else {
-				rythm.stepDelays[i] = percentage;
-			}
-		}
-		networkTrainer.setShuffle(rythm.stepDelays);
-		generators.setShuffle(rythm.stepDelays);
+		rythm.setShuffle(percentage);
+		Rythm publish = new Rythm();
+		publish.copyFrom(rythm);
+		networkTrainer.setShuffle(publish.stepDelays);
+		generators.setShuffle(publish.stepDelays);
 	}
 	
 	protected RunCode loadRythm() {

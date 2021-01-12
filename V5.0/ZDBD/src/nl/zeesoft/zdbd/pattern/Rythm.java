@@ -51,6 +51,27 @@ public class Rythm {
 		return r;
 	}
 	
+	public void setShuffle(float percentage) {
+		if (percentage > 0.5F) {
+			percentage = 0.5F;
+		}
+		for (int i = 0; i < stepDelays.length; i++) {
+			if (i%2==0) {
+				if (stepsPerBeat==8) {
+					if (i%4==0) {
+						stepDelays[i] = 0;
+					} else {
+						stepDelays[i] = percentage;
+					}
+				} else {
+					stepDelays[i] = 0;
+				}
+			} else {
+				stepDelays[i] = percentage;
+			}
+		}
+	}
+
 	public int getStepsPerPattern() {
 		return beatsPerPattern * stepsPerBeat;
 	}
