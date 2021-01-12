@@ -24,7 +24,22 @@ public class Theme {
 	protected Network			network					= new Network();
 	protected Generators		generators				= new Generators();
 	protected SoundPatch		soundPatch				= new SoundPatch();
-
+	
+	protected void setShuffle(float percentage) {
+		if (percentage > 0.5F) {
+			percentage = 0.5F;
+		}
+		for (int i = 0; i < rythm.stepDelays.length; i++) {
+			if (i%2==0) {
+				rythm.stepDelays[i] = 0;
+			} else {
+				rythm.stepDelays[i] = percentage;
+			}
+		}
+		networkTrainer.setShuffle(rythm.stepDelays);
+		generators.setShuffle(rythm.stepDelays);
+	}
+	
 	protected RunCode loadRythm() {
 		return rythm.getFromFileRunCode(getRythmFileName());
 	}
@@ -51,11 +66,11 @@ public class Theme {
 		return network.getInitializeAndLoadRunCode(networkConfiguration,false);
 	}
 	
-	public CodeRunnerChain trainNetwork() {
+	protected CodeRunnerChain trainNetwork() {
 		return networkTrainer.getTrainNetworkChain(network);
 	}
 	
-	public List<RunCode> resetNetwork() {
+	protected List<RunCode> resetNetwork() {
 		network = new Network();
 		List<RunCode> r = new ArrayList<RunCode>();
 		r.add(network.getInitializeRunCode(networkConfiguration, true));

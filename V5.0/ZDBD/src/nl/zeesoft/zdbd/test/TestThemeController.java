@@ -62,6 +62,8 @@ public class TestThemeController extends TestObject {
 		settings.soundBankDir = "../../V3.0/ZeeTracker/resources/";
 		settings.workDir = "dist";
 		
+		System.out.println("Initializing controller ...");
+		
 		ThemeController controller = new ThemeController();
 		CodeRunnerChain chain = controller.initialize(settings);
 		assertNotNull(chain,"Failed to initialize controller");
@@ -83,7 +85,7 @@ public class TestThemeController extends TestObject {
 			Generator generator = new Generator();
 			generator.name = "TestGenerator";
 			controller.putGenerator(generator);
-			assertEqual(controller.getGenerators().size(),4,"Number of generators does not match expectation");
+			assertEqual(controller.getGenerators().size(),7,"Number of generators does not match expectation");
 			assertEqual(controller.themeHasChanges(),true,"Theme changes do not match expectation (3)");
 			
 			System.out.println();
@@ -105,6 +107,8 @@ public class TestThemeController extends TestObject {
 				selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
 				sleep(11000);
 				MidiSys.sequencer.stop();
+
+				controller.setShuffle(0.2F);
 				
 				sleep(1000);
 				MidiSys.sequencer.startRecording();

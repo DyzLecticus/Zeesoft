@@ -49,6 +49,7 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				GENERATED_SEQUENCES			= "GENERATED_SEQUENCES";
 	public static String				GENERATING_SEQUENCE			= "GENERATING_SEQUENCE";
 	public static String				GENERATED_SEQUENCE			= "GENERATED_SEQUENCE";
+	public static String				CHANGED_SHUFFLE				= "CHANGED_SHUFFLE";
 	
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
@@ -138,6 +139,19 @@ public class ThemeController implements EventListener, Waitable {
 			MidiSys.sequencer.setTempoInBPM(beatsPerMinute);
 		}
 		lock.unlock(this);
+	}
+	
+	public void setShuffle(float percentage) {
+		boolean changed = false;
+		lock.lock(this);
+		if (theme!=null && theme.rythm.stepDelays[1]!=percentage) {
+			changed = true;
+			theme.setShuffle(percentage);
+		}
+		lock.unlock(this);
+		if (changed) {
+			eventPublisher.publishEvent(this, CHANGED_SHUFFLE, percentage);
+		}
 	}
 	
 	public void setTrainingSequence(PatternSequence sequence) {

@@ -64,6 +64,12 @@ public class NetworkTrainer implements Waitable {
 		this.changedSequence = System.currentTimeMillis();
 		lock.unlock(this);
 	}
+	
+	public void setShuffle(float[] stepDelays) {
+		lock.lock(this);
+		sequence.rythm.stepDelays = stepDelays;
+		lock.unlock(this);
+	}
 
 	public void setStartTrainTemporalMemory(int startTrainTemporalMemory) {
 		lock.lock(this);

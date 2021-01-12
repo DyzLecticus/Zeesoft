@@ -177,9 +177,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 				controller = null;
 			}
 			lock.unlock(this);
-		} else if (
-			event.name.equals(ThemeController.GENERATED_SEQUENCES)
-			) {
+		} else if (event.name.equals(ThemeController.GENERATED_SEQUENCES)) {
 			lock.lock(this);
 			if ((currSequence.length()==0 || currSequence.equals(NetworkTrainer.TRAINING_SEQUENCE)) && 
 				!MidiSys.sequencer.isRunning()
@@ -209,6 +207,15 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 					changedNextSequenceNoLock();
 					Logger.dbg(this, new Str("Updated next sequence"));
 				}
+			}
+			lock.unlock(this);
+		} else if (event.name.equals(ThemeController.CHANGED_SHUFFLE)) {
+			lock.lock(this);
+			if (currSequence.length()>0) {
+				changedCurrentSequenceNoLock();
+			}
+			if (nextSequence.length()>0) {
+				changedNextSequenceNoLock();
 			}
 			lock.unlock(this);
 		}

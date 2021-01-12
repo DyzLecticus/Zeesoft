@@ -22,6 +22,7 @@ public class Generators {
 	protected Busy					busy		= new Busy(this);
 	
 	protected List<Generator>		generators	= new ArrayList<Generator>();
+	protected float[]				stepDelays	= null;
 	protected long					changed		= System.currentTimeMillis();
 	
 	public Generators() {
@@ -39,6 +40,8 @@ public class Generators {
 	}
 	
 	public void initializeDefaults() {
+		generators.clear();
+		
 		Generator gen = null;
 		gen = new Generator();
 		gen.name = "Maintain A1";
@@ -176,6 +179,17 @@ public class Generators {
 		return r;
 	}
 	
+	public void setShuffle(float[] stepDelays) {
+		lock.lock(this);
+		this.stepDelays = stepDelays;
+		for (Generator gen: generators) {
+			if (gen.generatedPatternSequence!=null) {
+				gen.generatedPatternSequence.rythm.stepDelays = stepDelays; 
+			}
+		}
+		lock.unlock(this);
+	}
+	
 	public void clear() {
 		lock.lock(this);
 		generators.clear();
@@ -218,6 +232,10 @@ public class Generators {
 			lock.lock(this);
 			if (copy.generatedPatternSequence!=null) {
 				gen.generatedPatternSequence = copy.generatedPatternSequence;
+				if (stepDelays!=null) {
+					gen.generatedPatternSequence.rythm.stepDelays = stepDelays;
+					stepDelays = null;
+				}
 				r = gen.generatedPatternSequence;
 			}
 			changed = System.currentTimeMillis();
