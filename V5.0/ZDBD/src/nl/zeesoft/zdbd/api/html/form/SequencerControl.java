@@ -12,7 +12,7 @@ public class SequencerControl extends FormHtml {
 	protected MixState	currentMix	= null;
 	protected MixState	nextMix		= null;
 	
-	public SequencerControl(int beatsPerMinute, List<String> names, String currentSequence, String nextSequence,
+	public SequencerControl(int beatsPerMinute, float shufflePercentage, List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay,
 		MixState currentMix, MixState nextMix
 		) {
@@ -20,6 +20,7 @@ public class SequencerControl extends FormHtml {
 			names.add(0,currentSequence);
 		}
 		addProperty("beatsPerMinute", "Beats per minute", beatsPerMinute, FormProperty.NUMBER_INPUT);
+		addProperty("shufflePercentage", "Shuffle", shufflePercentage, FormProperty.ANY_INPUT);
 		addProperty("currentSequence", "Play sequence", names, FormProperty.SELECT, currentSequence);
 		addProperty("nextSequence", "Next sequence", names, FormProperty.SELECT, nextSequence);
 		addProperty("hold", "Hold", hold, FormProperty.CHECKBOX_INPUT);

@@ -270,10 +270,11 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		return r;
 	}
 	
-	public SequencerControl getSequencerControl(int bpm) {
+	public SequencerControl getSequencerControl(int bpm, float shufflePercentage) {
 		lock.lock(this);
 		SequencerControl r = new SequencerControl(
 			bpm,
+			shufflePercentage,
 			controller.getSequenceNames(),
 			currSequence,
 			nextSequence,

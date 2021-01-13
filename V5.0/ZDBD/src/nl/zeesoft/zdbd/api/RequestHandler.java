@@ -106,12 +106,14 @@ public class RequestHandler extends HttpRequestHandler {
 			} else if (request.path.equals("/sequencerControl.txt")) {
 				if (checkInitialized(response)) {
 					int bpm = 120;
+					float shufflePercentage = 0F;
 					Rythm rythm = controller.getRythm();
 					if (rythm!=null) {
 						bpm = (int)rythm.beatsPerMinute;
+						shufflePercentage = rythm.stepDelays[1];
 					}
 					response.code = HttpURLConnection.HTTP_OK;
-					response.body = selector.getSequencerControl(bpm).render();
+					response.body = selector.getSequencerControl(bpm,shufflePercentage).render();
 				}
 			} else if (request.path.equals("/sequenceEditor.txt")) {
 				if (checkInitialized(response)) {
@@ -394,6 +396,8 @@ public class RequestHandler extends HttpRequestHandler {
 			boolean error = false;
 			if (name.equals("beatsPerMinute")) {
 				controller.setBeatsPerMinute(parseBeatsPerMinute(elems.get(2)));;
+			} else if (name.equals("shufflePercentage")) {
+				controller.setShuffle(parseShufflePercentage(elems.get(2)));;
 			} else if (name.equals("currentSequence")) {
 				selector.setCurrentSequence(elems.get(2).toString());
 			} else if (name.equals("nextSequence")) {
@@ -748,6 +752,14 @@ public class RequestHandler extends HttpRequestHandler {
 		}
 		if (r > 1) {
 			r = 1;
+		}
+		return r;
+	}
+	
+	protected float parseShufflePercentage(Str perc) {
+		float r = parsePercentage(perc);
+		if (r > 0.5F) {
+			r = 0.5F;
 		}
 		return r;
 	}
