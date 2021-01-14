@@ -217,7 +217,15 @@ public class RequestHandler extends HttpRequestHandler {
 			}
 			index++;
 		}
+
+		r.sb().append("\n");
+		r.sb().append("isRecording:");
+		r.sb().append(selector.isRecording());
 		
+		r.sb().append("\n");
+		r.sb().append("recordedTicks:");
+		r.sb().append(MidiSys.sequencer.getRecordedTicks());
+
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
 	}
@@ -377,19 +385,34 @@ public class RequestHandler extends HttpRequestHandler {
 			}
 		} else if (request.body.toString().equals("START")) {
 			String name = selector.getCurrentSequence();
-			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
-				if (checkSequenceName(name,response)) {
-					selector.start();
+			if (MidiSys.isInitialized()) {
+				if(!MidiSys.sequencer.isRunning()) {
+					if (checkSequenceName(name,response)) {
+						selector.start();
+						setPostOk(response);
+					}
+				} else {
 					setPostOk(response);
 				}
 			} else {
-				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("STOP")) {
-			if (MidiSys.isInitialized() && MidiSys.sequencer.isRunning()) {
-				MidiSys.sequencer.stop();
+			if (MidiSys.isInitialized()) {
+				if (MidiSys.sequencer.isRunning()) {
+					MidiSys.sequencer.stop();
+				}
+				setPostOk(response);
 			}
-			setPostOk(response);
+		} else if (request.body.toString().equals("START_RECORDING")) {
+			if (MidiSys.isInitialized()) {
+				selector.startRecording();
+				setPostOk(response);
+			}
+		} else if (request.body.toString().equals("STOP_RECORDING")) {
+			if (MidiSys.isInitialized()) {
+				selector.stopRecording();
+				setPostOk(response);
+			}
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
 			String name = elems.get(1).toString();

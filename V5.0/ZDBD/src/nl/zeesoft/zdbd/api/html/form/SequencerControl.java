@@ -9,10 +9,13 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Str;
 
 public class SequencerControl extends FormHtml {
-	protected MixState	currentMix	= null;
-	protected MixState	nextMix		= null;
+	protected MixState	currentMix		= null;
+	protected MixState	nextMix			= null;
+	protected boolean	recording		= false;
+	protected long		recordedTicks	= 0;
 	
-	public SequencerControl(int beatsPerMinute, float shufflePercentage, List<String> names, String currentSequence, String nextSequence,
+	public SequencerControl(int beatsPerMinute, float shufflePercentage, boolean recording, long recordedTicks,
+		List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay,
 		MixState currentMix, MixState nextMix
 		) {
@@ -32,6 +35,8 @@ public class SequencerControl extends FormHtml {
 		}
 		this.currentMix = currentMix;
 		this.nextMix = nextMix;
+		this.recording = recording;
+		this.recordedTicks = recordedTicks;
 	}
 	
 	@Override
@@ -41,6 +46,7 @@ public class SequencerControl extends FormHtml {
 		append(r,super.render());
 		append(r,renderMuteButtons(currentMix,true));
 		append(r,renderMuteButtons(nextMix,false));
+		append(r,renderRecorder(recording,recordedTicks));
 		return r;
 	}
 	
@@ -126,6 +132,31 @@ public class SequencerControl extends FormHtml {
 			r.sb().append("\" class=\"red");
 		}
 		r.sb().append("\" type=\"button\" onclick=\"sequencer.toggleMute(this);\" />");
+		return r;
+	}
+	
+	public static Str renderRecorder(boolean recording, long recordedTicks) {
+		Str r = new Str();
+		append(r,"<div class=\"row\">");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<label class=\"column-label\">Record</label>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<input type=\"button\" id=\"startRecording\" value=\"Start\" onclick=\"sequencer.startRecording();\"");
+		if (recording) {
+			r.sb().append(" DISABLED");
+		}
+		r.sb().append(" />");
+		append(r,"<input type=\"button\" id=\"stopRecording\" value=\"Stop\" onclick=\"sequencer.stopRecording();\"");
+		if (!recording) {
+			r.sb().append(" DISABLED");
+		}
+		r.sb().append(" />");
+		append(r,"<label id=\"recordedTicks\">");
+		r.sb().append(recordedTicks);
+		r.sb().append("</label>");
+		append(r,"</div>");
+		append(r,"</div>");
 		return r;
 	}
 }

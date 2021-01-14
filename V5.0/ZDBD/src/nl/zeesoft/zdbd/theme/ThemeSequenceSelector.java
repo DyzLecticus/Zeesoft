@@ -5,6 +5,7 @@ import java.util.List;
 import javax.sound.midi.Sequence;
 
 import nl.zeesoft.zdbd.api.html.form.SequencerControl;
+import nl.zeesoft.zdbd.midi.MidiSequencer;
 import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
@@ -27,7 +28,9 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	private String				nextSequence			= "";
 	private MixState			currMix					= new MixState();
 	private MixState			nextMix					= new MixState();
-	
+
+	private boolean				recording				= false;
+
 	private ThemeController		controller				= null;
 	
 	public void setController(ThemeController controller) {
@@ -162,6 +165,34 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		return r;
 	}
 
+	public void startRecording() {
+		lock.lock(this);
+		if (!recording) {
+			recording = true;
+			if (!MidiSys.sequencer.isRecording()) {
+				MidiSys.sequencer.startRecording();
+			}
+		}
+		lock.unlock(this);
+	}
+
+	public void stopRecording() {
+		lock.lock(this);
+		if (recording) {
+			recording = false;
+			if (MidiSys.sequencer.isRecording()) {
+				MidiSys.sequencer.stopRecording();
+			}
+		}
+		lock.unlock(this);
+	}
+
+	public boolean isRecording() {
+		lock.lock(this);
+		boolean r = recording;
+		lock.unlock(this);
+		return r;
+	}
 	
 	@Override
 	public void handleEvent(Event event) {
@@ -271,10 +302,17 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	}
 	
 	public SequencerControl getSequencerControl(int bpm, float shufflePercentage) {
+		long recordedTicks = 0;
+		MidiSequencer sequencer = MidiSys.sequencer;
+		if (sequencer!=null) {
+			recordedTicks = MidiSys.sequencer.getRecordedTicks();
+		}
 		lock.lock(this);
 		SequencerControl r = new SequencerControl(
 			bpm,
 			shufflePercentage,
+			recording,
+			recordedTicks,
 			controller.getSequenceNames(),
 			currSequence,
 			nextSequence,

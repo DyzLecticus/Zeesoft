@@ -361,6 +361,16 @@ public class MidiSequencer implements Sequencer, Waitable {
 		return r;
 	}
 
+	public long getRecordedTicks() {
+		long r = 0;
+		recordLock.lock(this);
+		if (recordedSequence!=null && recordedSequence.sequence!=null) {
+			r = recordedSeqTicks;
+		}
+		recordLock.unlock(this);
+		return r;
+	}
+
 	public Sequence getRecordedSequence() {
 		Sequence r = null;
 		recordLock.lock(this);

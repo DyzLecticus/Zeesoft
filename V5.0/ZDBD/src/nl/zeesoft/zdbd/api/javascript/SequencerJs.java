@@ -9,6 +9,8 @@ public class SequencerJs extends ResponseObject {
 		Str r = new Str();
 		append(r,"var sequencer = sequencer || {};");
 		append(r,"sequencer.isRunning = false;");
+		append(r,"sequencer.isRecording = false;");
+		append(r,"sequencer.recordedTicks = 0;");
 		append(r,"sequencer.refresh = function() {");
 		append(r,"    main.xhr.getText(\"/sequencerControl.txt\",sequencer.refreshCallback,sequencer.errorCallback);");
 		append(r,"    if (!sequencer.isRunning) {");
@@ -61,6 +63,12 @@ public class SequencerJs extends ResponseObject {
 		append(r,"                }");
 		append(r,"            }");
 		append(r,"        }");
+		append(r,"    }");
+		append(r,"    sequencer.isRecording = obj.isRecording;");
+		append(r,"    sequencer.recordedTicks = parseInt(obj.recordedTicks,10);");
+		append(r,"    var elem = window.document.getElementById(\"recordedTicks\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        elem.innerHTML = obj.recordedTicks;");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"sequencer.errorStateCallback = function(response) {");
@@ -122,6 +130,24 @@ public class SequencerJs extends ResponseObject {
 		append(r,"}");
 		append(r,"sequencer.stop = function() {");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"STOP\",sequencer.refresh,main.xhr.alertErrorCallback);");
+		append(r,"}");
+		append(r,"sequencer.startRecording = function() {");
+		append(r,"    var s = true;");
+		append(r,"    if (sequencer.recordedTicks>0) {");
+		append(r,"        s = confirm(\"This will erase the current recording. Are you sure you want to restart?\");");
+		append(r,"    }");
+		append(r,"    if (s==true) {");
+		append(r,"        main.xhr.postText(\"/sequencer.txt\",\"START_RECORDING\",sequencer.refresh,main.xhr.alertErrorCallback);");
+		append(r,"    }");
+		append(r,"}");
+		append(r,"sequencer.stopRecording = function() {");
+		append(r,"    var s = true;");
+		append(r,"    if (sequencer.isRunning) {");
+		append(r,"        s = confirm(\"Are you sure you want to stop recording?\");");
+		append(r,"    }");
+		append(r,"    if (s==true) {");
+		append(r,"        main.xhr.postText(\"/sequencer.txt\",\"STOP_RECORDING\",sequencer.refresh,main.xhr.alertErrorCallback);");
+		append(r,"    }");
 		append(r,"}");
 		return r;
 	}
