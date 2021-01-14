@@ -9,8 +9,8 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class GeneratorEditor extends FormHtml {
 	public GeneratorEditor(Generator generator) {
-		okLabel = "Done";
-		onOkClick = "generators.editDone();";
+		cancelLabel = "Done";
+		onCancelClick = "generators.editDone();";
 		
 		addProperty("name", "Name", generator.name, FormProperty.TEXT_INPUT);
 		addProperty("group1Distortion", "Group 1 distortion", generator.group1Distortion, FormProperty.ANY_INPUT);

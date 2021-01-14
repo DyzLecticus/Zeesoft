@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.Str;
 public class FormHtml extends ResponseObject {
 	public String				okLabel			= "Ok";
 	public String				onOkClick		= "";
+	public String				cancelLabel		= "Cancel";
 	public String				onCancelClick	= "";
 	public List<FormProperty> 	properties		= new ArrayList<FormProperty>();
 	
@@ -43,11 +44,11 @@ public class FormHtml extends ResponseObject {
 			append(r,property.render());
 			append(r,"</div>");
 		}
-		append(r,renderOkCancel(okLabel,onOkClick,onCancelClick));
+		append(r,renderOkCancel(okLabel,onOkClick,cancelLabel,onCancelClick));
 		return r;
 	}
 	
-	public static Str renderOkCancel(String okLabel, String onOkClick, String onCancelClick) {
+	public static Str renderOkCancel(String okLabel, String onOkClick, String cancelLabel, String onCancelClick) {
 		Str r = new Str();
 		if (onOkClick.length()>0 || onCancelClick.length()>0) {
 			append(r,"<div class=\"row\">");
@@ -60,7 +61,9 @@ public class FormHtml extends ResponseObject {
 				r.sb().append("\" />");
 			}
 			if (onCancelClick.length()>0) {
-				append(r,"<input id=\"formCancel\" type=\"button\" value=\"Cancel\" onclick=\"");
+				append(r,"<input id=\"formCancel\" type=\"button\" value=\"");
+				r.sb().append(cancelLabel);
+				r.sb().append("\" onclick=\"");
 				r.sb().append(onCancelClick);
 				r.sb().append("\" />");
 			}
