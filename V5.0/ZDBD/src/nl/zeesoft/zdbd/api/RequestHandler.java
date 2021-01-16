@@ -152,6 +152,7 @@ public class RequestHandler extends HttpRequestHandler {
 				}
 			}
 		}
+		setDefaultHeaders(response);
 	}
 	
 	protected void handleGetThemeRequest(HttpResponse response) {
@@ -285,6 +286,7 @@ public class RequestHandler extends HttpRequestHandler {
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
+		setDefaultHeaders(response);
 	}
 
 	protected void handlePostStateRequest(HttpRequest request, HttpResponse response) {

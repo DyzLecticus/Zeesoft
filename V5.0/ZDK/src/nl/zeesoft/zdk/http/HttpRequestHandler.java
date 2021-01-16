@@ -4,8 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.imageio.ImageIO;
 
@@ -27,6 +30,7 @@ public class HttpRequestHandler {
 		if (error.length()>0) {
 			setNotFoundError(response,error);
 		}
+		setDefaultHeaders(response);
 	}
 	
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
@@ -47,11 +51,7 @@ public class HttpRequestHandler {
 				response.body = data;
 			}
 		}
-	}
-	
-	protected BufferedImage getFavIcon() {
-		ImageIcon icon = ImageIcon.getZeesoftIcon(32);
-		return icon.getBufferedImage();
+		setDefaultHeaders(response);
 	}
 	
 	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
@@ -66,10 +66,12 @@ public class HttpRequestHandler {
 				setError(response,HttpURLConnection.HTTP_PRECON_FAILED,error);
 			}
 		}
+		setDefaultHeaders(response);
 	}
 	
 	protected void handlePutRequest(HttpRequest request, HttpResponse response) {
 		handlePostRequest(request,response);
+		setDefaultHeaders(response);
 	}
 	
 	protected void handleDeleteRequest(HttpRequest request, HttpResponse response) {
@@ -77,6 +79,7 @@ public class HttpRequestHandler {
 		if (error.length()>0) {
 			setNotFoundError(response,error);
 		}
+		setDefaultHeaders(response);
 	}
 	
 	protected void handleConnectRequest(HttpRequest request, HttpResponse response) {
@@ -103,6 +106,11 @@ public class HttpRequestHandler {
 		}
 	}
 	
+	protected BufferedImage getFavIcon() {
+		ImageIcon icon = ImageIcon.getZeesoftIcon(32);
+		return icon.getBufferedImage();
+	}
+	
 	protected void setNotFoundError(HttpResponse response, Str error) {
 		setError(response,HttpURLConnection.HTTP_NOT_FOUND,error);
 	}
@@ -115,5 +123,28 @@ public class HttpRequestHandler {
 		response.code = code;
 		response.message = error.toString();
 		response.body = error;
+	}
+	
+	protected void setDefaultHeaders(HttpResponse response) {
+		setDefaultHeaders(response, null);
+	}
+
+	protected void setDefaultHeaders(HttpResponse response, Date modified) {
+		response.headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.headers.add("Pragma", "no-cache");
+		response.headers.add("Last-Modified", getLastModifiedDateString(modified));
+	}
+	
+	protected final String getLastModifiedDateString() {
+		return getLastModifiedDateString(null);
+	}
+	
+	protected final String getLastModifiedDateString(Date modified) {
+		if (modified==null) {
+			modified = new Date();
+		}
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return dateFormat.format(modified);
 	}
 }
