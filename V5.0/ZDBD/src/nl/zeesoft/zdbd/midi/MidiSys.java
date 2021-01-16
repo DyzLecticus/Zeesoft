@@ -56,6 +56,7 @@ public class MidiSys {
 		try {
 			synthesizer = MidiSystem.getSynthesizer();
 			if (synthesizer!=null) {
+				Logger.dbg(new MidiSys(), new Str("Initializing synthesizer ..."));
 				synthesizer.open();
 			} else {
 				Logger.err(new MidiSys(),new Str("Synthesizer device is not supported"));
@@ -63,13 +64,24 @@ public class MidiSys {
 			if (synthesizer!=null) {
 				SynthConfig config = new SynthConfig();
 				config.configureSynthesizer(synthesizer);
+				Logger.dbg(new MidiSys(), new Str("Initialized synthesizer"));
+				Logger.dbg(new MidiSys(), new Str("Initializing sequencer ..."));
 				if (sequencer==null) {
 					sequencer = new MidiSequencer();
-					sequencer.setSynthConfig(config);
 				}
+				sequencer.setSynthConfig(config);
+				Logger.dbg(new MidiSys(), new Str("Initialized sequencer"));
 			}
 		} catch (MidiUnavailableException e) {
 			Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);
+		}
+	}
+	
+	public static void destroy() {
+		if (isInitialized()) {
+			Logger.dbg(new MidiSys(), new Str("Destroying MIDI system ..."));
+			closeDevices();
+			Logger.dbg(new MidiSys(), new Str("Destroying MIDI system"));
 		}
 	}
 	
@@ -80,14 +92,18 @@ public class MidiSys {
 	
 	public static void closeSequencer() {
 		if (sequencer!=null && sequencer.isOpen()) {
+			Logger.dbg(new MidiSys(), new Str("Closing sequencer ..."));
 			sequencer.close();
+			Logger.dbg(new MidiSys(), new Str("Closed sequencer"));
 		}
 	}
 	
 	public static void closeSynthesizer() {
 		if (synthesizer!=null && synthesizer.isOpen()) {
 			allSoundOff();
+			Logger.dbg(new MidiSys(), new Str("Closing synthesizer ..."));
 			synthesizer.close();
+			Logger.dbg(new MidiSys(), new Str("Closed synthesizer"));
 		}
 	}
 	

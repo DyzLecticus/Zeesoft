@@ -533,7 +533,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme = null;
 			lock.unlock(this);
 		}
-		MidiSys.closeDevices();
+		MidiSys.destroy();
 		Logger.dbg(this,new Str("Destroyed"));
 	}
 	
