@@ -172,15 +172,25 @@ public class App implements ActionListener {
 	
 	protected void handleOpenRequest() {
 		Desktop desktop = Desktop.getDesktop();
+		boolean opened = false;
 		if (desktop.isSupported(Desktop.Action.BROWSE)) {
 			try {
 				URL url = new URL(APP_URL);
 				desktop.browse(url.toURI());
+				opened = true;
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		if (!opened) {
+	    	JOptionPane.showMessageDialog(
+	    		null,
+				"Failed to open browser to: " + APP_URL,
+				"Browse failed",
+				JOptionPane.ERROR_MESSAGE
+			);
 		}
 	}
 }

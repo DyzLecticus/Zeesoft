@@ -186,8 +186,16 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected void handleGetSequencerRequest(HttpResponse response) {
 		Str r = new Str();
+		
+		boolean running = false;
+		long recordedTicks = 0;
+		if (MidiSys.sequencer!=null) {
+			running = MidiSys.sequencer.isRunning();
+			recordedTicks = MidiSys.sequencer.getRecordedTicks();
+		}
+		
 		r.sb().append("isRunning:");
-		r.sb().append(MidiSys.sequencer.isRunning());
+		r.sb().append(running);
 
 		r.sb().append("\n");
 		r.sb().append("currentSequence:");
@@ -229,7 +237,7 @@ public class RequestHandler extends HttpRequestHandler {
 		
 		r.sb().append("\n");
 		r.sb().append("recordedTicks:");
-		r.sb().append(MidiSys.sequencer.getRecordedTicks());
+		r.sb().append(recordedTicks);
 
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = r;
