@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.midi;
+package nl.zeesoft.zdbd.midi;
 
 import java.io.BufferedInputStream;
 import java.io.File;

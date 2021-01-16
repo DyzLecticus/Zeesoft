@@ -120,6 +120,14 @@ public class Processor implements StrAble {
 			if (runnerList==null) {
 				lock.unlock(this);
 			}
+		} else if (processor instanceof Classifier) {
+			if (runnerList==null) {
+				lock.lock(this);
+			}
+			((Classifier)processor).reset(runnerList);
+			if (runnerList==null) {
+				lock.unlock(this);
+			}
 		}
 	}
 	

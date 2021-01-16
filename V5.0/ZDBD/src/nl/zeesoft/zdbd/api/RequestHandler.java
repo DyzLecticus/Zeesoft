@@ -84,68 +84,72 @@ public class RequestHandler extends HttpRequestHandler {
 
 	@Override
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
-		Str body = pathResponses.get(request.path);
-		if (body!=null) {
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = body;
-			if (request.path.endsWith(".css")) {
-				response.headers.addContentTypeHeader("text/css");
-			}
+		if (request.path.equals("/favicon.ico")) {
+			super.handleGetRequest(request, response);
 		} else {
-			if (request.path.equals("/state.txt")) {
+			Str body = pathResponses.get(request.path);
+			if (body!=null) {
 				response.code = HttpURLConnection.HTTP_OK;
-				response.body = monitor.getStateResponse();
-			} else if (request.path.equals("/theme.txt")) {
-				if (checkInitialized(response)) {
-					handleGetThemeRequest(response);
-				}
-			} else if (request.path.equals("/sequencer.txt")) {
-				if (checkInitialized(response)) {
-					handleGetSequencerRequest(response);
-				}
-			} else if (request.path.equals("/sequencerControl.txt")) {
-				if (checkInitialized(response)) {
-					int bpm = 120;
-					float shufflePercentage = 0F;
-					Rythm rythm = controller.getRythm();
-					if (rythm!=null) {
-						bpm = (int)rythm.beatsPerMinute;
-						shufflePercentage = rythm.stepDelays[1];
-					}
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = selector.getSequencerControl(bpm,shufflePercentage).render();
-				}
-			} else if (request.path.equals("/sequenceEditor.txt")) {
-				if (checkInitialized(response)) {
-					SequenceEditor editor = new SequenceEditor(controller.getTrainingSequence(),0);
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = editor.render();
-				}
-			} else if (request.path.equals("/network.txt")) {
-				if (checkInitialized(response)) {
-					handleGetNetworkRequest(response);
-				}
-			} else if (request.path.equals("/networkStatistics.txt")) {
-				float accuracy = 0;
-				NetworkIO lastIO = controller.getLastIO();
-				if (lastIO!=null) {
-					accuracy = lastIO.getAverageClassifierAccuracy(false);
-				}
-				NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics(),accuracy);
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = statistics.render();
-			} else if (request.path.equals("/generatorStatus.txt")) {
-				if (checkInitialized(response)) {
-					handleGetGeneratorStatusRequest(response);
-				}
-			} else if (request.path.equals("/generators.txt")) {
-				if (checkInitialized(response)) {
-					GeneratorList generators = new GeneratorList(controller.getGenerators());
-					response.code = HttpURLConnection.HTTP_OK;
-					response.body = generators.render();
+				response.body = body;
+				if (request.path.endsWith(".css")) {
+					response.headers.addContentTypeHeader("text/css");
 				}
 			} else {
-				setNotFoundError(response,new Str("Not found"));
+				if (request.path.equals("/state.txt")) {
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = monitor.getStateResponse();
+				} else if (request.path.equals("/theme.txt")) {
+					if (checkInitialized(response)) {
+						handleGetThemeRequest(response);
+					}
+				} else if (request.path.equals("/sequencer.txt")) {
+					if (checkInitialized(response)) {
+						handleGetSequencerRequest(response);
+					}
+				} else if (request.path.equals("/sequencerControl.txt")) {
+					if (checkInitialized(response)) {
+						int bpm = 120;
+						float shufflePercentage = 0F;
+						Rythm rythm = controller.getRythm();
+						if (rythm!=null) {
+							bpm = (int)rythm.beatsPerMinute;
+							shufflePercentage = rythm.stepDelays[1];
+						}
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = selector.getSequencerControl(bpm,shufflePercentage).render();
+					}
+				} else if (request.path.equals("/sequenceEditor.txt")) {
+					if (checkInitialized(response)) {
+						SequenceEditor editor = new SequenceEditor(controller.getTrainingSequence(),0);
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = editor.render();
+					}
+				} else if (request.path.equals("/network.txt")) {
+					if (checkInitialized(response)) {
+						handleGetNetworkRequest(response);
+					}
+				} else if (request.path.equals("/networkStatistics.txt")) {
+					float accuracy = 0;
+					NetworkIO lastIO = controller.getLastIO();
+					if (lastIO!=null) {
+						accuracy = lastIO.getAverageClassifierAccuracy(false);
+					}
+					NetworkStatistics statistics = new NetworkStatistics(controller.getNetworkStatistics(),accuracy);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = statistics.render();
+				} else if (request.path.equals("/generatorStatus.txt")) {
+					if (checkInitialized(response)) {
+						handleGetGeneratorStatusRequest(response);
+					}
+				} else if (request.path.equals("/generators.txt")) {
+					if (checkInitialized(response)) {
+						GeneratorList generators = new GeneratorList(controller.getGenerators());
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = generators.render();
+					}
+				} else {
+					setNotFoundError(response,new Str("Not found"));
+				}
 			}
 		}
 	}

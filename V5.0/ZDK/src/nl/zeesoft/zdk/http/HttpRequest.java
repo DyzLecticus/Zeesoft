@@ -30,7 +30,7 @@ public class HttpRequest {
 		return r;
 	}
 	
-	public String getPath() {
+	public String getFilePath() {
 		String r = path;
 		if (r.startsWith("/")) {
 			r = r.substring(1);
@@ -38,8 +38,7 @@ public class HttpRequest {
 		if (r.length()==0) {
 			r = config.getIndexFileName();
 		}
-		r = config.getFilePath() + r;
-		return r;
+		return config.getFilePath() + r;
 	}
 	
 	public int getContentLength() {

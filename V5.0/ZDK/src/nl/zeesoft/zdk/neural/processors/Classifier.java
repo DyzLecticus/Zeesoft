@@ -121,6 +121,20 @@ public class Classifier extends SDRProcessor {
 		accuracyHistory.clear();
 	}
 	
+	public void reset(CodeRunnerList runnerList) {
+		if (runnerList==null) {
+			clear();
+		} else {
+			runnerList.add(new RunCode() {
+				@Override
+				protected boolean run() {
+					clear();
+					return true;
+				}
+			});
+		}
+	}
+	
 	@Override
 	public Str setInput(SDR... sdrs) {
 		Str err = new Str();
@@ -338,5 +352,12 @@ public class Classifier extends SDRProcessor {
 			predictedValue = classification.getMostCountedValues().get(0);
 		}
 		lock.unlock(this);
+	}
+	
+	protected void clear() {
+		activationHistory.clear();
+		for (ClassifierStep step: classifierSteps) {
+			step.bits.clear();
+		}
 	}
 }

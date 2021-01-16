@@ -1,11 +1,17 @@
 package nl.zeesoft.zdk.http;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.image.ImageIcon;
 import nl.zeesoft.zdk.thread.CodeRunner;
 
 public class HttpRequestHandler {
@@ -17,7 +23,7 @@ public class HttpRequestHandler {
 	}
 	
 	protected void handleHeadRequest(HttpRequest request, HttpResponse response) {
-		Str error = FileIO.checkFile(request.getPath());
+		Str error = FileIO.checkFile(request.getFilePath());
 		if (error.length()>0) {
 			setNotFoundError(response,error);
 		}
@@ -25,16 +31,31 @@ public class HttpRequestHandler {
 	
 	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
 		Str data = new Str();
-		Str error = data.fromFile(request.getPath());
-		if (error.length()>0) {
-			setNotFoundError(response,error);
+		if (request.path.equals("/favicon.ico")) {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(getFavIcon(),"PNG",bos);
+				response.bytes = bos.toByteArray();
+			} catch (IOException e) {
+				setInternalError(response,new Str("Failed to convert favicon image to byte array"));
+			}
 		} else {
-			response.body = data;
+			Str error = data.fromFile(request.getFilePath());
+			if (error.length()>0) {
+				setNotFoundError(response,error);
+			} else {
+				response.body = data;
+			}
 		}
 	}
 	
+	protected BufferedImage getFavIcon() {
+		ImageIcon icon = ImageIcon.getZeesoftIcon(32);
+		return icon.getBufferedImage();
+	}
+	
 	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
-		String path = request.getPath();
+		String path = request.getFilePath();
 		Str error = FileIO.checkDirectory(FileIO.getDirName(path));
 		if (error.length()>0) {
 			setError(response,HttpURLConnection.HTTP_PRECON_FAILED,error);
@@ -52,7 +73,7 @@ public class HttpRequestHandler {
 	}
 	
 	protected void handleDeleteRequest(HttpRequest request, HttpResponse response) {
-		Str error = FileIO.deleteFile(request.getPath());
+		Str error = FileIO.deleteFile(request.getFilePath());
 		if (error.length()>0) {
 			setNotFoundError(response,error);
 		}
@@ -84,6 +105,10 @@ public class HttpRequestHandler {
 	
 	protected void setNotFoundError(HttpResponse response, Str error) {
 		setError(response,HttpURLConnection.HTTP_NOT_FOUND,error);
+	}
+	
+	protected void setInternalError(HttpResponse response, Str error) {
+		setError(response,HttpURLConnection.HTTP_INTERNAL_ERROR,error);
 	}
 	
 	protected void setError(HttpResponse response, int code, Str error) {

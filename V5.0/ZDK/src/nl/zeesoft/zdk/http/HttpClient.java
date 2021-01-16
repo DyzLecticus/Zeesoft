@@ -32,7 +32,7 @@ public class HttpClient {
 	protected BufferedReader	reader				= null;
 	private CodeRunner			runner				= null;
 	
-	protected Str				responseBody		= new Str();
+	protected byte[]			responseBytes		= null;
 	protected int				responseCode		= HttpURLConnection.HTTP_OK;
 	protected String			responseMessage		= "";
 	protected HttpHeaderList	responseHeaders		= new HttpHeaderList();
@@ -239,7 +239,19 @@ public class HttpClient {
 
 	public Str getResponseBody() {
 		lock.lock(this);
-		Str r = responseBody;
+		Str r = new Str();
+		if (responseBytes!=null) {
+			for (int i = 0; i < responseBytes.length; i++) {
+				r.sb().append((char)responseBytes[i]);
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+
+	public byte[] getResponseBytes() {
+		lock.lock(this);
+		byte[] r = responseBytes;
 		lock.unlock(this);
 		return r;
 	}
@@ -294,7 +306,6 @@ public class HttpClient {
 	}
 	
 	protected void readResponse() {
-		Str r = new Str();
 		lock.lock(this);
 		BufferedReader rdr = getReaderNoLock();
 		Socket sock = socket;
@@ -320,7 +331,7 @@ public class HttpClient {
 				}
 			}
 		}
-		
+
 		if (header.length()>0) {
 			List<Str> headers = header.split("\n");
 			List<Str> params = headers.get(0).split(" ");
@@ -336,6 +347,7 @@ public class HttpClient {
 				}
 			}
 			int contentLength = responseHeaders.getIntegerValue(HttpHeader.CONTENT_LENGTH);
+			byte[] bytes = new byte[contentLength];
 			lock.unlock(this);
 			
 			if (contentLength>0) {
@@ -343,7 +355,7 @@ public class HttpClient {
 				for (int i = 0; i < contentLength; i++) {
 					try {
 						c = rdr.read();
-						r.sb().append((char) c);
+						bytes[i] = (byte) c;
 					} catch (IOException ex) {
 						logError("I/O exception",ex);
 					}
@@ -351,7 +363,7 @@ public class HttpClient {
 			}
 			
 			lock.lock(this);
-			responseBody = r;
+			responseBytes = bytes;
 			lock.unlock(this);
 		}
 	}
@@ -384,7 +396,7 @@ public class HttpClient {
 	}
 	
 	protected void clearResponseNoLock() {
-		responseBody = new Str();
+		responseBytes = null;
 		responseCode = HttpURLConnection.HTTP_OK;
 		responseMessage = "";
 		responseHeaders = new HttpHeaderList();

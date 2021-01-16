@@ -17,7 +17,6 @@ import javax.sound.midi.Synthesizer;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
-import nl.zeesoft.zdk.midi.SoundbankLoader;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.RunCode;
 

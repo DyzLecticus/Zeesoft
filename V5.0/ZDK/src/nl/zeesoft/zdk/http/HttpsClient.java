@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -150,6 +151,7 @@ public class HttpsClient extends HttpClient {
 			rdr = getReaderNoLock();
 		}
 		HttpsURLConnection con = connection;
+		List<Integer> bytes = new ArrayList<Integer>();
 		lock.unlock(this);
 		
 		if (rdr!=null) {
@@ -158,6 +160,7 @@ public class HttpsClient extends HttpClient {
 				try {
 					c = rdr.read();
 					if (c!=-1) {
+						bytes.add(c);
 						r.sb().append((char) c);
 					}
 				} catch (IOException ex) {
@@ -167,7 +170,12 @@ public class HttpsClient extends HttpClient {
 		}
 		
 		lock.lock(this);
-		responseBody = r;
+		responseBytes = new byte[bytes.size()];
+		int i = 0;
+		for (Integer byt: bytes) {
+			responseBytes[i] = (byte)(int)byt;
+			i++;
+		}
 		try {
 			if (method.equals("CONNECT")) {
 				responseCode = HttpURLConnection.HTTP_OK;

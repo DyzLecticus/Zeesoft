@@ -54,7 +54,7 @@ public class ProxyRequestHandler extends HttpRequestHandler {
 						url += "/";
 					}
 					if (request.path.startsWith(url)) {
-						url += request.getPath();
+						url += request.getFilePath();
 					}
 				}
 				if (url.startsWith("https://")) {

@@ -204,6 +204,7 @@ public class HttpConnection {
 	private void handleResponse(HttpRequest request, HttpResponse response) {
 		lock.lock(this);
 		writer.print(response.toStr().sb());
+		writer.flush();
 		if (response.bytes!=null) {
 			writeOutput(response.bytes);
 		}

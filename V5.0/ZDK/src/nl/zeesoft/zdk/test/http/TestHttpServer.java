@@ -93,6 +93,11 @@ public class TestHttpServer extends TestObject {
 			assertEqual(request.getResponseCode(),200,"Response code does not match expectation (1)");
 			assertEqual(request.getResponseBody(),indexHtml,"Response body does not match expectation (1)");
 			
+			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/favicon.ico");
+			request.sendRequest();
+			assertEqual(request.getResponseCode(),200,"Favicon response code does not match expectation");
+			assertEqual(request.getResponseBytes().length,173,"Favicon response bytes does not match expectation");
+			
 			request = new HttpClient(logger,"GET","http://127.0.0.1:8080/pizza.txt");
 			request.sendRequest();
 			assertEqual(request.getResponseCode(),404,"Response code does not match expectation");
