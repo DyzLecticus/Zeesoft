@@ -417,6 +417,20 @@ public class RequestHandler extends HttpRequestHandler {
 				selector.stopRecording();
 				setPostOk(response);
 			}
+		} else if (
+			request.body.toString().equals("EXPORT_AUDIO") ||
+			request.body.toString().equals("EXPORT_MIDI")
+			) {
+			if (MidiSys.isInitialized()) {
+				if (MidiSys.sequencer.getRecordedTicks()>0) {
+					boolean midi = request.body.toString().equals("EXPORT_MIDI");
+					monitor.startChain(controller.exportRecording(midi));
+					setPostOk(response);
+				} else {
+					Str err = new Str("No recorded data to export");
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+				}
+			}
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
 			String name = elems.get(1).toString();

@@ -565,6 +565,14 @@ public class MidiSequencer implements Sequencer, Waitable {
 		}
 		lock.unlock(this);
 		if (events!=null && events.size()>0) {
+			for (Entry<Long,Set<MidiEvent>> entry: events.entrySet()) {
+				Set<MidiEvent> list = new HashSet<MidiEvent>(entry.getValue());
+				entry.setValue(new HashSet<MidiEvent>());
+				for (MidiEvent event: list) {
+					MidiEvent recEvent = new MidiEvent(event.getMessage(),event.getTick());
+					entry.getValue().add(recEvent);
+				}
+			}
 			recordLock.lock(this);
 			recordedSequence.eventsPerTick.putAll(events);
 			long prev = recordedSeqTicks;

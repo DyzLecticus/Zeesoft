@@ -156,6 +156,24 @@ public class SequencerControl extends FormHtml {
 		r.sb().append(recordedTicks);
 		r.sb().append("</label>");
 		append(r,"</div>");
+		
+		append(r,"</div>");
+		append(r,"<div class=\"row\">");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<label class=\"column-label\">Export</label>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<input type=\"button\" id=\"exportMidi\" value=\"MIDI\" onclick=\"sequencer.exportMidi();\"");
+		if (recordedTicks==0) {
+			r.sb().append(" DISABLED");
+		}
+		r.sb().append(" />");
+		append(r,"<input type=\"button\" id=\"exportAudio\" value=\"Audio\" onclick=\"sequencer.exportAudio();\"");
+		if (recordedTicks==0) {
+			r.sb().append(" DISABLED");
+		}
+		r.sb().append(" />");
+		append(r,"</div>");
 		append(r,"</div>");
 		return r;
 	}

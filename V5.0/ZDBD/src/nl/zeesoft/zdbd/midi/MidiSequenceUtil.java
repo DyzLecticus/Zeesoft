@@ -129,14 +129,16 @@ public class MidiSequenceUtil {
 	
 	public static void renderSequenceToMidiFile(Sequence sequence, String path) {
 		File file = new File(path);
-        int[] fileTypes = MidiSystem.getMidiFileTypes(sequence);
-        if (fileTypes.length > 0) {
-			try {
-				MidiSystem.write(sequence,fileTypes[0],file);
-			} catch (IOException e) {
-				Logger.err(new MidiSequenceUtil(), new Str("Caught IO exception while writing MIDI file"), e);
-			}
-        }
+		if (file.getParentFile().isDirectory() && file.getParentFile().exists()) {
+	        int[] fileTypes = MidiSystem.getMidiFileTypes(sequence);
+	        if (fileTypes.length > 0) {
+				try {
+					MidiSystem.write(sequence,fileTypes[0],file);
+				} catch (IOException e) {
+					Logger.err(new MidiSequenceUtil(), new Str("Caught IO exception while writing MIDI file"), e);
+				}
+	        }
+		}
 	}
 
 	public static RunCode getRenderSequenceToAudioFileRunCode(Sequence sequence, String path) {
@@ -150,11 +152,14 @@ public class MidiSequenceUtil {
 	}
 
 	public static void renderSequenceToAudioFile(Sequence sequence, String path) {
-		if (MidiSys.synthesizer!=null && MidiSys.synthesizer instanceof AudioSynthesizer) {
+		File file = new File(path);
+		if (
+			file.getParentFile().isDirectory() && file.getParentFile().exists() &&
+			MidiSys.synthesizer!=null && MidiSys.synthesizer instanceof AudioSynthesizer
+			) {
 			MidiSequenceUtil self = new MidiSequenceUtil();
 			MidiSys.sequencer.stop();
 			MidiSys.closeSynthesizer();
-			File file = new File(path);
 			try {
 				AudioSynthesizer synth = (AudioSynthesizer) MidiSystem.getSynthesizer();
 				AudioInputStream stream = synth.openStream(null, null);

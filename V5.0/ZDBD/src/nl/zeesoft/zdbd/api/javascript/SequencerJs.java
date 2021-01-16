@@ -70,6 +70,14 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = obj.recordedTicks;");
 		append(r,"    }");
+		append(r,"    var elem = window.document.getElementById(\"exportMidi\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        elem.disabled = (obj.recordedTicks==0);");
+		append(r,"    }");
+		append(r,"    var elem = window.document.getElementById(\"exportAudio\");");
+		append(r,"    if (elem!=null) {");
+		append(r,"        elem.disabled = (obj.recordedTicks==0);");
+		append(r,"    }");
 		append(r,"};");
 		append(r,"sequencer.errorStateCallback = function(response) {");
 		append(r,"    if (response.status==503) {");
@@ -148,6 +156,12 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    if (s==true) {");
 		append(r,"        main.xhr.postText(\"/sequencer.txt\",\"STOP_RECORDING\",sequencer.refresh,main.xhr.alertErrorCallback);");
 		append(r,"    }");
+		append(r,"}");
+		append(r,"sequencer.exportMidi = function() {");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"EXPORT_MIDI\",state.refresh,main.xhr.alertErrorCallback);");
+		append(r,"}");
+		append(r,"sequencer.exportAudio = function() {");
+		append(r,"    main.xhr.postText(\"/sequencer.txt\",\"EXPORT_AUDIO\",state.refresh,main.xhr.alertErrorCallback);");
 		append(r,"}");
 		return r;
 	}

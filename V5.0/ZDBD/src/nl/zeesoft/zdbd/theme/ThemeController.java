@@ -376,8 +376,26 @@ public class ThemeController implements EventListener, Waitable {
 		return getSaveThemeRunnerChain(name);
 	}
 	
+	public CodeRunnerChain exportRecording(boolean midi) {
+		return getExportRecordingRunnerChain(null, midi);
+	}
+	
 	public CodeRunnerChain exportRecordingTo(String path, boolean midi) {
 		return getExportRecordingRunnerChain(path, midi);
+	}
+	
+	public boolean getRecordingExists(boolean midi) {
+		lock.lock(this);
+		boolean r = FileIO.checkFile(getRecordingPathNoLock(midi)).length()==0;
+		lock.unlock(this);
+		return r;
+	}
+	
+	public String getRecordingPath(boolean midi) {
+		lock.lock(this);
+		String r = getRecordingPathNoLock(midi);
+		lock.unlock(this);
+		return r;
 	}
 	
 	public CodeRunnerChain loadTheme(String name) {
@@ -605,6 +623,9 @@ public class ThemeController implements EventListener, Waitable {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = name;
+			if (theme.name.equals("Demo")) {
+				theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
+			}
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);
 				PatternSequence sequence = theme.networkTrainer.getSequence();
@@ -765,6 +786,9 @@ public class ThemeController implements EventListener, Waitable {
 		CodeRunnerChain r = new CodeRunnerChain();
 		lock.lock(this);
 		if (theme!=null && !busy.isBusy()) {
+			if (path==null) {
+				path = getRecordingPathNoLock(midi);
+			}
 			Sequence midiSequence = MidiSys.sequencer.getRecordedSequence();
 			if (midiSequence!=null) {
 				busy.setBusy(true);
@@ -811,5 +835,18 @@ public class ThemeController implements EventListener, Waitable {
 			}
 		}
 		return r;
+	}
+	
+	protected String getRecordingPathNoLock(boolean midi) {
+		String path = "";
+		if (theme!=null) {
+			path = theme.getDirectory() + "record";
+			if (midi) {
+				path += ".mid";
+			} else {
+				path += ".wav";
+			}
+		}
+		return path;
 	}
 }
