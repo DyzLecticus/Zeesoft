@@ -10,9 +10,13 @@ import java.awt.event.MouseListener;
 import nl.zeesoft.zodb.Messenger;
 
 public class GuiTrayIcon {
+	private	Image		image	= null;
 	private SystemTray	tray	= null;
 	private TrayIcon	icon	= null;
 	private boolean		added	= false;
+
+	public TrayIcon(Image image) {
+	}
 
 	protected void addTrayIcon() {
 		if (added) {

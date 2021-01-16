@@ -64,12 +64,12 @@ public class MidiSys {
 				SynthConfig config = new SynthConfig();
 				config.configureSynthesizer(synthesizer);
 				Logger.dbg(new MidiSys(), new Str("Initialized synthesizer"));
-				Logger.dbg(new MidiSys(), new Str("Initializing sequencer ..."));
 				if (sequencer==null) {
+					Logger.dbg(new MidiSys(), new Str("Initializing sequencer ..."));
 					sequencer = new MidiSequencer();
+					sequencer.setSynthConfig(config);
+					Logger.dbg(new MidiSys(), new Str("Initialized sequencer"));
 				}
-				sequencer.setSynthConfig(config);
-				Logger.dbg(new MidiSys(), new Str("Initialized sequencer"));
 			}
 		} catch (MidiUnavailableException e) {
 			Logger.err(new MidiSys(),new Str("Failed to initialize synthesizer"),e);

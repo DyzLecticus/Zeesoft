@@ -481,6 +481,7 @@ public class ThemeController implements EventListener, Waitable {
 			MidiSys.sequencer.stop();
 		} else if (event.name.equals(EXPORTED_RECORDING)) {
 			lock.lock(this);
+			updateSequencerAndSynthesizerNoLock();
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(GENERATING_SEQUENCES)) {

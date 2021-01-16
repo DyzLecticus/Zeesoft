@@ -1,7 +1,19 @@
 package nl.zeesoft.zdbd;
 
+import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
 import nl.zeesoft.zdbd.api.ControllerMonitor;
 import nl.zeesoft.zdbd.api.ServerConfig;
+import nl.zeesoft.zdbd.gui.IconTray;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
@@ -15,10 +27,25 @@ import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
 import nl.zeesoft.zdk.thread.Waiter;
 
-public class App {
+public class App implements ActionListener {
+	public static final String	QUIT		= "QUIT";
+	public static final String	OPEN		= "OPEN";
+	
+	public static final String	APP_URL		= "http://127.0.0.1:1234/";
+	
 	protected Lock				lock		= new Lock();
 	protected ThemeController	controller	= null;
 	protected HttpServer		server		= null;
+	protected IconTray			iconTray	= new IconTray();
+	
+	public App() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			JFrame.setDefaultLookAndFeelDecorated(true);
+		} catch (Exception e) {
+			// Ignore
+		}
+	}
 	
 	public boolean start(ThemeControllerSettings settings) {
 		boolean r = false;
@@ -39,6 +66,7 @@ public class App {
 		
 		// Create the server configuration
 		ServerConfig config = new ServerConfig(controller,monitor,selector);
+		config.setPort(1234);
 		config.setLogger(Logger.logger);
 		config.setFilePath(settings.workDir);
 		
@@ -51,7 +79,7 @@ public class App {
 			Logger.err(this, error);
 		} else {
 			// Test the server
-			HttpClient client = new HttpClient("GET","http://127.0.0.1:8080/");
+			HttpClient client = new HttpClient("GET",APP_URL);
 			client.sendRequest();
 			int responseCode = client.getResponseCode();
 			if (responseCode!=200) {
@@ -74,6 +102,7 @@ public class App {
 		}
 		
 		if (r) {
+			iconTray.initialize(this);
 			App app = this;
 			Runtime.getRuntime().addShutdownHook(new Thread() { 
 				public void run() { 
@@ -111,6 +140,47 @@ public class App {
 			Waiter.waitForRunners(server.getActiveRunners(),1000);
 			server = null;
 		}
+		iconTray.destroy();
 		lock.unlock(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals(QUIT)) {
+			handleQuitRequest();
+		} else if (e.getActionCommand().equals(OPEN)) {
+			handleOpenRequest();
+		}
+	}
+	
+	protected void handleQuitRequest() {
+		int response = JOptionPane.YES_OPTION;
+		if (controller.themeHasChanges()) {
+	    	response = JOptionPane.showConfirmDialog(
+	    		null,
+				"The current theme has changes.\nAre you sure you want to quit?",
+				"Quit?",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE
+			);
+		}
+        if (response == JOptionPane.YES_OPTION) {
+        	stop();
+			System.exit(0);
+		}
+	}
+	
+	protected void handleOpenRequest() {
+		Desktop desktop = Desktop.getDesktop();
+		if (desktop.isSupported(Desktop.Action.BROWSE)) {
+			try {
+				URL url = new URL(APP_URL);
+				desktop.browse(url.toURI());
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
