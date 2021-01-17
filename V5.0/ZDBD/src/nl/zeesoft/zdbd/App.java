@@ -229,6 +229,20 @@ public class App implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			String os = System.getProperty("os.name").toLowerCase();
+			if (os.indexOf("mac")>=0) {
+				Runtime rt = Runtime.getRuntime();
+				try {
+					String[] exec = new String[2];
+					exec[0] = "open";
+					exec[1] = APP_URL;
+					rt.exec(exec);
+					opened = true;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		if (!opened) {
 	    	JOptionPane.showMessageDialog(
