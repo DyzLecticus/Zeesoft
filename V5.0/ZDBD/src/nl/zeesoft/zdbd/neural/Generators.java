@@ -53,19 +53,19 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain B1";
-		gen.setSkipInstruments(Bass.NAME, Note.NAME);
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
 		put(gen);
 		
 		gen = new Generator();
 		gen.name = "Maintain B2";
-		gen.setSkipInstruments(Bass.NAME, Note.NAME);
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
 		put(gen);
 		
 		gen = new Generator();
 		gen.name = "Free form";
 		gen.maintainBeat = 0;
 		gen.maintainFeedback = false;
-		gen.setSkipInstruments(Ride.NAME, Note.NAME);
+		gen.setMaintainInstruments(Ride.NAME, Note.NAME);
 		put(gen);
 
 		gen = new Generator();
@@ -73,7 +73,7 @@ public class Generators {
 		gen.group1Distortion = 0;
 		gen.group2Distortion = 0;
 		gen.maintainBeat = 0;
-		gen.setSkipInstruments(Ride.NAME, Crash.NAME, Note.NAME);
+		gen.setMaintainInstruments(Ride.NAME, Crash.NAME, Note.NAME);
 		put(gen);
 	}
 	

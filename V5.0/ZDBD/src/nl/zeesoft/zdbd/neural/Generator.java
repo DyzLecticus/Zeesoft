@@ -28,11 +28,11 @@ public class Generator {
 	public boolean			randomChunkOffset			= true;
 	
 	// Mix controls
-	public String[]			skipInstruments				= {Note.NAME};
 	public float			mixStart					= 0.0F; // 0 - 1
 	public float			mixEnd						= 1.0F; // 0 - 1
 	public float			maintainBeat				= 1.0F; // 0 - 1
 	public boolean			maintainFeedback			= false;
+	public String[]			maintainInstruments			= {Note.NAME};
 	
 	// Output
 	public PatternSequence	generatedPatternSequence	= null;
@@ -50,7 +50,7 @@ public class Generator {
 		this.smallerChunk = gen.smallerChunk;
 		this.largerChunk = gen.largerChunk;
 		this.randomChunkOffset = gen.randomChunkOffset;
-		this.setSkipInstruments(gen.skipInstruments);
+		this.setMaintainInstruments(gen.maintainInstruments);
 		this.mixStart = gen.mixStart;
 		this.mixEnd = gen.mixEnd;
 		this.maintainBeat = gen.maintainBeat;
@@ -62,36 +62,36 @@ public class Generator {
 		}
 	}
 
-	public void setSkipInstruments(String ... names) {
-		skipInstruments = new String[names.length];
+	public void setMaintainInstruments(String ... names) {
+		maintainInstruments = new String[names.length];
 		for (int n = 0; n < names.length; n++) {
 			if (names[n]!=null && names[n].length()>0) {
-				skipInstruments[n] = names[n];
+				maintainInstruments[n] = names[n];
 			}
 		}
 	}
 
-	public void setSkipInstrument(String name, boolean skip) {
+	public void setMaintainInstrument(String name, boolean maintain) {
 		if (name!=null && name.length()>0) {
-			if (skip && !skipInstrumentsContains(name)) {
-				String[] newSkip = new String[skipInstruments.length + 1];
-				for (int n = 0; n < skipInstruments.length; n++) {
-					newSkip[n] = skipInstruments[n];
+			if (maintain && !maintainInstrumentsContains(name)) {
+				String[] newMaintain = new String[maintainInstruments.length + 1];
+				for (int n = 0; n < maintainInstruments.length; n++) {
+					newMaintain[n] = maintainInstruments[n];
 				}
-				newSkip[skipInstruments.length] = name;
-				skipInstruments = newSkip;
-			} else if (!skip && skipInstrumentsContains(name)) {
-				String[] newSkip = new String[skipInstruments.length - 1];
-				if (newSkip.length>0) {
+				newMaintain[maintainInstruments.length] = name;
+				maintainInstruments = newMaintain;
+			} else if (!maintain && maintainInstrumentsContains(name)) {
+				String[] newMaintain = new String[maintainInstruments.length - 1];
+				if (newMaintain.length>0) {
 					int i = 0;
-					for (int n = 0; n < skipInstruments.length; n++) {
-						if (!skipInstruments[n].equals(name)) {
-							newSkip[i] = skipInstruments[n];
+					for (int n = 0; n < maintainInstruments.length; n++) {
+						if (!maintainInstruments[n].equals(name)) {
+							newMaintain[i] = maintainInstruments[n];
 							i++;
 						}
 					}
 				}
-				skipInstruments = newSkip;
+				maintainInstruments = newMaintain;
 			}
 		}
 	}
@@ -254,7 +254,7 @@ public class Generator {
 	protected int[] addPredictedValuesToPattern(InstrumentPattern pattern, int step, NetworkIO workingIO, InstrumentPattern basePattern, boolean ori) {
 		int values[] = getPredictedValuesFromPreviousIO(workingIO);
 		for (PatternInstrument inst: pattern.instruments) {
-			if (basePattern!=null && (ori || skipInstrumentsContains(inst.name()))) {
+			if (basePattern!=null && (ori || maintainInstrumentsContains(inst.name()))) {
 				int value = basePattern.getInstrument(inst.name()).stepValues[step];
 				if (value!=PatternInstrument.OFF) {
 					inst.stepValues[step] = value;
@@ -282,10 +282,10 @@ public class Generator {
 		return r;
 	}
 	
-	protected boolean skipInstrumentsContains(String name) {
+	protected boolean maintainInstrumentsContains(String name) {
 		boolean r = false;
-		for (int i = 0; i < skipInstruments.length; i++) {
-			if (skipInstruments[i]!=null && skipInstruments[i].equals(name)) {
+		for (int i = 0; i < maintainInstruments.length; i++) {
+			if (maintainInstruments[i]!=null && maintainInstruments[i].equals(name)) {
 				r = true;
 				break;
 			}

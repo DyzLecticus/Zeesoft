@@ -132,7 +132,7 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    var ids = [\"name\",\"group1Distortion\",\"group2Distortion\",\"randomChunkOffset\",\"mixStart\",\"mixEnd\",\"maintainBeat\",\"maintainFeedback\"];");
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
-			append(r,"    ids[ids.length] = \"skip-");
+			append(r,"    ids[ids.length] = \"maintain-");
 			r.sb().append(inst.name());
 			r.sb().append("\";");
 		}

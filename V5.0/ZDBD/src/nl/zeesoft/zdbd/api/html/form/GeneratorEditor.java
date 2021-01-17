@@ -23,13 +23,13 @@ public class GeneratorEditor extends FormHtml {
 		addProperty("maintainBeat", "Maintain beat", generator.maintainBeat, FormProperty.ANY_INPUT);
 		addProperty("maintainFeedback", "Maintain feedback", generator.maintainFeedback, FormProperty.CHECKBOX_INPUT);
 
-		List<String> skipList = new ArrayList<String>();
-		for (int i = 0; i < generator.skipInstruments.length; i++) {
-			skipList.add(generator.skipInstruments[i]);
+		List<String> maintainList = new ArrayList<String>();
+		for (int i = 0; i < generator.maintainInstruments.length; i++) {
+			maintainList.add(generator.maintainInstruments[i]);
 		}
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
-			boolean skip = skipList.contains(inst.name());
-			addProperty("skip-" + inst.name(), "Skip " + inst.name().toLowerCase(), skip, FormProperty.CHECKBOX_INPUT);
+			boolean maintain = maintainList.contains(inst.name());
+			addProperty("maintain-" + inst.name(), "Maintain " + inst.name().toLowerCase(), maintain, FormProperty.CHECKBOX_INPUT);
 		}
 		for (FormProperty property: properties) {
 			property.onChange = "generators.propertyChange(this);";

@@ -654,8 +654,8 @@ public class RequestHandler extends HttpRequestHandler {
 						gen.maintainBeat = parsePercentage(kv.get(1));
 					} else if (prop.equals("maintainFeedback")) {
 						gen.maintainFeedback = parseBoolean(kv.get(1));
-					} else if (prop.startsWith("skip-")) {
-						gen.setSkipInstrument(prop.substring(5),parseBoolean(kv.get(1)));
+					} else if (prop.startsWith("maintain-")) {
+						gen.setMaintainInstrument(prop.substring(5),parseBoolean(kv.get(1)));
 					}
 				}
 				controller.putGenerator(gen);
@@ -696,8 +696,8 @@ public class RequestHandler extends HttpRequestHandler {
 					generator.maintainBeat = parsePercentage(elems.get(3));
 				} else if (propertyName.equals("maintainFeedback")) {
 					generator.maintainFeedback = parseBoolean(elems.get(3));
-				} else if (propertyName.startsWith("skip-")) {
-					generator.setSkipInstrument(propertyName.substring(5), parseBoolean(elems.get(3)));
+				} else if (propertyName.startsWith("maintain-")) {
+					generator.setMaintainInstrument(propertyName.substring(5), parseBoolean(elems.get(3)));
 				} else {
 					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 					error = true;
@@ -778,8 +778,8 @@ public class RequestHandler extends HttpRequestHandler {
 		} catch(NumberFormatException ex) {
 			r = 120;
 		}
-		if (r < 6) {
-			r = 6;
+		if (r < 10) {
+			r = 10;
 		}
 		if (r > 240) {
 			r = 240;

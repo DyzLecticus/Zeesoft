@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.neural.SDR;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Rythm {
+	public static float		MAX_SHUFFLE			= 0.75F;
+	
 	public static String	PATTERN				= "Pattern";
 	public static String	STEP				= "Step";
 	public static String	BEAT				= "Beat";
@@ -52,8 +54,8 @@ public class Rythm {
 	}
 	
 	public void setShuffle(float percentage) {
-		if (percentage > 0.5F) {
-			percentage = 0.5F;
+		if (percentage > MAX_SHUFFLE) {
+			percentage = MAX_SHUFFLE;
 		}
 		for (int i = 0; i < stepDelays.length; i++) {
 			if (i%2==0) {
@@ -67,7 +69,11 @@ public class Rythm {
 					stepDelays[i] = 0;
 				}
 			} else {
-				stepDelays[i] = percentage;
+				if (stepsPerBeat==8) {
+					stepDelays[i] = percentage / 2F;
+				} else {
+					stepDelays[i] = percentage;
+				}
 			}
 		}
 	}

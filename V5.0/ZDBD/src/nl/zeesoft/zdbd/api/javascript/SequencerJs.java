@@ -1,6 +1,7 @@
 package nl.zeesoft.zdbd.api.javascript;
 
 import nl.zeesoft.zdbd.api.ResponseObject;
+import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Str;
 
 public class SequencerJs extends ResponseObject {
@@ -101,8 +102,8 @@ public class SequencerJs extends ResponseObject {
 		append(r,"        }");
 		append(r,"        cb = function() { theme.refresh(); };");
 		append(r,"    } else if (property.id==\"shufflePercentage\") {");
-		append(r,"        if (value>0.5) {");
-		append(r,"            value = 0.5;");
+		append(r,"        if (value>" + Rythm.MAX_SHUFFLE + ") {");
+		append(r,"            value = " + Rythm.MAX_SHUFFLE + ";");
 		append(r,"            property.value = value;");
 		append(r,"        } else if (value<0.0) {");
 		append(r,"            value = 0.0;");

@@ -122,7 +122,7 @@ public class App implements ActionListener {
 				}
 				
 				iconTray.initialize(this);
-				iconTray.displayInfoMessage("Hello", "Left click on me for options");
+				iconTray.displayInfoMessage("Hello", "Click here for options");
 
 				// Initialize the controller
 				CodeRunnerChain chain = controller.initialize(settings);
