@@ -53,8 +53,7 @@ public class TestApp extends TestObject {
 		assertEqual(started,true,"Failed to start the app");
 		if (started) {
 			sleep(600000);
-			
-			app.stop();
+			app.stop(null);
 		}
 	}
 }

@@ -63,11 +63,11 @@ public class IconTray {
 		icon = null;
 	}
 
-	protected void displayInfoMessage(String caption, String text) {
+	public void displayInfoMessage(String caption, String text) {
 		displayMessage(caption, text, TrayIcon.MessageType.INFO);
 	}
 	
-	protected void displayMessage(String caption, String text, MessageType messageType) {
+	public void displayMessage(String caption, String text, MessageType messageType) {
 		if (icon!=null) {
 			icon.displayMessage(caption, text, messageType);
 		}

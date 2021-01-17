@@ -52,10 +52,11 @@ public class App implements ActionListener {
 			String restart = "java -Xmx2048m -Xms2048m -jar " + currentPath + " restart";
 			System.out.println(restart);
 			try {
-				Runtime.getRuntime().exec(restart);
+				Runtime.getRuntime().exec(restart.split(" "));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			System.exit(0);
 		} else {
 			(new App()).start(new ThemeControllerSettings());
 		}
@@ -74,8 +75,10 @@ public class App implements ActionListener {
 		boolean r = false;
 		
 		lock.lock(this);
+		boolean open = false;
 		if (Logger.logger==null) {
 			Logger.initializeLogger();
+			open = true;
 		}
 		
 		// Create the work directory
@@ -114,6 +117,13 @@ public class App implements ActionListener {
 				error.sb().append(responseCode);
 				Logger.err(this, error);
 			} else {
+				if (open) {
+					handleOpenRequest();
+				}
+				
+				iconTray.initialize(this);
+				iconTray.displayInfoMessage("Hello", "Left click on me for options");
+
 				// Initialize the controller
 				CodeRunnerChain chain = controller.initialize(settings);
 				monitor.startChain(chain);
@@ -129,24 +139,28 @@ public class App implements ActionListener {
 		}
 		
 		if (r) {
-			iconTray.initialize(this);
 			App app = this;
 			Runtime.getRuntime().addShutdownHook(new Thread() { 
 				public void run() { 
-					app.stop(); 
+					app.stop(null); 
 				} 
 			});
 		}
 		lock.unlock(this);
 		
 		if (!r) {
-			stop();
+			stop(error);
 		}
 		return r;
 	}
 	
-	public void stop() {
+	public void stop(Str error) {
 		lock.lock(this);
+		if (error==null) {
+			iconTray.displayInfoMessage("Bye", "Hope you had fun");
+		} else {
+			iconTray.displayInfoMessage("Error", error.toString());
+		}
 		if (controller!=null) {
 			if (controller.isBusy()) {
 				Logger.dbg(this, new Str("Waiting for controller to finish ..."));
@@ -159,13 +173,18 @@ public class App implements ActionListener {
 		}
 		if (server!=null && server.isOpen()) {
 			// Close the server
-			Str error = server.close();
-			if (error.length()>0) {
-				Logger.err(this, error);
+			Str err = server.close();
+			if (err.length()>0) {
+				Logger.err(this, err);
 			}
 			// Wait for connections to close if needed
 			Waiter.waitForRunners(server.getActiveRunners(),1000);
 			server = null;
+		}
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		iconTray.destroy();
 		lock.unlock(this);
@@ -192,7 +211,7 @@ public class App implements ActionListener {
 			);
 		}
         if (response == JOptionPane.YES_OPTION) {
-        	stop();
+        	stop(null);
 			System.exit(0);
 		}
 	}

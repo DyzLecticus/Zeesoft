@@ -16,7 +16,8 @@ public class ByeHtml extends HtmlResponse {
 	public Str renderBody() {
 		Str r = new Str();
 		append(r,"<div>");
-		append(r,"<h1>Bye!</h1>");
+		append(r,"<h1>Bye</h1>");
+		append(r,"Hope you had fun");
 		append(r,"</div>");
 		return r;
 	}

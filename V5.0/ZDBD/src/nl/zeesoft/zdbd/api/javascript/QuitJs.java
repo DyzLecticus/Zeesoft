@@ -10,6 +10,7 @@ public class QuitJs extends ResponseObject {
 		append(r,"var quit = quit || {};");
 		append(r,"quit.onload = function() {");
 		append(r,"    main.xhr.postText(\"/state.txt\",\"QUIT\");");
+		append(r,"    setTimeout(function() { window.close(); }, 3000);");
 		append(r,"};");
 		return r;
 	}
