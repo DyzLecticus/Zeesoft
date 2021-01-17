@@ -323,7 +323,7 @@ public class FileIO {
 				for (int i = 0; i < files.length; i++) {
 					if (listFiles && files[i].isFile()) {
 						r.add(files[i]);
-					} else if (!listFiles && files[i].isFile()) {
+					} else if (!listFiles && !files[i].isFile()) {
 						r.add(files[i]);
 					}
 				}
