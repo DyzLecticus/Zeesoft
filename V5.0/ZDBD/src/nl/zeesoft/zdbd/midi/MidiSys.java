@@ -155,8 +155,9 @@ public class MidiSys {
 	}
 	
 	protected static Soundbank loadSoundBank(Synthesizer synthesizer, String path) {
+		MidiSys self = new MidiSys();
 		Soundbank r = null;
-		InputStream is = (new SoundbankLoader()).getClass().getResourceAsStream(path);
+		InputStream is = self.getClass().getResourceAsStream(path);
 		if (is!=null) {
 			try {
 				r = MidiSystem.getSoundbank(new BufferedInputStream(is));
@@ -165,7 +166,7 @@ public class MidiSys {
 			} catch (IOException e) {
 				// Ignore
 			}
-		} 
+		}
 		if (r==null) {
 			File file = new File(path);
 			try {
@@ -180,6 +181,10 @@ public class MidiSys {
 			if (!loadedSoundbanks.contains(path)) {
 				loadedSoundbanks.add(path);
 			}
+		} else {
+			Str msg = new Str("Soundbank not found: ");
+			msg.sb().append(path);
+			Logger.err(self,msg);
 		}
 		return r;
 	}

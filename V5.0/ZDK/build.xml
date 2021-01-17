@@ -12,8 +12,8 @@
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zdk nl/zeesoft/zdk/collection nl/zeesoft/zdk/grid nl/zeesoft/zdk/http nl/zeesoft/zdk/midi nl/zeesoft/zdk/neural nl/zeesoft/zdk/neural/model  nl/zeesoft/zdk/neural/network  nl/zeesoft/zdk/neural/processors nl/zeesoft/zdk/test nl/zeesoft/zdk/util nl/zeesoft/zdk/thread"/>
-	<property name="packagenames" value="nl.zeesoft.zdk,nl.zeesoft.zdk.collection,nl.zeesoft.zdk.grid,nl.zeesoft.zdk.http,nl.zeesoft.zdk.midi,nl.zeesoft.zdk.neural,nl.zeesoft.zdk.neural.model,nl.zeesoft.zdk.neural.network,nl.zeesoft.zdk.neural.processors,nl.zeesoft.zdk.test,nl.zeesoft.zdk.test.util,nl.zeesoft.zdk.thread"/>
+	<property name="classpath" value="nl/zeesoft/zdk nl/zeesoft/zdk/collection nl/zeesoft/zdk/grid nl/zeesoft/zdk/http nl/zeesoft/zdk/neural nl/zeesoft/zdk/neural/model nl/zeesoft/zdk/neural/network nl/zeesoft/zdk/neural/processors nl/zeesoft/zdk/test nl/zeesoft/zdk/util nl/zeesoft/zdk/thread"/>
+	<property name="packagenames" value="nl.zeesoft.zdk,nl.zeesoft.zdk.collection,nl.zeesoft.zdk.grid,nl.zeesoft.zdk.http,nl.zeesoft.zdk.neural,nl.zeesoft.zdk.neural.model,nl.zeesoft.zdk.neural.network,nl.zeesoft.zdk.neural.processors,nl.zeesoft.zdk.test,nl.zeesoft.zdk.test.util,nl.zeesoft.zdk.thread"/>
 
 	<target name="compile">
 		<mkdir dir="${build}"/>

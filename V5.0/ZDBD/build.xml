@@ -20,6 +20,8 @@
 	<property name="classpath" value="nl/zeesoft/zdbd nl/zeesoft/zdbd/api nl/zeesoft/zdbd/gui nl/zeesoft/zdbd/midi nl/zeesoft/zdbd/neural nl/zeesoft/zdbd/pattern nl/zeesoft/zdbd/theme zdk.jar"/>
 	<property name="packagenames" value="nl.zeesoft.zdbd,nl.zeesoft.zdbd.api,nl.zeesoft.zdbd.gui,nl.zeesoft.zdbd.midi,nl.zeesoft.zdbd.neural,nl.zeesoft.zdbd.pattern,nl.zeesoft.zdbd.theme"/>
 
+	<property name="appclasspath" value="nl/zeesoft/zdk nl/zeesoft/zdk/collection nl/zeesoft/zdk/grid nl/zeesoft/zdk/http nl/zeesoft/zdk/neural nl/zeesoft/zdk/neural/model nl/zeesoft/zdk/neural/network nl/zeesoft/zdk/neural/processors nl/zeesoft/zdk/test nl/zeesoft/zdk/util nl/zeesoft/zdk/thread nl/zeesoft/zdbd nl/zeesoft/zdbd/api nl/zeesoft/zdbd/gui nl/zeesoft/zdbd/midi nl/zeesoft/zdbd/neural nl/zeesoft/zdbd/pattern nl/zeesoft/zdbd/theme"/>
+
 	<target name="copyZDK" description="Copy the ZDK release">
 		<mkdir dir="${lib}"/>
 		<unzip src="${releasesZDK}/zdk-${versionZDK}.zip" dest="${lib}">
@@ -76,6 +78,48 @@
 		</delete>
 	</target>
 
+	<target name="dist-app" depends="dist" description="Generate the ZDBD distribution">
+		<mkdir dir="${build}/ZDBD"/>
+		
+		<mkdir dir="${build}/ZDBD/zdk_src"/>
+		<unzip src="${lib}/zdk.jar" dest="${build}/ZDBD/zdk_src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		
+		<mkdir dir="${build}/ZDBD/zdbd_src"/>
+		<unzip src="${dist}/zdbd.jar" dest="${build}/ZDBD/zdbd_src">
+		    <patternset>
+		        <include name="**/*.java"/>
+		    </patternset>
+		</unzip>
+		
+		<copy todir="${build}/ZDBD/src">
+            <fileset dir="${build}/ZDBD/zdk_src" />
+        </copy>
+		<copy todir="${build}/ZDBD/src">
+            <fileset dir="${build}/ZDBD/zdbd_src" />
+        </copy>
+
+		<mkdir dir="${build}/ZDBD/build"/>
+		<javac srcdir="${build}/ZDBD/src" destdir="${build}/ZDBD/build" debug="on" includeantruntime="false"/>
+
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="${appclasspath}"/>
+			<attribute name="Main-Class" value="nl.zeesoft.zdbd.App"/>
+		</manifest>
+		
+		<mkdir dir="${build}/ZDBD/build/resources"/>
+		<copy file="../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2" tofile="${build}/ZDBD/build/resources/ZeeTrackerDrumKit.sf2"/>
+		<copy file="../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2" tofile="${build}/ZDBD/build/resources/ZeeTrackerSynthesizers.sf2"/>
+		
+		<jar jarfile="${dist}/zdbd-app.jar" basedir="${build}/ZDBD/build" manifest="${dist}/mymanifest"/>
+		
+		<delete dir="${build}/ZDBD"/>
+	</target>
+	
 	<target name="release" description="Release the ZDBD">
 		<antcall target="failIfReleaseExists"/>
 		<input message="Are you sure you want to release version ${version} (y/n)?" validargs="y,n" addproperty="_release"/>

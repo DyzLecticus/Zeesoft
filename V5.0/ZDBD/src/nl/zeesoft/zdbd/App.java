@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,6 +39,28 @@ public class App implements ActionListener {
 	protected HttpServer		server		= null;
 	protected IconTray			iconTray	= new IconTray();
 	
+	public static void main(String[] args) {
+		String currentPath = "";
+		try {
+			currentPath = App.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			currentPath = currentPath.replace('/', File.separator.charAt(0)).substring(1);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		long currentMemory = Runtime.getRuntime().maxMemory()/1024/1024;
+		if (args.length==0 && currentPath.length()>0 && currentMemory < 1900) {
+			String restart = "java -Xmx2048m -Xms2048m -jar " + currentPath + " restart";
+			System.out.println(restart);
+			try {
+				Runtime.getRuntime().exec(restart);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			(new App()).start(new ThemeControllerSettings());
+		}
+	}
+	
 	public App() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -51,6 +74,10 @@ public class App implements ActionListener {
 		boolean r = false;
 		
 		lock.lock(this);
+		if (Logger.logger==null) {
+			Logger.initializeLogger();
+		}
+		
 		// Create the work directory
 		if (FileIO.checkDirectory(settings.workDir).length()>0) {
 			FileIO.mkDirs(settings.workDir);

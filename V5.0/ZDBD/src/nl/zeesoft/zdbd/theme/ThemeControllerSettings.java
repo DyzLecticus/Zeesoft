@@ -3,7 +3,7 @@ package nl.zeesoft.zdbd.theme;
 import nl.zeesoft.zdk.FileIO;
 
 public class ThemeControllerSettings extends Settings {
-	public String		soundBankDir				= "resources/";
+	public String		soundBankDir				= "/resources/";
 	public boolean		useInternalDrumKit			= true;
 	public boolean		useInternalSyntesizers		= true;
 	
