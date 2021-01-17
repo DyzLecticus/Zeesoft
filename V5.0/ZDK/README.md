@@ -194,8 +194,8 @@ The output of this test shows;
 File import;
 Reading file: 2
 Reading file: 1
-Reading file: 3
 Reading file: 4
+Reading file: 3
 Imported 4 files
 
 Progress bars;
@@ -391,9 +391,9 @@ Class references;
 The output of this test shows the full debug logging of a regular HTTP server and a proxy server handling some basic requests.  
 It also shows the mocked OS file actions that were performed.  
 ~~~~
-2021-01-17 19:14:36:058 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 8080 ...
-2021-01-17 19:14:36:064 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 8080
-2021-01-17 19:14:36:093 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2021-01-17 22:44:48:740 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 8080 ...
+2021-01-17 22:44:48:746 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 8080
+2021-01-17 22:44:48:775 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET / HTTP/1.1
 Content-Type: text/html
@@ -403,9 +403,9 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:48 GMT
 Content-Length: 47
-2021-01-17 19:14:36:321 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2021-01-17 22:44:49:004 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET /favicon.ico HTTP/1.1
 Content-Type: text/html
@@ -415,9 +415,9 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Content-Length: 173
-2021-01-17 19:14:36:331 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2021-01-17 22:44:49:014 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -427,9 +427,9 @@ Connection: keep-alive
 HTTP/1.1 404 File not found: http/pizza.txt
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Content-Length: 30
-2021-01-17 19:14:36:333 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2021-01-17 22:44:49:016 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 PUT /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -440,11 +440,11 @@ Content-Length: 13
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
-2021-01-17 19:14:36:335 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
+2021-01-17 22:44:49:019 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -454,9 +454,9 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Content-Length: 13
-2021-01-17 19:14:36:337 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+2021-01-17 22:44:49:021 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 DELETE /pizza.txt HTTP/1.1
 Content-Type: text/html
@@ -466,10 +466,10 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
-2021-01-17 19:14:36:339 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 9090 ...
-2021-01-17 19:14:36:340 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 9090
-2021-01-17 19:14:36:343 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
+2021-01-17 22:44:49:022 nl.zeesoft.zdk.http.HttpServer: Opening server socket on port: 9090 ...
+2021-01-17 22:44:49:022 nl.zeesoft.zdk.http.HttpServer: Opened server socket on port: 9090
+2021-01-17 22:44:49:025 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 8080);
 <<<
 GET / HTTP/1.1
 Host: 127.0.0.1:8080
@@ -479,9 +479,9 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Content-Length: 47
-2021-01-17 19:14:36:344 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 9090);
+2021-01-17 22:44:49:026 nl.zeesoft.zdk.http.HttpServer$1: Request/response headers (Port: 9090);
 <<<
 GET / HTTP/1.1
 Host: 127.0.0.1:8080
@@ -491,16 +491,16 @@ Connection: keep-alive
 HTTP/1.1 200 OK
 Cache-Control: no-cache, no-store, must-revalidate
 Pragma: no-cache
-Last-Modified: Sun, 17 Jan 2021 18:14:36 GMT
+Last-Modified: Sun, 17 Jan 2021 21:44:49 GMT
 Content-Length: 47
-2021-01-17 19:14:36:355 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
-2021-01-17 19:14:36:355 nl.zeesoft.zdk.http.HttpServer: Closed connections
-2021-01-17 19:14:36:355 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 9090 ...
-2021-01-17 19:14:36:356 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 9090
-2021-01-17 19:14:36:366 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
-2021-01-17 19:14:36:366 nl.zeesoft.zdk.http.HttpServer: Closed connections
-2021-01-17 19:14:36:366 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 8080 ...
-2021-01-17 19:14:36:366 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 8080
+2021-01-17 22:44:49:038 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
+2021-01-17 22:44:49:038 nl.zeesoft.zdk.http.HttpServer: Closed connections
+2021-01-17 22:44:49:038 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 9090 ...
+2021-01-17 22:44:49:039 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 9090
+2021-01-17 22:44:49:049 nl.zeesoft.zdk.http.HttpServer: Closing connections ...
+2021-01-17 22:44:49:049 nl.zeesoft.zdk.http.HttpServer: Closed connections
+2021-01-17 22:44:49:049 nl.zeesoft.zdk.http.HttpServer: Closing server socket on port: 8080 ...
+2021-01-17 22:44:49:050 nl.zeesoft.zdk.http.HttpServer: Closed server socket on port: 8080
 
 Action log;
 MKDIRS:http/
@@ -691,8 +691,8 @@ Class references;
 **Test output**  
 The output of this test shows a scalar encoder beeing used to encode 2 example values into SDRs.  
 ~~~~
-2021-01-17 19:14:36:522 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initializing ScalarEncoder ...
-2021-01-17 19:14:36:522 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initialized
+2021-01-17 22:44:49:214 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initializing ScalarEncoder ...
+2021-01-17 22:44:49:214 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initialized
 Encoded SDR for value 20: 16;16;24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39
 Encoded SDR for value 21: 16;16;25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40
 ~~~~
@@ -749,24 +749,24 @@ Class references;
 The output of this test shows an example spatial pooler and the input/output for similar inputs among a certain input variation.  
 It also shows the average overlap for similar inputs and the average overall overlap.  
 ~~~~
-2021-01-17 19:14:36:604 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
-2021-01-17 19:14:36:676 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
-2021-01-17 19:14:36:676 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
-2021-01-17 19:14:36:811 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
+2021-01-17 22:44:49:299 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
+2021-01-17 22:44:49:362 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
+2021-01-17 22:44:49:362 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
+2021-01-17 22:44:49:484 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
 
-2021-01-17 19:14:36:811 nl.zeesoft.zdk.test.neural.TestSpatialPooler: Initializing spatial pooler (asynchronous) ...
-2021-01-17 19:14:37:280 nl.zeesoft.zdk.test.neural.TestSpatialPooler: Initialized spatial pooler (asynchronous)
+2021-01-17 22:44:49:484 nl.zeesoft.zdk.test.neural.TestSpatialPooler: Initializing spatial pooler (asynchronous) ...
+2021-01-17 22:44:49:956 nl.zeesoft.zdk.test.neural.TestSpatialPooler: Initialized spatial pooler (asynchronous)
 
 Input SDR: 16;16;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-Output SDR: 48;48;14,127,161,182,187,207,216,234,238,258,343,367,532,556,619,632,643,680,689,695,716,841,884,902,995,1051,1075,1163,1198,1206,1254,1314,1337,1366,1397,1454,1470,1475,1477,1553,1563,1607,1666,1806,1951,1987
+Output SDR: 48;48;6,47,112,115,145,165,231,271,325,340,520,544,620,661,691,704,709,730,788,845,852,880,960,995,1002,1025,1057,1073,1174,1190,1214,1217,1220,1236,1277,1377,1395,1480,1519,1520,1616,1688,1697,1846,1856,2085
 Input SDR: 16;16;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-Output SDR: 48;48;14,127,161,175,182,207,216,238,258,367,371,493,532,556,619,632,643,680,689,716,834,841,884,907,995,1051,1075,1097,1163,1254,1314,1337,1358,1366,1397,1430,1454,1470,1475,1477,1553,1607,1666,1806,1987,1988
+Output SDR: 48;48;6,47,112,115,145,165,231,325,340,520,544,620,661,672,684,691,704,709,730,788,845,852,880,960,995,1002,1025,1057,1073,1174,1190,1214,1217,1220,1236,1277,1377,1395,1519,1520,1616,1697,1846,1847,1856,2085
 Input SDR: 16;16;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-Output SDR: 48;48;14,127,161,175,182,207,216,234,238,258,367,371,493,532,556,619,632,680,689,716,834,841,884,995,1051,1075,1163,1198,1206,1254,1314,1337,1358,1366,1397,1454,1470,1475,1477,1553,1607,1666,1806,1951,1987,1988
+Output SDR: 48;48;6,47,112,115,145,165,231,325,340,520,544,620,661,672,684,691,704,709,730,788,845,852,880,960,995,1002,1025,1057,1073,1174,1190,1214,1217,1220,1236,1277,1377,1395,1519,1520,1616,1697,1846,1847,1856,2085
 Input SDR: 16;16;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-Output SDR: 48;48;14,127,161,175,182,207,216,234,238,258,367,371,493,532,556,619,632,680,689,695,716,834,841,884,995,1051,1075,1163,1198,1254,1314,1337,1358,1366,1397,1454,1470,1475,1477,1553,1607,1666,1806,1951,1987,1988
+Output SDR: 48;48;6,47,112,115,145,165,231,325,340,520,544,620,661,672,684,691,704,709,730,788,845,852,880,960,995,1002,1025,1057,1073,1174,1190,1214,1217,1220,1236,1277,1377,1395,1519,1520,1616,1697,1846,1847,1856,2085
 Input SDR: 16;16;0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-Output SDR: 48;48;14,127,161,175,182,187,207,216,234,238,258,367,371,493,532,556,619,632,680,689,695,716,834,841,884,995,1051,1075,1097,1163,1254,1314,1337,1358,1366,1397,1454,1470,1475,1477,1607,1666,1806,1951,1987,1988
+Output SDR: 48;48;6,47,112,115,145,165,231,325,340,520,544,620,661,672,684,691,704,709,730,788,845,852,880,960,995,1002,1025,1057,1073,1174,1190,1214,1217,1220,1236,1277,1377,1395,1520,1616,1688,1697,1846,1847,1856,2085
 
 Average overlap for similar inputs: 44.0, overall: 2.0
 ~~~~
@@ -823,93 +823,93 @@ Class references;
 **Test output**  
 The output of this test shows an example temporal memory learning a sequence of SDRs.  
 ~~~~
-2021-01-17 19:14:47:294 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
-2021-01-17 19:14:47:298 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
-2021-01-17 19:14:47:298 nl.zeesoft.zdk.neural.processors.TemporalMemory: Resetting TemporalMemory connections ...
-2021-01-17 19:14:47:309 nl.zeesoft.zdk.neural.processors.TemporalMemory: Reset connections
-2021-01-17 19:14:47:363 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 1 > bursting: 46, active: 736, winners: 46, predictive: 0
-2021-01-17 19:14:47:384 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 2 > bursting: 46, active: 736, winners: 46, predictive: 0
-2021-01-17 19:14:47:411 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 3 > bursting: 46, active: 736, winners: 46, predictive: 0
-2021-01-17 19:14:47:427 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 4 > bursting: 46, active: 736, winners: 46, predictive: 0
-2021-01-17 19:14:47:454 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 5 > bursting: 46, active: 736, winners: 46, predictive: 42
-2021-01-17 19:14:47:473 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 6 > bursting: 4, active: 106, winners: 46, predictive: 42
-2021-01-17 19:14:47:485 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 7 > bursting: 4, active: 106, winners: 46, predictive: 40
-2021-01-17 19:14:47:502 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 8 > bursting: 6, active: 136, winners: 46, predictive: 43
-2021-01-17 19:14:47:517 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 9 > bursting: 3, active: 91, winners: 46, predictive: 4
-2021-01-17 19:14:47:537 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 10 > bursting: 42, active: 676, winners: 46, predictive: 46
-2021-01-17 19:14:47:544 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 11 > bursting: 0, active: 46, winners: 46, predictive: 45
-2021-01-17 19:14:47:550 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 12 > bursting: 1, active: 61, winners: 46, predictive: 46
-2021-01-17 19:14:47:556 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 13 > bursting: 0, active: 46, winners: 46, predictive: 42
-2021-01-17 19:14:47:571 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 14 > bursting: 4, active: 106, winners: 46, predictive: 0
-2021-01-17 19:14:47:584 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 15 > bursting: 46, active: 736, winners: 46, predictive: 46
-2021-01-17 19:14:47:592 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 16 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:47:601 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 17 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:47:608 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 18 > bursting: 0, active: 46, winners: 46, predictive: 41
-2021-01-17 19:14:47:618 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 19 > bursting: 5, active: 121, winners: 46, predictive: 0
-2021-01-17 19:14:47:632 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 20 > bursting: 46, active: 736, winners: 46, predictive: 46
-2021-01-17 19:14:47:639 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 21 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:47:656 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 22 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:47:662 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 23 > bursting: 0, active: 46, winners: 46, predictive: 40
-2021-01-17 19:14:47:671 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 24 > bursting: 6, active: 136, winners: 46, predictive: 0
-2021-01-17 19:14:47:689 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 25 > bursting: 46, active: 736, winners: 46, predictive: 88
-2021-01-17 19:14:47:696 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 26 > bursting: 0, active: 46, winners: 46, predictive: 12
-2021-01-17 19:14:47:712 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 27 > bursting: 34, active: 556, winners: 46, predictive: 92
-2021-01-17 19:14:47:719 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 28 > bursting: 0, active: 46, winners: 46, predictive: 14
-2021-01-17 19:14:47:732 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 29 > bursting: 32, active: 526, winners: 46, predictive: 86
-2021-01-17 19:14:47:747 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 30 > bursting: 0, active: 46, winners: 46, predictive: 44
-2021-01-17 19:14:47:753 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 31 > bursting: 7, active: 151, winners: 46, predictive: 46
-2021-01-17 19:14:47:758 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 32 > bursting: 0, active: 46, winners: 46, predictive: 43
-2021-01-17 19:14:47:763 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 33 > bursting: 3, active: 91, winners: 46, predictive: 0
-2021-01-17 19:14:47:789 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 34 > bursting: 46, active: 736, winners: 46, predictive: 96
-2021-01-17 19:14:47:797 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 35 > bursting: 0, active: 46, winners: 46, predictive: 21
-2021-01-17 19:14:47:811 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 36 > bursting: 27, active: 451, winners: 46, predictive: 93
-2021-01-17 19:14:47:818 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 37 > bursting: 0, active: 46, winners: 46, predictive: 5
-2021-01-17 19:14:47:835 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 38 > bursting: 42, active: 676, winners: 46, predictive: 96
-2021-01-17 19:14:47:855 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 39 > bursting: 0, active: 46, winners: 46, predictive: 58
-2021-01-17 19:14:47:863 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 40 > bursting: 1, active: 61, winners: 46, predictive: 57
-2021-01-17 19:14:47:871 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 41 > bursting: 3, active: 91, winners: 46, predictive: 47
-2021-01-17 19:14:47:877 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 42 > bursting: 0, active: 46, winners: 46, predictive: 49
-2021-01-17 19:14:47:884 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 43 > bursting: 0, active: 46, winners: 46, predictive: 52
-2021-01-17 19:14:47:901 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 44 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:47:911 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 45 > bursting: 1, active: 61, winners: 46, predictive: 41
-2021-01-17 19:14:47:921 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 46 > bursting: 5, active: 121, winners: 46, predictive: 0
-2021-01-17 19:14:47:947 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 47 > bursting: 46, active: 736, winners: 46, predictive: 93
-2021-01-17 19:14:47:957 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 48 > bursting: 0, active: 46, winners: 46, predictive: 77
-2021-01-17 19:14:47:967 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 49 > bursting: 2, active: 76, winners: 46, predictive: 43
-2021-01-17 19:14:47:998 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 50 > bursting: 7, active: 151, winners: 46, predictive: 60
-2021-01-17 19:14:48:008 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 51 > bursting: 5, active: 121, winners: 46, predictive: 52
-2021-01-17 19:14:48:013 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 52 > bursting: 0, active: 46, winners: 46, predictive: 58
-2021-01-17 19:14:48:019 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 53 > bursting: 0, active: 46, winners: 46, predictive: 59
-2021-01-17 19:14:48:024 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 54 > bursting: 0, active: 46, winners: 46, predictive: 41
-2021-01-17 19:14:48:030 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 55 > bursting: 5, active: 121, winners: 46, predictive: 0
-2021-01-17 19:14:48:057 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 56 > bursting: 46, active: 736, winners: 46, predictive: 93
-2021-01-17 19:14:48:062 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 57 > bursting: 0, active: 46, winners: 46, predictive: 63
-2021-01-17 19:14:48:067 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 58 > bursting: 1, active: 61, winners: 46, predictive: 74
-2021-01-17 19:14:48:072 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 59 > bursting: 0, active: 46, winners: 46, predictive: 38
-2021-01-17 19:14:48:078 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 60 > bursting: 8, active: 166, winners: 46, predictive: 0
-2021-01-17 19:14:48:093 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 61 > bursting: 46, active: 736, winners: 46, predictive: 138
-2021-01-17 19:14:48:099 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 62 > bursting: 0, active: 46, winners: 46, predictive: 32
-2021-01-17 19:14:48:107 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 63 > bursting: 15, active: 271, winners: 46, predictive: 93
-2021-01-17 19:14:48:123 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 64 > bursting: 0, active: 46, winners: 46, predictive: 72
-2021-01-17 19:14:48:128 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 65 > bursting: 1, active: 61, winners: 46, predictive: 70
-2021-01-17 19:14:48:133 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 66 > bursting: 0, active: 46, winners: 46, predictive: 64
-2021-01-17 19:14:48:138 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 67 > bursting: 0, active: 46, winners: 46, predictive: 52
-2021-01-17 19:14:48:143 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 68 > bursting: 0, active: 46, winners: 46, predictive: 65
-2021-01-17 19:14:48:157 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 69 > bursting: 0, active: 46, winners: 46, predictive: 71
-2021-01-17 19:14:48:162 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 70 > bursting: 0, active: 46, winners: 46, predictive: 70
-2021-01-17 19:14:48:167 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 71 > bursting: 0, active: 46, winners: 46, predictive: 46
-2021-01-17 19:14:48:172 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 72 > bursting: 0, active: 46, winners: 46, predictive: 40
-2021-01-17 19:14:48:178 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 73 > bursting: 6, active: 136, winners: 46, predictive: 0
-2021-01-17 19:14:48:194 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 74 > bursting: 46, active: 736, winners: 46, predictive: 144
-2021-01-17 19:14:48:500 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 100 > bursting: 0, active: 46, winners: 46, predictive: 107
-2021-01-17 19:14:48:838 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 150 > bursting: 0, active: 46, winners: 46, predictive: 96
-2021-01-17 19:14:49:142 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 200 > bursting: 0, active: 46, winners: 46, predictive: 132
-2021-01-17 19:14:49:645 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 250 > bursting: 0, active: 46, winners: 46, predictive: 97
-2021-01-17 19:14:49:949 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 300 > bursting: 0, active: 46, winners: 46, predictive: 137
-2021-01-17 19:14:50:266 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 350 > bursting: 0, active: 46, winners: 46, predictive: 99
-2021-01-17 19:14:50:618 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 400 > bursting: 0, active: 46, winners: 46, predictive: 138
-2021-01-17 19:14:50:940 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 450 > bursting: 0, active: 46, winners: 46, predictive: 104
-2021-01-17 19:14:51:263 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 500 > bursting: 0, active: 46, winners: 46, predictive: 138
+2021-01-17 22:44:59:817 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
+2021-01-17 22:44:59:820 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
+2021-01-17 22:44:59:820 nl.zeesoft.zdk.neural.processors.TemporalMemory: Resetting TemporalMemory connections ...
+2021-01-17 22:44:59:829 nl.zeesoft.zdk.neural.processors.TemporalMemory: Reset connections
+2021-01-17 22:44:59:863 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 1 > bursting: 46, active: 736, winners: 46, predictive: 0
+2021-01-17 22:44:59:886 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 2 > bursting: 46, active: 736, winners: 46, predictive: 0
+2021-01-17 22:44:59:912 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 3 > bursting: 46, active: 736, winners: 46, predictive: 0
+2021-01-17 22:44:59:927 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 4 > bursting: 46, active: 736, winners: 46, predictive: 0
+2021-01-17 22:44:59:954 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 5 > bursting: 46, active: 736, winners: 46, predictive: 43
+2021-01-17 22:44:59:963 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 6 > bursting: 3, active: 91, winners: 46, predictive: 42
+2021-01-17 22:44:59:972 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 7 > bursting: 4, active: 106, winners: 46, predictive: 42
+2021-01-17 22:44:59:992 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 8 > bursting: 4, active: 106, winners: 46, predictive: 43
+2021-01-17 22:45:00:003 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 9 > bursting: 3, active: 91, winners: 46, predictive: 3
+2021-01-17 22:45:00:019 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 10 > bursting: 43, active: 691, winners: 46, predictive: 45
+2021-01-17 22:45:00:026 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 11 > bursting: 1, active: 61, winners: 46, predictive: 46
+2021-01-17 22:45:00:034 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 12 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:040 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 13 > bursting: 0, active: 46, winners: 46, predictive: 39
+2021-01-17 22:45:00:055 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 14 > bursting: 7, active: 151, winners: 46, predictive: 1
+2021-01-17 22:45:00:067 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 15 > bursting: 45, active: 721, winners: 46, predictive: 46
+2021-01-17 22:45:00:074 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 16 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:082 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 17 > bursting: 0, active: 46, winners: 46, predictive: 44
+2021-01-17 22:45:00:091 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 18 > bursting: 2, active: 76, winners: 46, predictive: 37
+2021-01-17 22:45:00:101 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 19 > bursting: 9, active: 181, winners: 46, predictive: 0
+2021-01-17 22:45:00:113 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 20 > bursting: 46, active: 736, winners: 46, predictive: 46
+2021-01-17 22:45:00:120 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 21 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:148 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 22 > bursting: 0, active: 46, winners: 46, predictive: 44
+2021-01-17 22:45:00:167 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 23 > bursting: 2, active: 76, winners: 46, predictive: 41
+2021-01-17 22:45:00:176 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 24 > bursting: 5, active: 121, winners: 46, predictive: 0
+2021-01-17 22:45:00:205 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 25 > bursting: 46, active: 736, winners: 46, predictive: 89
+2021-01-17 22:45:00:215 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 26 > bursting: 0, active: 46, winners: 46, predictive: 19
+2021-01-17 22:45:00:236 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 27 > bursting: 27, active: 451, winners: 46, predictive: 64
+2021-01-17 22:45:00:262 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 28 > bursting: 0, active: 46, winners: 46, predictive: 45
+2021-01-17 22:45:00:271 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 29 > bursting: 1, active: 61, winners: 46, predictive: 46
+2021-01-17 22:45:00:279 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 30 > bursting: 0, active: 46, winners: 46, predictive: 45
+2021-01-17 22:45:00:287 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 31 > bursting: 1, active: 61, winners: 46, predictive: 46
+2021-01-17 22:45:00:300 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 32 > bursting: 0, active: 46, winners: 46, predictive: 44
+2021-01-17 22:45:00:353 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 33 > bursting: 2, active: 76, winners: 46, predictive: 0
+2021-01-17 22:45:00:369 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 34 > bursting: 46, active: 736, winners: 46, predictive: 90
+2021-01-17 22:45:00:374 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 35 > bursting: 0, active: 46, winners: 46, predictive: 38
+2021-01-17 22:45:00:383 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 36 > bursting: 13, active: 241, winners: 46, predictive: 46
+2021-01-17 22:45:00:389 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 37 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:395 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 38 > bursting: 0, active: 46, winners: 46, predictive: 45
+2021-01-17 22:45:00:412 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 39 > bursting: 1, active: 61, winners: 46, predictive: 46
+2021-01-17 22:45:00:418 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 40 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:425 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 41 > bursting: 0, active: 46, winners: 46, predictive: 38
+2021-01-17 22:45:00:435 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 42 > bursting: 8, active: 166, winners: 46, predictive: 0
+2021-01-17 22:45:00:456 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 43 > bursting: 46, active: 736, winners: 46, predictive: 92
+2021-01-17 22:45:00:481 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 44 > bursting: 0, active: 46, winners: 46, predictive: 36
+2021-01-17 22:45:00:490 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 45 > bursting: 11, active: 211, winners: 46, predictive: 46
+2021-01-17 22:45:00:496 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 46 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:503 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 47 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:510 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 48 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:517 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 49 > bursting: 0, active: 46, winners: 46, predictive: 45
+2021-01-17 22:45:00:536 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 50 > bursting: 1, active: 61, winners: 46, predictive: 41
+2021-01-17 22:45:00:543 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 51 > bursting: 5, active: 121, winners: 46, predictive: 0
+2021-01-17 22:45:00:557 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 52 > bursting: 46, active: 736, winners: 46, predictive: 93
+2021-01-17 22:45:00:562 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 53 > bursting: 0, active: 46, winners: 46, predictive: 13
+2021-01-17 22:45:00:572 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 54 > bursting: 34, active: 556, winners: 46, predictive: 135
+2021-01-17 22:45:00:578 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 55 > bursting: 0, active: 46, winners: 46, predictive: 11
+2021-01-17 22:45:00:598 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 56 > bursting: 37, active: 601, winners: 46, predictive: 93
+2021-01-17 22:45:00:603 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 57 > bursting: 0, active: 46, winners: 46, predictive: 42
+2021-01-17 22:45:00:609 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 58 > bursting: 8, active: 166, winners: 46, predictive: 53
+2021-01-17 22:45:00:614 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 59 > bursting: 0, active: 46, winners: 46, predictive: 47
+2021-01-17 22:45:00:619 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 60 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:634 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 61 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:00:639 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 62 > bursting: 0, active: 46, winners: 46, predictive: 45
+2021-01-17 22:45:00:644 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 63 > bursting: 1, active: 61, winners: 46, predictive: 43
+2021-01-17 22:45:00:652 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 64 > bursting: 3, active: 91, winners: 46, predictive: 0
+2021-01-17 22:45:00:666 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 65 > bursting: 46, active: 736, winners: 46, predictive: 137
+2021-01-17 22:45:00:672 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 66 > bursting: 0, active: 46, winners: 46, predictive: 18
+2021-01-17 22:45:00:682 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 67 > bursting: 30, active: 496, winners: 46, predictive: 136
+2021-01-17 22:45:00:687 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 68 > bursting: 0, active: 46, winners: 46, predictive: 2
+2021-01-17 22:45:00:710 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 69 > bursting: 44, active: 706, winners: 46, predictive: 137
+2021-01-17 22:45:00:715 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 70 > bursting: 0, active: 46, winners: 46, predictive: 16
+2021-01-17 22:45:00:729 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 71 > bursting: 31, active: 511, winners: 46, predictive: 141
+2021-01-17 22:45:00:734 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 72 > bursting: 0, active: 46, winners: 46, predictive: 37
+2021-01-17 22:45:00:744 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 73 > bursting: 9, active: 181, winners: 46, predictive: 53
+2021-01-17 22:45:00:751 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 74 > bursting: 0, active: 46, winners: 46, predictive: 57
+2021-01-17 22:45:01:043 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 100 > bursting: 0, active: 46, winners: 46, predictive: 46
+2021-01-17 22:45:01:389 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 150 > bursting: 0, active: 46, winners: 46, predictive: 101
+2021-01-17 22:45:01:684 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 200 > bursting: 0, active: 46, winners: 46, predictive: 136
+2021-01-17 22:45:02:160 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 250 > bursting: 0, active: 46, winners: 46, predictive: 101
+2021-01-17 22:45:02:480 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 300 > bursting: 0, active: 46, winners: 46, predictive: 142
+2021-01-17 22:45:02:798 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 350 > bursting: 0, active: 46, winners: 46, predictive: 101
+2021-01-17 22:45:03:100 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 400 > bursting: 0, active: 46, winners: 46, predictive: 145
+2021-01-17 22:45:03:445 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 450 > bursting: 0, active: 46, winners: 46, predictive: 101
+2021-01-17 22:45:03:824 nl.zeesoft.zdk.test.neural.TestTemporalMemory: 500 > bursting: 0, active: 46, winners: 46, predictive: 145
 ~~~~
 
 nl.zeesoft.zdk.test.neural.TestClassifier
@@ -973,12 +973,12 @@ Class references;
 The output of this test shows an example classifier input and output SDR.  
 In this case the value is passed to the classifier using a separate key value SDR which is not shown here.  
 ~~~~
-2021-01-17 19:14:51:736 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
-2021-01-17 19:14:51:736 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
+2021-01-17 22:45:04:379 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
+2021-01-17 22:45:04:379 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
 
-2021-01-17 19:14:51:777 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
-2021-01-17 19:14:51:853 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
-2021-01-17 19:14:51:895 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
+2021-01-17 22:45:04:419 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
+2021-01-17 22:45:04:455 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
+2021-01-17 22:45:04:486 nl.zeesoft.zdk.neural.processors.ClassifierStep: Dividing step 1 classifier value counts by two ...
 
 Input SDR: 10;10;84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99
 Output SDR: SDR##1;1;@accuracy#java.lang.Float#1.0@accuracyTrend#java.lang.Float#1.0@classification:1#nl.zeesoft.zdk.neural.processors.Classification#1;value;java.lang.Integer;0,160
@@ -1025,18 +1025,18 @@ Class references;
 **Test output**  
 The output of this test shows a *Merger* and an example of a merged and distorted output SDR.  
 ~~~~
-2021-01-17 19:14:51:956 nl.zeesoft.zdk.neural.processors.Merger: Initializing Merger ...
-2021-01-17 19:14:51:956 nl.zeesoft.zdk.neural.processors.Merger: Initialized
+2021-01-17 22:45:04:537 nl.zeesoft.zdk.neural.processors.Merger: Initializing Merger ...
+2021-01-17 22:45:04:537 nl.zeesoft.zdk.neural.processors.Merger: Initialized
 
 Merged and distorted;
-10110100
+11001000
 00000000
-00001001
-11000000
-00000000
+00000111
+11000001
 00000000
 00000010
-00100000
+00000000
+00000000
 ~~~~
 
 nl.zeesoft.zdk.test.neural.TestProcessorFactory
@@ -1083,26 +1083,26 @@ Class references;
 **Test output**  
 The output of this test shows an example SDR processing chain and a subsample of some of its temporal memory outputs.  
 ~~~~
-2021-01-17 19:14:52:013 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
-2021-01-17 19:14:52:034 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
-2021-01-17 19:14:52:034 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
-2021-01-17 19:14:52:065 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
-2021-01-17 19:14:52:066 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
-2021-01-17 19:14:52:068 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
-2021-01-17 19:14:52:069 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
-2021-01-17 19:14:52:069 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
+2021-01-17 22:45:04:614 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
+2021-01-17 22:45:04:645 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
+2021-01-17 22:45:04:645 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
+2021-01-17 22:45:04:677 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
+2021-01-17 22:45:04:677 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
+2021-01-17 22:45:04:677 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
+2021-01-17 22:45:04:677 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
+2021-01-17 22:45:04:692 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
 
 Processing ...
-2021-01-17 19:14:54:281 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;800,801,802,803,804,805,806,807,808,809,810,811,812,813,814,815,1056,1057,1058,1059,1060,1061,1062,1063,1064,1065,1066,1067,1068,1069,1070,1071,1360,1361,1362,1363,1364,1365,1366,1367,1368,1369,1370,1371,1372,1373,1374,1375,1792,1793,1794,1795,1796,1797,1798,1799,1800,1801,1802,1803,1804,1805,1806,1807,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2224,2225,2226,2227,2228,2229,2230,2231,2232,2233,2234,2235,2236,2237,2238,2239,3392,3393,3394,3395,3396,3397,3398,3399,3400,3401,3402,3403,3404,3405,3406,3407,3855,4176,4177,4178,4179,4180,4181,4182,4183,4184,4185,4186,4187,4188,4189,4190,4191,4784,4785,4786,4787,4788,4789,4790,4791,4792,4793,4794,4795,4796,4797,4798,4799,4912,4913,4914,4915,4916,4917,4918,4919,4920,4921,4922,4923,4924,4925,4926,4927,5808,5809,5810,5811,5812,5813,5814,5815,5816,5817,5818,5819,5820,5821,5822,5823,5952,5953,5954,5955,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5966,5967,6144,6145,6146,6147,6148,6149,6150,6151,6152,6153,6154,6155,6156,6157,6158,6159,6528,6529,6530,6531,6532,6533,6534,6535,6536,6537,6538,6539,6540,6541,6542,6543,7200,7201,7202,7203,7204,7205,7206,7207,7208,7209,7210,7211,7212,7213,7214,7215,7696,7697,7698,7699,7700,7701,7702,7703,7704,7705,7706,7707,7708,7709,7710,7711,7840,7841,7842,7843,7844,7845,7846,7847,7848,7849,7850,7851,7852,7853,7854,7855,8480,8481,8482,8483,8484,8485,8486,8487,8488,8489,8490,8491,8492,8493,8494,8495,8544,8545,8546,8547,8548,8549,8550,8551,8552,8553,8554,8555,8556,8557,8558,8559,9436,10208,10209,10210,10211,10212,10213,10214,10215,10216,10217,10218,10219,10220,10221,10222,10223,11680,11681,11682,11683,11684,11685,11686,11687,11688,11689,11690,11691,11692,11693,11694,11695,11760,11761,11762,11763,11764,11765,11766,11767,11768,11769,11770,11771,11772,11773,11774,11775,12672,12673,12674,12675,12676,12677,12678,12679,12680,12681,12682,12683,12684,12685,12686,12687,12928,12929,12930,12931,12932,12933,12934,12935,12936,12937,12938,12939,12940,12941,12942,12943,13744,13745,13746,13747,13748,13749,13750,13751,13752,13753,13754,13755,13756,13757,13758,13759,14371,16320,16321,16322,16323,16324,16325,16326,16327,16328,16329,16330,16331,16332,16333,16334,16335,16672,16673,16674,16675,16676,16677,16678,16679,16680,16681,16682,16683,16684,16685,16686,16687,17856,19040,19041,19042,19043,19044,19045,19046,19047,19048,19049,19050,19051,19052,19053,19054,19055,19504,19505,19506,19507,19508,19509,19510,19511,19512,19513,19514,19515,19516,19517,19518,19519,21120,21121,21122,21123,21124,21125,21126,21127,21128,21129,21130,21131,21132,21133,21134,21135,21168,21169,21170,21171,21172,21173,21174,21175,21176,21177,21178,21179,21180,21181,21182,21183,21280,21281,21282,21283,21284,21285,21286,21287,21288,21289,21290,21291,21292,21293,21294,21295,22800,22801,22802,22803,22804,22805,22806,22807,22808,22809,22810,22811,22812,22813,22814,22815,24816,24817,24818,24819,24820,24821,24822,24823,24824,24825,24826,24827,24828,24829,24830,24831,25056,25057,25058,25059,25060,25061,25062,25063,25064,25065,25066,25067,25068,25069,25070,25071,25840,25841,25842,25843,25844,25845,25846,25847,25848,25849,25850,25851,25852,25853,25854,25855,25856,25857,25858,25859,25860,25861,25862,25863,25864,25865,25866,25867,25868,25869,25870,25871,26544,26545,26546,26547,26548,26549,26550,26551,26552,26553,26554,26555,26556,26557,26558,26559,27312,27313,27314,27315,27316,27317,27318,27319,27320,27321,27322,27323,27324,27325,27326,27327,28064,28065,28066,28067,28068,28069,28070,28071,28072,28073,28074,28075,28076,28077,28078,28079,28752,28753,28754,28755,28756,28757,28758,28759,28760,28761,28762,28763,28764,28765,28766,28767,30272,30273,30274,30275,30276,30277,30278,30279,30280,30281,30282,30283,30284,30285,30286,30287
-2021-01-17 19:14:58:439 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;624,625,626,627,628,629,630,631,632,633,634,635,636,637,638,639,768,769,770,771,772,773,774,775,776,777,778,779,780,781,782,783,812,1056,1057,1058,1059,1060,1061,1062,1063,1064,1065,1066,1067,1068,1069,1070,1071,1792,1793,1794,1795,1796,1797,1798,1799,1800,1801,1802,1803,1804,1805,1806,1807,1978,2038,2576,2577,2578,2579,2580,2581,2582,2583,2584,2585,2586,2587,2588,2589,2590,2591,3399,4043,4359,5816,5952,5953,5954,5955,5956,5957,5958,5959,5960,5961,5962,5963,5964,5965,5966,5967,6257,7203,7392,7393,7394,7395,7396,7397,7398,7399,7400,7401,7402,7403,7404,7405,7406,7407,7699,7760,7761,7762,7763,7764,7765,7766,7767,7768,7769,7770,7771,7772,7773,7774,7775,7850,8338,9153,9436,9712,9713,9714,9715,9716,9717,9718,9719,9720,9721,9722,9723,9724,9725,9726,9727,10218,11258,12682,12942,13104,13105,13106,13107,13108,13109,13110,13111,13112,13113,13114,13115,13116,13117,13118,13119,13232,13233,13234,13235,13236,13237,13238,13239,13240,13241,13242,13243,13244,13245,13246,13247,13695,13750,15248,15249,15250,15251,15252,15253,15254,15255,15256,15257,15258,15259,15260,15261,15262,15263,16328,17296,17297,17298,17299,17300,17301,17302,17303,17304,17305,17306,17307,17308,17309,17310,17311,19046,19504,19505,19506,19507,19508,19509,19510,19511,19512,19513,19514,19515,19516,19517,19518,19519,21312,21313,21314,21315,21316,21317,21318,21319,21320,21321,21322,21323,21324,21325,21326,21327,23250,23376,23377,23378,23379,23380,23381,23382,23383,23384,23385,23386,23387,23388,23389,23390,23391,24784,24785,24786,24787,24788,24789,24790,24791,24792,24793,24794,24795,24796,24797,24798,24799,25061,25584,25585,25586,25587,25588,25589,25590,25591,25592,25593,25594,25595,25596,25597,25598,25599,25850,25858,27319,30247
-2021-01-17 19:15:02:127 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;78,135,770,812,1787,1803,1978,2038,3399,4359,5967,6530,7203,7699,7770,7850,9436,9504,9505,9506,9507,9508,9509,9510,9511,9512,9513,9514,9515,9516,9517,9518,9519,10218,10928,10929,10930,10931,10932,10933,10934,10935,10936,10937,10938,10939,10940,10941,10942,10943,12682,12942,13238,13695,13750,14272,14273,14274,14275,14276,14277,14278,14279,14280,14281,14282,14283,14284,14285,14286,14287,16328,16687,18149,18221,18272,19046,19510,20406,20864,21131,21282,21627,22154,23250,25061,25850,25858,30247,30280,31136,31137,31138,31139,31140,31141,31142,31143,31144,31145,31146,31147,31148,31149,31150,31151
-2021-01-17 19:15:05:645 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;278,770,812,1442,1803,1978,2038,3328,3329,3330,3331,3332,3333,3334,3335,3336,3337,3338,3339,3340,3341,3342,3343,3399,3934,4096,4097,4098,4099,4100,4101,4102,4103,4104,4105,4106,4107,4108,4109,4110,4111,4916,7203,7699,7770,7850,8555,9436,9776,9777,9778,9779,9780,9781,9782,9783,9784,9785,9786,9787,9788,9789,9790,9791,10218,10928,10929,10930,10931,10932,10933,10934,10935,10936,10937,10938,10939,10940,10941,10942,10943,11258,11680,11681,11682,11683,11684,11685,11686,11687,11688,11689,11690,11691,11692,11693,11694,11695,12308,12682,12942,13750,14273,15028,15256,16328,18208,18209,18210,18211,18212,18213,18214,18215,18216,18217,18218,18219,18220,18221,18222,18223,19046,19584,19585,19586,19587,19588,19589,19590,19591,19592,19593,19594,19595,19596,19597,19598,19599,20406,21131,21282,21408,21409,21410,21411,21412,21413,21414,21415,21416,21417,21418,21419,21420,21421,21422,21423,25061,25600,25601,25602,25603,25604,25605,25606,25607,25608,25609,25610,25611,25612,25613,25614,25615,25850,26397,26547,28752,28753,28754,28755,28756,28757,28758,28759,28760,28761,28762,28763,28764,28765,28766,28767,30247,31164
-2021-01-17 19:15:09:119 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;770,812,1057,1209,1369,1520,1521,1522,1523,1524,1525,1526,1527,1528,1529,1530,1531,1532,1533,1534,1535,1787,1803,1978,2038,3399,4186,4359,5816,6530,6848,6849,6850,6851,6852,6853,6854,6855,6856,6857,6858,6859,6860,6861,6862,6863,7699,7850,8480,8481,8482,8483,8484,8485,8486,8487,8488,8489,8490,8491,8492,8493,8494,8495,9153,9436,10218,10544,10545,10546,10547,10548,10549,10550,10551,10552,10553,10554,10555,10556,10557,10558,10559,11057,12682,12942,13232,13233,13234,13235,13236,13237,13238,13239,13240,13241,13242,13243,13244,13245,13246,13247,13695,13750,15028,16328,16635,19296,19297,19298,19299,19300,19301,19302,19303,19304,19305,19306,19307,19308,19309,19310,19311,20406,20864,21131,21282,21616,21617,21618,21619,21620,21621,21622,21623,21624,21625,21626,21627,21628,21629,21630,21631,23616,23617,23618,23619,23620,23621,23622,23623,23624,23625,23626,23627,23628,23629,23630,23631,25061,25608,25850,25858,30247,30280,33584,33585,33586,33587,33588,33589,33590,33591,33592,33593,33594,33595,33596,33597,33598,33599
-2021-01-17 19:15:12:692 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;770,812,1057,1803,1978,2038,2295,2578,3399,4104,4186,5816,6861,7203,7405,7699,7770,7850,8555,9153,9436,10218,10558,11258,12308,12682,12942,13238,13695,13750,16328,16687,18149,20406,21131,21282,21920,21921,21922,21923,21924,21925,21926,21927,21928,21929,21930,21931,21932,21933,21934,21935,25061,25850,25858,26547,27319,28094,29540,30247,31164
-2021-01-17 19:15:17:424 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;576,770,812,1369,1803,2038,2179,2295,3855,4183,4359,4785,4916,5816,6150,6305,6530,6861,7203,7850,8482,9436,10218,10558,11258,12308,12682,13238,16328,17856,19046,20275,20864,21282,21931,23250,23387,25850,25858,26208,26547,27319,28067,28094,29540,30280
-2021-01-17 19:15:21:705 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;78,278,770,812,1209,1219,1442,1978,2038,2295,2578,3332,3399,3855,5816,5967,6683,7203,7770,7850,8555,9153,9436,9725,10218,10544,10545,10546,10547,10548,10549,10550,10551,10552,10553,10554,10555,10556,10557,10558,10559,11258,12308,12682,12942,13695,13750,16328,16635,16992,16993,16994,16995,16996,16997,16998,16999,17000,17001,17002,17003,17004,17005,17006,17007,18848,18849,18850,18851,18852,18853,18854,18855,18856,18857,18858,18859,18860,18861,18862,18863,20406,21282,21931,23250,25061,25850,25858,27319,28094,30247
-2021-01-17 19:15:25:030 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;576,812,1057,1209,1369,1803,2038,2232,2578,4043,4104,4916,5816,7203,7699,7770,7850,8338,9153,10218,11258,12308,13750,15028,15256,16999,20406,21131,21179,21409,22154,22777,22807,24123,25176,25589,25608,25850,26208,26547,27319,28064,28065,28066,28067,28068,28069,28070,28071,28072,28073,28074,28075,28076,28077,28078,28079,29540,30247,31147,31164
-Processing 1000 SDRs took: 36572 ms (36 ms/SDR)
+2021-01-17 22:45:06:403 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;1376,1377,1378,1379,1380,1381,1382,1383,1384,1385,1386,1387,1388,1389,1390,1391,1440,1441,1442,1443,1444,1445,1446,1447,1448,1449,1450,1451,1452,1453,1454,1455,1584,1585,1586,1587,1588,1589,1590,1591,1592,1593,1594,1595,1596,1597,1598,1599,1600,1601,1602,1603,1604,1605,1606,1607,1608,1609,1610,1611,1612,1613,1614,1615,2272,2273,2274,2275,2276,2277,2278,2279,2280,2281,2282,2283,2284,2285,2286,2287,2672,2673,2674,2675,2676,2677,2678,2679,2680,2681,2682,2683,2684,2685,2686,2687,2864,2865,2866,2867,2868,2869,2870,2871,2872,2873,2874,2875,2876,2877,2878,2879,3552,3553,3554,3555,3556,3557,3558,3559,3560,3561,3562,3563,3564,3565,3566,3567,3776,3777,3778,3779,3780,3781,3782,3783,3784,3785,3786,3787,3788,3789,3790,3791,4336,4337,4338,4339,4340,4341,4342,4343,4344,4345,4346,4347,4348,4349,4350,4351,4608,4609,4610,4611,4612,4613,4614,4615,4616,4617,4618,4619,4620,4621,4622,4623,4816,4817,4818,4819,4820,4821,4822,4823,4824,4825,4826,4827,4828,4829,4830,4831,4896,4897,4898,4899,4900,4901,4902,4903,4904,4905,4906,4907,4908,4909,4910,4911,5088,5089,5090,5091,5092,5093,5094,5095,5096,5097,5098,5099,5100,5101,5102,5103,5200,5201,5202,5203,5204,5205,5206,5207,5208,5209,5210,5211,5212,5213,5214,5215,6368,6369,6370,6371,6372,6373,6374,6375,6376,6377,6378,6379,6380,6381,6382,6383,8912,8913,8914,8915,8916,8917,8918,8919,8920,8921,8922,8923,8924,8925,8926,8927,9200,9201,9202,9203,9204,9205,9206,9207,9208,9209,9210,9211,9212,9213,9214,9215,9632,9633,9634,9635,9636,9637,9638,9639,9640,9641,9642,9643,9644,9645,9646,9647,9728,9729,9730,9731,9732,9733,9734,9735,9736,9737,9738,9739,9740,9741,9742,9743,10912,10913,10914,10915,10916,10917,10918,10919,10920,10921,10922,10923,10924,10925,10926,10927,11072,11073,11074,11075,11076,11077,11078,11079,11080,11081,11082,11083,11084,11085,11086,11087,11552,11553,11554,11555,11556,11557,11558,11559,11560,11561,11562,11563,11564,11565,11566,11567,11792,11793,11794,11795,11796,11797,11798,11799,11800,11801,11802,11803,11804,11805,11806,11807,12608,12609,12610,12611,12612,12613,12614,12615,12616,12617,12618,12619,12620,12621,12622,12623,13712,13713,13714,13715,13716,13717,13718,13719,13720,13721,13722,13723,13724,13725,13726,13727,15024,15025,15026,15027,15028,15029,15030,15031,15032,15033,15034,15035,15036,15037,15038,15039,15568,15569,15570,15571,15572,15573,15574,15575,15576,15577,15578,15579,15580,15581,15582,15583,15872,15873,15874,15875,15876,15877,15878,15879,15880,15881,15882,15883,15884,15885,15886,15887,16272,16273,16274,16275,16276,16277,16278,16279,16280,16281,16282,16283,16284,16285,16286,16287,18240,18241,18242,18243,18244,18245,18246,18247,18248,18249,18250,18251,18252,18253,18254,18255,18848,18849,18850,18851,18852,18853,18854,18855,18856,18857,18858,18859,18860,18861,18862,18863,19424,19425,19426,19427,19428,19429,19430,19431,19432,19433,19434,19435,19436,19437,19438,19439,19520,19521,19522,19523,19524,19525,19526,19527,19528,19529,19530,19531,19532,19533,19534,19535,19808,19809,19810,19811,19812,19813,19814,19815,19816,19817,19818,19819,19820,19821,19822,19823,20448,20449,20450,20451,20452,20453,20454,20455,20456,20457,20458,20459,20460,20461,20462,20463,21024,21025,21026,21027,21028,21029,21030,21031,21032,21033,21034,21035,21036,21037,21038,21039,21376,21377,21378,21379,21380,21381,21382,21383,21384,21385,21386,21387,21388,21389,21390,21391,21888,21889,21890,21891,21892,21893,21894,21895,21896,21897,21898,21899,21900,21901,21902,21903,23520,23521,23522,23523,23524,23525,23526,23527,23528,23529,23530,23531,23532,23533,23534,23535,24176,24177,24178,24179,24180,24181,24182,24183,24184,24185,24186,24187,24188,24189,24190,24191,25824,25825,25826,25827,25828,25829,25830,25831,25832,25833,25834,25835,25836,25837,25838,25839,29488,29489,29490,29491,29492,29493,29494,29495,29496,29497,29498,29499,29500,29501,29502,29503,29552,29553,29554,29555,29556,29557,29558,29559,29560,29561,29562,29563,29564,29565,29566,29567,29584,29585,29586,29587,29588,29589,29590,29591,29592,29593,29594,29595,29596,29597,29598,29599,30384,30385,30386,30387,30388,30389,30390,30391,30392,30393,30394,30395,30396,30397,30398,30399
+2021-01-17 22:45:08:995 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;675,1376,1377,1378,1379,1380,1381,1382,1383,1384,1385,1386,1387,1388,1389,1390,1391,1591,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2281,2784,2785,2786,2787,2788,2789,2790,2791,2792,2793,2794,2795,2796,2797,2798,2799,3344,3345,3346,3347,3348,3349,3350,3351,3352,3353,3354,3355,3356,3357,3358,3359,3553,4608,4609,4610,4611,4612,4613,4614,4615,4616,4617,4618,4619,4620,4621,4622,4623,4816,4817,4818,4819,4820,4821,4822,4823,4824,4825,4826,4827,4828,4829,4830,4831,5102,6372,6969,7344,7345,7346,7347,7348,7349,7350,7351,7352,7353,7354,7355,7356,7357,7358,7359,8922,8976,8977,8978,8979,8980,8981,8982,8983,8984,8985,8986,8987,8988,8989,8990,8991,9205,9376,9377,9378,9379,9380,9381,9382,9383,9384,9385,9386,9387,9388,9389,9390,9391,10912,10913,10914,10915,10916,10917,10918,10919,10920,10921,10922,10923,10924,10925,10926,10927,11798,12016,12017,12018,12019,12020,12021,12022,12023,12024,12025,12026,12027,12028,12029,12030,12031,12617,13168,13169,13170,13171,13172,13173,13174,13175,13176,13177,13178,13179,13180,13181,13182,13183,13713,15031,15576,16232,16256,16257,16258,16259,16260,16261,16262,16263,16264,16265,16266,16267,16268,16269,16270,16271,16272,16273,16274,16275,16276,16277,16278,16279,16280,16281,16282,16283,16284,16285,16286,16287,16320,16321,16322,16323,16324,16325,16326,16327,16328,16329,16330,16331,16332,16333,16334,16335,17120,17121,17122,17123,17124,17125,17126,17127,17128,17129,17130,17131,17132,17133,17134,17135,17376,17377,17378,17379,17380,17381,17382,17383,17384,17385,17386,17387,17388,17389,17390,17391,18240,18241,18242,18243,18244,18245,18246,18247,18248,18249,18250,18251,18252,18253,18254,18255,18858,19520,19521,19522,19523,19524,19525,19526,19527,19528,19529,19530,19531,19532,19533,19534,19535,19816,20462,21072,21073,21074,21075,21076,21077,21078,21079,21080,21081,21082,21083,21084,21085,21086,21087,21184,21185,21186,21187,21188,21189,21190,21191,21192,21193,21194,21195,21196,21197,21198,21199,21900,24048,24049,24050,24051,24052,24053,24054,24055,24056,24057,24058,24059,24060,24061,24062,24063,25128,25836,29488,29489,29490,29491,29492,29493,29494,29495,29496,29497,29498,29499,29500,29501,29502,29503,29559,30560,30561,30562,30563,30564,30565,30566,30567,30568,30569,30570,30571,30572,30573,30574,30575
+2021-01-17 22:45:11:689 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;784,785,786,787,788,789,790,791,792,793,794,795,796,797,798,799,1383,1575,1591,1872,1873,1874,1875,1876,1877,1878,1879,1880,1881,1882,1883,1884,1885,1886,1887,3553,3872,3873,3874,3875,3876,3877,3878,3879,3880,3881,3882,3883,3884,3885,3886,3887,4337,4579,4608,4609,4610,4611,4612,4613,4614,4615,4616,4617,4618,4619,4620,4621,4622,4623,4907,5200,5201,5202,5203,5204,5205,5206,5207,5208,5209,5210,5211,5212,5213,5214,5215,7788,8922,8985,9205,9380,11080,11554,11798,12617,12832,12833,12834,12835,12836,12837,12838,12839,12840,12841,12842,12843,12844,12845,12846,12847,13713,15031,15576,16593,18251,18858,19436,19535,19816,20462,20512,20513,20514,20515,20516,20517,20518,20519,20520,20521,20522,20523,20524,20525,20526,20527,21195,21900,22128,22129,22130,22131,22132,22133,22134,22135,22136,22137,22138,22139,22140,22141,22142,22143,23533,25836,26548,26592,26593,26594,26595,26596,26597,26598,26599,26600,26601,26602,26603,26604,26605,26606,26607,28928,28929,28930,28931,28932,28933,28934,28935,28936,28937,28938,28939,28940,28941,28942,28943,29559,29595,30320,30321,30322,30323,30324,30325,30326,30327,30328,30329,30330,30331,30332,30333,30334,30335,30378,31842
+2021-01-17 22:45:14:323 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;824,1568,1569,1570,1571,1572,1573,1574,1575,1576,1577,1578,1579,1580,1581,1582,1583,1591,1881,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2187,3353,3553,3872,3873,3874,3875,3876,3877,3878,3879,3880,3881,3882,3883,3884,3885,3886,3887,4579,8586,8922,8985,9205,9296,9641,10832,10833,10834,10835,10836,10837,10838,10839,10840,10841,10842,10843,10844,10845,10846,10847,10924,10945,11554,12617,13713,15031,15576,16256,16257,16258,16259,16260,16261,16262,16263,16264,16265,16266,16267,16268,16269,16270,16271,16593,17124,17381,18251,18858,19436,19535,19816,20462,21376,21377,21378,21379,21380,21381,21382,21383,21384,21385,21386,21387,21388,21389,21390,21391,21900,24055,24182,25128,25836,28848,28849,28850,28851,28852,28853,28854,28855,28856,28857,28858,28859,28860,28861,28862,28863,29488,29559,30320,30321,30322,30323,30324,30325,30326,30327,30328,30329,30330,30331,30332,30333,30334,30335,30391,31842
+2021-01-17 22:45:16:927 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;675,1445,1575,1591,2281,2796,2864,2865,2866,2867,2868,2869,2870,2871,2872,2873,2874,2875,2876,2877,2878,2879,3553,3882,5102,6372,8586,8922,8985,9205,9326,9641,10845,10924,11554,11798,12128,12129,12130,12131,12132,12133,12134,12135,12136,12137,12138,12139,12140,12141,12142,12143,12371,12617,12835,13713,15031,15167,15576,18251,18858,19436,19535,19816,20462,20515,21317,21378,21747,21856,21857,21858,21859,21860,21861,21862,21863,21864,21865,21866,21867,21868,21869,21870,21871,21900,24182,26597,29559,30330,31842
+2021-01-17 22:45:19:534 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;824,1591,1990,2281,2675,2796,3791,4700,6900,7788,8586,8985,9205,9312,9313,9314,9315,9316,9317,9318,9319,9320,9321,9322,9323,9324,9325,9326,9327,9380,9641,11798,12128,12129,12130,12131,12132,12133,12134,12135,12136,12137,12138,12139,12140,12141,12142,12143,12617,13180,13713,14869,15031,15167,15576,16224,16225,16226,16227,16228,16229,16230,16231,16232,16233,16234,16235,16236,16237,16238,16239,16263,16328,17124,17381,18858,19217,20462,20515,21078,21195,21378,21856,21857,21858,21859,21860,21861,21862,21863,21864,21865,21866,21867,21868,21869,21870,21871,21961,23533,25128,26544,26545,26546,26547,26548,26549,26550,26551,26552,26553,26554,26555,26556,26557,26558,26559,29595,30330,30391,31136,31137,31138,31139,31140,31141,31142,31143,31144,31145,31146,31147,31148,31149,31150,31151
+2021-01-17 22:45:22:023 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;675,1591,1881,2796,3353,3553,4828,5102,6372,7355,7382,8586,8922,8985,9205,9296,9641,10924,10945,11221,11554,12023,12617,12660,12835,13180,13713,14092,14869,15031,15167,15576,15880,18251,18858,19436,19535,19816,20462,21900,21961,23533,24758,26548,29559,30330
+2021-01-17 22:45:24:519 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;675,1197,1383,1591,2796,3553,4612,5015,5102,6372,8922,8985,9205,9326,9641,11554,11798,11897,12223,12464,12465,12466,12467,12468,12469,12470,12471,12472,12473,12474,12475,12476,12477,12478,12479,12617,12660,13713,14869,15031,15576,16277,18251,18858,18930,19436,19535,19816,20462,21025,21317,21378,21900,21961,22133,23533,25885,29479,29520,29521,29522,29523,29524,29525,29526,29527,29528,29529,29530,29531,29532,29533,29534,29535,29559,30330
+2021-01-17 22:45:26:995 nl.zeesoft.zdk.test.neural.TestProcessorFactory: 768;48;675,824,1197,1383,1445,1591,3553,4579,4700,5102,6372,7355,8586,8922,8985,9205,9380,9641,10924,11554,11798,12223,12617,12835,13713,15031,15576,17124,18251,18858,18930,19436,19535,19802,19816,20462,21025,21378,21747,21900,21961,25885,26597,29479,29559,31139
+Processing 1000 SDRs took: 24807 ms (24 ms/SDR)
 ~~~~
 
 nl.zeesoft.zdk.test.neural.TestNetwork
@@ -1192,72 +1192,72 @@ Layer: 3
   <- 1 = value
   -> 0 = Classifications: 1*1
 
-2021-01-17 19:15:28:677 nl.zeesoft.zdk.neural.network.Network: Initializing network ...
-2021-01-17 19:15:28:678 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
-2021-01-17 19:15:28:678 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initializing ScalarEncoder ...
-2021-01-17 19:15:28:678 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initialized
-2021-01-17 19:15:28:678 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
-2021-01-17 19:15:28:681 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
-2021-01-17 19:15:28:678 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
-2021-01-17 19:15:28:729 nl.zeesoft.zdk.neural.processors.TemporalMemory: Resetting TemporalMemory connections ...
-2021-01-17 19:15:28:730 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
-2021-01-17 19:15:28:732 nl.zeesoft.zdk.neural.processors.TemporalMemory: Reset connections
-2021-01-17 19:15:28:759 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
-2021-01-17 19:15:28:760 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
-2021-01-17 19:15:28:790 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
-2021-01-17 19:15:28:791 nl.zeesoft.zdk.neural.network.Network: Initialized network
+2021-01-17 22:45:29:515 nl.zeesoft.zdk.neural.network.Network: Initializing network ...
+2021-01-17 22:45:29:528 nl.zeesoft.zdk.neural.processors.Classifier: Initializing Classifier ...
+2021-01-17 22:45:29:528 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initializing SpatialPooler ...
+2021-01-17 22:45:29:528 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initializing TemporalMemory ...
+2021-01-17 22:45:29:562 nl.zeesoft.zdk.neural.processors.SpatialPooler: Initialized
+2021-01-17 22:45:29:529 nl.zeesoft.zdk.neural.processors.Classifier: Initialized
+2021-01-17 22:45:29:528 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initializing ScalarEncoder ...
+2021-01-17 22:45:29:580 nl.zeesoft.zdk.neural.processors.SpatialPooler: Resetting SpatialPooler connections ...
+2021-01-17 22:45:29:580 nl.zeesoft.zdk.neural.processors.ScalarEncoder: Initialized
+2021-01-17 22:45:29:584 nl.zeesoft.zdk.neural.processors.TemporalMemory: Initialized
+2021-01-17 22:45:29:584 nl.zeesoft.zdk.neural.processors.TemporalMemory: Resetting TemporalMemory connections ...
+2021-01-17 22:45:29:587 nl.zeesoft.zdk.neural.processors.TemporalMemory: Reset connections
+2021-01-17 22:45:29:613 nl.zeesoft.zdk.neural.processors.SpatialPooler: Reset connections
+2021-01-17 22:45:29:614 nl.zeesoft.zdk.neural.network.Network: Initialized network
 
-2021-01-17 19:15:28:791 nl.zeesoft.zdk.test.neural.TestNetwork: Processing 100 SDRs ...
-2021-01-17 19:15:32:368 nl.zeesoft.zdk.test.neural.TestNetwork: Processed 100 SDRs
+2021-01-17 22:45:29:614 nl.zeesoft.zdk.test.neural.TestNetwork: Processing 100 SDRs ...
+2021-01-17 22:45:32:749 nl.zeesoft.zdk.test.neural.TestNetwork: Processed 100 SDRs
 
 Statistics;
 - Cells             : 36864
 - Proximal segments : 2304
-- Proximal synapses : 463085 (active: 241489)
-- Distal segments   : 1432
-- Distal synapses   : 38052 (active: 3752)
+- Proximal synapses : 463614 (active: 241042)
+- Distal segments   : 1482
+- Distal synapses   : 38740 (active: 3644)
 
-2021-01-17 19:15:32:636 nl.zeesoft.zdk.neural.network.Network: Saving network ...
-2021-01-17 19:15:32:637 nl.zeesoft.zdk.neural.network.Network$7: Writing dist/Configuration.txt ...
-2021-01-17 19:15:32:638 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/EN.txt ...
-2021-01-17 19:15:32:641 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/CL.txt ...
-2021-01-17 19:15:32:645 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/TM.txt ...
-2021-01-17 19:15:32:647 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/SP.txt ...
-2021-01-17 19:15:32:684 nl.zeesoft.zdk.neural.network.Network$9: Writing dist/PreviousIO.txt ...
-2021-01-17 19:15:33:446 nl.zeesoft.zdk.neural.network.Network: Saved network
+2021-01-17 22:45:32:983 nl.zeesoft.zdk.neural.network.Network: Saving network ...
+2021-01-17 22:45:32:998 nl.zeesoft.zdk.neural.network.Network$7: Writing dist/Configuration.txt ...
+2021-01-17 22:45:32:998 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/EN.txt ...
+2021-01-17 22:45:32:998 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/CL.txt ...
+2021-01-17 22:45:33:015 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/TM.txt ...
+2021-01-17 22:45:33:099 nl.zeesoft.zdk.neural.network.Network$8: Writing dist/SP.txt ...
+2021-01-17 22:45:33:164 nl.zeesoft.zdk.neural.network.Network$9: Writing dist/PreviousIO.txt ...
+2021-01-17 22:45:33:735 nl.zeesoft.zdk.neural.network.Network: Saved network
 
 Processor: EN
 -> 16;16;1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
 -> SDR##1;1;@value#java.lang.Integer#1
 Processor: SP
--> 48;48;460,1377,1111,1212,1810,366,209,1383,897,70,400,646,903,285,1254,1229,1046,1851,1503,1460,263,608,678,520,232,599,1474,1098,326,1265,1312,769,932,1148,184,921,639,206,603,570,1600,1804,983,323,1803,1512
+-> 48;48;1410,831,513,494,1991,52,1759,1136,1022,852,1575,181,622,671,1844,1151,925,911,1649,1801,1355,1074,1491,15,326,560,1743,567,1260,639,281,1414,631,683,1567,1746,561,1183,828,1266,658,1236,1993,2,791,1306
 Processor: TM
--> 768;48;2944,2945,2946,2947,2948,2949,2950,2951,2952,2953,2954,2955,2956,2957,2958,2959,3712,3713,3714,3715,3716,3717,3718,3719,3720,3721,3722,3723,3724,3725,3726,3727,3344,3345,3346,3347,3348,3349,3350,3351,3352,3353,3354,3355,3356,3357,3358,3359,6400,6401,6402,6403,6404,6405,6406,6407,6408,6409,6410,6411,6412,6413,6414,6415,7360,7361,7362,7363,7364,7365,7366,7367,7368,7369,7370,7371,7372,7373,7374,7375,4560,4561,4562,4563,4564,4565,4566,4567,4568,4569,4570,4571,4572,4573,4574,4575,8320,8321,8322,8323,8324,8325,8326,8327,8328,8329,8330,8331,8332,8333,8334,8335,9728,9729,9730,9731,9732,9733,9734,9735,9736,9737,9738,9739,9740,9741,9742,9743,12304,12305,12306,12307,12308,12309,12310,12311,12312,12313,12314,12315,12316,12317,12318,12319,14912,14913,14914,14915,14916,14917,14918,14919,14920,14921,14922,14923,14924,14925,14926,14927,14352,14353,14354,14355,14356,14357,14358,14359,14360,14361,14362,14363,14364,14365,14366,14367,14736,14737,14738,14739,14740,14741,14742,14743,14744,14745,14746,14747,14748,14749,14750,14751,18368,18369,18370,18371,18372,18373,18374,18375,18376,18377,18378,18379,18380,18381,18382,18383,19392,19393,19394,19395,19396,19397,19398,19399,19400,19401,19402,19403,19404,19405,19406,19407,20992,20993,20994,20995,20996,20997,20998,20999,21000,21001,21002,21003,21004,21005,21006,21007,19664,19665,19666,19667,19668,19669,19670,19671,19672,19673,19674,19675,19676,19677,19678,19679,23360,23361,23362,23363,23364,23365,23366,23367,23368,23369,23370,23371,23372,23373,23374,23375,20240,20241,20242,20243,20244,20245,20246,20247,20248,20249,20250,20251,20252,20253,20254,20255,24192,24193,24194,24195,24196,24197,24198,24199,24200,24201,24202,24203,24204,24205,24206,24207,22032,22033,22034,22035,22036,22037,22038,22039,22040,22041,22042,22043,22044,22045,22046,22047,25600,25601,25602,25603,25604,25605,25606,25607,25608,25609,25610,25611,25612,25613,25614,25615,1120,1121,1122,1123,1124,1125,1126,1127,1128,1129,1130,1131,1132,1133,1134,1135,28864,28865,28866,28867,28868,28869,28870,28871,28872,28873,28874,28875,28876,28877,28878,28879,3296,3297,3298,3299,3300,3301,3302,3303,3304,3305,3306,3307,3308,3309,3310,3311,5216,5217,5218,5219,5220,5221,5222,5223,5224,5225,5226,5227,5228,5229,5230,5231,5856,5857,5858,5859,5860,5861,5862,5863,5864,5865,5866,5867,5868,5869,5870,5871,9120,9121,9122,9123,9124,9125,9126,9127,9128,9129,9130,9131,9132,9133,9134,9135,10336,10337,10338,10339,10340,10341,10342,10343,10344,10345,10346,10347,10348,10349,10350,10351,10848,10849,10850,10851,10852,10853,10854,10855,10856,10857,10858,10859,10860,10861,10862,10863,16736,16737,16738,16739,16740,16741,16742,16743,16744,16745,16746,16747,16748,16749,16750,16751,17568,17569,17570,17571,17572,17573,17574,17575,17576,17577,17578,17579,17580,17581,17582,17583,20064,20065,20066,20067,20068,20069,20070,20071,20072,20073,20074,20075,20076,20077,20078,20079,23584,23585,23586,23587,23588,23589,23590,23591,23592,23593,23594,23595,23596,23597,23598,23599,28960,28961,28962,28963,28964,28965,28966,28967,28968,28969,28970,28971,28972,28973,28974,28975,4208,4209,4210,4211,4212,4213,4214,4215,4216,4217,4218,4219,4220,4221,4222,4223,5168,5169,5170,5171,5172,5173,5174,5175,5176,5177,5178,5179,5180,5181,5182,5183,9584,9585,9586,9587,9588,9589,9590,9591,9592,9593,9594,9595,9596,9597,9598,9599,9648,9649,9650,9651,9652,9653,9654,9655,9656,9657,9658,9659,9660,9661,9662,9663,10224,10225,10226,10227,10228,10229,10230,10231,10232,10233,10234,10235,10236,10237,10238,10239,14448,14449,14450,14451,14452,14453,14454,14455,14456,14457,14458,14459,14460,14461,14462,14463,15728,15729,15730,15731,15732,15733,15734,15735,15736,15737,15738,15739,15740,15741,15742,15743,17776,17777,17778,17779,17780,17781,17782,17783,17784,17785,17786,17787,17788,17789,17790,17791,22128,22129,22130,22131,22132,22133,22134,22135,22136,22137,22138,22139,22140,22141,22142,22143,24048,24049,24050,24051,24052,24053,24054,24055,24056,24057,24058,24059,24060,24061,24062,24063,28848,28849,28850,28851,28852,28853,28854,28855,28856,28857,28858,28859,28860,28861,28862,28863,29616,29617,29618,29619,29620,29621,29622,29623,29624,29625,29626,29627,29628,29629,29630,29631
--> 48;48;70,184,206,209,232,263,285,323,326,366,400,460,520,570,599,603,608,639,646,678,769,897,903,921,932,983,1046,1098,1111,1148,1212,1229,1254,1265,1312,1377,1383,1460,1474,1503,1512,1600,1803,1804,1810,1851
--> 768;48;1992,7277,7294,8849,16429,10140,17906,18810,20458,18830,25165,29494
--> 768;48;2950,3723,3354,6414,7361,4563,8325,9731,12315,14927,14366,14742,18371,19396,20993,19668,20251,23372,24193,22045,25604,1123,28879,3309,5220,5866,9134,10346,10852,16744,17583,20075,23594,28969,4214,5173,9592,9656,10237,14451,15734,17785,22143,24057,28854,29625
+-> 768;48;832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,8960,8961,8962,8963,8964,8965,8966,8967,8968,8969,8970,8971,8972,8973,8974,8975,13248,13249,13250,13251,13252,13253,13254,13255,13256,13257,13258,13259,13260,13261,13262,13263,13632,13633,13634,13635,13636,13637,13638,13639,13640,13641,13642,13643,13644,13645,13646,13647,18176,18177,18178,18179,18180,18181,18182,18183,18184,18185,18186,18187,18188,18189,18190,18191,19776,19777,19778,19779,19780,19781,19782,19783,19784,19785,19786,19787,19788,19789,19790,19791,20160,20161,20162,20163,20164,20165,20166,20167,20168,20169,20170,20171,20172,20173,20174,20175,29504,29505,29506,29507,29508,29509,29510,29511,29512,29513,29514,29515,29516,29517,29518,29519,2896,2897,2898,2899,2900,2901,2902,2903,2904,2905,2906,2907,2908,2909,2910,2911,4496,4497,4498,4499,4500,4501,4502,4503,4504,4505,4506,4507,4508,4509,4510,4511,8208,8209,8210,8211,8212,8213,8214,8215,8216,8217,8218,8219,8220,8221,8222,8223,8976,8977,8978,8979,8980,8981,8982,8983,8984,8985,8986,8987,8988,8989,8990,8991,14800,14801,14802,14803,14804,14805,14806,14807,14808,14809,14810,14811,14812,14813,14814,14815,26384,26385,26386,26387,26388,26389,26390,26391,26392,26393,26394,26395,26396,26397,26398,26399,28816,28817,28818,28819,28820,28821,28822,28823,28824,28825,28826,28827,28828,28829,28830,28831,31888,31889,31890,31891,31892,31893,31894,31895,31896,31897,31898,31899,31900,31901,31902,31903,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,5216,5217,5218,5219,5220,5221,5222,5223,5224,5225,5226,5227,5228,5229,5230,5231,7904,7905,7906,7907,7908,7909,7910,7911,7912,7913,7914,7915,7916,7917,7918,7919,9072,9073,9074,9075,9076,9077,9078,9079,9080,9081,9082,9083,9084,9085,9086,9087,9952,9953,9954,9955,9956,9957,9958,9959,9960,9961,9962,9963,9964,9965,9966,9967,10096,10097,10098,10099,10100,10101,10102,10103,10104,10105,10106,10107,10108,10109,10110,10111,10224,10225,10226,10227,10228,10229,10230,10231,10232,10233,10234,10235,10236,10237,10238,10239,10736,10737,10738,10739,10740,10741,10742,10743,10744,10745,10746,10747,10748,10749,10750,10751,10928,10929,10930,10931,10932,10933,10934,10935,10936,10937,10938,10939,10940,10941,10942,10943,12656,12657,12658,12659,12660,12661,12662,12663,12664,12665,12666,12667,12668,12669,12670,12671,10528,10529,10530,10531,10532,10533,10534,10535,10536,10537,10538,10539,10540,10541,10542,10543,13296,13297,13298,13299,13300,13301,13302,13303,13304,13305,13306,13307,13308,13309,13310,13311,14576,14577,14578,14579,14580,14581,14582,14583,14584,14585,14586,14587,14588,14589,14590,14591,16352,16353,16354,16355,16356,16357,16358,16359,16360,16361,16362,16363,16364,16365,16366,16367,18416,18417,18418,18419,18420,18421,18422,18423,18424,18425,18426,18427,18428,18429,18430,18431,17184,17185,17186,17187,17188,17189,17190,17191,17192,17193,17194,17195,17196,17197,17198,17199,18928,18929,18930,18931,18932,18933,18934,18935,18936,18937,18938,18939,18940,18941,18942,18943,20256,20257,20258,20259,20260,20261,20262,20263,20264,20265,20266,20267,20268,20269,20270,20271,21680,21681,21682,21683,21684,21685,21686,21687,21688,21689,21690,21691,21692,21693,21694,21695,20896,20897,20898,20899,20900,20901,20902,20903,20904,20905,20906,20907,20908,20909,20910,20911,22560,22561,22562,22563,22564,22565,22566,22567,22568,22569,22570,22571,22572,22573,22574,22575,23856,23857,23858,23859,23860,23861,23862,23863,23864,23865,23866,23867,23868,23869,23870,23871,22624,22625,22626,22627,22628,22629,22630,22631,22632,22633,22634,22635,22636,22637,22638,22639,25072,25073,25074,25075,25076,25077,25078,25079,25080,25081,25082,25083,25084,25085,25086,25087,25200,25201,25202,25203,25204,25205,25206,25207,25208,25209,25210,25211,25212,25213,25214,25215,27936,27937,27938,27939,27940,27941,27942,27943,27944,27945,27946,27947,27948,27949,27950,27951,27888,27889,27890,27891,27892,27893,27894,27895,27896,27897,27898,27899,27900,27901,27902,27903,28144,28145,28146,28147,28148,28149,28150,28151,28152,28153,28154,28155,28156,28157,28158,28159,31856,31857,31858,31859,31860,31861,31862,31863,31864,31865,31866,31867,31868,31869,31870,31871
+-> 48;48;2,15,52,181,281,326,494,513,560,561,567,622,631,639,658,671,683,791,828,831,852,911,925,1022,1074,1136,1151,1183,1236,1260,1266,1306,1355,1410,1414,1491,1567,1575,1649,1743,1746,1759,1801,1844,1991,1993
+-> 768;48;1466,1941,4108,6291,6630,12525,13171,16061,17950,21299,29677
+-> 768;48;838,8964,13254,13643,18185,19784,20162,29508,2900,4499,8217,8988,14800,26387,28818,31889,38,255,5227,7918,9076,10100,10234,10740,10931,9965,12662,10542,13299,14590,16358,18427,17187,18941,20256,21694,20897,22570,23858,22638,25074,25209,27937,27890,28152,31868
 Processor: CL
--> SDR##1;1;@accuracy#java.lang.Float#0.9893617@accuracyTrend#java.lang.Float#1.0@classification:1#nl.zeesoft.zdk.neural.processors.Classification#1;value;java.lang.Integer;0,2536%1,711
+-> SDR##1;1;@accuracy#java.lang.Float#1.0@accuracyTrend#java.lang.Float#1.0@classification:1#nl.zeesoft.zdk.neural.processors.Classification#1;value;java.lang.Integer;0,2300%1,902
 ~~~~
 
 Test results
 ------------
 All 15 tests have been executed successfully (287 assertions).  
-Total test duration: 62414 ms (total sleep duration: 176 ms).  
+Total test duration: 49673 ms (total sleep duration: 176 ms).  
 
 Memory usage and duration per test;  
- * nl.zeesoft.zdk.test.TestStr: 685 Kb / 0 Mb, 5 ms
- * nl.zeesoft.zdk.test.thread.TestRunCode: 438 Kb / 0 Mb, 28 ms
+ * nl.zeesoft.zdk.test.TestStr: 685 Kb / 0 Mb, 6 ms
+ * nl.zeesoft.zdk.test.thread.TestRunCode: 437 Kb / 0 Mb, 28 ms
  * nl.zeesoft.zdk.test.thread.TestCodeRunnerChain: 439 Kb / 0 Mb, 125 ms
- * nl.zeesoft.zdk.test.collection.TestCollections: 466 Kb / 0 Mb, 162 ms
- * nl.zeesoft.zdk.test.http.TestHttpServer: 1877 Kb / 1 Mb, 334 ms
- * nl.zeesoft.zdk.test.grid.TestGrid: 1808 Kb / 1 Mb, 13 ms
+ * nl.zeesoft.zdk.test.collection.TestCollections: 466 Kb / 0 Mb, 156 ms
+ * nl.zeesoft.zdk.test.http.TestHttpServer: 1877 Kb / 1 Mb, 331 ms
+ * nl.zeesoft.zdk.test.grid.TestGrid: 1808 Kb / 1 Mb, 14 ms
  * nl.zeesoft.zdk.test.neural.TestSDR: 1827 Kb / 1 Mb, 4 ms
  * nl.zeesoft.zdk.test.neural.TestCellGrid: 1824 Kb / 1 Mb, 4 ms
- * nl.zeesoft.zdk.test.neural.TestScalarEncoder: 1825 Kb / 1 Mb, 4 ms
- * nl.zeesoft.zdk.test.neural.TestSpatialPooler: 1822 Kb / 1 Mb, 10646 ms
- * nl.zeesoft.zdk.test.neural.TestTemporalMemory: 1834 Kb / 1 Mb, 4422 ms
- * nl.zeesoft.zdk.test.neural.TestClassifier: 1845 Kb / 1 Mb, 203 ms
- * nl.zeesoft.zdk.test.neural.TestMerger: 1855 Kb / 1 Mb, 4 ms
- * nl.zeesoft.zdk.test.neural.TestProcessorFactory: 1856 Kb / 1 Mb, 36632 ms
- * nl.zeesoft.zdk.test.neural.TestNetwork: 1893 Kb / 1 Mb, 9314 ms
+ * nl.zeesoft.zdk.test.neural.TestScalarEncoder: 1824 Kb / 1 Mb, 4 ms
+ * nl.zeesoft.zdk.test.neural.TestSpatialPooler: 1821 Kb / 1 Mb, 10479 ms
+ * nl.zeesoft.zdk.test.neural.TestTemporalMemory: 1834 Kb / 1 Mb, 4533 ms
+ * nl.zeesoft.zdk.test.neural.TestClassifier: 1845 Kb / 1 Mb, 139 ms
+ * nl.zeesoft.zdk.test.neural.TestMerger: 1855 Kb / 1 Mb, 3 ms
+ * nl.zeesoft.zdk.test.neural.TestProcessorFactory: 1856 Kb / 1 Mb, 24885 ms
+ * nl.zeesoft.zdk.test.neural.TestNetwork: 1893 Kb / 1 Mb, 8440 ms

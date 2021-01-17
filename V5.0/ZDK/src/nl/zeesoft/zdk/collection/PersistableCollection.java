@@ -293,23 +293,25 @@ public class PersistableCollection extends CompleteCollection {
 			List<Str> nameValue = line.split(EQUALS);
 			String fieldName = nameValue.get(0).toString();
 			Field field = Reflector.getField(object, fieldName);
-			String className = Reflector.getClassName(field.getType().toString());
-			if (field!=null && isSupportedObject(className)) {
-				field.setAccessible(true);
-				Str value = nameValue.get(1);
-				if (Reflector.isArrayType(field.getType().toString())) {
-					Object[] arrayValue = (Object[]) Reflector.getFieldValue(object, field);
-					if (arrayValue!=null) {
-						List<Str> vals = parseValuesFromArray(value);
-						for (int i = 0; i < arrayValue.length; i++) {
-							Object reference = getInternalObjectNoLock(vals.get(i));
-							arrayValue[i] = reference;
+			if (field!=null) {
+				String className = Reflector.getClassName(field.getType().toString());
+				if (isSupportedObject(className)) {
+					field.setAccessible(true);
+					Str value = nameValue.get(1);
+					if (Reflector.isArrayType(field.getType().toString())) {
+						Object[] arrayValue = (Object[]) Reflector.getFieldValue(object, field);
+						if (arrayValue!=null) {
+							List<Str> vals = parseValuesFromArray(value);
+							for (int i = 0; i < arrayValue.length; i++) {
+								Object reference = getInternalObjectNoLock(vals.get(i));
+								arrayValue[i] = reference;
+							}
 						}
-					}
-				} else {
-					Object reference = getInternalObjectNoLock(value);
-					if (reference!=null) {
-						Reflector.setFieldValue(object, field, reference);
+					} else {
+						Object reference = getInternalObjectNoLock(value);
+						if (reference!=null) {
+							Reflector.setFieldValue(object, field, reference);
+						}
 					}
 				}
 			}
