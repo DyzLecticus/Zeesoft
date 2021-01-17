@@ -39,6 +39,8 @@ public class ZDBD extends LibraryObject {
 
 	@Override
 	public void addTests(List<TestObject> tests) {
-		//tests.add(new TestStr(getTester()));
+		tests.add(new TestEncoders(getTester()));
+		tests.add(new TestInstrumentNetwork(getTester()));
+		tests.add(new TestGenerator(getTester()));
 	}
 }

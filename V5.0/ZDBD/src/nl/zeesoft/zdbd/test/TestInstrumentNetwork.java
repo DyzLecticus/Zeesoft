@@ -30,28 +30,34 @@ public class TestInstrumentNetwork extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how a *Str* instance can be used to split a comma separated string into a list of *Str* instances. ");
-		System.out.println("The *Str* class is designed to add features of the Java String to a Java StringBuilder. ");
-		System.out.println("It also contains methods for file writing and reading. ");
+		System.out.println("This test shows how a *PatternSequence* and a *NetworkTrainer* can be used to train a *Network*. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the Str");
-		System.out.println("Str str = new Str(\"qwer,asdf,zxcv\");");
-		System.out.println("// Split the Str");
-		System.out.println("List<Str> strs = str.split(\",\");");
+		System.out.println("// Create the network configuration");
+		System.out.println("NetworkConfig config = NetworkConfigFactory.getNetworkConfig();");
+		System.out.println("// Create and initialize the network");
+		System.out.println("Network network = new Network();");
+		System.out.println("network.initialize(config,true);");
+		System.out.println("// Create the pattern sequence");
+		System.out.println("PatternSequence sequence = PatternFactory.getFourOnFloorInstrumentPatternSequence();");
+		System.out.println("// Create and configure the network trainer");
+		System.out.println("NetworkTrainer trainer = new NetworkTrainer();");
+		System.out.println("trainer.setSequence(sequence);");
+		System.out.println("// Train the network");
+		System.out.println("CodeRunnerChain chain = trainer.getTrainNetworkChain(network);");
+		System.out.println("Waiter.startAndWaitFor(chain, 60000);");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockStr.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestController.class));
-		System.out.println(" * " + getTester().getLinkForClass(Str.class));
+		System.out.println(" * " + getTester().getLinkForClass(PatternSequence.class));
+		System.out.println(" * " + getTester().getLinkForClass(NetworkTrainer.class));
+		System.out.println(" * " + getTester().getLinkForClass(Network.class));
+		System.out.println(" * " + getTester().getLinkForClass(CodeRunnerChain.class));
+		System.out.println(" * " + getTester().getLinkForClass(Waiter.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the string input and lists the *Str* objects.  ");
-		*/
+		System.out.println("The output of this test shows the network configuration and the network / network trainer debug log.  ");
 	}
 
 	@Override
@@ -65,7 +71,6 @@ public class TestInstrumentNetwork extends TestObject {
 		
 		Str str = new Str();
 		str.fromFile("trainer.txt");
-		System.out.println(str);
 		
 		trainer = new NetworkTrainer();
 		trainer.fromFile("trainer.txt");

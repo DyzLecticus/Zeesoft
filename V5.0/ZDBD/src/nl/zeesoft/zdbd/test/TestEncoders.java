@@ -8,6 +8,7 @@ import nl.zeesoft.zdbd.pattern.PatternFactory;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.SDR;
+import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.test.util.TestObject;
 import nl.zeesoft.zdk.test.util.Tester;
 
@@ -22,28 +23,32 @@ public class TestEncoders extends TestObject {
 
 	@Override
 	protected void describe() {
-		/* TODO: Describe
-		System.out.println("This test shows how a *Str* instance can be used to split a comma separated string into a list of *Str* instances. ");
-		System.out.println("The *Str* class is designed to add features of the Java String to a Java StringBuilder. ");
-		System.out.println("It also contains methods for file writing and reading. ");
+		System.out.println("This test shows how a *Rythm* and *InstrumentPattern* are converted into SDRs for *Network* training. ");
+		System.out.println("The rythm and pattern number are converted into 'context' SDRs. ");
+		System.out.println("The pattern instruments are divided into two groups and then converted into SDRs. ");
 		System.out.println();
 		System.out.println("**Example implementation**  ");
 		System.out.println("~~~~");
-		System.out.println("// Create the Str");
-		System.out.println("Str str = new Str(\"qwer,asdf,zxcv\");");
-		System.out.println("// Split the Str");
-		System.out.println("List<Str> strs = str.split(\",\");");
+		System.out.println("// Create the Rythm (default = 4/4)");
+		System.out.println("Rythm rythm = new Rythm();");
+		System.out.println("// Create the InstrumentPattern");
+		System.out.println("InstrumentPattern pattern = PatternFactory.getFourOnFloorInstrumentPattern(0);");
+		System.out.println("// Get the context SDRs");
+		System.out.println("List<SDR> sdrs = rythm.getSDRsForPattern(pattern.num);");
+		System.out.println("// Get the group 1 SDRs");
+		System.out.println("sdrs = pattern.getSDRsForGroup(1,rythm.getStepsPerPattern());");
+		System.out.println("// Get the group 2 SDRs");
+		System.out.println("sdrs = pattern.getSDRsForGroup(2,rythm.getStepsPerPattern());");
 		System.out.println("~~~~");
 		System.out.println();
-		getTester().describeMock(MockStr.class.getName());
-		System.out.println();
 		System.out.println("Class references;  ");
-		System.out.println(" * " + getTester().getLinkForClass(TestController.class));
-		System.out.println(" * " + getTester().getLinkForClass(Str.class));
+		System.out.println(" * " + getTester().getLinkForClass(Rythm.class));
+		System.out.println(" * " + getTester().getLinkForClass(InstrumentPattern.class));
+		System.out.println(" * " + getTester().getLinkForClass(SDR.class));
+		System.out.println(" * " + getTester().getLinkForClass(Network.class));
 		System.out.println();
 		System.out.println("**Test output**  ");
-		System.out.println("The output of this test shows the string input and lists the *Str* objects.  ");
-		*/
+		System.out.println("The output of this test shows all SDRs for a rythm and instrument pattern.  ");
 	}
 
 	@Override

@@ -17,8 +17,8 @@
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zdbd nl/zeesoft/zdbd/gui zdk.jar"/>
-	<property name="packagenames" value="nl.zeesoft.zdbd,nl.zeesoft.zdbd.gui"/>
+	<property name="classpath" value="nl/zeesoft/zdbd nl/zeesoft/zdbd/api nl/zeesoft/zdbd/gui nl/zeesoft/zdbd/midi nl/zeesoft/zdbd/neural nl/zeesoft/zdbd/pattern nl/zeesoft/zdbd/theme zdk.jar"/>
+	<property name="packagenames" value="nl.zeesoft.zdbd,nl.zeesoft.zdbd.api,nl.zeesoft.zdbd.gui,nl.zeesoft.zdbd.midi,nl.zeesoft.zdbd.neural,nl.zeesoft.zdbd.pattern,nl.zeesoft.zdbd.theme"/>
 
 	<target name="copyZDK" description="Copy the ZDK release">
 		<mkdir dir="${lib}"/>
@@ -116,7 +116,7 @@
         </copy>		
 		<mkdir dir="${dist}/javadoc"/>
 		<javadoc sourcepath="${dist}/src" destdir="${dist}/javadoc" failonerror="true" failonwarning="true" packagenames="${packagenames}"/>
-		<zip destfile="${dist}/zsc-javadoc.zip" basedir="${dist}/javadoc"/>
+		<zip destfile="${dist}/zdbd-javadoc.zip" basedir="${dist}/javadoc"/>
 		<delete dir="${dist}/javadoc"/>
 		<delete dir="${dist}/src"/>
 	</target>
