@@ -24,6 +24,20 @@ public class HttpServer {
 	
 	public HttpServer(HttpServerConfig config) {
 		this.config = config.copy();
+		if (config.getCloseServerRunner()==null) {
+			config.setCloseServerRunner(new CodeRunner(new RunCode() {
+				@Override
+				protected boolean run() {
+					close();
+					return true;
+				}
+			}) {
+				@Override
+				protected void doneCallback() {
+					System.exit(0);
+				}
+			});
+		}
 		intializeServer();
 	}
 	

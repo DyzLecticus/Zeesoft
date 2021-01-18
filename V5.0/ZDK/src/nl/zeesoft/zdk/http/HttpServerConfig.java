@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.http;
 import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
+import nl.zeesoft.zdk.thread.CodeRunner;
 
 public class HttpServerConfig {
 	private Logger		logger				= new Logger();
@@ -20,6 +21,8 @@ public class HttpServerConfig {
 	private boolean		allowConnect		= false;
 
 	private boolean		debugLogHeaders		= false;
+	
+	private CodeRunner	closeServerRunner	= null;
 
 	public HttpServerConfig() {
 		
@@ -134,6 +137,14 @@ public class HttpServerConfig {
 		this.debugLogHeaders = debugLogHeaders;
 	}
 
+	public CodeRunner getCloseServerRunner() {
+		return closeServerRunner;
+	}
+
+	public void setCloseServerRunner(CodeRunner closeServerRunner) {
+		this.closeServerRunner = closeServerRunner;
+	}
+
 	protected HttpServerConfig copy() {
 		HttpServerConfig r = (HttpServerConfig) Instantiator.getNewClassInstance(this.getClass());
 		r.setLogger(getLogger());
@@ -147,6 +158,7 @@ public class HttpServerConfig {
 		r.setAllowPut(isAllowPut());
 		r.setAllowDelete(isAllowDelete());
 		r.setDebugLogHeaders(isDebugLogHeaders());
+		r.setCloseServerRunner(getCloseServerRunner());
 		return r;
 	}
 	
