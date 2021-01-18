@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.neural.processors;
 import nl.zeesoft.zdk.Instantiator;
 
 public class ProcessorFactory {
-	public static final int THREADS	= 4; 
+	public static final int THREADS	= Runtime.getRuntime().availableProcessors(); 
 	
 	public static SDRProcessor getNewSDRProcessor(SDRProcessorConfig config, boolean initialize) {
 		SDRProcessor r = null;

@@ -12,7 +12,7 @@ import nl.zeesoft.zdk.thread.CodeRunnerList;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class Grid {
-	public static final int		THREADS			= 4;
+	public static final int		THREADS			= Runtime.getRuntime().availableProcessors();
 	
 	protected int 				sizeX			= 2;
 	protected int 				sizeY			= 2;
