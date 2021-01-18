@@ -20,18 +20,6 @@ public class IndexHtml extends HtmlResponse {
 		
 		append(r,"<div id=\"menu\">");
 		append(r,"<div class=\"row\">");
-		append(r,"    <div class=\"column-right column-padding hidden\" id=\"state\"></div>");
-		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <label class=\"column-label-small\">App</label>");
-		append(r,"    </div>");
-		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <input type=\"button\" value=\"Quit\" onclick=\"menu.quit();\" />");
-		append(r,"    </div>");
-		append(r,"</div>");
-		append(r,"<div class=\"row\">");
-		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <label class=\"column-label-small\">Theme</label>");
-		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" value=\"Load\" onclick=\"menu.load();\" />");
 		append(r,"    </div>");
@@ -47,6 +35,9 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" value=\"New\" onclick=\"menu.new();\" />");
 		append(r,"    </div>");
+		append(r,"    <div class=\"column-right column-padding\">");
+		append(r,"    <input type=\"button\" value=\"X\" onclick=\"menu.quit();\" />");
+		append(r,"    </div>");
 		append(r,"</div>");
 		append(r,"</div>"); // end menu
 
@@ -57,7 +48,15 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div class=\"column-left\">");
 		append(r,"<div class=\"app-column\">");
 		
-		append(r,"<div id=\"theme\" class=\"row\"></div>");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label\">Name</label >");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <div id=\"theme\" class=\"row\"></div>");
+		append(r,"    </div>");
+		append(r,"</div>");
+		
 		append(r,"<div id=\"sequencer\"></div>");
 
 		append(r,"</div>");

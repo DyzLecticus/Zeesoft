@@ -12,17 +12,7 @@ public class StateJs extends ResponseObject {
 		append(r,"    main.xhr.getText(\"/state.txt\",state.refreshCallback);");
 		append(r,"};");
 		append(r,"state.refreshCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
-		//append(r,"    console.log(obj);");
-		append(r,"    var elem = window.document.getElementById(\"state\");");
-		append(r,"    if (elem!=null) {");
-		append(r,"        var html = obj.text;");
-		append(r,"        html += \":&nbsp;\";");
-		append(r,"        html += Math.round(obj.donePercentage * 100);");
-		append(r,"        html += \"%\";");
-		append(r,"        elem.innerHTML = html;");
-		append(r,"    }");
 		append(r,"    var elem = window.document.getElementById(\"progressBar\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        var perc = Math.round(obj.donePercentage * 100) + \"%\";");
@@ -46,7 +36,7 @@ public class StateJs extends ResponseObject {
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = \"\";");
 		append(r,"    }");
-		append(r,"    var elem = window.document.getElementById(\"footerBar\");");
+		append(r,"    var elem = window.document.getElementById(\"progressBar\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.style.width = \"0%\";");
 		append(r,"    }");

@@ -6,9 +6,13 @@ import java.util.List;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdk.Str;
 
 public class GeneratorEditor extends FormHtml {
-	public GeneratorEditor(Generator generator) {
+	protected String	prevName	= "";
+	protected String	nextName	= "";
+	
+	public GeneratorEditor(Generator generator, String prevName, String nextName) {
 		cancelLabel = "Done";
 		onCancelClick = "generators.editDone();";
 		
@@ -34,5 +38,33 @@ public class GeneratorEditor extends FormHtml {
 		for (FormProperty property: properties) {
 			property.onChange = "generators.propertyChange(this);";
 		}
+		
+		this.prevName = prevName;
+		this.nextName = nextName;
+	}
+
+	@Override
+	public Str render() {
+		Str r = new Str();
+		append(r,renderPrevNextButtons(prevName,nextName));
+		append(r,super.render());
+		return r;
+	}
+	
+	public static Str renderPrevNextButtons(String prevName, String nextName) {
+		Str r = new Str();
+		if (prevName.length()>0 || nextName.length()>0) {
+			append(r,"<div class=\"row\">");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"button\" value=\"<<\" onclick=\"generators.edit('");
+			r.sb().append(prevName);
+			r.sb().append("');\"/>");
+			append(r,"<input type=\"button\" value=\">>\" onclick=\"generators.edit('");
+			r.sb().append(nextName);
+			r.sb().append("');\"/>");
+			append(r,"</div>");
+			append(r,"</div>");
+		}
+		return r;
 	}
 }

@@ -22,9 +22,7 @@ public class NetworkJs extends ResponseObject {
 		append(r,"    main.xhr.getText(\"/networkStatistics.txt\",network.refreshStatisticsCallback,network.errorCallback);");
 		append(r,"};");
 		append(r,"network.refreshCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
-		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"resetNetwork\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        if (obj.isTraining || !obj.canTrain || obj.needsTraining) {");
@@ -56,7 +54,6 @@ public class NetworkJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"};");
 		append(r,"network.refreshStatisticsCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"statistics\");");
 		append(r,"    if (elem!=null && network.showStats) {");
 		append(r,"        elem.innerHTML = response.responseText;");

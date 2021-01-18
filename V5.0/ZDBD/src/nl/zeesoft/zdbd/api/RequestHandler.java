@@ -1,13 +1,17 @@
 package nl.zeesoft.zdbd.api;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.api.css.MainCss;
-import nl.zeesoft.zdbd.api.html.ByeHtml;
+import nl.zeesoft.zdbd.api.html.Bye;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
@@ -25,7 +29,6 @@ import nl.zeesoft.zdbd.api.javascript.MainJs;
 import nl.zeesoft.zdbd.api.javascript.MenuJs;
 import nl.zeesoft.zdbd.api.javascript.ModalJs;
 import nl.zeesoft.zdbd.api.javascript.NetworkJs;
-import nl.zeesoft.zdbd.api.javascript.QuitJs;
 import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
@@ -62,7 +65,6 @@ public class RequestHandler extends HttpRequestHandler {
 		
 		pathResponses.put("/", (new IndexHtml()).render());
 		pathResponses.put("/index.html", (new IndexHtml()).render());
-		pathResponses.put("/bye.html", (new ByeHtml()).render());
 
 		pathResponses.put("/main.css", (new MainCss()).render());
 		
@@ -78,8 +80,6 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		pathResponses.put("/network.js", (new NetworkJs()).render());
 		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
-		
-		pathResponses.put("/quit.js", (new QuitJs()).render());
 	}
 
 	@Override
@@ -115,8 +115,20 @@ public class RequestHandler extends HttpRequestHandler {
 							bpm = (int)rythm.beatsPerMinute;
 							shufflePercentage = rythm.stepDelays[1];
 						}
+						String name = controller.getName();
+						String midiRecording = "";
+						String audioRecording = "";
+						if (controller.recordingExists(true)) {
+							midiRecording = name + ".mid";
+						}
+						if (controller.recordingExists(false)) {
+							audioRecording = name + ".wav";
+						}
 						response.code = HttpURLConnection.HTTP_OK;
-						response.body = selector.getSequencerControl(bpm,shufflePercentage).render();
+						response.body = selector.getSequencerControl(bpm,shufflePercentage,midiRecording,audioRecording).render();
+					} else {
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = selector.getSequencerControl(120,0.0F,"","").render();
 					}
 				} else if (request.path.equals("/sequenceEditor.txt")) {
 					if (checkInitialized(response)) {
@@ -146,6 +158,23 @@ public class RequestHandler extends HttpRequestHandler {
 						GeneratorList generators = new GeneratorList(controller.getGenerators());
 						response.code = HttpURLConnection.HTTP_OK;
 						response.body = generators.render();
+					}
+				} else if (request.path.startsWith("/Recordings/")) {
+					if (checkInitialized(response)) {
+						String path = controller.getRecordingPath(request.path.endsWith(".mid"));
+						if (path.length()>0) {
+							Path pth = Paths.get(path);
+							try {
+								byte[] data = Files.readAllBytes(pth);
+								response.code = HttpURLConnection.HTTP_OK;
+								response.bytes = data;
+							} catch (IOException e) {
+								e.printStackTrace();
+								setInternalError(response, new Str("IO exception while reading file"));
+							}
+						} else {
+							setNotFoundError(response,new Str("Not found"));
+						}
 					}
 				} else {
 					setNotFoundError(response,new Str("Not found"));
@@ -300,7 +329,7 @@ public class RequestHandler extends HttpRequestHandler {
 	protected void handlePostStateRequest(HttpRequest request, HttpResponse response) {
 		if (request.body.toString().equals("QUIT")) {
 			setPostOk(response);
-			System.exit(0);
+			config.getCloseServerRunner().start();
 		} else if (request.body.startsWith("LOAD:")) {
 			String name = request.body.split(":").get(1).toString();
 			List<String> names = controller.listThemes();
@@ -351,7 +380,12 @@ public class RequestHandler extends HttpRequestHandler {
 			Str name = elems.get(1);
 			if (checkThemeName(name,response)) {
 				Rythm rythm = new Rythm();
-				rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
+				if (elems.size()>2) {
+					rythm.beatsPerMinute = parseBeatsPerMinute(elems.get(2));
+				}
+				if (elems.size()>3) {
+					rythm.setShuffle(parseShufflePercentage(elems.get(3)));
+				}
 				if (!controller.isBusy()) {
 					monitor.startChain(controller.newTheme(name.toString(), rythm));
 					setPostOk(response);
@@ -366,7 +400,10 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected void handlePostModalRequest(HttpRequest request, HttpResponse response) {
 		String name = request.body.toString();
-		if (name.equals("LoadTheme")) {
+		if (name.equals("Bye")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new Bye()).render();
+		} else if (name.equals("LoadTheme")) {
 			List<String> names = controller.listThemes();
 			response.code = HttpURLConnection.HTTP_OK;
 			response.body = (new LoadTheme(names)).render();
@@ -380,7 +417,7 @@ public class RequestHandler extends HttpRequestHandler {
 			response.body = (new DeleteTheme(names)).render();
 		} else if (name.equals("NewTheme")) {
 			response.code = HttpURLConnection.HTTP_OK;
-			response.body = (new NewTheme("",120)).render();
+			response.body = (new NewTheme("",120,0.0F)).render();
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -669,8 +706,35 @@ public class RequestHandler extends HttpRequestHandler {
 			String name = request.body.split(":").get(1).toString();
 			if (checkGeneratorName(name,response)) {
 				Generator generator = controller.getGenerator(name);
+				String prevName = "";
+				String nextName = "";
+				List<Generator> list = controller.listGenerators();
+				boolean found = false;
+				for (Generator gen: list) {
+					if (found) {
+						nextName = gen.name;
+						break;
+					}
+					if (gen.name.equals(generator.name)) {
+						found = true;
+					} else if (!found) {
+						prevName = gen.name;
+					}
+				}
+				if (prevName.length()==0) {
+					prevName = list.get(list.size()-1).name;
+					if (prevName.equals(generator.name)) {
+						prevName = "";
+					}
+				}
+				if (nextName.length()==0) {
+					nextName = list.get(0).name;
+					if (nextName.equals(generator.name)) {
+						nextName = "";
+					}
+				}
 				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new GeneratorEditor(generator)).render();
+				response.body = (new GeneratorEditor(generator,prevName,nextName)).render();
 			}
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
@@ -809,8 +873,8 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected float parseShufflePercentage(Str perc) {
 		float r = parsePercentage(perc);
-		if (r > 0.5F) {
-			r = 0.5F;
+		if (r > Rythm.MAX_SHUFFLE) {
+			r = Rythm.MAX_SHUFFLE;
 		}
 		return r;
 	}

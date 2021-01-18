@@ -23,7 +23,7 @@ public class ServerConfig extends HttpServerConfig {
 
 	@Override
 	protected HttpRequestHandler getNewHttpRequestHandler() {
-		return new RequestHandler(this,controller,monitor,selector);
+		return new RequestHandler(this.copy(),controller,monitor,selector);
 	}
 	
 	@Override

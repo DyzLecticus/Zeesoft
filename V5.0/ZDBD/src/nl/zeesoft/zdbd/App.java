@@ -24,8 +24,10 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpClient;
 import nl.zeesoft.zdk.http.HttpServer;
+import nl.zeesoft.zdk.thread.CodeRunner;
 import nl.zeesoft.zdk.thread.CodeRunnerChain;
 import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
 import nl.zeesoft.zdk.thread.Waiter;
 
 public class App implements ActionListener {
@@ -56,7 +58,6 @@ public class App implements ActionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.exit(0);
 		} else {
 			(new App()).start(new ThemeControllerSettings());
 		}
@@ -99,6 +100,18 @@ public class App implements ActionListener {
 		config.setPort(1234);
 		config.setLogger(Logger.logger);
 		config.setFilePath(settings.workDir);
+		config.setCloseServerRunner(new CodeRunner(new RunCode() {
+			@Override
+			protected boolean run() {
+				stop(null);
+				return true;
+			}
+		}) {
+			@Override
+			protected void doneCallback() {
+				System.exit(0);
+			}
+		});
 		
 		// Create the server
 		server = new HttpServer(config);
@@ -150,6 +163,7 @@ public class App implements ActionListener {
 		
 		if (!r) {
 			stop(error);
+			System.exit(0);
 		}
 		return r;
 	}
@@ -213,7 +227,7 @@ public class App implements ActionListener {
         if (response == JOptionPane.YES_OPTION) {
         	stop(null);
 			System.exit(0);
-		}
+        }
 	}
 	
 	protected void handleOpenRequest() {

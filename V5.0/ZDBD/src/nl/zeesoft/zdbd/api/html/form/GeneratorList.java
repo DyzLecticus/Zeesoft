@@ -6,7 +6,7 @@ import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdk.Str;
 
 public class GeneratorList extends FormHtml {
-	private List<Generator> generators 	= null;
+	protected List<Generator> generators 	= null;
 	
 	public GeneratorList(List<Generator> generators) {
 		this.generators = generators;

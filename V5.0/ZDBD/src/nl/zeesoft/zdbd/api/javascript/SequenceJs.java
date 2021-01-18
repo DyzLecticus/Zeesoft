@@ -20,7 +20,6 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    main.xhr.getText(\"/sequenceEditor.txt\",sequence.refreshCallback,sequence.errorCallback);");
 		append(r,"};");
 		append(r,"sequence.refreshCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"sequenceEditor\");");
 		append(r,"    if (elem!=null && sequence.show) {");
 		append(r,"        if (elem.innerHTML==null || elem.innerHTML == \"\") {");
@@ -116,7 +115,6 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"}");
 		append(r,"sequence.pastePatternCallback = function() {");
-		//append(r,"    console.log(property.id + \"=\" + property.value)");
 		append(r,"    var elemC = window.document.getElementById(\"pattern\" + sequence.copiedPattern);");
 		append(r,"    var elemP = window.document.getElementById(\"pattern\" + sequence.pastedPattern);");
 		append(r,"    if (elemC!=null && elemP!=null) {");
@@ -124,7 +122,6 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"}");
 		append(r,"sequence.clickedStepValue = function(property) {");
-		//append(r,"    console.log(property.id + \"=\" + property.value)");
 		append(r,"    var elems = property.id.split(\"-\");");
 		append(r,"    var name = elems[0];");
 		append(r,"    var step = parseInt(elems[1],10);");

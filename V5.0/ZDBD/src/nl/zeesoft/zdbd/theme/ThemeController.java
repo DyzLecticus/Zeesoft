@@ -384,7 +384,7 @@ public class ThemeController implements EventListener, Waitable {
 		return getExportRecordingRunnerChain(path, midi);
 	}
 	
-	public boolean getRecordingExists(boolean midi) {
+	public boolean recordingExists(boolean midi) {
 		lock.lock(this);
 		boolean r = FileIO.checkFile(getRecordingPathNoLock(midi)).length()==0;
 		lock.unlock(this);
@@ -394,6 +394,9 @@ public class ThemeController implements EventListener, Waitable {
 	public String getRecordingPath(boolean midi) {
 		lock.lock(this);
 		String r = getRecordingPathNoLock(midi);
+		if (FileIO.checkFile(r).length()!=0) {
+			r = "";
+		}
 		lock.unlock(this);
 		return r;
 	}
@@ -536,6 +539,9 @@ public class ThemeController implements EventListener, Waitable {
 		settings.toFile();
 		if (FileIO.checkDirectory(settings.getThemeDir()).length()>0) {
 			FileIO.mkDirs(settings.getThemeDir());
+		}
+		if (FileIO.checkDirectory(settings.getRecordingsDir()).length()>0) {
+			FileIO.mkDirs(settings.getRecordingsDir());
 		}
 		Logger.dbg(this,new Str("Installed"));
 	}
@@ -841,7 +847,7 @@ public class ThemeController implements EventListener, Waitable {
 	protected String getRecordingPathNoLock(boolean midi) {
 		String path = "";
 		if (theme!=null) {
-			path = theme.getDirectory() + "record";
+			path = settings.getRecordingsDir() + theme.name;
 			if (midi) {
 				path += ".mid";
 			} else {

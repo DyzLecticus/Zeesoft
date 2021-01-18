@@ -33,7 +33,6 @@ public class ModalJs extends ResponseObject {
 		append(r,"    main.xhr.postText(\"/modal.txt\",name,modal.loadCallback);");
 		append(r,"};");
 		append(r,"modal.loadCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    modal.show(response.responseText);");
 		append(r,"};");
 		return r;

@@ -152,7 +152,6 @@ public class Theme {
 				return true;
 			}
 		};
-		code.params[0] = getDirectory();
 		return code;
 	}
 }

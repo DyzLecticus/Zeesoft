@@ -9,10 +9,15 @@ public class SequencerControl extends FormHtml {
 	protected boolean	recording		= false;
 	protected long		recordedTicks	= 0;
 	
-	public SequencerControl(int beatsPerMinute, float shufflePercentage, boolean recording, long recordedTicks,
+	protected String	midiRecording	= "";
+	protected String	audioRecording	= "";
+	
+	public SequencerControl(int beatsPerMinute, float shufflePercentage,
 		List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay,
-		MixState currentMix, MixState nextMix
+		MixState currentMix, MixState nextMix, 
+		boolean recording, long recordedTicks,
+		String midiRecording, String audioRecording
 		) {
 		if (!names.contains(currentSequence)) {
 			names.add(0,currentSequence);
@@ -32,6 +37,8 @@ public class SequencerControl extends FormHtml {
 		}
 		this.recording = recording;
 		this.recordedTicks = recordedTicks;
+		this.midiRecording = midiRecording;
+		this.audioRecording = audioRecording;
 	}
 	
 	@Override
@@ -39,7 +46,7 @@ public class SequencerControl extends FormHtml {
 		Str r = new Str();
 		append(r,renderPlayStopButtons());
 		append(r,super.render());
-		append(r,renderRecorder(recording,recordedTicks));
+		append(r,renderRecorder(recording,recordedTicks,midiRecording,audioRecording));
 		return r;
 	}
 	
@@ -57,11 +64,11 @@ public class SequencerControl extends FormHtml {
 		return r;
 	}
 	
-	public static Str renderRecorder(boolean recording, long recordedTicks) {
+	public static Str renderRecorder(boolean recording, long recordedTicks, String midiRecording, String audioRecording) {
 		Str r = new Str();
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,"<label class=\"column-label\">Record</label>");
+		append(r,"<label class=\"column-label\">Recorder</label>");
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,"<input type=\"button\" id=\"startRecording\" value=\"Start\" onclick=\"sequencer.startRecording();\"");
@@ -78,8 +85,8 @@ public class SequencerControl extends FormHtml {
 		r.sb().append(recordedTicks);
 		r.sb().append("</label>");
 		append(r,"</div>");
-		
 		append(r,"</div>");
+		
 		append(r,"<div class=\"row\">");
 		append(r,"<div class=\"column-left column-padding\">");
 		append(r,"<label class=\"column-label\">Export</label>");
@@ -97,6 +104,28 @@ public class SequencerControl extends FormHtml {
 		r.sb().append(" />");
 		append(r,"</div>");
 		append(r,"</div>");
+
+		append(r,renderRecording(midiRecording));
+		append(r,renderRecording(audioRecording));
+		return r;
+	}
+	
+	public static Str renderRecording(String recording) {
+		Str r = new Str();
+		if (recording.length()>0) {
+			append(r,"<div class=\"row\">");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<label class=\"column-label\"></label>");
+			append(r,"</div>");
+			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<a href=\"Recordings/");
+			r.sb().append(recording);
+			r.sb().append("\" />");
+			r.sb().append(recording);
+			r.sb().append("</a>");
+			append(r,"</div>");
+			append(r,"</div>");
+		}
 		return r;
 	}
 }

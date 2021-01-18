@@ -22,9 +22,7 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    main.xhr.getText(\"/generatorStatus.txt\",generators.refreshStatusCallback,generators.errorCallback);");
 		append(r,"};");
 		append(r,"generators.refreshStatusCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
-		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"generateSequences\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        if (obj.isGenerating || !obj.canGenerate) {");
@@ -38,7 +36,6 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"};");
 		append(r,"generators.refreshCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"generatorList\");");
 		append(r,"    if (elem!=null && generators.showList) {");
 		append(r,"        elem.innerHTML = response.responseText;");
@@ -137,7 +134,6 @@ public class GeneratorsJs extends ResponseObject {
 			r.sb().append("\";");
 		}
 		append(r,"    var obj = main.dom.buildBodyText(ids);");
-		//append(r,"    console.log(obj);");
 		append(r,"    var cb = function() { modal.hide(); generators.refresh(); };");
 		append(r,"    main.xhr.postText(\"/generator.txt\",\"SAVE\\n\" + obj,cb,main.xhr.alertErrorCallback);");
 		append(r,"};");

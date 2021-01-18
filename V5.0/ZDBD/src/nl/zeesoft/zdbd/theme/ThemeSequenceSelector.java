@@ -301,7 +301,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		return r;
 	}
 	
-	public SequencerControl getSequencerControl(int bpm, float shufflePercentage) {
+	public SequencerControl getSequencerControl(int bpm, float shufflePercentage, String midiRecording, String audioRecording) {
 		long recordedTicks = 0;
 		MidiSequencer sequencer = MidiSys.sequencer;
 		if (sequencer!=null) {
@@ -311,8 +311,6 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		SequencerControl r = new SequencerControl(
 			bpm,
 			shufflePercentage,
-			recording,
-			recordedTicks,
 			controller.getSequenceNames(),
 			currSequence,
 			nextSequence,
@@ -321,7 +319,11 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			selectTrainingSequence,
 			regenerateOnPlay,
 			currMix,
-			nextMix
+			nextMix,
+			recording,
+			recordedTicks,
+			midiRecording,
+			audioRecording
 		);
 		lock.unlock(this);
 		return r;

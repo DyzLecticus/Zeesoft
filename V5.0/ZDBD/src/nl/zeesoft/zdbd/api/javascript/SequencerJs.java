@@ -19,7 +19,6 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    };");
 		append(r,"};");
 		append(r,"sequencer.refreshCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var elem = window.document.getElementById(\"sequencer\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        elem.innerHTML = response.responseText;");
@@ -34,9 +33,7 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    main.xhr.getText(\"/sequencer.txt\",sequencer.refreshStateCallback,sequencer.errorStateCallback);");
 		append(r,"};");
 		append(r,"sequencer.refreshStateCallback = function(response) {");
-		//append(r,"    console.log(response);");
 		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
-		//append(r,"    console.log(obj);");
 		append(r,"    var elem = window.document.getElementById(\"currentSequence\");");
 		append(r,"    if (elem!=null && elem.options[elem.selectedIndex] &&");
 		append(r,"        elem.options[elem.selectedIndex].value!=obj.currentSequence) {");

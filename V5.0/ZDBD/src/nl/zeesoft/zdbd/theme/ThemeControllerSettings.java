@@ -27,4 +27,8 @@ public class ThemeControllerSettings extends Settings {
 	public String getThemeDir() {
 		return FileIO.addSlash(getWorkDir() + "Themes");
 	}
+	
+	public String getRecordingsDir() {
+		return FileIO.addSlash(getWorkDir() + "Recordings");
+	}
 }
