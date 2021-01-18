@@ -14,7 +14,7 @@ public class IndexHtml extends HtmlResponse {
 	@Override
 	public Str renderBody() {
 		Str r = new Str();
-		append(r,"<div id=\"modal\"></div>");
+		append(r,"<div id=\"modal\" class=\"app-column\"></div>");
 		
 		append(r,"<div id=\"app\">");
 		
@@ -51,10 +51,20 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>"); // end menu
 
 		append(r,"<hr />");
+
+		append(r,"<div class=\"row\">");
+
+		append(r,"<div class=\"column-left\">");
+		append(r,"<div class=\"app-column\">");
+		
 		append(r,"<div id=\"theme\" class=\"row\"></div>");
 		append(r,"<div id=\"sequencer\"></div>");
 
-		append(r,"<hr />");
+		append(r,"</div>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left\">");
+		append(r,"<div class=\"app-column\">");
+		
 		append(r,"<div id=\"trainingSequence\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
@@ -73,7 +83,6 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div id=\"sequenceEditor\"></div>");
 		append(r,"</div>"); // end trainingSequence
 
-		append(r,"<hr />");
 		append(r,"<div id=\"network\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
@@ -92,7 +101,6 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div id=\"statistics\"></div>");
 		append(r,"</div>"); // end network
 
-		append(r,"<hr />");
 		append(r,"<div id=\"generators\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
@@ -107,6 +115,11 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"</div>");
 		append(r,"<div id=\"generatorList\"></div>");
 		append(r,"</div>"); // end generators
+
+		append(r,"</div>"); // end app column
+		append(r,"</div>"); // end column
+		
+		append(r,"</div>"); // end row
 
 		append(r,"</div>"); // end app
 
