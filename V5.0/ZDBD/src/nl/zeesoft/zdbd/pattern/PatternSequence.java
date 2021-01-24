@@ -12,12 +12,14 @@ import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class PatternSequence {
-	public Rythm						rythm		= new Rythm();
-	public List<InstrumentPattern>		patterns	= new ArrayList<InstrumentPattern>();
-	public int[]						sequence	= new int[4];
+	public Rythm						rythm			= new Rythm();
+	public List<InstrumentPattern>		patterns		= new ArrayList<InstrumentPattern>();
+	public int[]						sequence		= new int[4];
+	public List<SequenceChord>			chordChanges	= new ArrayList<SequenceChord>();
 	
 	public PatternSequence() {
 		clear();
+		chordChanges.add(new SequenceChord());
 	}
 	
 	public PatternSequence copy() {
@@ -27,13 +29,17 @@ public class PatternSequence {
 	}
 	
 	public void copyFrom(PatternSequence seq) {
+		clear();
 		this.rythm.copyFrom(seq.rythm);
 		this.patterns.clear();
 		for (InstrumentPattern pat: seq.patterns) {
 			patterns.add(pat.copy());
 		}
 		for (int i = 0; i < this.sequence.length; i++) {
-			this.sequence[i] = seq.sequence[i];
+			sequence[i] = seq.sequence[i];
+		}
+		for (SequenceChord chord: seq.chordChanges) {
+			chordChanges.add(chord.copy());
 		}
 	}
 
@@ -73,6 +79,7 @@ public class PatternSequence {
 		sequence[1] = -1;
 		sequence[2] = -1;
 		sequence[3] = -1;
+		chordChanges.clear();
 	}
 	
 	public void addEmptyPatterns() {
@@ -93,13 +100,37 @@ public class PatternSequence {
 
 	public List<InstrumentPattern> getSequencedPatterns() {
 		List<InstrumentPattern> r = new ArrayList<InstrumentPattern>();
+		int step = 0;
 		for (int i = 0; i < sequence.length; i++) {
 			if (sequence[i]>= 0 && sequence[i] < patterns.size()) {
 				InstrumentPattern pattern = patterns.get(sequence[i]);
 				if (pattern!=null && !pattern.isEmpty()) {
-					r.add(pattern);
+					InstrumentPattern copy = pattern.copy();
+					for (int s = 0; s < rythm.getStepsPerPattern(); s++) {
+						step++;
+						SequenceChord chord = getChordForStep(chordChanges,step).copy();
+						chord.step = s;
+						copy.chords.add(chord);
+					}
+					r.add(copy);
 				}
 			}
+		}
+		return r;
+	}
+
+	public List<SequenceChord> getSequencedChords() {
+		List<SequenceChord> r = new ArrayList<SequenceChord>(); 
+		for (SequenceChord chord: chordChanges) {
+			int index = r.size();
+			int i = 0;
+			for (SequenceChord c: r) {
+				if (c.step>chord.step) {
+					index = i;
+				}
+				i++;
+			}
+			r.add(index,chord);
 		}
 		return r;
 	}
@@ -127,5 +158,26 @@ public class PatternSequence {
 	public Sequence toDefaultMidiSequence() {
 		PatternSequenceConvertor convertor = new PatternSequenceConvertor();
 		return convertor.generateSequenceForPatternSequence(this);
+	}
+	
+	public SequenceChord getChordForStep(int step, boolean exact) {
+		SequenceChord r = getChordForStep(chordChanges,step);
+		if (r!=null && exact && r.step!=step) {
+			r = null;
+		}
+		return r;
+	}
+	
+	public static SequenceChord getChordForStep(List<SequenceChord> chordChanges,int step) {
+		SequenceChord r = null;
+		for (SequenceChord chord: chordChanges) {
+			if (chord.step<=step) {
+				r = chord;
+				if (chord.step==step) {
+					break;
+				}
+			}
+		}
+		return r;
 	}
 }

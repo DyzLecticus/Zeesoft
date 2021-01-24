@@ -12,6 +12,7 @@ import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.SequenceChord;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
@@ -104,6 +105,12 @@ public class PatternSequenceConvertor {
 						if (inst.name().equals(Bass.NAME)) {
 							int octave = pattern.getInstrument(Octave.NAME).stepValues[s];
 							int note = pattern.getInstrument(Note.NAME).stepValues[s];
+							SequenceChord chord = PatternSequence.getChordForStep(pattern.chords, s);
+							if (note>0) {
+								note = chord.baseNote + chord.interval[note - 1];
+							} else {
+								note = chord.baseNote;
+							}
 							BassConvertor.applyOctaveNote(mns, octave, note);
 						}
 					}

@@ -6,6 +6,7 @@ import java.util.SortedMap;
 
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.SequenceChord;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Logger;
@@ -112,6 +113,9 @@ public class Generator {
 			}
 			for (int p = 0; p < r.sequence.length; p++) {
 				r.sequence[p] = trainingSequence.sequence[p];
+			}
+			for (SequenceChord chord: trainingSequence.chordChanges) {
+				r.chordChanges.add(chord.copy());
 			}
 			generatedPatternSequence = r;
 			

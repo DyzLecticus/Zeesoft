@@ -86,6 +86,9 @@ public class MainCss extends ResponseObject {
 		append(r,"    border:2px outset;");
 		append(r,"    width:32px;");
 		append(r,"}");
+		append(r,".chord-value {");
+		append(r,"    width:48px;");
+		append(r,"}");
 		
 		append(r,".grey {");
 		append(r,"    background-color:#dedede;");

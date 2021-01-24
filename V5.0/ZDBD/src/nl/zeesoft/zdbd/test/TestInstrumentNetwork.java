@@ -121,11 +121,14 @@ public class TestInstrumentNetwork extends TestObject {
 			Waiter.startAndWaitFor(chain, 60000);
 			System.out.println("Trained network");
 			
-			if (FileIO.checkDirectory(config.directory).length()==0 && trainer.getLastIO()!=null) {
-				System.out.println();
+			if (trainer.getLastIO()!=null) {
 				FileIO.mockIO = false;
+				if (FileIO.checkDirectory(config.directory).length()!=0) {
+					FileIO.mkDirs(config.directory);
+				}
 				network.save();
 				FileIO.mockIO = true;
+				
 			}
 		}
 		

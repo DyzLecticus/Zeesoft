@@ -4,6 +4,7 @@ import nl.zeesoft.zdbd.api.ResponseObject;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
+import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdk.Str;
 
@@ -47,7 +48,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    body += \":\";");
 		append(r,"    body += value;");
 		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,network.refreshHeader,sequence.errorCallback);");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.changedPatternSelect = function(property) {");
 		append(r,"    var select = property.options[property.selectedIndex].value;");
 		append(r,"    if (select!=sequence.selectedPattern) {");
@@ -61,7 +62,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"            elem.classList.remove(\"hidden\");");
 		append(r,"        }");
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.clickedClearPattern = function() {");
 		append(r,"    elem = window.document.getElementById(\"patternSelect\");");
 		append(r,"    if (elem!=null) {");
@@ -73,7 +74,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"            main.xhr.postText(\"/sequenceEditor.txt\",body,cb,main.xhr.alertErrorCallback);");
 		append(r,"        }");
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.clearPatternCallback = function() {");
 		append(r,"    elem = window.document.getElementById(\"patternSelect\");");
 		append(r,"    if (elem!=null) {");
@@ -93,13 +94,13 @@ public class SequenceJs extends ResponseObject {
 			append(r,"        }");
 		}
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.copyPattern = function() {");
 		append(r,"    elem = window.document.getElementById(\"patternSelect\");");
 		append(r,"    if (elem!=null) {");
 		append(r,"        sequence.copiedPattern = elem.options[elem.selectedIndex].value;");
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.pastePattern = function() {");
 		append(r,"    elem = window.document.getElementById(\"patternSelect\");");
 		append(r,"    if (elem!=null) {");
@@ -113,14 +114,14 @@ public class SequenceJs extends ResponseObject {
 		append(r,"            }");
 		append(r,"        }");
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.pastePatternCallback = function() {");
 		append(r,"    var elemC = window.document.getElementById(\"pattern\" + sequence.copiedPattern);");
 		append(r,"    var elemP = window.document.getElementById(\"pattern\" + sequence.pastedPattern);");
 		append(r,"    if (elemC!=null && elemP!=null) {");
 		append(r,"        elemP.innerHTML = elemC.innerHTML;");
 		append(r,"    }");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.clickedStepValue = function(property) {");
 		append(r,"    var elems = property.id.split(\"-\");");
 		append(r,"    var name = elems[0];");
@@ -133,6 +134,9 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    if (name==\"" + Bass.NAME + "\") {");
 		append(r,"        maxValue = 16;");
+		append(r,"    }");
+		append(r,"    if (name==\"" + Note.NAME + "\") {");
+		append(r,"        maxValue = 3;");
 		append(r,"    }");
 		append(r,"    if (newValue>maxValue) {");
 		append(r,"        newValue = 0;");
@@ -169,7 +173,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    body += \":\";");
 		append(r,"    body += newValue;");
 		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,network.refreshHeader,sequence.errorCallback);");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.changedStepValue = function(property) {");
 		append(r,"    var elems = property.id.split(\"-\");");
 		append(r,"    var name = elems[0];");
@@ -184,7 +188,7 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    body += \":\";");
 		append(r,"    body += newValue;");
 		append(r,"    main.xhr.postText(\"/sequenceEditor.txt\",body,network.refreshHeader,sequence.errorCallback);");
-		append(r,"}");
+		append(r,"};");
 		append(r,"sequence.toggleShow = function() {");
 		append(r,"    sequence.show = !sequence.show;");
 		append(r,"    if (sequence.show) {");

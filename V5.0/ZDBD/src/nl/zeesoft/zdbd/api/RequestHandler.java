@@ -14,6 +14,7 @@ import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.Bye;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
+import nl.zeesoft.zdbd.api.html.form.ChordEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
@@ -23,6 +24,7 @@ import nl.zeesoft.zdbd.api.html.form.SequenceEditor;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
 import nl.zeesoft.zdbd.api.javascript.BindingsJs;
+import nl.zeesoft.zdbd.api.javascript.ChordsJs;
 import nl.zeesoft.zdbd.api.javascript.GeneratorsJs;
 import nl.zeesoft.zdbd.api.javascript.IndexJs;
 import nl.zeesoft.zdbd.api.javascript.MainJs;
@@ -40,6 +42,7 @@ import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.Rythm;
+import nl.zeesoft.zdbd.pattern.SequenceChord;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
@@ -77,6 +80,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/menu.js", (new MenuJs()).render());
 		pathResponses.put("/theme.js", (new ThemeJs()).render());
 		pathResponses.put("/sequence.js", (new SequencerJs()).render());
+		pathResponses.put("/chords.js", (new ChordsJs()).render());
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		pathResponses.put("/network.js", (new NetworkJs()).render());
 		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
@@ -129,6 +133,12 @@ public class RequestHandler extends HttpRequestHandler {
 					} else {
 						response.code = HttpURLConnection.HTTP_OK;
 						response.body = selector.getSequencerControl(120,0.0F,"","").render();
+					}
+				} else if (request.path.equals("/chordEditor.txt")) {
+					if (checkInitialized(response)) {
+						ChordEditor editor = new ChordEditor(controller.getTrainingSequence());
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = editor.render();
 					}
 				} else if (request.path.equals("/sequenceEditor.txt")) {
 					if (checkInitialized(response)) {
@@ -312,6 +322,8 @@ public class RequestHandler extends HttpRequestHandler {
 			handlePostModalRequest(request,response);
 		} else if (request.path.equals("/sequencer.txt")) {
 			handlePostSequencerRequest(request,response);
+		} else if (request.path.equals("/chordEditor.txt")) {
+			handlePostChordEditorRequest(request,response);
 		} else if (request.path.equals("/sequenceEditor.txt")) {
 			handlePostSequenceEditorRequest(request,response);
 		} else if (request.path.equals("/network.txt")) {
@@ -537,6 +549,110 @@ public class RequestHandler extends HttpRequestHandler {
 			} else {
 				selector.setNextMix(state);
 			}
+			setPostOk(response);
+		} else {
+			setNotFoundError(response,new Str("Not found"));
+		}
+	}
+
+	protected void handlePostChordEditorRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.startsWith("SET_CHORD_STEP:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int chordStep = Integer.parseInt(elems.get(1).toString());
+			int newChordStep = Integer.parseInt(elems.get(2).toString());
+			if (chordStep>0 && newChordStep>0) {
+				if (chordStep!=newChordStep) {
+					SequenceChord chord = sequence.getChordForStep(chordStep,true);
+					if (chord!=null) {
+						SequenceChord existing = sequence.getChordForStep(newChordStep,true);
+						if (existing==null) {
+							chord.step = newChordStep;
+							controller.setTrainingSequence(sequence);
+							setPostOk(response);
+						} else {
+							Str err = new Str("Chord already exists for step: ");
+							err.sb().append(newChordStep);
+							setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+						}
+					} else {
+						Str err = new Str("Chord not found: ");
+						err.sb().append(chordStep);
+						setNotFoundError(response,err);
+					}
+				}
+			} else {
+				Str err = new Str("Changing the first chord step is not allowed");
+				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			}
+		} else if (request.body.startsWith("SET_CHORD_BASE_NOTE:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int chordStep = Integer.parseInt(elems.get(1).toString());
+			int baseNote = Integer.parseInt(elems.get(2).toString());
+			SequenceChord chord = sequence.getChordForStep(chordStep,true);
+			if (chord!=null) {
+				chord.baseNote = baseNote;
+				controller.setTrainingSequence(sequence);
+				setPostOk(response);
+			} else {
+				Str err = new Str("Chord not found: ");
+				err.sb().append(chordStep);
+				setNotFoundError(response,err);
+			}
+		} else if (request.body.startsWith("SET_CHORD_INTERVAL:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int chordStep = Integer.parseInt(elems.get(1).toString());
+			int interval = Integer.parseInt(elems.get(2).toString());
+			int value = Integer.parseInt(elems.get(3).toString());
+			if (interval < 0) {
+				interval = 0;
+			}
+			if (interval > 3) {
+				interval = 3;
+			}
+			if (value < 0) {
+				value = 0;
+			}
+			if (value > 12) {
+				value = 12;
+			}
+			SequenceChord chord = sequence.getChordForStep(chordStep,true);
+			if (chord!=null) {
+				chord.interval[interval] = value;
+				controller.setTrainingSequence(sequence);
+				setPostOk(response);
+			} else {
+				Str err = new Str("Chord not found: ");
+				err.sb().append(chordStep);
+				setNotFoundError(response,err);
+			}
+		} else if (request.body.startsWith("DELETE:")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			List<Str> elems = request.body.split(":");
+			int chordStep = Integer.parseInt(elems.get(1).toString());
+			SequenceChord chord = sequence.getChordForStep(chordStep,true);
+			if (chord!=null) {
+				sequence.chordChanges.remove(chord);
+				controller.setTrainingSequence(sequence);
+				setPostOk(response);
+			} else {
+				Str err = new Str("Chord not found: ");
+				err.sb().append(chordStep);
+				setNotFoundError(response,err);
+			}
+		} else if (request.body.toString().equals("ADD")) {
+			PatternSequence sequence = controller.getTrainingSequence();
+			SequenceChord newChord = new SequenceChord();
+			for (SequenceChord chord: sequence.chordChanges) {
+				if (newChord==null || chord.step>=newChord.step) {
+					newChord = chord.copy();
+					newChord.step++;
+				}
+			}
+			sequence.chordChanges.add(newChord);
+			controller.setTrainingSequence(sequence);
 			setPostOk(response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));

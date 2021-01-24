@@ -91,9 +91,10 @@ public class SequenceEditor extends FormHtml {
 				for (String name: pattern.getInstrumentNames()) {
 					int value = pattern.getStepValue(name,s);
 					append(r,"<div class=\"column-left column-padding\">");
-					if (name.equals(Note.NAME)) {
-						append(r,renderNoteSelect(name + "-" + s,value,"sequence.changedStepValue(this);"));
-					} else {
+					// TODO: Create selector for bass note
+					//if (name.equals(Note.NAME)) {
+					//	append(r,renderNoteSelect(name + "-" + s,value,"sequence.changedStepValue(this);"));
+					//} else {
 						append(r,"<input type=\"button\" value=\"");
 						r.sb().append(value);
 						r.sb().append("\" class=\"pattern-step ");
@@ -110,7 +111,7 @@ public class SequenceEditor extends FormHtml {
 						r.sb().append("-");
 						r.sb().append(s);
 						r.sb().append("\" />");
-					}
+					//}
 					append(r,"</div>");
 				}
 				append(r,"</div>");

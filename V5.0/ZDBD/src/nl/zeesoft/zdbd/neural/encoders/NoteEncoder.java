@@ -5,6 +5,6 @@ import nl.zeesoft.zdk.neural.BasicFeatureEncoder;
 public class NoteEncoder extends BasicFeatureEncoder {
 	public NoteEncoder(int onBits) {
 		setOnBits(onBits);
-		setFeatures(12);
+		setFeatures(4);
 	}
 }

@@ -64,6 +64,18 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div class=\"column-left\">");
 		append(r,"<div class=\"app-column\">");
 		
+		append(r,"<div id=\"chordChanges\">");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" class=\"show-hide\" id=\"showChordChanges\" value=\"+\" onclick=\"chords.toggleShow();\" />");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label-header\">Chord changes</label >");
+		append(r,"    </div>");
+		append(r,"</div>");
+		append(r,"<div id=\"chordEditor\"></div>");
+		append(r,"</div>"); // end chordChanges
+		
 		append(r,"<div id=\"trainingSequence\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");

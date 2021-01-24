@@ -31,6 +31,9 @@ public class InstrumentPattern {
 	public int 								num					= 0;
 	public List<PatternInstrument>			instruments			= getInstruments();
 	
+	// Calculated
+	public List<SequenceChord>				chords				= new ArrayList<SequenceChord>();
+	
 	public InstrumentPattern copy() {
 		InstrumentPattern r = new InstrumentPattern();
 		r.copyFrom(this);

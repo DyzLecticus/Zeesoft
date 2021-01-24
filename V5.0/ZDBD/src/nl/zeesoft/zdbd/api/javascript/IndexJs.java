@@ -14,6 +14,7 @@ public class IndexJs extends ResponseObject {
 		append(r,(new MenuJs()).render());
 		append(r,(new ThemeJs()).render());
 		append(r,(new SequenceJs()).render());
+		append(r,(new ChordsJs()).render());
 		append(r,(new SequencerJs()).render());
 		append(r,(new NetworkJs()).render());
 		append(r,(new GeneratorsJs()).render());

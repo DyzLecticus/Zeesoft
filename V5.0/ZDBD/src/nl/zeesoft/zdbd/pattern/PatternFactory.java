@@ -86,13 +86,13 @@ public class PatternFactory {
 		pattern.setBass(11, 1, true);
 		pattern.setBass(14, 2, true);
 
-		int note = 3;
+		int note = 0;
 		if (patternNum>1) {
-			note = 10;
+			note = 3;
 		}
 		for (int s = 0; s < 16; s++) {
 			if (s==8 && patternNum>1) {
-				note = 5;
+				note = 1;
 			}
 			if (s==6 || s==11) {
 				pattern.setNote(s, 1, note);				
