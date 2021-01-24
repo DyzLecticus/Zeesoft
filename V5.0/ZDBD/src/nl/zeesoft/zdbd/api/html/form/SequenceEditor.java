@@ -1,6 +1,5 @@
 package nl.zeesoft.zdbd.api.html.form;
 
-import nl.zeesoft.zdbd.midi.convertors.MidiNote;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
@@ -91,13 +90,10 @@ public class SequenceEditor extends FormHtml {
 				for (String name: pattern.getInstrumentNames()) {
 					int value = pattern.getStepValue(name,s);
 					append(r,"<div class=\"column-left column-padding\">");
-					// TODO: Create selector for bass note
-					//if (name.equals(Note.NAME)) {
-					//	append(r,renderNoteSelect(name + "-" + s,value,"sequence.changedStepValue(this);"));
-					//} else {
-						append(r,"<input type=\"button\" value=\"");
-						r.sb().append(value);
-						r.sb().append("\" class=\"pattern-step ");
+					append(r,"<input type=\"button\" value=\"");
+					r.sb().append(value);
+					r.sb().append("\" class=\"pattern-step ");
+					if (!name.equals(Note.NAME)) { 
 						if (InstrumentPattern.isAccent(value)) { 
 							r.sb().append("yellow");
 						} else if (value!=PatternInstrument.OFF) {
@@ -105,13 +101,15 @@ public class SequenceEditor extends FormHtml {
 						} else {
 							r.sb().append("grey");
 						}
-						r.sb().append("\" onclick=\"sequence.clickedStepValue(this)\"");
-						r.sb().append("\" id=\"");
-						r.sb().append(name);
-						r.sb().append("-");
-						r.sb().append(s);
-						r.sb().append("\" />");
-					//}
+					} else {
+						r.sb().append("grey");
+					}
+					r.sb().append("\" onclick=\"sequence.clickedStepValue(this)\"");
+					r.sb().append("\" id=\"");
+					r.sb().append(name);
+					r.sb().append("-");
+					r.sb().append(s);
+					r.sb().append("\" />");
 					append(r,"</div>");
 				}
 				append(r,"</div>");
@@ -168,32 +166,6 @@ public class SequenceEditor extends FormHtml {
 			r.sb().append(" SELECTED");
 		}
 		r.sb().append(">4</option>");
-		append(r,"</select>");
-		return r;
-	}
-	
-	protected static Str renderNoteSelect(String id, int sel, String onChange) {
-		Str r = new Str();
-		append(r,"<select id=\"");
-		r.sb().append(id);
-		r.sb().append("\"");
-		if (onChange.length()>0) {
-			r.sb().append(" onchange=\"");
-			r.sb().append(onChange);
-			r.sb().append("\"");
-		}
-		r.sb().append(">");
-		for (int n = 0; n < MidiNote.NOTE_CODES.length; n++) {
-			append(r,"    <option value=\"");
-			r.sb().append(n);
-			r.sb().append("\"");
-			if (n==sel) {
-				r.sb().append(" SELECTED");
-			}
-			r.sb().append(">");
-			r.sb().append(MidiNote.NOTE_CODES[n]);
-			r.sb().append("</option>");
-		}
 		append(r,"</select>");
 		return r;
 	}

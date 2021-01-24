@@ -23,40 +23,45 @@ public class ChordEditor extends FormHtml {
 	public static Str renderChords(PatternSequence sequence) {
 		Str r = new Str();
 		
+		append(r,"<div class=\"row\">");
+		append(r,"<div class=\"column-left column-padding\">");
+		append(r,"<label class=\"chord-step\">Step</label>");
+		append(r,"</div>");
+		append(r,"</div>");
+		
 		// TODO: Add header
 		int row = 0;
 		for (SequenceChord chord: sequence.getSequencedChords()) {
 			if (row%2==0) {
 				append(r,"<div class=\"row row-highlight\">");
 			} else {
-				append(r,"<div class=\"row \">");
+				append(r,"<div class=\"row\">");
 			}
 			
 			append(r,"<div class=\"column-left column-padding\">");
+			append(r,"<input type=\"number\" class=\"chord-step\" value=\"");
+			r.sb().append(chord.step);
+			r.sb().append("\" onchange=\"chords.changedStep(this);\"");
+			r.sb().append("\" id=\"chord-");
+			r.sb().append(chord.step);
+			r.sb().append("\"");
+			if (row==0) {
+				r.sb().append(" DISABLED");
+			}
+			r.sb().append(" />");
 			
+			append(r,renderNoteSelect("chord-" + chord.step,chord.baseNote,"chords.changedBaseNote(this);"));
+
+			for (int i = 0; i < chord.interval.length; i++) {
 				append(r,"<input type=\"number\" class=\"chord-value\" value=\"");
-				r.sb().append(chord.step);
-				r.sb().append("\" onchange=\"chords.changedStep(this);\"");
+				r.sb().append(chord.interval[i]);
+				r.sb().append("\" onchange=\"chords.changedInterval(this);\"");
 				r.sb().append("\" id=\"chord-");
 				r.sb().append(chord.step);
-				r.sb().append("\"");
-				if (row==0) {
-					r.sb().append(" DISABLED");
-				}
-				r.sb().append(" />");
-				
-				append(r,renderNoteSelect("chord-" + chord.step,chord.baseNote,"chords.changedBaseNote(this);"));
-
-				for (int i = 0; i < chord.interval.length; i++) {
-					append(r,"<input type=\"number\" class=\"chord-value\" value=\"");
-					r.sb().append(chord.interval[i]);
-					r.sb().append("\" onchange=\"chords.changedInterval(this);\"");
-					r.sb().append("\" id=\"chord-");
-					r.sb().append(chord.step);
-					r.sb().append("-");
-					r.sb().append(i);
-					r.sb().append("\" />");
-				}
+				r.sb().append("-");
+				r.sb().append(i);
+				r.sb().append("\" />");
+			}
 			append(r,"</div>");
 			
 			if (row>0) {

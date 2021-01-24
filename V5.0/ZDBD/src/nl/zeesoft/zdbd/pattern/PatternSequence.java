@@ -171,7 +171,7 @@ public class PatternSequence {
 	public static SequenceChord getChordForStep(List<SequenceChord> chordChanges,int step) {
 		SequenceChord r = null;
 		for (SequenceChord chord: chordChanges) {
-			if (chord.step<=step) {
+			if (chord.step<=step && (r==null || r.step<chord.step)) {
 				r = chord;
 				if (chord.step==step) {
 					break;
