@@ -24,12 +24,14 @@ public class ChordEditor extends FormHtml {
 		Str r = new Str();
 		
 		append(r,"<div class=\"row\">");
-		append(r,"<div class=\"column-left column-padding\">");
-		append(r,"<label class=\"chord-step\">Step</label>");
+		append(r,"<div class=\"column-left column-padding chord-step\">");
+		append(r,"<label>Step</label>");
+		append(r,"</div>");
+		append(r,"<div class=\"column-left column-padding chord-step\">");
+		append(r,"<label>Chord</label>");
 		append(r,"</div>");
 		append(r,"</div>");
 		
-		// TODO: Add header
 		int row = 0;
 		for (SequenceChord chord: sequence.getSequencedChords()) {
 			if (row%2==0) {

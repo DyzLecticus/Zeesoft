@@ -53,7 +53,7 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    <label class=\"column-label\">Name</label >");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <div id=\"theme\" class=\"row\"></div>");
+		append(r,"    <div id=\"theme\"></div>");
 		append(r,"    </div>");
 		append(r,"</div>");
 		
