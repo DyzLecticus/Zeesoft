@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.midi.convertors;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 
 public class InstrumentConvertors {
@@ -15,9 +16,11 @@ public class InstrumentConvertors {
 	public static final int				PERCUSSION1			= 6;
 	public static final int				PERCUSSION2			= 7;
 	public static final int				BASS				= 8;
+	public static final int				ARPEGGIATOR			= 9;
 	
 	public static final String[]		INSTRUMENT_NAMES	= {
-		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass"
+		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass",
+		Arpeggiator.class.getSimpleName()
 	};
 	
 	private List<InstrumentConvertor>	convertors			= new ArrayList<InstrumentConvertor>();
@@ -31,17 +34,33 @@ public class InstrumentConvertors {
 		for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
 			String name = INSTRUMENT_NAMES[i];
 			if (i==BASS) {
-				BassConvertor bass = new BassConvertor();
-				bass.name = name;
-				BassLayerConvertor layer1 = new BassLayerConvertor();
+				BassConvertor conv = new BassConvertor();
+				conv.name = name;
+				SoundLayerConvertor layer1 = new SoundLayerConvertor();
 				layer1.channel = SynthConfig.BASS_CHANNEL_1;
-				bass.layers.add(layer1);
-				BassLayerConvertor layer2 = new BassLayerConvertor();
+				conv.layers.add(layer1);
+				SoundLayerConvertor layer2 = new SoundLayerConvertor();
 				layer2.channel = SynthConfig.BASS_CHANNEL_2;
 				layer2.velocity = 40;
 				layer2.accentVelocity = 50;
-				bass.layers.add(layer2);
-				convertors.add(bass);
+				conv.layers.add(layer2);
+				convertors.add(conv);
+			} else if (i==ARPEGGIATOR) {
+				ArpConvertor conv = new ArpConvertor();
+				conv.name = name;
+				SoundLayerConvertor layer1 = new SoundLayerConvertor();
+				layer1.channel = SynthConfig.ARP_CHANNEL_1;
+				layer1.baseOctave = 3;
+				layer1.velocity = 60;
+				layer1.accentVelocity = 60;
+				conv.layers.add(layer1);
+				SoundLayerConvertor layer2 = new SoundLayerConvertor();
+				layer2.channel = SynthConfig.ARP_CHANNEL_2;
+				layer1.baseOctave = 4;
+				layer2.velocity = 0;
+				layer2.accentVelocity = 60;
+				conv.layers.add(layer2);
+				convertors.add(conv);
 			} else {
 				DrumConvertor drum = new DrumConvertor();
 				drum.name = name;

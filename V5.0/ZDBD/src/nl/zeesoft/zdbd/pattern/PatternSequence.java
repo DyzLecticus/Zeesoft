@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
@@ -157,7 +158,7 @@ public class PatternSequence {
 	
 	public Sequence toDefaultMidiSequence() {
 		PatternSequenceConvertor convertor = new PatternSequenceConvertor();
-		return convertor.generateSequenceForPatternSequence(this);
+		return convertor.generateSequenceForPatternSequence(this,new Arpeggiator());
 	}
 	
 	public SequenceChord getChordForStep(int step, boolean exact) {

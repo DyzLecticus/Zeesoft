@@ -8,6 +8,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
@@ -18,6 +19,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatternSequenceConvertor {
@@ -34,6 +36,7 @@ public class PatternSequenceConvertor {
 				r.add(inst.name());
 			}
 		}
+		r.add(Arpeggiator.class.getSimpleName());
 		return r;
 	}
 	
@@ -41,7 +44,7 @@ public class PatternSequenceConvertor {
 		return getTrackNames().indexOf(name);
 	}
 	
-	public Sequence generateSequenceForPatternSequence(PatternSequence sequence) {
+	public Sequence generateSequenceForPatternSequence(PatternSequence sequence,Arpeggiator arp) {
 		Sequence r = createSequence();
 		if (r!=null) {
 			lock.lock(this);
@@ -58,6 +61,10 @@ public class PatternSequenceConvertor {
 					}
 				}
 				startTick += MidiSequenceUtil.getSequenceEndTick(sequence.rythm);
+			}
+			if (arp!=null) {
+				Track track = r.getTracks()[r.getTracks().length - 1];
+				generateArpeggiatorSequence(track,sequence,arp);
 			}
 			lock.unlock(this);
 		}
@@ -122,25 +129,66 @@ public class PatternSequenceConvertor {
 								break;
 							}
 						}
-						for (MidiNote mn: mns) {
-							long startTick = MidiSequenceUtil.getStepTick(rythm,s);
-							if (startTick<(nextActiveTick - 2)) {
-								Track track = sequence.getTracks()[inst.index];
-								MidiSequenceUtil.createEventOnTrack(
-									track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick
-								);
-								long add = (long)(mn.hold * (float)ticksPerStep);
-								long endTick = startTick + add;
-								if (endTick>=nextActiveTick) {
-									endTick = nextActiveTick - 1;
-								}
-								MidiSequenceUtil.createEventOnTrack(
-									track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick
-								);
-							}
-						}
+						Track track = sequence.getTracks()[inst.index];
+						addMidiNotesToTrack(mns,track,rythm,s,nextActiveTick,ticksPerStep);
 					}
 				}
+			}
+		}
+	}
+	
+	protected void generateArpeggiatorSequence(Track track, PatternSequence sequence, Arpeggiator arp) {
+		long sequenceEndTick = MidiSequenceUtil.getSequenceEndTick(sequence.rythm) * sequence.getSequencedPatterns().size();
+		long nextActiveTick = (sequenceEndTick - 1);
+		int ticksPerStep = MidiSequenceUtil.getTicksPerStep(sequence.rythm);
+		ArpConvertor arpConv = (ArpConvertor) convertors.get(Arpeggiator.class.getSimpleName());
+		
+		boolean accent = true;
+		int duration = Rand.getRandomInt(1,arp.maxDuration);
+		int totalSteps = sequence.getTotalSteps();
+		for (int s = 0; s < totalSteps; s++) {
+			if (s==0 || Rand.getRandomFloat(0, 1)<=arp.density) {
+				SequenceChord chord = sequence.getChordForStep(s,false);
+				List<Integer> chordNotes = new ArrayList<Integer>();
+				chordNotes.add(chord.baseNote);
+				for (int i = 0; i < chord.interval.length; i++) {
+					int note = chord.baseNote + chord.interval[i];
+					if (note<chord.baseNote+12 && !chordNotes.contains(note)) {
+						chordNotes.add(note);
+					}
+				}
+				List<Integer> allNotes = new ArrayList<Integer>();
+				for (int c = 0; c <= arp.maxOctave; c++) {
+					for (Integer note: chordNotes) {
+						allNotes.add(note + (c * 12));
+					}
+				}
+				int note = allNotes.get(Rand.getRandomInt(0, allNotes.size()-1));
+				List<MidiNote> mns = arpConv.getMidiNotesForArpeggiatorNote(note, duration, accent);
+				addMidiNotesToTrack(mns,track,sequence.rythm,s,nextActiveTick,ticksPerStep);
+			}
+			
+			s += duration - 1;
+			duration = Rand.getRandomInt(1,arp.maxDuration);
+			accent = Rand.getRandomInt(0,1) == 1;
+		}
+	}
+	
+	protected void addMidiNotesToTrack(List<MidiNote> mns, Track track, Rythm rythm, int step, long nextActiveTick, int ticksPerStep) {
+		for (MidiNote mn: mns) {
+			long startTick = MidiSequenceUtil.getStepTick(rythm,step);
+			if (startTick<(nextActiveTick - 2)) {
+				MidiSequenceUtil.createEventOnTrack(
+					track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick
+				);
+				long add = (long)(mn.hold * (float)ticksPerStep);
+				long endTick = startTick + add;
+				if (endTick>=nextActiveTick) {
+					endTick = nextActiveTick - 1;
+				}
+				MidiSequenceUtil.createEventOnTrack(
+					track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick
+				);
 			}
 		}
 	}

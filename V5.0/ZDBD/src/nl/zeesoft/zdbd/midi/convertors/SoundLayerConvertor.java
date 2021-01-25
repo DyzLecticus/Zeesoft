@@ -1,6 +1,6 @@
 package nl.zeesoft.zdbd.midi.convertors;
 
-public class BassLayerConvertor {
+public class SoundLayerConvertor {
 	public int		channel			= 0;
 	public int		baseOctave		= 2;
 	public int		velocity		= 100;

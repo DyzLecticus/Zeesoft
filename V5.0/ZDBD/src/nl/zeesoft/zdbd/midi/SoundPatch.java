@@ -16,8 +16,8 @@ public class SoundPatch {
 		this.convertor = pat.convertor;
 	}
 	
-	public Sequence generateMidiSequence(PatternSequence sequence) {
-		return convertor.generateSequenceForPatternSequence(sequence);
+	public Sequence generateMidiSequence(PatternSequence sequence, Arpeggiator arp) {
+		return convertor.generateSequenceForPatternSequence(sequence,arp);
 	}
 	
 	public RunCode getFromFileRunCode(String path) {

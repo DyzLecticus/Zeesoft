@@ -18,6 +18,8 @@ public class SynthConfig {
 	public static final int			DRUM_CHANNEL		= 9;
 	public static final int			BASS_CHANNEL_1		= 0;
 	public static final int			BASS_CHANNEL_2		= 1;
+	public static final int			ARP_CHANNEL_1		= 2;
+	public static final int			ARP_CHANNEL_2		= 3;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -67,6 +69,7 @@ public class SynthConfig {
 		}
 		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
 		drumConfig.instrument = 118;
+
 		SynthChannelConfig bass1Config = channels[BASS_CHANNEL_1];
 		bass1Config.instrument = 87;
 		bass1Config.reverb = 0;
@@ -78,6 +81,14 @@ public class SynthConfig {
 		bass2Config.chorus = 40;
 		bass2Config.pan = 0;
 		bass2Config.resonance = 80;
+
+		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
+		arp1Config.instrument = 83;
+		arp1Config.reverb = 48;
+		SynthChannelConfig arp2Config = channels[ARP_CHANNEL_2];
+		arp2Config.instrument = 82;
+		arp2Config.reverb = 40;
+		
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
 		lock.unlock(this);
@@ -199,6 +210,10 @@ public class SynthConfig {
 			r = 1;
 		} else if (channel==BASS_CHANNEL_2) {
 			r = 2;
+		} else if (channel==ARP_CHANNEL_1) {
+			r = 3;
+		} else if (channel==ARP_CHANNEL_2) {
+			r = 4;
 		}
 		return r;
 	}

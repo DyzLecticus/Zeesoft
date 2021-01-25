@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.neural.Generator;
@@ -332,7 +333,8 @@ public class ThemeController implements EventListener, Waitable {
 		Sequence r = null;
 		lock.lock(this);
 		if (theme!=null) {
-			r = theme.soundPatch.generateMidiSequence(sequence);
+			// TODO: Arpeggiator control
+			r = theme.soundPatch.generateMidiSequence(sequence, new Arpeggiator());
 		}
 		lock.unlock(this);
 		return r;
