@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArpConvertor extends InstrumentConvertor {
-	public float						hold			= 0.5F;
+	public float						hold			= 0.75F;
 	public List<SoundLayerConvertor>	layers			= new ArrayList<SoundLayerConvertor>();
 	
 	public List<MidiNote> getMidiNotesForArpeggiatorNote(int note, int duration, boolean accent) {

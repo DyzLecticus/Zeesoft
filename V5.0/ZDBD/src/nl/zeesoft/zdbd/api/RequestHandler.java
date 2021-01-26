@@ -249,6 +249,8 @@ public class RequestHandler extends HttpRequestHandler {
 		channels.add(SynthConfig.DRUM_CHANNEL);
 		channels.add(SynthConfig.BASS_CHANNEL_1);
 		channels.add(SynthConfig.BASS_CHANNEL_2);
+		channels.add(SynthConfig.ARP_CHANNEL_1);
+		channels.add(SynthConfig.ARP_CHANNEL_2);
 		for (Integer channel: channels) {
 			r.sb().append("\n");
 			r.sb().append("mute-channel-");

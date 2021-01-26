@@ -50,15 +50,15 @@ public class InstrumentConvertors {
 				conv.name = name;
 				SoundLayerConvertor layer1 = new SoundLayerConvertor();
 				layer1.channel = SynthConfig.ARP_CHANNEL_1;
-				layer1.baseOctave = 3;
-				layer1.velocity = 60;
-				layer1.accentVelocity = 60;
+				layer1.baseOctave = 4;
+				layer1.velocity = 48;
+				layer1.accentVelocity = 52;
 				conv.layers.add(layer1);
 				SoundLayerConvertor layer2 = new SoundLayerConvertor();
 				layer2.channel = SynthConfig.ARP_CHANNEL_2;
-				layer1.baseOctave = 4;
-				layer2.velocity = 0;
-				layer2.accentVelocity = 60;
+				layer2.baseOctave = 4;
+				layer2.velocity = 48;
+				layer2.accentVelocity = 52;
 				conv.layers.add(layer2);
 				convertors.add(conv);
 			} else {

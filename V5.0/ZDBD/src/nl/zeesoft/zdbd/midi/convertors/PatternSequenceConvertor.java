@@ -146,6 +146,7 @@ public class PatternSequenceConvertor {
 		boolean accent = true;
 		int duration = Rand.getRandomInt(1,arp.maxDuration);
 		int totalSteps = sequence.getTotalSteps();
+		int pNote = -1;
 		for (int s = 0; s < totalSteps; s++) {
 			if (s==0 || Rand.getRandomFloat(0, 1)<=arp.density) {
 				SequenceChord chord = sequence.getChordForStep(s,false);
@@ -160,12 +161,24 @@ public class PatternSequenceConvertor {
 				List<Integer> allNotes = new ArrayList<Integer>();
 				for (int c = 0; c <= arp.maxOctave; c++) {
 					for (Integer note: chordNotes) {
-						allNotes.add(note + (c * 12));
+						int addNote = note + (c * 12);
+						int diff = 0;
+						if (pNote>-1) {
+							if (pNote>addNote) {
+								diff = pNote - addNote;
+							} else if (pNote<addNote) {
+								diff = addNote - pNote;
+							}
+						}
+						if (diff<=arp.maxInterval) {
+							allNotes.add(addNote);
+						}
 					}
 				}
 				int note = allNotes.get(Rand.getRandomInt(0, allNotes.size()-1));
 				List<MidiNote> mns = arpConv.getMidiNotesForArpeggiatorNote(note, duration, accent);
 				addMidiNotesToTrack(mns,track,sequence.rythm,s,nextActiveTick,ticksPerStep);
+				pNote = note;
 			}
 			
 			s += duration - 1;

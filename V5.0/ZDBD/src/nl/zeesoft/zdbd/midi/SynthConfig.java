@@ -83,11 +83,11 @@ public class SynthConfig {
 		bass2Config.resonance = 80;
 
 		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
-		arp1Config.instrument = 83;
+		arp1Config.instrument = 80;
 		arp1Config.reverb = 48;
 		SynthChannelConfig arp2Config = channels[ARP_CHANNEL_2];
-		arp2Config.instrument = 82;
-		arp2Config.reverb = 40;
+		arp2Config.instrument = 83;
+		arp2Config.reverb = 48;
 		
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
