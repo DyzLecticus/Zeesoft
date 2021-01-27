@@ -605,6 +605,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
+				codes.add(theme.loadArpeggiators());
 				codes.add(theme.loadSoundPatch());
 				load = true;
 			} else {
@@ -695,6 +696,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.saveNetworkTrainer());
 				codes.add(theme.saveNetwork());
 				codes.add(theme.saveGenerators());
+				codes.add(theme.saveArpeggiators());
 				codes.add(theme.saveSoundPatch());
 				
 				r.add(eventPublisher.getPublishEventRunCode(this, SAVING_THEME));
@@ -723,6 +725,7 @@ public class ThemeController implements EventListener, Waitable {
 				codes.add(theme.loadNetworkTrainer());
 				codes.add(theme.loadNetwork());
 				codes.add(theme.loadGenerators());
+				codes.add(theme.loadArpeggiators());
 				codes.add(theme.loadSoundPatch());
 				
 				r = new CodeRunnerChain();

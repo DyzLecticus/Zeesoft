@@ -24,7 +24,6 @@ public class Theme {
 	protected NetworkConfig		networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
 	protected Network			network					= new Network();
 	protected Generators		generators				= new Generators();
-	// TODO: Save/load arpeggiators
 	protected Arpeggiators		arpeggiators			= new Arpeggiators();
 	protected SoundPatch		soundPatch				= new SoundPatch();
 	
@@ -87,6 +86,14 @@ public class Theme {
 		return generators.getToFileRunCode(getGeneratorsFileName());
 	}
 
+	protected RunCode loadArpeggiators() {
+		return arpeggiators.getFromFileRunCode(getArpeggiatorsFileName());
+	}
+
+	protected RunCode saveArpeggiators() {
+		return arpeggiators.getToFileRunCode(getArpeggiatorsFileName());
+	}
+
 	protected RunCode generateSequence(String name) {
 		return generators.getGenerateSequenceRunCode(network, networkTrainer.getLastIO(), networkTrainer.getSequence(), name);
 	}
@@ -113,6 +120,10 @@ public class Theme {
 	
 	protected String getGeneratorsFileName() {
 		return getDirectory() + "Generators.txt";
+	}
+	
+	protected String getArpeggiatorsFileName() {
+		return getDirectory() + "Arpeggiators.txt";
 	}
 	
 	protected String getSoundPatchFileName() {

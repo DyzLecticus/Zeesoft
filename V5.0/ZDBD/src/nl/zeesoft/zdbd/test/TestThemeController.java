@@ -69,13 +69,13 @@ public class TestThemeController extends TestObject {
 		assertNotNull(chain,"Failed to initialize controller");
 		if (chain!=null) {
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(FileIO.getActionLog().size(),2,"Action log size does not match expectation (1)");
+			assertEqual(FileIO.getActionLog().size(),4,"Action log size does not match expectation (1)");
 			assertEqual(controller.themeHasChanges(),true,"Theme changes do not match expectation (1)");
 			
 			System.out.println();
 			chain = controller.saveTheme();
 			Waiter.startAndWaitFor(chain,10000);
-			assertEqual(FileIO.getActionLog().size(),25,"Action log size does not match expectation (2)");
+			assertEqual(FileIO.getActionLog().size(),28,"Action log size does not match expectation (2)");
 			assertEqual(controller.themeHasChanges(),false,"Theme changes do not match expectation (2)");
 			List<String> themes = controller.listThemes();
 			assertEqual(themes.size(),1,"Number of themes does not match expectation");
@@ -133,7 +133,7 @@ public class TestThemeController extends TestObject {
 			Waiter.waitFor(controller, 1000);
 			chain = controller.destroy();
 			Waiter.startAndWaitFor(chain,10000);
-			if (assertEqual(FileIO.getActionLog().size(),26,"Action log size does not match expectation (3)")) {
+			if (assertEqual(FileIO.getActionLog().size(),29,"Action log size does not match expectation (3)")) {
 				
 				System.out.println();
 				ThemeController controller2 = new ThemeController();
@@ -144,19 +144,19 @@ public class TestThemeController extends TestObject {
 				}
 				settings = controller2.getSettings();
 				assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");
-				assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (4)");
+				assertEqual(FileIO.getActionLog().size(),53,"Action log size does not match expectation (4)");
 				assertEqual(controller2.themeHasChanges(),false,"Theme changes do not match expectation (4)");
 				
 				System.out.println();
 				chain = controller2.newTheme("Test");
 				Waiter.startAndWaitFor(chain,10000);
 				assertEqual(controller2.getName(),"Test","Active theme does not match expectation");
-				assertEqual(FileIO.getActionLog().size(),49,"Action log size does not match expectation (5)");
+				assertEqual(FileIO.getActionLog().size(),53,"Action log size does not match expectation (5)");
 				assertEqual(controller2.themeHasChanges(),true,"Theme changes do not match expectation (5)");
 
 				chain = controller2.deleteTheme("Demo");
 				Waiter.startAndWaitFor(chain,10000);
-				assertEqual(FileIO.getActionLog().size(),72,"Action log size does not match expectation (6)");
+				assertEqual(FileIO.getActionLog().size(),77,"Action log size does not match expectation (6)");
 
 				System.out.println();
 				chain = controller2.destroy();

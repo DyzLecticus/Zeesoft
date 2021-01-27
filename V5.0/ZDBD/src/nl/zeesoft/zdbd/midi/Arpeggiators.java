@@ -3,7 +3,9 @@ package nl.zeesoft.zdbd.midi;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.Lock;
+import nl.zeesoft.zdk.thread.RunCode;
 
 public class Arpeggiators {
 	protected Lock					lock	= new Lock();
@@ -55,6 +57,42 @@ public class Arpeggiators {
 		}
 		lock.unlock(this);
 		return r;
+	}
+	
+	public RunCode getFromFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				fromFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void fromFile(String path) {
+		Arpeggiators arpeggiators = (Arpeggiators) PersistableCollection.fromFile(path);
+		if (arpeggiators!=null) {
+			lock.lock(this);
+			arps.clear();
+			for (Arpeggiator arp: arpeggiators.list()) {
+				arps.add(arp);
+			}
+			lock.unlock(this);
+		}
+	}
+	
+	public RunCode getToFileRunCode(String path) {
+		return new RunCode() {
+			@Override
+			protected boolean run() {
+				toFile(path);
+				return true;
+			}
+		};
+	}
+	
+	public void toFile(String path) {
+		PersistableCollection.toFile(this, path);
 	}
 	
 	protected Arpeggiator getArpeggiatorNoLock(String name) {
