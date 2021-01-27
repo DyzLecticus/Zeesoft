@@ -328,7 +328,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 		if (start) {
 			recordLock.lock(this);
 			recordedSequence = new MidiSequence();
-			recordedSequence.sequence = MidiSequenceUtil.createSequence(3);
+			recordedSequence.sequence = MidiSequenceUtil.createSequence(SynthConfig.getTotalTracks());
 			MidiSequenceUtil.addTempoMetaEventToSequence(recordedSequence.sequence, 0, beatsPerMinute, 0);
 			if (synthConfig!=null) {
 				synthConfig.addInitialSynthConfig(recordedSequence.sequence);

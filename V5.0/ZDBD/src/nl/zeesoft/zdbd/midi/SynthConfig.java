@@ -81,16 +81,24 @@ public class SynthConfig {
 		bass2Config.chorus = 40;
 		bass2Config.pan = 0;
 		bass2Config.resonance = 80;
+		
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
 
 		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
 		arp1Config.instrument = 80;
 		arp1Config.reverb = 48;
+		arp1Config.filter = 16;
+		arp1Config.pan = 32;
 		SynthChannelConfig arp2Config = channels[ARP_CHANNEL_2];
 		arp2Config.instrument = 83;
 		arp2Config.reverb = 48;
-		
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
+
+		lfos.add(new ChannelLFO(ARP_CHANNEL_1,FILTER,LFO.SINE,32,0.75F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_2,FILTER,LFO.SINE,32,-0.4F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.TRIANGLE,12,0.5F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.TRIANGLE,12,-0.5F));
+
 		lock.unlock(this);
 	}
 	
@@ -216,5 +224,9 @@ public class SynthConfig {
 			r = 4;
 		}
 		return r;
+	}
+	
+	public static int getTotalTracks() {
+		return 5;
 	}
 }

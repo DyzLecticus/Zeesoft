@@ -593,6 +593,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
+			theme.setShuffle(0.15F);
 			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
 			codes.add(theme.initializeNetwork());
 		}
@@ -634,6 +635,7 @@ public class ThemeController implements EventListener, Waitable {
 			theme.name = name;
 			if (theme.name.toLowerCase().equals("demo")) {
 				theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
+				theme.setShuffle(0.15F);
 			}
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);
