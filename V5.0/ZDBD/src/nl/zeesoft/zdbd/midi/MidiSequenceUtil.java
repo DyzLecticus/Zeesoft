@@ -2,6 +2,7 @@ package nl.zeesoft.zdbd.midi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -18,6 +19,7 @@ import javax.sound.sampled.AudioSystem;
 
 import com.sun.media.sound.AudioSynthesizer;
 
+import nl.zeesoft.zdbd.midi.convertors.MidiNote;
 import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -114,6 +116,25 @@ public class MidiSequenceUtil {
 			track.add(event);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void addMidiNotesToTrack(List<MidiNote> mns, Track track, Rythm rythm, int step, long nextActiveTick, int ticksPerStep) {
+		for (MidiNote mn: mns) {
+			long startTick = getStepTick(rythm,step);
+			if (startTick<(nextActiveTick - 2)) {
+				createEventOnTrack(
+					track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick
+				);
+				long add = (long)(mn.hold * (float)ticksPerStep);
+				long endTick = startTick + add;
+				if (endTick>=nextActiveTick) {
+					endTick = nextActiveTick - 1;
+				}
+				createEventOnTrack(
+					track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick
+				);
+			}
 		}
 	}
 

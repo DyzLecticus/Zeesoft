@@ -130,7 +130,7 @@ public class PatternSequenceConvertor {
 							}
 						}
 						Track track = sequence.getTracks()[inst.index];
-						addMidiNotesToTrack(mns,track,rythm,s,nextActiveTick,ticksPerStep);
+						MidiSequenceUtil.addMidiNotesToTrack(mns,track,rythm,s,nextActiveTick,ticksPerStep);
 					}
 				}
 			}
@@ -177,32 +177,13 @@ public class PatternSequenceConvertor {
 				}
 				int note = allNotes.get(Rand.getRandomInt(0, allNotes.size()-1));
 				List<MidiNote> mns = arpConv.getMidiNotesForArpeggiatorNote(note, duration, accent);
-				addMidiNotesToTrack(mns,track,sequence.rythm,s,nextActiveTick,ticksPerStep);
+				MidiSequenceUtil.addMidiNotesToTrack(mns,track,sequence.rythm,s,nextActiveTick,ticksPerStep);
 				pNote = note;
 			}
 			
 			s += duration - 1;
 			duration = Rand.getRandomInt(1,arp.maxDuration);
 			accent = Rand.getRandomInt(0,1) == 1;
-		}
-	}
-	
-	protected void addMidiNotesToTrack(List<MidiNote> mns, Track track, Rythm rythm, int step, long nextActiveTick, int ticksPerStep) {
-		for (MidiNote mn: mns) {
-			long startTick = MidiSequenceUtil.getStepTick(rythm,step);
-			if (startTick<(nextActiveTick - 2)) {
-				MidiSequenceUtil.createEventOnTrack(
-					track,ShortMessage.NOTE_ON,mn.channel,mn.midiNote,mn.velocity,startTick
-				);
-				long add = (long)(mn.hold * (float)ticksPerStep);
-				long endTick = startTick + add;
-				if (endTick>=nextActiveTick) {
-					endTick = nextActiveTick - 1;
-				}
-				MidiSequenceUtil.createEventOnTrack(
-					track,ShortMessage.NOTE_OFF,mn.channel,mn.midiNote,mn.velocity,endTick
-				);
-			}
 		}
 	}
 }

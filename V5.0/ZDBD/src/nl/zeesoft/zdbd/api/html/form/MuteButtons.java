@@ -34,11 +34,11 @@ public class MuteButtons extends FormProperty {
 		r.sb().append("</label>");
 		append(r,"</div>");
 		append(r,"<div class=\"column-left column-padding\">");
-		append(r,renderMuteChannelButton(idPrefix,SynthConfig.DRUM_CHANNEL,"DRM",state));
-		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_1,"BA1",state));
-		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_2,"BA2",state));
-		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_1,"AR1",state));
-		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_2,"AR2",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.DRUM_CHANNEL,"DR",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_1,"B1",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_2,"B2",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_1,"A1",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_2,"A2",state));
 		append(r,"</div>");
 		append(r,"</div>");
 		
