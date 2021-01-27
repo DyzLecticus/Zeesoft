@@ -12,6 +12,9 @@ import nl.zeesoft.zdbd.pattern.SequenceChord;
 import nl.zeesoft.zdk.Rand;
 
 public class Arpeggiator {
+	public static String			DEFAULT			= "Default";
+	
+	public String					name			= DEFAULT;
 	public int						minDuration		= 1;
 	public int						maxDuration		= 2;
 	public float					density			= 0.80F;
@@ -21,10 +24,12 @@ public class Arpeggiator {
 	
 	public Arpeggiator copy() {
 		Arpeggiator r = new Arpeggiator();
+		r.minDuration = minDuration;
 		r.maxDuration = maxDuration;
 		r.density = density;
 		r.maxOctave = maxOctave;
 		r.maxInterval = maxInterval;
+		r.maxSteps = maxSteps;
 		return r;
 	}
 	

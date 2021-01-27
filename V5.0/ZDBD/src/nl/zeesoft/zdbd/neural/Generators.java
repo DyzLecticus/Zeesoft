@@ -39,44 +39,6 @@ public class Generators {
 		lock.unlock(this);
 	}
 	
-	public void initializeDefaults() {
-		generators.clear();
-		
-		Generator gen = null;
-		gen = new Generator();
-		gen.name = "Maintain A1";
-		put(gen);
-		
-		gen = new Generator();
-		gen.name = "Maintain A2";
-		put(gen);
-		
-		gen = new Generator();
-		gen.name = "Maintain B1";
-		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
-		put(gen);
-		
-		gen = new Generator();
-		gen.name = "Maintain B2";
-		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
-		put(gen);
-		
-		gen = new Generator();
-		gen.name = "Free form";
-		gen.maintainBeat = 0;
-		gen.maintainFeedback = false;
-		gen.setMaintainInstruments(Ride.NAME, Note.NAME);
-		put(gen);
-
-		gen = new Generator();
-		gen.name = "Undistorted";
-		gen.group1Distortion = 0;
-		gen.group2Distortion = 0;
-		gen.maintainBeat = 0;
-		gen.setMaintainInstruments(Ride.NAME, Crash.NAME, Note.NAME);
-		put(gen);
-	}
-	
 	public int size() {
 		lock.lock(this);
 		int r = generators.size();
@@ -285,5 +247,43 @@ public class Generators {
 			}
 		}
 		return r;
+	}
+	
+	private void initializeDefaults() {
+		generators.clear();
+		
+		Generator gen = null;
+		gen = new Generator();
+		gen.name = "Maintain A1";
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain A2";
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain B1";
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Maintain B2";
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
+		put(gen);
+		
+		gen = new Generator();
+		gen.name = "Free form";
+		gen.maintainBeat = 0;
+		gen.maintainFeedback = false;
+		gen.setMaintainInstruments(Ride.NAME, Note.NAME);
+		put(gen);
+
+		gen = new Generator();
+		gen.name = "Undistorted";
+		gen.group1Distortion = 0;
+		gen.group2Distortion = 0;
+		gen.maintainBeat = 0;
+		gen.setMaintainInstruments(Ride.NAME, Crash.NAME, Note.NAME);
+		put(gen);
 	}
 }

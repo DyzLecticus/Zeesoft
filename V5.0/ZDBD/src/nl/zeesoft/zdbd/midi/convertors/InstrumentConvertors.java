@@ -29,7 +29,22 @@ public class InstrumentConvertors {
 		initializeDefaults();
 	}
 	
-	public void initializeDefaults() {
+	public InstrumentConvertor get(String name) {
+		InstrumentConvertor r = null;
+		for (InstrumentConvertor convertor: convertors) {
+			if (convertor.name.equals(name)) {
+				r = convertor;
+				break;
+			}
+		}
+		return r;
+	}
+	
+	public static String getInstrumentName(int index) {
+		return INSTRUMENT_NAMES[index];
+	}
+	
+	private void initializeDefaults() {
 		convertors.clear();
 		for (int i = 0; i < INSTRUMENT_NAMES.length; i++) {
 			String name = INSTRUMENT_NAMES[i];
@@ -116,20 +131,5 @@ public class InstrumentConvertors {
 				convertors.add(drum);
 			}
 		}
-	}
-	
-	public InstrumentConvertor get(String name) {
-		InstrumentConvertor r = null;
-		for (InstrumentConvertor convertor: convertors) {
-			if (convertor.name.equals(name)) {
-				r = convertor;
-				break;
-			}
-		}
-		return r;
-	}
-	
-	public static String getInstrumentName(int index) {
-		return INSTRUMENT_NAMES[index];
 	}
 }
