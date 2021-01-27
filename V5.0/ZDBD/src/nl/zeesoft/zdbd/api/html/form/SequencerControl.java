@@ -15,7 +15,8 @@ public class SequencerControl extends FormHtml {
 	public SequencerControl(int beatsPerMinute, float shufflePercentage,
 		List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay,
-		MixState currentMix, MixState nextMix, 
+		MixState currentMix, MixState nextMix,
+		List<String> arpeggiators, String nextArpeggiator,
 		boolean recording, long recordedTicks,
 		String midiRecording, String audioRecording
 		) {
@@ -27,6 +28,7 @@ public class SequencerControl extends FormHtml {
 		addProperty("currentSequence", "Play sequence", names, FormProperty.SELECT, currentSequence);
 		properties.add(new MuteButtons(currentMix,true));
 		addProperty("nextSequence", "Next sequence", names, FormProperty.SELECT, nextSequence);
+		addProperty("nextArpeggiator", "Next arpeggiator", arpeggiators, FormProperty.SELECT, nextArpeggiator);
 		properties.add(new MuteButtons(nextMix,false));
 		addProperty("hold", "Hold", hold, FormProperty.CHECKBOX_INPUT);
 		addProperty("selectRandom", "Randomize", selectRandom, FormProperty.CHECKBOX_INPUT);

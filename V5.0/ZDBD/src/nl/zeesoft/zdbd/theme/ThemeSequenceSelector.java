@@ -5,6 +5,7 @@ import java.util.List;
 import javax.sound.midi.Sequence;
 
 import nl.zeesoft.zdbd.api.html.form.SequencerControl;
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSequencer;
 import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
@@ -28,6 +29,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	private String				nextSequence			= "";
 	private MixState			currMix					= new MixState();
 	private MixState			nextMix					= new MixState();
+	private Arpeggiator			currArpeggiator			= new Arpeggiator();
+	private Arpeggiator			nextArpeggiator			= new Arpeggiator();
 
 	private boolean				recording				= false;
 
@@ -160,6 +163,40 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		lock.lock(this);
 		if (nextMix!=null) {
 			r = nextMix.copy();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void setCurrentArpeggiator(Arpeggiator arp) {
+		if (arp!=null) {
+			arp = arp.copy();
+			lock.lock(this);
+			currArpeggiator = arp;
+			changedCurrentSequenceNoLock();
+			lock.unlock(this);
+		}
+	}
+
+	public void setNextArpeggiator(Arpeggiator arp) {
+		if (arp!=null) {
+			arp = arp.copy();
+			lock.lock(this);
+			nextArpeggiator = arp;
+			changedNextSequenceNoLock();
+			if (MidiSys.sequencer!=null && !MidiSys.sequencer.isRunning()) {
+				currArpeggiator = arp.copy();
+				changedCurrentSequenceNoLock();
+			}
+			lock.unlock(this);
+		}
+	}
+	
+	public Arpeggiator getNextArpeggiator() {
+		Arpeggiator r = null;
+		lock.lock(this);
+		if (nextArpeggiator!=null) {
+			r = nextArpeggiator.copy();
 		}
 		lock.unlock(this);
 		return r;
@@ -320,6 +357,8 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			regenerateOnPlay,
 			currMix,
 			nextMix,
+			controller.getArpeggiatorNames(),
+			nextArpeggiator.name,
 			recording,
 			recordedTicks,
 			midiRecording,
@@ -379,7 +418,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		if (controller!=null && !MidiSys.sequencer.isRunning()) {
 			PatternSequence sequence = controller.getSequences().get(currSequence);
 			if (sequence!=null) {
-				Sequence midiSequence = controller.generateMidiSequence(sequence);
+				Sequence midiSequence = controller.generateMidiSequence(sequence,currArpeggiator);
 				MidiSys.sequencer.setSequence(midiSequence);
 			}
 		}
@@ -389,7 +428,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		if (controller!=null) {
 			PatternSequence sequence = controller.getSequences().get(nextSequence);
 			if (sequence!=null) {
-				Sequence midiSequence = controller.generateMidiSequence(sequence);
+				Sequence midiSequence = controller.generateMidiSequence(sequence,nextArpeggiator);
 				MidiSys.sequencer.setNextSequence(midiSequence);
 			}
 		}

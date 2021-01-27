@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.theme;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.midi.Arpeggiators;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.neural.Generators;
 import nl.zeesoft.zdbd.neural.NetworkConfigFactory;
@@ -23,6 +24,8 @@ public class Theme {
 	protected NetworkConfig		networkConfiguration	= NetworkConfigFactory.getNetworkConfig();
 	protected Network			network					= new Network();
 	protected Generators		generators				= new Generators();
+	// TODO: Save/load arpeggiators
+	protected Arpeggiators		arpeggiators			= new Arpeggiators();
 	protected SoundPatch		soundPatch				= new SoundPatch();
 	
 	protected void setShuffle(float percentage) {

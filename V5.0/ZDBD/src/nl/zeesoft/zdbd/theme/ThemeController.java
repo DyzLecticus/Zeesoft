@@ -328,13 +328,35 @@ public class ThemeController implements EventListener, Waitable {
 		lock.unlock(this);
 		return r;
 	}
+
+	public List<String> getArpeggiatorNames() {
+		List<String> r = new ArrayList<String>();
+		lock.lock(this);
+		if (theme!=null) {
+			List<Arpeggiator> arps = theme.arpeggiators.list();
+			for (Arpeggiator arp: arps) {
+				r.add(arp.name);
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+
+	public Arpeggiator getArpeggiator(String name) {
+		Arpeggiator r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.arpeggiators.get(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
 	
-	public Sequence generateMidiSequence(PatternSequence sequence) {
+	public Sequence generateMidiSequence(PatternSequence sequence, Arpeggiator arp) {
 		Sequence r = null;
 		lock.lock(this);
 		if (theme!=null) {
-			// TODO: Arpeggiator control
-			r = theme.soundPatch.generateMidiSequence(sequence, new Arpeggiator());
+			r = theme.soundPatch.generateMidiSequence(sequence, arp);
 		}
 		lock.unlock(this);
 		return r;

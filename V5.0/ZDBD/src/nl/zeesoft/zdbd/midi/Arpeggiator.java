@@ -24,6 +24,7 @@ public class Arpeggiator {
 	
 	public Arpeggiator copy() {
 		Arpeggiator r = new Arpeggiator();
+		r.name = name;
 		r.minDuration = minDuration;
 		r.maxDuration = maxDuration;
 		r.density = density;

@@ -11,7 +11,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.api.css.MainCss;
-import nl.zeesoft.zdbd.api.html.Bye;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
 import nl.zeesoft.zdbd.api.html.form.ChordEditor;
@@ -34,6 +33,7 @@ import nl.zeesoft.zdbd.api.javascript.NetworkJs;
 import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
+import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdbd.midi.SynthConfig;
@@ -414,10 +414,7 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected void handlePostModalRequest(HttpRequest request, HttpResponse response) {
 		String name = request.body.toString();
-		if (name.equals("Bye")) {
-			response.code = HttpURLConnection.HTTP_OK;
-			response.body = (new Bye()).render();
-		} else if (name.equals("LoadTheme")) {
+		if (name.equals("LoadTheme")) {
 			List<String> names = controller.listThemes();
 			response.code = HttpURLConnection.HTTP_OK;
 			response.body = (new LoadTheme(names)).render();
@@ -504,6 +501,16 @@ public class RequestHandler extends HttpRequestHandler {
 				selector.setCurrentSequence(elems.get(2).toString());
 			} else if (name.equals("nextSequence")) {
 				selector.setNextSequence(elems.get(2).toString());
+			} else if (name.equals("nextArpeggiator")) {
+				Arpeggiator arp = controller.getArpeggiator(elems.get(2).toString());
+				if (arp!=null) {
+					selector.setNextArpeggiator(arp);
+				} else {
+					Str err = new Str("Arpeggiator not found: ");
+					err.sb().append(elems.get(2).toString());
+					setNotFoundError(response,err);
+					error = true;
+				}
 			} else if (name.equals("hold")) {
 				selector.setHold(parseBoolean(elems.get(2)));
 			} else if (name.equals("selectRandom")) {
