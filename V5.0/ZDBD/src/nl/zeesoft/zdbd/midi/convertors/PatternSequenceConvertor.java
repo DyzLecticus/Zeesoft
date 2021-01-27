@@ -18,7 +18,6 @@ import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
-import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatternSequenceConvertor {
@@ -63,7 +62,8 @@ public class PatternSequenceConvertor {
 			}
 			if (arp!=null) {
 				Track track = r.getTracks()[r.getTracks().length - 1];
-				generateArpeggiatorSequence(track,sequence,arp);
+				ArpConvertor convertor = (ArpConvertor) convertors.get(Arpeggiator.class.getSimpleName());
+				arp.generateMidiSequenceOnTrack(track, sequence, convertor);
 			}
 			lock.unlock(this);
 		}
@@ -133,66 +133,6 @@ public class PatternSequenceConvertor {
 					}
 				}
 			}
-		}
-	}
-	
-	protected void generateArpeggiatorSequence(Track track, PatternSequence sequence, Arpeggiator arp) {
-		long sequenceEndTick = MidiSequenceUtil.getSequenceEndTick(sequence.rythm) * sequence.getSequencedPatterns().size();
-		long nextActiveTick = (sequenceEndTick - 1);
-		int ticksPerStep = MidiSequenceUtil.getTicksPerStep(sequence.rythm);
-		ArpConvertor arpConv = (ArpConvertor) convertors.get(Arpeggiator.class.getSimpleName());
-		int totalSteps = sequence.getTotalSteps();
-		
-		boolean accent = true;
-		int duration = Rand.getRandomInt(arp.minDuration,arp.maxDuration);
-		int pNote = -1;
-		for (int s = 0; s < totalSteps; s++) {
-			if (s==0 || Rand.getRandomFloat(0, 1)<=arp.density) {
-				SequenceChord chord = sequence.getChordForStep(s,false);
-				List<Integer> chordNotes = new ArrayList<Integer>();
-				chordNotes.add(chord.baseNote);
-				for (int i = 0; i < chord.interval.length; i++) {
-					int note = chord.baseNote + chord.interval[i];
-					if (note<chord.baseNote+12 && !chordNotes.contains(note)) {
-						chordNotes.add(note);
-					}
-				}
-				List<Integer> allNotes = new ArrayList<Integer>();
-				for (int c = 0; c <= arp.maxOctave; c++) {
-					for (Integer note: chordNotes) {
-						int addNote = note + (c * 12);
-						int diff = 0;
-						if (pNote>-1) {
-							if (pNote>addNote) {
-								diff = pNote - addNote;
-							} else if (pNote<addNote) {
-								diff = addNote - pNote;
-							}
-						}
-						if (diff<=arp.maxInterval) {
-							allNotes.add(addNote);
-						}
-					}
-				}
-				int note = allNotes.get(Rand.getRandomInt(0, allNotes.size()-1));
-				List<MidiNote> mns = arpConv.getMidiNotesForArpeggiatorNote(note, duration, accent);
-				MidiSequenceUtil.addMidiNotesToTrack(mns,track,sequence.rythm,s,nextActiveTick,ticksPerStep);
-				pNote = note;
-			}
-			
-			s += duration - 1;
-			
-			int remainingSteps = totalSteps - s - 1;
-			int max = arp.maxDuration;
-			int min = arp.minDuration;
-			if (remainingSteps>0 && max>remainingSteps) {
-				max = remainingSteps;
-			}
-			if (min>max) {
-				break;
-			}
-			duration = Rand.getRandomInt(arp.minDuration,max);
-			accent = Rand.getRandomInt(0,1) == 1;
 		}
 	}
 }
