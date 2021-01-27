@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import nl.zeesoft.zdbd.midi.Arpeggiator;
@@ -142,10 +141,10 @@ public class PatternSequenceConvertor {
 		long nextActiveTick = (sequenceEndTick - 1);
 		int ticksPerStep = MidiSequenceUtil.getTicksPerStep(sequence.rythm);
 		ArpConvertor arpConv = (ArpConvertor) convertors.get(Arpeggiator.class.getSimpleName());
+		int totalSteps = sequence.getTotalSteps();
 		
 		boolean accent = true;
-		int duration = Rand.getRandomInt(1,arp.maxDuration);
-		int totalSteps = sequence.getTotalSteps();
+		int duration = Rand.getRandomInt(arp.minDuration,arp.maxDuration);
 		int pNote = -1;
 		for (int s = 0; s < totalSteps; s++) {
 			if (s==0 || Rand.getRandomFloat(0, 1)<=arp.density) {
@@ -182,7 +181,17 @@ public class PatternSequenceConvertor {
 			}
 			
 			s += duration - 1;
-			duration = Rand.getRandomInt(1,arp.maxDuration);
+			
+			int remainingSteps = totalSteps - s - 1;
+			int max = arp.maxDuration;
+			int min = arp.minDuration;
+			if (remainingSteps>0 && max>remainingSteps) {
+				max = remainingSteps;
+			}
+			if (min>max) {
+				break;
+			}
+			duration = Rand.getRandomInt(arp.minDuration,max);
 			accent = Rand.getRandomInt(0,1) == 1;
 		}
 	}
