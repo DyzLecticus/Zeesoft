@@ -2,6 +2,9 @@ package nl.zeesoft.zdbd.midi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.Lock;
@@ -23,8 +26,8 @@ public class Arpeggiators {
 			Arpeggiator existing = getArpeggiatorNoLock(arp.name);
 			if (existing!=null) {
 				arps.remove(existing);
-				arps.add(arp);
 			}
+			arps.add(arp);
 			lock.unlock(this);
 		}
 	}
@@ -37,6 +40,18 @@ public class Arpeggiators {
 		}
 		lock.unlock(this);
 		return r;
+	}
+	
+	public void rename(String name, String newName) {
+		if (newName.length()>0) {
+			lock.lock(this);
+			Arpeggiator arp = getArpeggiatorNoLock(name);
+			Arpeggiator conflict = getArpeggiatorNoLock(newName);
+			if (arp!=null && conflict==null) {
+				arp.name = newName;
+			}
+			lock.unlock(this);
+		}
 	}
 	
 	public Arpeggiator remove(String name) {
@@ -52,8 +67,12 @@ public class Arpeggiators {
 	public List<Arpeggiator> list() {
 		List<Arpeggiator> r = new ArrayList<Arpeggiator>();
 		lock.lock(this);
+		SortedMap<String,Arpeggiator> map = new TreeMap<String,Arpeggiator>();
 		for (Arpeggiator arp: arps) {
-			r.add(arp.copy());
+			map.put(arp.name,arp.copy());
+		}
+		for (Entry<String,Arpeggiator> entry: map.entrySet()) {
+			r.add(entry.getValue());
 		}
 		lock.unlock(this);
 		return r;
@@ -108,63 +127,47 @@ public class Arpeggiators {
 	
 	private void initializeDefaults() {
 		arps.clear();
-		arps.add(new Arpeggiator());
 		
 		Arpeggiator arp = new Arpeggiator();
-		arp.name = "Sparse narrow even";
+		arp.name = "Even sparse narrow";
 		arp.density = 0.25F;
 		arp.maxOctave = 0;
 		arp.maxSteps = 16;
 		arps.add(arp);
-		
+
 		arp = new Arpeggiator();
-		arp.name = "Sparse wide even";
-		arp.density = 0.25F;
-		arp.maxOctave = 2;
-		arp.maxSteps = 16;
-		arps.add(arp);
-		
-		arp = new Arpeggiator();
-		arp.name = "Sparse wide odd";
-		arp.density = 0.25F;
-		arp.maxOctave = 2;
-		arps.add(arp);
-		
-		arp = new Arpeggiator();
-		arp.name = "Medium even";
-		arp.density = 0.5F;
+		arp.name = "Even medium";
+		arp.density = 0.50F;
 		arp.maxOctave = 1;
 		arp.maxSteps = 16;
 		arps.add(arp);
-		
+
 		arp = new Arpeggiator();
-		arp.name = "Medium wide odd";
-		arp.density = 0.5F;
-		arp.maxOctave = 2;
-		arp.maxSteps = 20;
+		arp.name = "Odd medium";
+		arp.density = 0.50F;
+		arp.maxOctave = 1;
+		arp.maxSteps = 12;
 		arps.add(arp);
-		
+
 		arp = new Arpeggiator();
-		arp.name = "Dense even";
-		arp.density = 0.8F;
+		arp.name = "Odd dense medium ";
+		arp.density = 0.75F;
+		arp.maxOctave = 1;
+		arp.maxSteps = 12;
+		arps.add(arp);
+
+		arp = new Arpeggiator();
+		arp.name = "Odd dense wide ";
+		arp.density = 0.75F;
+		arp.maxOctave = 2;
+		arp.maxSteps = 12;
+		arps.add(arp);
+
+		arp = new Arpeggiator();
+		arp.name = "Even dense medium ";
+		arp.density = 0.75F;
 		arp.maxOctave = 1;
 		arp.maxSteps = 16;
-		arps.add(arp);
-		
-		arp = new Arpeggiator();
-		arp.name = "Dense wide odd";
-		arp.density = 0.8F;
-		arp.maxOctave = 2;
-		arp.maxSteps = 20;
-		arps.add(arp);
-		
-		arp = new Arpeggiator();
-		arp.name = "Final";
-		arp.minDuration = 4;
-		arp.maxDuration = 4;
-		arp.density = 0.0F;
-		arp.maxOctave = 1;
-		arp.maxSteps = 64;
 		arps.add(arp);
 	}
 }

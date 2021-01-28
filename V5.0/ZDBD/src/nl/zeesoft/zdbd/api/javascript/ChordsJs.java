@@ -84,9 +84,12 @@ public class ChordsJs extends ResponseObject {
 		append(r,"    main.xhr.postText(\"/chordEditor.txt\",body,function() {},chords.alertErrorCallback);");
 		append(r,"};");
 		append(r,"chords.delete = function(chord) {");
-		append(r,"    var body = \"DELETE:\";");
-		append(r,"    body += chord;");
-		append(r,"    main.xhr.postText(\"/chordEditor.txt\",body,chords.refresh,chords.alertErrorCallback);");
+		append(r,"    var d = confirm(\"Are you sure you want to delete the chord?\");");
+		append(r,"    if (d==true) {");
+		append(r,"        var body = \"DELETE:\";");
+		append(r,"        body += chord;");
+		append(r,"        main.xhr.postText(\"/chordEditor.txt\",body,chords.refresh,chords.alertErrorCallback);");
+		append(r,"    }");
 		append(r,"};");
 		append(r,"chords.add = function() {");
 		append(r,"    var body = \"ADD\";");

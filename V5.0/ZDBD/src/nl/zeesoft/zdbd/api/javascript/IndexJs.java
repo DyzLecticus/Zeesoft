@@ -18,6 +18,7 @@ public class IndexJs extends ResponseObject {
 		append(r,(new SequencerJs()).render());
 		append(r,(new NetworkJs()).render());
 		append(r,(new GeneratorsJs()).render());
+		append(r,(new ArpeggiatorsJs()).render());
 		return r;
 	}
 

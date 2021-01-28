@@ -240,9 +240,28 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			lock.lock(this);
 			currSequence = "";
 			nextSequence = "";
+			currMix = new MixState();
+			nextMix = new MixState();
+			currArpeggiator = new Arpeggiator();
+			nextArpeggiator = new Arpeggiator();
 			if (event.name.equals(ThemeController.DESTROYING) && controller!=null) {
 				controller.eventPublisher.removeListener(this);
 				controller = null;
+			}
+			lock.unlock(this);
+		} else if (
+			event.name.equals(ThemeController.INITIALIZED) ||
+			event.name.equals(ThemeController.INITIALIZED_AND_LOADED) ||
+			event.name.equals(ThemeController.LOADED_THEME)
+			) {
+			lock.lock(this);
+			List<Arpeggiator> arps = controller.listArpeggiators();
+			if (arps.size()>0) {
+				currArpeggiator = arps.get(0);
+				nextArpeggiator = currArpeggiator.copy();
+			} else {
+				currArpeggiator = new Arpeggiator();
+				nextArpeggiator = new Arpeggiator();
 			}
 			lock.unlock(this);
 		} else if (event.name.equals(ThemeController.GENERATED_SEQUENCES)) {

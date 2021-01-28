@@ -78,12 +78,14 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"    generators.move(\"MOVE_DOWN\",name);");
 		append(r,"};");
 		append(r,"generators.move = function(direction,name) {");
-		append(r,"    main.xhr.postText(\"/generators.txt\",direction + \":\" + name,generators.refresh,main.xhr.alertErrorCallback);");
+		append(r,"    var cb = function() { generators.refresh(); sequencer.refresh(); };");
+		append(r,"    main.xhr.postText(\"/generators.txt\",direction + \":\" + name,cb,main.xhr.alertErrorCallback);");
 		append(r,"};");
 		append(r,"generators.delete = function(name) {");
 		append(r,"    var d = confirm(\"Are you sure you want to delete the generator?\");");
 		append(r,"    if (d==true) {");
-		append(r,"        main.xhr.postText(\"/generators.txt\",\"DELETE:\" + name,generators.refresh,main.xhr.alertErrorCallback);");
+		append(r,"        var cb = function() { generators.refresh(); sequencer.refresh(); };");
+		append(r,"        main.xhr.postText(\"/generators.txt\",\"DELETE:\" + name,cb,main.xhr.alertErrorCallback);");
 		append(r,"    }");
 		append(r,"};");
 		append(r,"generators.edit = function(name) {");
@@ -95,6 +97,7 @@ public class GeneratorsJs extends ResponseObject {
 		append(r,"};");
 		append(r,"generators.editDone = function() {");
 		append(r,"    generators.refresh();");
+		append(r,"    sequencer.refresh();");
 		append(r,"    modal.hide();");
 		append(r,"};");
 		append(r,"generators.propertyChange = function(property) {");
@@ -134,7 +137,7 @@ public class GeneratorsJs extends ResponseObject {
 			r.sb().append("\";");
 		}
 		append(r,"    var obj = main.dom.buildBodyText(ids);");
-		append(r,"    var cb = function() { modal.hide(); generators.refresh(); };");
+		append(r,"    var cb = function() { modal.hide(); generators.refresh(); sequencer.refresh(); };");
 		append(r,"    main.xhr.postText(\"/generator.txt\",\"SAVE\\n\" + obj,cb,main.xhr.alertErrorCallback);");
 		append(r,"};");
 		return r;

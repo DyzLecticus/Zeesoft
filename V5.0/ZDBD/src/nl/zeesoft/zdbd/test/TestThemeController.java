@@ -85,7 +85,7 @@ public class TestThemeController extends TestObject {
 			Generator generator = new Generator();
 			generator.name = "TestGenerator";
 			controller.putGenerator(generator);
-			assertEqual(controller.getGenerators().size(),7,"Number of generators does not match expectation");
+			assertEqual(controller.listGenerators().size(),7,"Number of generators does not match expectation");
 			assertEqual(controller.themeHasChanges(),true,"Theme changes do not match expectation (3)");
 			
 			System.out.println();

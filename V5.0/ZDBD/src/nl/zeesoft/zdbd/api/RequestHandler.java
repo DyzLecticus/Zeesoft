@@ -12,7 +12,10 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.form.AddArpeggiator;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
+import nl.zeesoft.zdbd.api.html.form.ArpeggiatorEditor;
+import nl.zeesoft.zdbd.api.html.form.ArpeggiatorList;
 import nl.zeesoft.zdbd.api.html.form.ChordEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
@@ -22,6 +25,7 @@ import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
 import nl.zeesoft.zdbd.api.html.form.SequenceEditor;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
+import nl.zeesoft.zdbd.api.javascript.ArpeggiatorsJs;
 import nl.zeesoft.zdbd.api.javascript.BindingsJs;
 import nl.zeesoft.zdbd.api.javascript.ChordsJs;
 import nl.zeesoft.zdbd.api.javascript.GeneratorsJs;
@@ -84,6 +88,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/sequencer.js", (new SequencerJs()).render());
 		pathResponses.put("/network.js", (new NetworkJs()).render());
 		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
+		pathResponses.put("/arpeggiators.js", (new ArpeggiatorsJs()).render());
 	}
 
 	@Override
@@ -165,7 +170,13 @@ public class RequestHandler extends HttpRequestHandler {
 					}
 				} else if (request.path.equals("/generators.txt")) {
 					if (checkInitialized(response)) {
-						GeneratorList generators = new GeneratorList(controller.getGenerators());
+						GeneratorList generators = new GeneratorList(controller.listGenerators());
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = generators.render();
+					}
+				} else if (request.path.equals("/arpeggiators.txt")) {
+					if (checkInitialized(response)) {
+						ArpeggiatorList generators = new ArpeggiatorList(controller.listArpeggiators());
 						response.code = HttpURLConnection.HTTP_OK;
 						response.body = generators.render();
 					}
@@ -334,6 +345,10 @@ public class RequestHandler extends HttpRequestHandler {
 			handlePostGeneratorsRequest(request,response);
 		} else if (request.path.equals("/generator.txt")) {
 			handlePostGeneratorRequest(request,response);
+		} else if (request.path.equals("/arpeggiators.txt")) {
+			handlePostArpeggiatorsRequest(request,response);
+		} else if (request.path.equals("/arpeggiator.txt")) {
+			handlePostArpeggiatorRequest(request,response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -792,39 +807,43 @@ public class RequestHandler extends HttpRequestHandler {
 			response.body = (new AddGenerator()).render();
 		} else if (request.body.startsWith("SAVE")) {
 			String name = request.body.split("\n").get(1).split(":").get(1).toString();
-			name = name.replace(":",";");
 			name = name.trim();
-			Generator gen = controller.getGenerator(name);
-			if (gen==null) {
-				gen = new Generator();
-				gen.name = name;
-				List<Str> lines = request.body.split("\n");
-				for (Str line: lines) {
-					List<Str> kv = line.split(":");
-					String prop = kv.get(0).toString();
-					if (prop.equals("group1Distortion")) {
-						gen.group1Distortion = parsePercentage(kv.get(1));
-					} else if (prop.equals("group2Distortion")) {
-						gen.group2Distortion = parsePercentage(kv.get(1));
-					} else if (prop.equals("randomChunkOffset")) {
-						gen.randomChunkOffset = parseBoolean(kv.get(1));
-					} else if (prop.equals("mixStart")) {
-						gen.mixStart = parsePercentage(kv.get(1));
-					} else if (prop.equals("mixEnd")) {
-						gen.mixEnd = parsePercentage(kv.get(1));
-					} else if (prop.equals("maintainBeat")) {
-						gen.maintainBeat = parsePercentage(kv.get(1));
-					} else if (prop.equals("maintainFeedback")) {
-						gen.maintainFeedback = parseBoolean(kv.get(1));
-					} else if (prop.startsWith("maintain-")) {
-						gen.setMaintainInstrument(prop.substring(5),parseBoolean(kv.get(1)));
+			if (name.length()>0) {
+				Generator gen = controller.getGenerator(name);
+				if (gen==null) {
+					gen = new Generator();
+					gen.name = name;
+					List<Str> lines = request.body.split("\n");
+					for (Str line: lines) {
+						List<Str> kv = line.split(":");
+						String prop = kv.get(0).toString();
+						if (prop.equals("group1Distortion")) {
+							gen.group1Distortion = parsePercentage(kv.get(1));
+						} else if (prop.equals("group2Distortion")) {
+							gen.group2Distortion = parsePercentage(kv.get(1));
+						} else if (prop.equals("randomChunkOffset")) {
+							gen.randomChunkOffset = parseBoolean(kv.get(1));
+						} else if (prop.equals("mixStart")) {
+							gen.mixStart = parsePercentage(kv.get(1));
+						} else if (prop.equals("mixEnd")) {
+							gen.mixEnd = parsePercentage(kv.get(1));
+						} else if (prop.equals("maintainBeat")) {
+							gen.maintainBeat = parsePercentage(kv.get(1));
+						} else if (prop.equals("maintainFeedback")) {
+							gen.maintainFeedback = parseBoolean(kv.get(1));
+						} else if (prop.startsWith("maintain-")) {
+							gen.setMaintainInstrument(prop.substring(5),parseBoolean(kv.get(1)));
+						}
 					}
+					controller.putGenerator(gen);
+					setPostOk(response);
+				} else {
+					Str err = new Str("Generator already exists with name: ");
+					err.sb().append(name);
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 				}
-				controller.putGenerator(gen);
-				setPostOk(response);
 			} else {
-				Str err = new Str("Generator already exists with name: ");
-				err.sb().append(name);
+				Str err = new Str("Generator name is mandatory");
 				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			}
 		} else if (request.body.startsWith("EDIT:")) {
@@ -909,6 +928,138 @@ public class RequestHandler extends HttpRequestHandler {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 		}
 	}
+
+	protected void handlePostArpeggiatorsRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.startsWith("DELETE:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkArpeggiatorName(name,response)) {
+				controller.removeArpeggiator(name);
+				setPostOk(response);
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
+	
+	protected void handlePostArpeggiatorRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.toString().equals("ADD")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new AddArpeggiator()).render();
+		} else if (request.body.startsWith("SAVE")) {
+			String name = request.body.split("\n").get(1).split(":").get(1).toString();
+			name = name.trim();
+			if (name.length()>0) {
+				Arpeggiator arp = controller.getArpeggiator(name);
+				if (arp==null) {
+					arp = new Arpeggiator();
+					arp.name = name;
+					List<Str> lines = request.body.split("\n");
+					for (Str line: lines) {
+						List<Str> kv = line.split(":");
+						String prop = kv.get(0).toString();
+						if (prop.equals("minDuration")) {
+							arp.minDuration = Integer.parseInt(kv.get(1).toString());
+						} else if (prop.equals("maxDuration")) {
+							arp.maxDuration = Integer.parseInt(kv.get(1).toString());
+						} else if (prop.equals("density")) {
+							arp.density = parsePercentage(kv.get(1));
+						} else if (prop.equals("maxOctave")) {
+							arp.maxOctave = Integer.parseInt(kv.get(1).toString());
+						} else if (prop.equals("maxInterval")) {
+							arp.maxInterval = Integer.parseInt(kv.get(1).toString());
+						} else if (prop.equals("maxSteps")) {
+							arp.maxSteps = Integer.parseInt(kv.get(1).toString());
+						}
+					}
+					controller.putArpeggiator(arp);
+					setPostOk(response);
+				} else {
+					Str err = new Str("Arpeggiator already exists with name: ");
+					err.sb().append(name);
+					setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+				}
+			} else {
+				Str err = new Str("Arpeggiator name is mandatory");
+				setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			}
+		} else if (request.body.startsWith("EDIT:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkArpeggiatorName(name,response)) {
+				Arpeggiator arpeggiator = controller.getArpeggiator(name);
+				String prevName = "";
+				String nextName = "";
+				List<Arpeggiator> list = controller.listArpeggiators();
+				boolean found = false;
+				for (Arpeggiator arp: list) {
+					if (found) {
+						nextName = arp.name;
+						break;
+					}
+					if (arp.name.equals(arpeggiator.name)) {
+						found = true;
+					} else if (!found) {
+						prevName = arp.name;
+					}
+				}
+				if (prevName.length()==0) {
+					prevName = list.get(list.size()-1).name;
+					if (prevName.equals(arpeggiator.name)) {
+						prevName = "";
+					}
+				}
+				if (nextName.length()==0) {
+					nextName = list.get(0).name;
+					if (nextName.equals(arpeggiator.name)) {
+						nextName = "";
+					}
+				}
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new ArpeggiatorEditor(arpeggiator,prevName,nextName)).render();
+			}
+		} else if (request.body.startsWith("SET_PROPERTY:")) {
+			List<Str> elems = request.body.split(":");
+			String name = request.body.split(":").get(1).toString();
+			if (checkArpeggiatorName(name,response)) {
+				String newName = "";
+				Arpeggiator generator = controller.getArpeggiator(name);
+				String propertyName = elems.get(2).toString();
+				boolean error = false;
+				if (propertyName.equals("name")) {
+					newName = elems.get(3).toString();
+				} else if (propertyName.equals("minDuration")) {
+					generator.minDuration = Integer.parseInt(elems.get(3).toString());
+				} else if (propertyName.equals("maxDuration")) {
+					generator.maxDuration = Integer.parseInt(elems.get(3).toString());
+				} else if (propertyName.equals("density")) {
+					generator.density = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("maxOctave")) {
+					generator.maxOctave = Integer.parseInt(elems.get(3).toString());
+				} else if (propertyName.equals("maxInterval")) {
+					generator.maxInterval = Integer.parseInt(elems.get(3).toString());
+				} else if (propertyName.equals("maxSteps")) {
+					generator.maxSteps = Integer.parseInt(elems.get(3).toString());
+				} else {
+					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					error = true;
+				}
+				if (!error) {
+					if (newName.length()>0) {
+						newName = newName.replace(":",";");
+						newName = newName.trim();
+						Str err = controller.renameArpeggiator(name, newName);
+						if (err.length()>0) {
+							setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+						}
+					} else {
+						controller.putArpeggiator(generator);
+					}
+					setPostOk(response);
+				}
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
 	
 	protected boolean checkInitialized(HttpResponse response) {
 		boolean r = true;
@@ -954,6 +1105,16 @@ public class RequestHandler extends HttpRequestHandler {
 		boolean r = true;
 		if (controller.getGenerator(name)==null) {
 			Str err = new Str("Specified generator not found");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		}
+		return r;
+	}
+	
+	protected boolean checkArpeggiatorName(String name, HttpResponse response) {
+		boolean r = true;
+		if (controller.getArpeggiator(name)==null) {
+			Str err = new Str("Specified arpeggiator not found");
 			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
 			r = false;
 		}

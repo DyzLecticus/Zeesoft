@@ -262,16 +262,6 @@ public class ThemeController implements EventListener, Waitable {
 		lock.unlock(this);
 	}
 	
-	public List<Generator> getGenerators() {
-		List<Generator> r = new ArrayList<Generator>();
-		lock.lock(this);
-		if (theme!=null) {
-			r = theme.generators.list();
-		}
-		lock.unlock(this);
-		return r;
-	}
-	
 	public Str renameGenerator(String name,String newName) {
 		Str r = new Str();
 		lock.lock(this);
@@ -342,11 +332,54 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 
+	public void putArpeggiator(Arpeggiator arp) {
+		lock.lock(this);
+		if (theme!=null) {
+			theme.arpeggiators.put(arp);
+		}
+		lock.unlock(this);
+	}
+
 	public Arpeggiator getArpeggiator(String name) {
 		Arpeggiator r = null;
 		lock.lock(this);
 		if (theme!=null) {
 			r = theme.arpeggiators.get(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
+
+	public List<Arpeggiator> listArpeggiators() {
+		List<Arpeggiator> r = new ArrayList<Arpeggiator>();
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.arpeggiators.list();
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public Str renameArpeggiator(String name,String newName) {
+		Str r = new Str();
+		lock.lock(this);
+		if (theme!=null) {
+			if (theme.arpeggiators.get(newName)!=null) {
+				r.sb().append("Arpeggiator already exists with name: ");
+				r.sb().append(newName);
+			} else {
+				theme.arpeggiators.rename(name, newName);
+			}
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public Arpeggiator removeArpeggiator(String name) {
+		Arpeggiator r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.arpeggiators.remove(name);
 		}
 		lock.unlock(this);
 		return r;

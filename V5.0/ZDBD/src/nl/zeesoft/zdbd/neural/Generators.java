@@ -203,6 +203,10 @@ public class Generators {
 			changed = System.currentTimeMillis();
 			busy.setBusy(false);
 			lock.unlock(this);
+		} else {
+			lock.lock(this);
+			busy.setBusy(false);
+			lock.unlock(this);
 		}
 		return r;
 	}

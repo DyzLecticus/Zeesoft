@@ -127,6 +127,18 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div id=\"generatorList\"></div>");
 		append(r,"</div>"); // end generators
 
+		append(r,"<div id=\"arpeggiators\">");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" class=\"show-hide\" value=\"+\" onclick=\"arpeggiators.toggleShowList(this);\" />");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label-header\">Arpeggiators</label >");
+		append(r,"    </div>");
+		append(r,"</div>");
+		append(r,"<div id=\"arpeggiatorList\"></div>");
+		append(r,"</div>"); // end generators
+
 		append(r,"</div>"); // end app column
 		append(r,"</div>"); // end column
 		
