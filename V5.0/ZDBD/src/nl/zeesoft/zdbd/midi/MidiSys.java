@@ -93,6 +93,7 @@ public class MidiSys {
 		if (sequencer!=null && sequencer.isOpen()) {
 			Logger.dbg(new MidiSys(), new Str("Closing sequencer ..."));
 			sequencer.close();
+			sequencer.waitForClose(1000);
 			Logger.dbg(new MidiSys(), new Str("Closed sequencer"));
 		}
 	}

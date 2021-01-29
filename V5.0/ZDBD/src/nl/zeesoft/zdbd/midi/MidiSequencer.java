@@ -107,6 +107,12 @@ public class MidiSequencer implements Sequencer, Waitable {
 		recordLock.unlock(this);
 	}
 
+	protected void waitForClose(int waitMs) {
+		Waiter.waitFor(sender, waitMs);
+		Waiter.waitFor(recorder, waitMs);
+		Waiter.waitFor(eventPublisher, waitMs);
+	}
+	
 	@Override
 	public boolean isOpen() {
 		// Always open
