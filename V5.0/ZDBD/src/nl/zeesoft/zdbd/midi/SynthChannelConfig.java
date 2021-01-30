@@ -27,6 +27,26 @@ public class SynthChannelConfig {
 	public int			vib_depth		= DEFAULT;
 	public int			vib_delay		= DEFAULT;
 	
+	public void copyFrom(SynthChannelConfig cfg) {
+		solo = cfg.solo;
+		mute = cfg.mute;
+		instrument = cfg.instrument;
+		volume = cfg.volume;
+		attack = cfg.attack;
+		decay = cfg.decay;
+		release = cfg.release;
+		pan = cfg.pan;
+		pressure = cfg.pressure;
+		modulation = cfg.modulation;
+		chorus = cfg.chorus;
+		filter = cfg.filter;
+		resonance = cfg.resonance;
+		reverb = cfg.reverb;
+		vib_rate = cfg.vib_rate;
+		vib_depth = cfg.vib_depth;
+		vib_delay = cfg.vib_delay;
+	}
+	
 	public int getControlValue(int control) {
 		int r = DEFAULT;
 		if (control==SynthConfig.VOLUME) {

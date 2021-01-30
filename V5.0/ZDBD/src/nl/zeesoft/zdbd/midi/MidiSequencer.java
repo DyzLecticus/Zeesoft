@@ -39,6 +39,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 	protected Lock								lock				= new Lock();
 
 	protected float								beatsPerMinute		= 120;
+	protected int								ticksPerStep		= MidiSequenceUtil.RESOLUTION / 4;
 	protected int								nsPerTick			= 520833;
 
 	protected List<MidiSequencerEventListener>	listeners			= new ArrayList<MidiSequencerEventListener>();
@@ -60,6 +61,8 @@ public class MidiSequencer implements Sequencer, Waitable {
 	protected Lock								recordLock			= new Lock();
 	protected MidiSequence						recordedSequence	= null;
 	protected long								recordedSeqTicks	= 0;
+	
+	protected EchoBuffer[]						echoBuffers			= new EchoBuffer[16];
 	
 	protected CodeRunner						sender				= null;
 	protected CodeRunner						recorder			= null;
@@ -85,6 +88,9 @@ public class MidiSequencer implements Sequencer, Waitable {
 		eventPublisher.setPriority(Thread.MIN_PRIORITY);
 		mixState[CURR] = new MixState();
 		mixState[NEXT] = new MixState();
+		for (int c = 0; c < echoBuffers.length; c++) {
+			echoBuffers[c] = new EchoBuffer();
+		}
 		calculateNsPerTickNoLock();
 	}
 
@@ -148,6 +154,12 @@ public class MidiSequencer implements Sequencer, Waitable {
 		float r = beatsPerMinute;
 		lock.unlock(this);
 		return r;
+	}
+	
+	public void setTicksPerStep(int ticksPerStep) {
+		lock.lock(this);
+		this.ticksPerStep = ticksPerStep;
+		lock.unlock(this);
 	}
 	
 	public void setSynthConfig(SynthConfig synthConfig) {
@@ -316,6 +328,9 @@ public class MidiSequencer implements Sequencer, Waitable {
 			sender.stop();
 			lock.lock(this);
 			paused = false;
+			for (int c = 0; c < echoBuffers.length; c++) {
+				echoBuffers[c].tickEvents.clear();
+			}
 			lock.unlock(this);
 		}
 	}
@@ -440,7 +455,16 @@ public class MidiSequencer implements Sequencer, Waitable {
 			//private MixState prevMixState = new MixState();
 			@Override
 			protected boolean run() {
+				List<EchoConfig> echos = new ArrayList<EchoConfig>();
 				lock.lock(this);
+				if (synthConfig!=null) {
+					echos = synthConfig.getEchos();
+				}
+				EchoBuffer[] echoBufs = new EchoBuffer[16];
+				for (int c = 0; c < echoBuffers.length; c++) {
+					echoBufs[c] = echoBuffers[c].copy();
+				}
+				int tps = ticksPerStep;
 				MidiSequence pSeq = sequence[CURR];
 				MidiSequence cSeq = sequence[CURR];
 				MidiSequence lpSeq = lfoSequence[CURR];
@@ -494,30 +518,52 @@ public class MidiSequencer implements Sequencer, Waitable {
 					List<MidiEvent> events = new ArrayList<MidiEvent>();
 					if (sTick>=0 && eTick>=0) {
 						for (long t = sTick; t < eTick; t++) {
+							// Add LFO events
 							Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
 							if (lpSeq!=null) {
 								Set<MidiEvent> evts = lpSeq.getEventsForTick(t,pMix);
 								events.addAll(evts);
 								tickEvents.addAll(evts);
 							}
+							
+							// Add regular events
 							Set<MidiEvent> evts = pSeq.getEventsForTick(t,pMix);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 							rSequence.eventsPerTick.put(rt, tickEvents);
+	
+							// Add echo events
+							for (EchoConfig echo: echos) {
+								evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+								events.addAll(evts);
+								tickEvents.addAll(evts);
+								rSequence.eventsPerTick.put(rt, tickEvents);
+							}
 							rt++;
 						}
 					}
 					for (long t = (pTick + 1); t < (cTick + 1); t++) {
+						// Add LFO events
 						Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
 						if (lcSeq!=null) {
 							Set<MidiEvent> evts = lcSeq.getEventsForTick(t,cMix);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 						}
+						
+						// Add regular events
 						Set<MidiEvent> evts = cSeq.getEventsForTick(t,cMix);
 						events.addAll(evts);
 						tickEvents.addAll(evts);
 						rSequence.eventsPerTick.put(rt, tickEvents);
+						
+						// Add echo events
+						for (EchoConfig echo: echos) {
+							evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+							events.addAll(evts);
+							tickEvents.addAll(evts);
+							rSequence.eventsPerTick.put(rt, tickEvents);
+						}
 						rt++;
 					}
 					for (MidiEvent event:events) {
@@ -528,6 +574,41 @@ public class MidiSequencer implements Sequencer, Waitable {
 							break;
 						}
 					}
+				}
+				
+				if (echos.size()>0 && rt>0) {
+					lock.lock(this);
+					for (int c = 0; c < echoBuffers.length; c++) {
+						echoBuffers[c] = echoBufs[c];
+					}
+					for (EchoConfig echo: echos) {
+						for (long t = 0; t < rt; t++) {
+							Set<MidiEvent> events = rSequence.eventsPerTick.get(t);
+							Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
+							for (MidiEvent event: events) {
+								if (event.getMessage() instanceof ShortMessage) {
+									ShortMessage msg = (ShortMessage) event.getMessage();
+									if (msg.getChannel()==echo.sourceChannel) {
+										ShortMessage message = new ShortMessage();
+										try {
+											int data2 = msg.getData2();
+											if (msg.getCommand()==ShortMessage.NOTE_ON || msg.getCommand()==ShortMessage.NOTE_OFF) {
+												data2 = (int)(data2 * echo.velocity);
+											}
+											// TODO: Apply echo changes to other events
+											message.setMessage(msg.getCommand(),echo.targetChannel,msg.getData1(),data2); 
+											MidiEvent evt = new MidiEvent(message,event.getTick());
+											tickEvents.add(evt);
+										} catch (InvalidMidiDataException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+							}
+							echoBuffers[echo.targetChannel].tickEvents.add(tickEvents);
+						}
+					}
+					lock.unlock(this);
 				}
 				
 				if (record && rt>0) {

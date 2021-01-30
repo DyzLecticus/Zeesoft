@@ -572,6 +572,7 @@ public class ThemeController implements EventListener, Waitable {
 		if (theme!=null) {
 			if (MidiSys.sequencer!=null) {
 				MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
+				MidiSys.sequencer.setTicksPerStep(MidiSequenceUtil.getTicksPerStep(theme.rythm));
 				MidiSys.sequencer.setSynthConfig(theme.soundPatch.synthConfig);
 			}
 			theme.soundPatch.synthConfig.setRythm(theme.rythm);

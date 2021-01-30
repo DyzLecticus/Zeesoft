@@ -20,6 +20,12 @@ public class SynthConfig {
 	public static final int			BASS_CHANNEL_2		= 1;
 	public static final int			ARP_CHANNEL_1		= 2;
 	public static final int			ARP_CHANNEL_2		= 3;
+	public static final int			ARP_ECHO_1_CH_1		= 4;
+	public static final int			ARP_ECHO_1_CH_2		= 5;
+	public static final int			ARP_ECHO_2_CH_1		= 6;
+	public static final int			ARP_ECHO_2_CH_2		= 7;
+	public static final int			ARP_ECHO_3_CH_1		= 8;
+	public static final int			ARP_ECHO_3_CH_2		= 10;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -55,6 +61,7 @@ public class SynthConfig {
 	
 	private SynthChannelConfig[]	channels 			= new SynthChannelConfig[16];
 	private List<ChannelLFO>		lfos				= new ArrayList<ChannelLFO>();
+	private List<EchoConfig>		echos				= new ArrayList<EchoConfig>();
 	
 	public SynthConfig() {
 		initializeDefaults();
@@ -99,7 +106,73 @@ public class SynthConfig {
 		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.TRIANGLE,12,0.5F));
 		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.TRIANGLE,12,-0.5F));
 
+		EchoConfig echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_1;
+		echo.targetChannel = ARP_ECHO_1_CH_1;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_2;
+		echo.targetChannel = ARP_ECHO_1_CH_2;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_1;
+		echo.targetChannel = ARP_ECHO_2_CH_1;
+		echo.pan = 112;
+		echo.delay = 6;
+		echo.velocity = 0.5F;
+		echo.filter = 0.6F;
+		echo.reverb = 1.5F;
+		echo.chorus = 1.5F;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_2;
+		echo.targetChannel = ARP_ECHO_2_CH_2;
+		echo.pan = 112;
+		echo.delay = 6;
+		echo.velocity = 0.5F;
+		echo.filter = 0.6F;
+		echo.reverb = 1.5F;
+		echo.chorus = 1.5F;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_1;
+		echo.targetChannel = ARP_ECHO_3_CH_1;
+		echo.pan = 0;
+		echo.delay = 9;
+		echo.velocity = 0.4F;
+		echo.filter = 0.5F;
+		echo.reverb = 1.75F;
+		echo.chorus = 1.75F;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_2;
+		echo.targetChannel = ARP_ECHO_3_CH_2;
+		echo.pan = 0;
+		echo.delay = 9;
+		echo.velocity = 0.4F;
+		echo.filter = 0.5F;
+		echo.reverb = 1.75F;
+		echo.chorus = 1.75F;
+		echos.add(echo);
+		
+		applyEchoConfigNoLock();
+		
 		lock.unlock(this);
+	}
+	
+	public List<EchoConfig> getEchos() {
+		List<EchoConfig> r = new ArrayList<EchoConfig>();
+		lock.lock(this);
+		for (EchoConfig echo: echos) {
+			r.add(echo.copy());
+		}
+		lock.unlock(this);
+		return r;
 	}
 	
 	public void configureSynthesizer(Synthesizer synthesizer) {
@@ -228,5 +301,17 @@ public class SynthConfig {
 	
 	public static int getTotalTracks() {
 		return 5;
+	}
+	
+	protected void applyEchoConfigNoLock() {
+		for (EchoConfig echo: echos) {
+			SynthChannelConfig source = channels[echo.sourceChannel];
+			SynthChannelConfig target = channels[echo.targetChannel];
+			target.copyFrom(source);
+			target.pan = echo.pan;
+			target.filter = (int)(target.filter * echo.filter);
+			target.reverb = (int)(target.reverb * echo.reverb);
+			target.chorus = (int)(target.chorus * echo.chorus);
+		}
 	}
 }
