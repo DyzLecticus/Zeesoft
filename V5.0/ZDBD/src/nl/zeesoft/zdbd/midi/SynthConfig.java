@@ -295,12 +295,24 @@ public class SynthConfig {
 			r = 3;
 		} else if (channel==ARP_CHANNEL_2) {
 			r = 4;
+		} else if (channel==ARP_ECHO_1_CH_1) {
+			r = 5;
+		} else if (channel==ARP_ECHO_1_CH_2) {
+			r = 6;
+		} else if (channel==ARP_ECHO_2_CH_1) {
+			r = 7;
+		} else if (channel==ARP_ECHO_2_CH_2) {
+			r = 8;
+		} else if (channel==ARP_ECHO_3_CH_1) {
+			r = 9;
+		} else if (channel==ARP_ECHO_3_CH_2) {
+			r = 10;
 		}
 		return r;
 	}
 	
 	public static int getTotalTracks() {
-		return 5;
+		return 11;
 	}
 	
 	protected void applyEchoConfigNoLock() {
