@@ -594,8 +594,15 @@ public class MidiSequencer implements Sequencer, Waitable {
 											int data2 = msg.getData2();
 											if (msg.getCommand()==ShortMessage.NOTE_ON || msg.getCommand()==ShortMessage.NOTE_OFF) {
 												data2 = (int)(data2 * echo.velocity);
+											} else if (msg.getCommand()==ShortMessage.CONTROL_CHANGE) {
+												if (msg.getData1()==SynthConfig.FILTER) {
+													data2 = (int)(data2 * echo.filter);
+												} else if (msg.getData1()==SynthConfig.REVERB) {
+													data2 = (int)(data2 * echo.reverb);
+												} else if (msg.getData1()==SynthConfig.CHORUS) {
+													data2 = (int)(data2 * echo.chorus);
+												}
 											}
-											// TODO: Apply echo changes to other events
 											message.setMessage(msg.getCommand(),echo.targetChannel,msg.getData1(),data2); 
 											MidiEvent evt = new MidiEvent(message,event.getTick());
 											tickEvents.add(evt);

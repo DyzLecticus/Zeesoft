@@ -121,8 +121,8 @@ public class SynthConfig {
 		echo.targetChannel = ARP_ECHO_2_CH_1;
 		echo.pan = 112;
 		echo.delay = 6;
-		echo.velocity = 0.5F;
-		echo.filter = 0.6F;
+		echo.velocity = 0.40F;
+		echo.filter = 0.75F;
 		echo.reverb = 1.5F;
 		echo.chorus = 1.5F;
 		echos.add(echo);
@@ -132,8 +132,8 @@ public class SynthConfig {
 		echo.targetChannel = ARP_ECHO_2_CH_2;
 		echo.pan = 112;
 		echo.delay = 6;
-		echo.velocity = 0.5F;
-		echo.filter = 0.6F;
+		echo.velocity = 0.40F;
+		echo.filter = 0.75F;
 		echo.reverb = 1.5F;
 		echo.chorus = 1.5F;
 		echos.add(echo);
@@ -143,8 +143,8 @@ public class SynthConfig {
 		echo.targetChannel = ARP_ECHO_3_CH_1;
 		echo.pan = 0;
 		echo.delay = 9;
-		echo.velocity = 0.4F;
-		echo.filter = 0.5F;
+		echo.velocity = 0.2F;
+		echo.filter = 0.7F;
 		echo.reverb = 1.75F;
 		echo.chorus = 1.75F;
 		echos.add(echo);
@@ -154,8 +154,8 @@ public class SynthConfig {
 		echo.targetChannel = ARP_ECHO_3_CH_2;
 		echo.pan = 0;
 		echo.delay = 9;
-		echo.velocity = 0.4F;
-		echo.filter = 0.5F;
+		echo.velocity = 0.2F;
+		echo.filter = 0.7F;
 		echo.reverb = 1.75F;
 		echo.chorus = 1.75F;
 		echos.add(echo);

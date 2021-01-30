@@ -6,7 +6,7 @@ public class EchoConfig {
 	public int		delay			= 3;
 	public int		pan				= 16;
 	public float	velocity		= 0.6F;
-	public float	filter			= 0.75F;
+	public float	filter			= 0.80F;
 	public float	reverb			= 1.25F;
 	public float	chorus			= 1.25F;
 	
