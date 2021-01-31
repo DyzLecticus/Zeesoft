@@ -150,6 +150,7 @@ public class PatternSequence {
 				io.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythm.getSDRForPatternStep(pattern.num, s));
 				io.setValue(NetworkConfigFactory.GROUP1_INPUT, pattern.getSDRForGroup1Step(s));
 				io.setValue(NetworkConfigFactory.GROUP2_INPUT, pattern.getSDRForGroup2Step(s));
+				io.setValue(NetworkConfigFactory.GROUP3_INPUT, pattern.getSDRForGroup3Step(s));
 				r.add(io);
 			}
 		}

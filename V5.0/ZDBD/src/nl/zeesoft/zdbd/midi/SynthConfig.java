@@ -18,14 +18,15 @@ public class SynthConfig {
 	public static final int			DRUM_CHANNEL		= 9;
 	public static final int			BASS_CHANNEL_1		= 0;
 	public static final int			BASS_CHANNEL_2		= 1;
-	public static final int			ARP_CHANNEL_1		= 2;
-	public static final int			ARP_CHANNEL_2		= 3;
-	public static final int			ARP_ECHO_1_CH_1		= 4;
-	public static final int			ARP_ECHO_1_CH_2		= 5;
-	public static final int			ARP_ECHO_2_CH_1		= 6;
-	public static final int			ARP_ECHO_2_CH_2		= 7;
-	public static final int			ARP_ECHO_3_CH_1		= 8;
-	public static final int			ARP_ECHO_3_CH_2		= 10;
+	public static final int			STAB_CHANNEL		= 2;
+	public static final int			ARP_CHANNEL_1		= 7;
+	public static final int			ARP_CHANNEL_2		= 8;
+	public static final int			ARP_ECHO_1_CH_1		= 10;
+	public static final int			ARP_ECHO_1_CH_2		= 11;
+	public static final int			ARP_ECHO_2_CH_1		= 12;
+	public static final int			ARP_ECHO_2_CH_2		= 13;
+	public static final int			ARP_ECHO_3_CH_1		= 14;
+	public static final int			ARP_ECHO_3_CH_2		= 15;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -70,10 +71,15 @@ public class SynthConfig {
 	public void initializeDefaults() {
 		lock.lock(this);
 		lfos.clear();
+		echos.clear();
+		
 		for (int c = 0; c < channels.length; c++) {
 			channels[c] = new SynthChannelConfig();
 			channels[c].channel = c;
 		}
+		
+		EchoConfig echo = null;
+		
 		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
 		drumConfig.instrument = 118;
 
@@ -92,6 +98,11 @@ public class SynthConfig {
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
 
+		SynthChannelConfig stabConfig = channels[STAB_CHANNEL];
+		stabConfig.instrument = 81;
+		stabConfig.reverb = 64;
+		stabConfig.chorus = 40;
+
 		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
 		arp1Config.instrument = 80;
 		arp1Config.reverb = 48;
@@ -106,14 +117,16 @@ public class SynthConfig {
 		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.TRIANGLE,12,0.5F));
 		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.TRIANGLE,12,-0.5F));
 
-		EchoConfig echo = new EchoConfig();
+		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_1;
 		echo.targetChannel = ARP_ECHO_1_CH_1;
+		echo.pan = 16;
 		echos.add(echo);
 		
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_2;
 		echo.targetChannel = ARP_ECHO_1_CH_2;
+		echo.pan = 16;
 		echos.add(echo);
 		
 		echo = new EchoConfig();
@@ -141,7 +154,7 @@ public class SynthConfig {
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_1;
 		echo.targetChannel = ARP_ECHO_3_CH_1;
-		echo.pan = 0;
+		echo.pan = 64;
 		echo.delay = 9;
 		echo.velocity = 0.2F;
 		echo.filter = 0.7F;
@@ -152,7 +165,7 @@ public class SynthConfig {
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_2;
 		echo.targetChannel = ARP_ECHO_3_CH_2;
-		echo.pan = 0;
+		echo.pan = 64;
 		echo.delay = 9;
 		echo.velocity = 0.2F;
 		echo.filter = 0.7F;
@@ -291,28 +304,30 @@ public class SynthConfig {
 			r = 1;
 		} else if (channel==BASS_CHANNEL_2) {
 			r = 2;
-		} else if (channel==ARP_CHANNEL_1) {
+		} else if (channel==STAB_CHANNEL) {
 			r = 3;
-		} else if (channel==ARP_CHANNEL_2) {
+		} else if (channel==ARP_CHANNEL_1) {
 			r = 4;
-		} else if (channel==ARP_ECHO_1_CH_1) {
+		} else if (channel==ARP_CHANNEL_2) {
 			r = 5;
-		} else if (channel==ARP_ECHO_1_CH_2) {
+		} else if (channel==ARP_ECHO_1_CH_1) {
 			r = 6;
-		} else if (channel==ARP_ECHO_2_CH_1) {
+		} else if (channel==ARP_ECHO_1_CH_2) {
 			r = 7;
-		} else if (channel==ARP_ECHO_2_CH_2) {
+		} else if (channel==ARP_ECHO_2_CH_1) {
 			r = 8;
-		} else if (channel==ARP_ECHO_3_CH_1) {
+		} else if (channel==ARP_ECHO_2_CH_2) {
 			r = 9;
-		} else if (channel==ARP_ECHO_3_CH_2) {
+		} else if (channel==ARP_ECHO_3_CH_1) {
 			r = 10;
+		} else if (channel==ARP_ECHO_3_CH_2) {
+			r = 11;
 		}
 		return r;
 	}
 	
 	public static int getTotalTracks() {
-		return 11;
+		return 12;
 	}
 	
 	protected void applyEchoConfigNoLock() {

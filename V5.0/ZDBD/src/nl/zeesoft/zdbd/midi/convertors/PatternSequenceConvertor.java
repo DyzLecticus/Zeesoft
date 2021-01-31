@@ -18,6 +18,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class PatternSequenceConvertor {
@@ -46,10 +47,9 @@ public class PatternSequenceConvertor {
 		Sequence r = createSequence();
 		if (r!=null) {
 			lock.lock(this);
-			List<InstrumentPattern> patterns = sequence.getSequencedPatterns();
 			long startTick = 0;
-			for (InstrumentPattern pattern: patterns) {
-				Sequence seq = generateNoteSequenceForPattern(pattern,sequence.rythm);
+			for (int i = 0; i < sequence.getSequencedPatterns().size(); i++) {
+				Sequence seq = generateNoteSequenceForPattern(sequence,i);
 				for (int t = 0; t < seq.getTracks().length; t++) {
 					Track track = seq.getTracks()[t];
 					for (int e = 0; e < track.size(); e++) {
@@ -71,17 +71,10 @@ public class PatternSequenceConvertor {
 		return r;
 	}
 	
-	public Sequence generateSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
-		lock.lock(this);
-		Sequence r = generateNoteSequenceForPattern(pattern,rythm);
-		lock.unlock(this);
-		return r;
-	}
-	
-	protected Sequence generateNoteSequenceForPattern(InstrumentPattern pattern, Rythm rythm) {
+	protected Sequence generateNoteSequenceForPattern(PatternSequence patternSequence, int patternIndex) {
 		Sequence r = createSequence();
-		addNotesToSequence(r,pattern,rythm);
-		MidiSequenceUtil.alignTrackEndings(r,rythm);
+		addNotesToSequence(r,patternSequence,patternIndex);
+		MidiSequenceUtil.alignTrackEndings(r,patternSequence.rythm);
 		return r;
 	}
 	
@@ -89,7 +82,10 @@ public class PatternSequenceConvertor {
 		return MidiSequenceUtil.createSequence(getTrackNames().size());
 	}
 	
-	protected void addNotesToSequence(Sequence sequence, InstrumentPattern pattern, Rythm rythm) {
+	protected void addNotesToSequence(Sequence sequence, PatternSequence patternSequence, int patternIndex) {
+		Rythm rythm = patternSequence.rythm;
+		InstrumentPattern pattern = patternSequence.getSequencedPatterns().get(patternIndex);
+		int baseStep = rythm.getStepsPerPattern() * patternIndex;
 		long sequenceEndTick = MidiSequenceUtil.getSequenceEndTick(rythm);
 		int ticksPerStep = MidiSequenceUtil.getTicksPerStep(rythm);
 		int stepsPerPattern = rythm.getStepsPerPattern();
@@ -119,6 +115,9 @@ public class PatternSequenceConvertor {
 								note = chord.baseNote;
 							}
 							BassConvertor.applyOctaveNote(mns, octave, note);
+						} else if (inst.name().equals(Stab.NAME)) {
+							SequenceChord chord = patternSequence.getChordForStep(baseStep + s,false);
+							StabConvertor.applyChordNotes(mns, 0, chord);
 						}
 					}
 					if (mns.size()>0) {
@@ -129,7 +128,7 @@ public class PatternSequenceConvertor {
 								break;
 							}
 						}
-						Track track = sequence.getTracks()[inst.index];
+						Track track = sequence.getTracks()[getTrackNum(inst.name())];
 						MidiSequenceUtil.addMidiNotesToTrack(mns,track,rythm,s,nextActiveTick,ticksPerStep);
 					}
 				}

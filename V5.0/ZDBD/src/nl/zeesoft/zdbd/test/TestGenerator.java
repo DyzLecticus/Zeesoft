@@ -63,15 +63,15 @@ public class TestGenerator extends TestObject {
 		NetworkConfig config = NetworkConfigFactory.getNetworkConfig();
 		config.directory = "dist";
 		
+		FileIO.mockIO = false;
 		Network network = new Network();
 		if (!config.fileExists()) {
 			System.out.println(config.getDescription());
 			network = TestInstrumentNetwork.createAndTrainNetwork();
 		} else {
-			FileIO.mockIO = false;
 			network.initializeAndLoad(config);
-			FileIO.mockIO = true;
 		}
+		FileIO.mockIO = true;
 		
 		NetworkIO lastIO = network.getLastIO();
 		assertNotNull(lastIO,"Last network IO does not match expectation");

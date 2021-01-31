@@ -530,15 +530,15 @@ public class MidiSequencer implements Sequencer, Waitable {
 							Set<MidiEvent> evts = pSeq.getEventsForTick(t,pMix);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
-							rSequence.eventsPerTick.put(rt, tickEvents);
 	
 							// Add echo events
 							for (EchoConfig echo: echos) {
 								evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
 								events.addAll(evts);
 								tickEvents.addAll(evts);
-								rSequence.eventsPerTick.put(rt, tickEvents);
 							}
+							
+							rSequence.eventsPerTick.put(rt, tickEvents);
 							rt++;
 						}
 					}
@@ -555,15 +555,21 @@ public class MidiSequencer implements Sequencer, Waitable {
 						Set<MidiEvent> evts = cSeq.getEventsForTick(t,cMix);
 						events.addAll(evts);
 						tickEvents.addAll(evts);
-						rSequence.eventsPerTick.put(rt, tickEvents);
 						
 						// Add echo events
+						// TODO Create separate echo code runner to make sure buffer is cleared
+						//System.out.println("---");
 						for (EchoConfig echo: echos) {
 							evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
-							events.addAll(evts);
-							tickEvents.addAll(evts);
-							rSequence.eventsPerTick.put(rt, tickEvents);
+							while(evts.size()>0) {
+								events.addAll(evts);
+								tickEvents.addAll(evts);
+								evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+							}
+							//System.out.println(echoBufs[echo.targetChannel].tickEvents.size());
 						}
+						
+						rSequence.eventsPerTick.put(rt, tickEvents);
 						rt++;
 					}
 					for (MidiEvent event:events) {

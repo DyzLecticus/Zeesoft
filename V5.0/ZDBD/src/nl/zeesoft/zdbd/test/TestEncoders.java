@@ -75,7 +75,13 @@ public class TestEncoders extends TestObject {
 		System.out.println("Group 2 pattern (" + InstrumentPattern.sizeX(2) + "*" + InstrumentPattern.sizeY(2) + ");");
 		System.out.println("(Percussion, Bass, Octave, Note)");
 		displaySDRList(sdrs);
-		
+
+		sdrs = pattern.getSDRsForGroup(3,rythm.getStepsPerPattern());
+		System.out.println();
+		System.out.println("Group 3 pattern (" + InstrumentPattern.sizeX(3) + "*" + InstrumentPattern.sizeY(3) + ");");
+		System.out.println("(Stab)");
+		displaySDRList(sdrs);
+
 		assertEqual(InstrumentPattern.getValueForDuration(0,false),0,"Note does not match expectation (1)");
 		assertEqual(InstrumentPattern.getValueForDuration(1,false),1,"Note does not match expectation (2)");
 		assertEqual(InstrumentPattern.getValueForDuration(1,true),2,"Note does not match expectation (3)");

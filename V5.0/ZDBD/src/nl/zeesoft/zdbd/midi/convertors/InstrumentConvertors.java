@@ -16,12 +16,12 @@ public class InstrumentConvertors {
 	public static final int				PERCUSSION1			= 6;
 	public static final int				PERCUSSION2			= 7;
 	public static final int				BASS				= 8;
-	public static final int				ARPEGGIATOR			= 9;
-	public static final int				STRINGS				= 10;
+	public static final int				STAB				= 9;
+	public static final int				ARPEGGIATOR			= 10;
 	
 	public static final String[]		INSTRUMENT_NAMES	= {
-		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass",
-		Arpeggiator.class.getSimpleName(),"Strings"
+		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass", "Stab",
+		Arpeggiator.class.getSimpleName()
 	};
 	
 	private List<InstrumentConvertor>	convertors			= new ArrayList<InstrumentConvertor>();
@@ -60,6 +60,17 @@ public class InstrumentConvertors {
 				layer2.velocity = 40;
 				layer2.accentVelocity = 50;
 				conv.layers.add(layer2);
+				convertors.add(conv);
+			} else if (i==STAB) {
+				StabConvertor conv = new StabConvertor();
+				conv.name = name;
+				conv.hold = 0.7F;
+				SynthLayerConvertor layer = new SynthLayerConvertor();
+				layer.channel = SynthConfig.STAB_CHANNEL;
+				layer.baseOctave = 5;
+				layer.velocity = 40;
+				layer.accentVelocity = 48;
+				conv.layers.add(layer);
 				convertors.add(conv);
 			} else if (i==ARPEGGIATOR) {
 				SynthConvertor conv = new SynthConvertor();

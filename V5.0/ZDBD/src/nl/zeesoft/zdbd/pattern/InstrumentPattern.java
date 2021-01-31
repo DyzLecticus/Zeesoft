@@ -11,6 +11,7 @@ import nl.zeesoft.zdbd.neural.encoders.HihatEncoder;
 import nl.zeesoft.zdbd.neural.encoders.NoteEncoder;
 import nl.zeesoft.zdbd.neural.encoders.OctaveEncoder;
 import nl.zeesoft.zdbd.neural.encoders.PercussionEncoder;
+import nl.zeesoft.zdbd.neural.encoders.StabEncoder;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Crash;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
@@ -22,6 +23,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
 import nl.zeesoft.zdbd.pattern.instruments.Ride;
 import nl.zeesoft.zdbd.pattern.instruments.Snare;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
 import nl.zeesoft.zdk.neural.SDR;
 
@@ -177,6 +179,14 @@ public class InstrumentPattern {
 		setStepValue(Note.NAME,step,note);
 	}
 	
+	public void setStab(int step, int duration, boolean accent) {
+		if (duration>=1 && duration<=8) {
+			setStepValue(Stab.NAME,step,getValueForDuration(duration,accent));
+		} else {
+			setStepValue(Stab.NAME,step,PatternInstrument.OFF);
+		}
+	}
+	
 	public static boolean isAccent(int value) {
 		boolean r = false;
 		if (value>0) {
@@ -223,6 +233,8 @@ public class InstrumentPattern {
 				r.add(getSDRForGroup1Step(s));
 			} else if (group==2) {
 				r.add(getSDRForGroup2Step(s));
+			} else if (group==3) {
+				r.add(getSDRForGroup3Step(s));
 			}
 		}
 		return r;
@@ -289,6 +301,25 @@ public class InstrumentPattern {
 		return kvSdr;
 	}
 
+	public SDR getSDRForGroup3Step(int step) {
+		StabEncoder sEnc = EncoderFactory.stabEncoder;
+		
+		int l = sEnc.getEncodeLength();
+		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
+		
+		int offset = 0;
+		kvSdr.concat(sEnc.getEncodedValue(getStepValue(Stab.NAME,step)), offset);
+		offset += sEnc.getEncodeLength();
+
+		for (PatternInstrument inst: instruments) {
+			if (inst.group()==3) {
+				kvSdr.put(inst.name(), inst.stepValues[step]);
+			}
+		}
+		
+		return kvSdr;
+	}
+
 	public static int sizeX(int group) {
 		return groupSDR(group).sizeX();
 	}
@@ -304,6 +335,8 @@ public class InstrumentPattern {
 			r = p.getSDRForGroup1Step(0);
 		} else if (group==2) {
 			r = p.getSDRForGroup2Step(0);
+		} else if (group==3) {
+			r = p.getSDRForGroup3Step(0);
 		}
 		r.flatten();
 		r.square();
@@ -322,6 +355,7 @@ public class InstrumentPattern {
 		r.add(new Bass(7));
 		r.add(new Octave(8));
 		r.add(new Note(9));
+		r.add(new Stab(10));
 		return r;
 	}
 }

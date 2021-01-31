@@ -37,6 +37,7 @@ public class MuteButtons extends FormProperty {
 		append(r,renderMuteChannelButton(idPrefix,SynthConfig.DRUM_CHANNEL,"DR",state));
 		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_1,"B1",state));
 		append(r,renderMuteChannelButton(idPrefix,SynthConfig.BASS_CHANNEL_2,"B2",state));
+		append(r,renderMuteChannelButton(idPrefix,SynthConfig.STAB_CHANNEL,"ST",state));
 		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_1,"A1",state));
 		append(r,renderMuteChannelButton(idPrefix,SynthConfig.ARP_CHANNEL_2,"A2",state));
 		append(r,"</div>");

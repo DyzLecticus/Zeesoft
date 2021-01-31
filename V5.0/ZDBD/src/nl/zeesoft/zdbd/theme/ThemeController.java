@@ -650,8 +650,8 @@ public class ThemeController implements EventListener, Waitable {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = "Demo";
-			theme.setShuffle(0.15F);
 			theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
+			theme.setShuffle(0.15F);
 			codes.add(theme.initializeNetwork());
 		}
 		r.add(eventPublisher.getPublishEventRunCode(this, INITIALIZING));

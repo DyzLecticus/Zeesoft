@@ -18,6 +18,7 @@ public class EncoderFactory {
 	public static BassEncoder			bassEncoder			= new BassEncoder(ON_BITS);
 	public static OctaveEncoder			octaveEncoder		= new OctaveEncoder(ON_BITS);
 	public static NoteEncoder			noteEncoder			= new NoteEncoder(ON_BITS);
+	public static StabEncoder			stabEncoder			= new StabEncoder(ON_BITS);
 	
 	public static Str testEncoders() {
 		Str r = new Str();
@@ -43,6 +44,7 @@ public class EncoderFactory {
 		r.add(bassEncoder);
 		r.add(octaveEncoder);
 		r.add(noteEncoder);
+		r.add(stabEncoder);
 		return r;
 	}
 }

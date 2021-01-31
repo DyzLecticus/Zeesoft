@@ -105,6 +105,14 @@ public class PatternFactory {
 			}
 		}
 
+		pattern.setStab(2, 1, false);
+		pattern.setStab(4, 1, true);
+		pattern.setStab(7, 1, true);
+		if (patternNum>0) {
+			pattern.setStab(10, 1, false);
+			pattern.setStab(12, 3, true);
+		}
+
 		return pattern;
 	}
 }

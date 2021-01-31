@@ -28,6 +28,7 @@ public class NetworkConfigFactory {
 	public static String	CONTEXT_INPUT			= "Context";
 	public static String	GROUP1_INPUT			= "Group1";
 	public static String	GROUP2_INPUT			= "Group2";
+	public static String	GROUP3_INPUT			= "Group3";
 		
 	public static NetworkConfig getNetworkConfig() {
 		NetworkConfig r = new NetworkConfig();
@@ -35,9 +36,11 @@ public class NetworkConfigFactory {
 		r.addInput(CONTEXT_INPUT);
 		r.addInput(GROUP1_INPUT);
 		r.addInput(GROUP2_INPUT);
+		r.addInput(GROUP3_INPUT);
 		
 		addGroupProcessors(r,1,GROUP1_INPUT);
 		addGroupProcessors(r,2,GROUP2_INPUT);
+		addGroupProcessors(r,3,GROUP3_INPUT);
 		
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {
 			String inputName = "";
@@ -45,6 +48,8 @@ public class NetworkConfigFactory {
 				inputName = GROUP1_INPUT;
 			} else if (inst.group()==2) {
 				inputName = GROUP2_INPUT;
+			} else if (inst.group()==3) {
+				inputName = GROUP3_INPUT;
 			}
 			addClassifier(r, inst.name(), inputName);
 		}

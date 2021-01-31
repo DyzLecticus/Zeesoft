@@ -10,6 +10,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Crash;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Ride;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -267,12 +268,12 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain B1";
-		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
 		put(gen);
 		
 		gen = new Generator();
 		gen.name = "Maintain B2";
-		gen.setMaintainInstruments(Bass.NAME, Note.NAME);
+		gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
 		put(gen);
 		
 		gen = new Generator();

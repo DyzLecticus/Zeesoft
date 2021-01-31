@@ -22,6 +22,7 @@ public class Generator {
 	// Network merger dirsortion controls
 	public float			group1Distortion			= 0.1F; // 0 - 1
 	public float			group2Distortion			= 0.0F; // 0 - 1
+	public float			group3Distortion			= 0.0F; // 0 - 1
 	
 	// Randomized rythm generation controls
 	public int				smallerChunk				= 1;
@@ -48,6 +49,7 @@ public class Generator {
 		this.name = gen.name;
 		this.group1Distortion = gen.group1Distortion;
 		this.group2Distortion = gen.group2Distortion;
+		this.group3Distortion = gen.group3Distortion;
 		this.smallerChunk = gen.smallerChunk;
 		this.largerChunk = gen.largerChunk;
 		this.randomChunkOffset = gen.randomChunkOffset;
@@ -104,6 +106,7 @@ public class Generator {
 			network.setProcessorLearn("*", false);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", group1Distortion);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", group2Distortion);
+			network.setProcessorProperty(NetworkConfigFactory.GROUP3_INPUT + "Merger", "distortion", group3Distortion);
 
 			PatternSequence r = new PatternSequence();
 			r.rythm.copyFrom(trainingSequence.rythm);
@@ -123,6 +126,7 @@ public class Generator {
 			network.setProcessorLearn("*", true);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP1_INPUT + "Merger", "distortion", 0F);
 			network.setProcessorProperty(NetworkConfigFactory.GROUP2_INPUT + "Merger", "distortion", 0F);
+			network.setProcessorProperty(NetworkConfigFactory.GROUP3_INPUT + "Merger", "distortion", 0F);
 			Logger.dbg(this, new Str("Generated sequence"));
 		}
 	}
@@ -177,11 +181,13 @@ public class Generator {
 				}
 				SDR group1SDR = t.getSDRForGroup1Step(0);
 				SDR group2SDR = t.getSDRForGroup2Step(0);
+				SDR group3SDR = t.getSDRForGroup3Step(0);
 				
 				NetworkIO networkIO = new NetworkIO();
 				networkIO.setValue(NetworkConfigFactory.CONTEXT_INPUT, rythmSDR);
 				networkIO.setValue(NetworkConfigFactory.GROUP1_INPUT, group1SDR);
 				networkIO.setValue(NetworkConfigFactory.GROUP2_INPUT, group2SDR);
+				networkIO.setValue(NetworkConfigFactory.GROUP3_INPUT, group3SDR);
 				network.processIO(networkIO);
 				if (networkIO.hasErrors()) {
 					Logger.err(this, networkIO.getErrors().get(0));
