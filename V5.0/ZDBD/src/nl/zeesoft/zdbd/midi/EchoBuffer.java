@@ -30,4 +30,13 @@ public class EchoBuffer {
 		}
 		return r;
 	}
+	
+	public boolean hasTickEvents(int ticksPerStep, int delay) {
+		boolean r = false;
+		int max = ticksPerStep * delay;
+		if (tickEvents.size()>max) {
+			r = true;
+		}
+		return r;
+	}
 }

@@ -78,6 +78,11 @@ public class MidiSequencer implements Sequencer, Waitable {
 			protected void doneCallback() {
 				flushRecordBuffer();
 				MidiSys.allSoundOff();
+	 			lock.lock(this);
+	 			for (int c = 0; c < echoBuffers.length; c++) {
+					echoBuffers[c].tickEvents.clear();
+				}
+	 			lock.unlock(this);
 			}
 		};
 		sender.setPriority(Thread.MAX_PRIORITY);
@@ -328,9 +333,6 @@ public class MidiSequencer implements Sequencer, Waitable {
 			sender.stop();
 			lock.lock(this);
 			paused = false;
-			for (int c = 0; c < echoBuffers.length; c++) {
-				echoBuffers[c].tickEvents.clear();
-			}
 			lock.unlock(this);
 		}
 	}
@@ -456,7 +458,9 @@ public class MidiSequencer implements Sequencer, Waitable {
 			@Override
 			protected boolean run() {
 				List<EchoConfig> echos = new ArrayList<EchoConfig>();
+				
 				lock.lock(this);
+				
 				if (synthConfig!=null) {
 					echos = synthConfig.getEchos();
 				}
@@ -508,7 +512,6 @@ public class MidiSequencer implements Sequencer, Waitable {
 					prevTick = cTick;
 				}
 				boolean record = recording;
-				lock.unlock(this);
 				
 				MidiSequence rSequence = new MidiSequence();
 				long rt = 0;
@@ -542,9 +545,10 @@ public class MidiSequencer implements Sequencer, Waitable {
 							rt++;
 						}
 					}
+					Set<MidiEvent> tickEvents = null;
 					for (long t = (pTick + 1); t < (cTick + 1); t++) {
 						// Add LFO events
-						Set<MidiEvent> tickEvents = new HashSet<MidiEvent>();
+						tickEvents = new HashSet<MidiEvent>();
 						if (lcSeq!=null) {
 							Set<MidiEvent> evts = lcSeq.getEventsForTick(t,cMix);
 							events.addAll(evts);
@@ -557,20 +561,22 @@ public class MidiSequencer implements Sequencer, Waitable {
 						tickEvents.addAll(evts);
 						
 						// Add echo events
-						// TODO Create separate echo code runner to make sure buffer is cleared
-						//System.out.println("---");
 						for (EchoConfig echo: echos) {
 							evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
-							while(evts.size()>0) {
-								events.addAll(evts);
-								tickEvents.addAll(evts);
-								evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
-							}
-							//System.out.println(echoBufs[echo.targetChannel].tickEvents.size());
+							events.addAll(evts);
+							tickEvents.addAll(evts);
 						}
-						
 						rSequence.eventsPerTick.put(rt, tickEvents);
 						rt++;
+					}
+					if (tickEvents!=null) {
+						for (EchoConfig echo: echos) {
+							while(echoBufs[echo.targetChannel].hasTickEvents(tps, echo.delay)) {
+								Set<MidiEvent> evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+								events.addAll(evts);
+								tickEvents.addAll(evts);
+							}
+						}
 					}
 					for (MidiEvent event:events) {
 						try {
@@ -583,7 +589,6 @@ public class MidiSequencer implements Sequencer, Waitable {
 				}
 				
 				if (echos.size()>0 && rt>0) {
-					lock.lock(this);
 					for (int c = 0; c < echoBuffers.length; c++) {
 						echoBuffers[c] = echoBufs[c];
 					}
@@ -621,17 +626,15 @@ public class MidiSequencer implements Sequencer, Waitable {
 							echoBuffers[echo.targetChannel].tickEvents.add(tickEvents);
 						}
 					}
-					lock.unlock(this);
 				}
 				
 				if (record && rt>0) {
-					lock.lock(this);
 					for (long t = 0; t < rt; t++) {
 						recordBuffer.eventsPerTick.put(recordedTicks, rSequence.eventsPerTick.get(t));
 						recordedTicks++;
 					}
-					lock.unlock(this);
 				}
+				lock.unlock(this);
 
 				if (switched) {
 					eventPublisher.start();
