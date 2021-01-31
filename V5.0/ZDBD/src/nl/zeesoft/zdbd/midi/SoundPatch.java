@@ -11,9 +11,9 @@ public class SoundPatch {
 	public SynthConfig					synthConfig	= new SynthConfig();
 	public PatternSequenceConvertor		convertor	= new PatternSequenceConvertor();
 	
-	public void copyFrom(SoundPatch pat) {
-		this.synthConfig = pat.synthConfig;
-		this.convertor = pat.convertor;
+	public void copyFrom(SoundPatch patch) {
+		this.synthConfig = patch.synthConfig;
+		this.convertor = patch.convertor;
 	}
 	
 	public Sequence generateMidiSequence(PatternSequence sequence, Arpeggiator arp) {

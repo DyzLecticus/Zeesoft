@@ -128,14 +128,14 @@ public class InstrumentConvertors {
 					sample.accentHold = 3.9F;
 				} else if (i==PERCUSSION1) {
 					sample.midiNote = 76;
-					sample.velocity = 80;
-					sample.accentVelocity = 90;
+					sample.velocity = 60;
+					sample.accentVelocity = 70;
 					sample.hold = 0.1F;
 					sample.accentHold = 0.2F;
 				} else if (i==PERCUSSION2) {
 					sample.midiNote = 77;
-					sample.velocity = 70;
-					sample.accentVelocity = 80;
+					sample.velocity = 50;
+					sample.accentVelocity = 60;
 					sample.hold = 0.1F;
 					sample.accentHold = 0.2F;
 				}
