@@ -175,7 +175,7 @@ public class MidiSequenceUtil {
 	public static void renderSequenceToAudioFile(Sequence sequence, String path) {
 		File file = new File(path);
 		if (
-			file.getParentFile().isDirectory() && file.getParentFile().exists() &&
+			file.getParentFile().exists() && file.getParentFile().isDirectory() &&
 			MidiSys.synthesizer!=null && MidiSys.synthesizer instanceof AudioSynthesizer
 			) {
 			MidiSequenceUtil self = new MidiSequenceUtil();
@@ -206,10 +206,8 @@ public class MidiSequenceUtil {
 		}
 	}
 
-	/*
-	 * Send entire MIDI Sequence into Receiver using time stamps.
-	 */
 	private static double send(Sequence seq, Receiver recv) {
+		// Send entire MIDI Sequence into Receiver using time stamps.
 		float divtype = seq.getDivisionType();
 		Track[] tracks = seq.getTracks();
 		int[] trackspos = new int[tracks.length];
@@ -225,33 +223,36 @@ public class MidiSequenceUtil {
 				Track track = tracks[i];
 				if (trackpos < track.size()) {
 					MidiEvent event = track.get(trackpos);
-					if (selevent == null
-							|| event.getTick() < selevent.getTick()) {
+					if (selevent == null || event.getTick() < selevent.getTick()) {
 						selevent = event;
 						seltrack = i;
 					}
 				}
 			}
-			if (seltrack == -1)
+			if (seltrack == -1) {
 				break;
+			}
 			trackspos[seltrack]++;
 			long tick = selevent.getTick();
-			if (divtype == Sequence.PPQ)
+			if (divtype == Sequence.PPQ) {
 				curtime += ((tick - lasttick) * mpq) / seqres;
-			else
+			} else {
 				curtime = (long) ((tick * 1000000.0 * divtype) / seqres);
+			}
 			lasttick = tick;
 			MidiMessage msg = selevent.getMessage();
 			if (msg instanceof MetaMessage) {
-				if (divtype == Sequence.PPQ)
+				if (divtype == Sequence.PPQ) {
 					if (((MetaMessage) msg).getType() == TEMPO) {
 						byte[] data = ((MetaMessage) msg).getData();
-						mpq = ((data[0] & 0xff) << 16)
-								| ((data[1] & 0xff) << 8) | (data[2] & 0xff);
+						mpq = 
+							((data[0] & 0xff) << 16) |
+							((data[1] & 0xff) << 8) |
+							(data[2] & 0xff);
 					}
-			} else {
-				if (recv != null)
-					recv.send(msg, curtime);
+				}
+			} else if (recv != null) {
+				recv.send(msg, curtime);
 			}
 		}
 		return curtime / 1000000.0;
