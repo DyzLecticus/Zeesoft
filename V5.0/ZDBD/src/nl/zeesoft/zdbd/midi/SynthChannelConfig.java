@@ -9,7 +9,7 @@ public class SynthChannelConfig {
 	public boolean		mute			= false;
 
 	public int			instrument		= 0;
-	public int			volume			= 100;
+	public int			volume			= 120;
 	public int			attack			= DEFAULT;
 	public int			decay			= DEFAULT;
 	public int			release			= DEFAULT;

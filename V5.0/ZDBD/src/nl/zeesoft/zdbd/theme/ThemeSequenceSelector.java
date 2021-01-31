@@ -296,9 +296,22 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 				}
 			}
 			lock.unlock(this);
+		} else if (event.name.equals(ThemeController.CHANGED_ARPEGGIATOR)) {
+			lock.lock(this);
+			if (event.param!=null) {
+				if (event.param.toString().equals(currArpeggiator.name) && !MidiSys.sequencer.isRunning()) {
+					changedCurrentSequenceNoLock();
+					Logger.dbg(this, new Str("Updated current sequence"));
+				}
+				if (event.param.toString().equals(nextArpeggiator.name)) {
+					changedNextSequenceNoLock();
+					Logger.dbg(this, new Str("Updated next sequence"));
+				}
+			}
+			lock.unlock(this);
 		} else if (event.name.equals(ThemeController.CHANGED_SHUFFLE)) {
 			lock.lock(this);
-			if (currSequence.length()>0) {
+			if (currSequence.length()>0 && !MidiSys.sequencer.isRunning()) {
 				changedCurrentSequenceNoLock();
 			}
 			if (nextSequence.length()>0) {

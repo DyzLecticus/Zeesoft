@@ -50,8 +50,11 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				GENERATED_SEQUENCES			= "GENERATED_SEQUENCES";
 	public static String				GENERATING_SEQUENCE			= "GENERATING_SEQUENCE";
 	public static String				GENERATED_SEQUENCE			= "GENERATED_SEQUENCE";
+	
 	public static String				CHANGED_SHUFFLE				= "CHANGED_SHUFFLE";
 	
+	public static String				CHANGED_ARPEGGIATOR			= "CHANGED_ARPEGGIATOR";
+
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
 
@@ -333,11 +336,18 @@ public class ThemeController implements EventListener, Waitable {
 	}
 
 	public void putArpeggiator(Arpeggiator arp) {
+		boolean changed = false;
 		lock.lock(this);
 		if (theme!=null) {
+			if (theme.arpeggiators.get(arp.name)!=null) {
+				changed = true;
+			}
 			theme.arpeggiators.put(arp);
 		}
 		lock.unlock(this);
+		if (changed) {
+			eventPublisher.publishEvent(this, CHANGED_ARPEGGIATOR, arp.name);
+		}
 	}
 
 	public Arpeggiator getArpeggiator(String name) {

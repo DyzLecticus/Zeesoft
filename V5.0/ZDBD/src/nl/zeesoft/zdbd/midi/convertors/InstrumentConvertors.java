@@ -116,8 +116,8 @@ public class InstrumentConvertors {
 					sample.accentHold = 0.8F;
 				} else if (i==RIDE) {
 					sample.midiNote = 69;
-					sample.velocity = 80;
-					sample.accentVelocity = 90;
+					sample.velocity = 76;
+					sample.accentVelocity = 84;
 					sample.hold = 0.9F;
 					sample.accentHold = 1.9F;
 				} else if (i==CRASH) {

@@ -14,7 +14,7 @@ public class ArpeggiatorEditor extends FormHtml {
 		addProperty("name", "Name", arpeggiator.name, FormProperty.TEXT_INPUT);
 		addProperty("minDuration", "Minimum duration", arpeggiator.minDuration, FormProperty.NUMBER_INPUT);
 		addProperty("maxDuration", "Maximum duration", arpeggiator.maxDuration, FormProperty.NUMBER_INPUT);
-		addProperty("density", "Group 2 distortion", arpeggiator.density, FormProperty.ANY_INPUT);
+		addProperty("density", "Density", arpeggiator.density, FormProperty.ANY_INPUT);
 		addProperty("maxOctave", "Maximum octave", arpeggiator.maxOctave, FormProperty.NUMBER_INPUT);
 		addProperty("maxInterval", "Maximum interval", arpeggiator.maxInterval, FormProperty.NUMBER_INPUT);
 		addProperty("maxSteps", "Maximum steps", arpeggiator.maxSteps, FormProperty.NUMBER_INPUT);
