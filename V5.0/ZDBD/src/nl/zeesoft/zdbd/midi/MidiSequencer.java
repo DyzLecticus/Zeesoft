@@ -116,6 +116,12 @@ public class MidiSequencer implements Sequencer, Waitable {
 		recordedSequence = null;
 		recordedSeqTicks = 0;
 		recordLock.unlock(this);
+		
+		lock.lock(this);
+		for (int c = 0; c < echoBuffers.length; c++) {
+			echoBuffers[c].tickEvents.clear();
+		}
+		lock.unlock(this);
 	}
 
 	protected void waitForClose(int waitMs) {
@@ -464,10 +470,6 @@ public class MidiSequencer implements Sequencer, Waitable {
 				if (synthConfig!=null) {
 					echos = synthConfig.getEchos();
 				}
-				EchoBuffer[] echoBufs = new EchoBuffer[16];
-				for (int c = 0; c < echoBuffers.length; c++) {
-					echoBufs[c] = echoBuffers[c].copy();
-				}
 				int tps = ticksPerStep;
 				MidiSequence pSeq = sequence[CURR];
 				MidiSequence cSeq = sequence[CURR];
@@ -536,7 +538,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 	
 							// Add echo events
 							for (EchoConfig echo: echos) {
-								evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+								evts = echoBuffers[echo.targetChannel].getTickEvents(tps, echo.delay);
 								events.addAll(evts);
 								tickEvents.addAll(evts);
 							}
@@ -562,7 +564,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 						
 						// Add echo events
 						for (EchoConfig echo: echos) {
-							evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+							evts = echoBuffers[echo.targetChannel].getTickEvents(tps, echo.delay);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 						}
@@ -571,8 +573,8 @@ public class MidiSequencer implements Sequencer, Waitable {
 					}
 					if (tickEvents!=null) {
 						for (EchoConfig echo: echos) {
-							while(echoBufs[echo.targetChannel].hasTickEvents(tps, echo.delay)) {
-								Set<MidiEvent> evts = echoBufs[echo.targetChannel].getTickEvents(tps, echo.delay);
+							while(echoBuffers[echo.targetChannel].hasTickEvents(tps, echo.delay)) {
+								Set<MidiEvent> evts = echoBuffers[echo.targetChannel].getTickEvents(tps, echo.delay);
 								events.addAll(evts);
 								tickEvents.addAll(evts);
 							}
@@ -589,9 +591,6 @@ public class MidiSequencer implements Sequencer, Waitable {
 				}
 				
 				if (echos.size()>0 && rt>0) {
-					for (int c = 0; c < echoBuffers.length; c++) {
-						echoBuffers[c] = echoBufs[c];
-					}
 					for (EchoConfig echo: echos) {
 						for (long t = 0; t < rt; t++) {
 							Set<MidiEvent> events = rSequence.eventsPerTick.get(t);
@@ -714,7 +713,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 			}
 		};
 	}
-
+	
 	@Override
 	public Info getDeviceInfo() {
 		// Not implemented
