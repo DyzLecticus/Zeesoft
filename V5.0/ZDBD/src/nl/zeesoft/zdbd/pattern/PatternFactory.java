@@ -5,6 +5,10 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 public class PatternFactory {
 	public static PatternSequence getFourOnFloorInstrumentPatternSequence() {
 		PatternSequence seq = new PatternSequence();
+		SequenceChord chord = new SequenceChord();
+		chord.step = 32;
+		chord.interval[1]++;
+		seq.chordChanges.add(chord);
 		seq.patterns.add(getFourOnFloorInstrumentPattern(0));
 		seq.patterns.add(getFourOnFloorInstrumentPattern(1));
 		seq.patterns.add(getFourOnFloorInstrumentPattern(2));

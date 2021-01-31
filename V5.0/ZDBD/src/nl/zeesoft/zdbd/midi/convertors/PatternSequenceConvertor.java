@@ -61,8 +61,9 @@ public class PatternSequenceConvertor {
 				startTick += MidiSequenceUtil.getSequenceEndTick(sequence.rythm);
 			}
 			if (arp!=null) {
-				Track track = r.getTracks()[r.getTracks().length - 1];
-				ArpConvertor convertor = (ArpConvertor) convertors.get(Arpeggiator.class.getSimpleName());
+				String name = Arpeggiator.class.getSimpleName();
+				Track track = r.getTracks()[getTrackNum(name)];
+				SynthConvertor convertor = (SynthConvertor) convertors.get(name);
 				arp.generateMidiSequenceOnTrack(track, sequence, convertor);
 			}
 			lock.unlock(this);

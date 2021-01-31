@@ -8,13 +8,13 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 
 public class BassConvertor extends InstrumentConvertor {
 	public float						hold			= 0.9F;
-	public List<SoundLayerConvertor>	layers			= new ArrayList<SoundLayerConvertor>();
+	public List<SynthLayerConvertor>	layers			= new ArrayList<SynthLayerConvertor>();
 	
 	@Override
 	public List<MidiNote> getMidiNotesForPatternValue(int value) {
 		List<MidiNote> r = new ArrayList<MidiNote>();
 		if (value!=PatternInstrument.OFF) {
-			for (SoundLayerConvertor layer: layers) {
+			for (SynthLayerConvertor layer: layers) {
 				MidiNote mn = new MidiNote();
 				mn.channel = layer.channel;
 				mn.midiNote = (layer.baseOctave * 12);

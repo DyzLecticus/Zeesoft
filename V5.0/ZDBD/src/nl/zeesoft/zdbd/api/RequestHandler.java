@@ -11,6 +11,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdbd.api.css.MainCss;
+import nl.zeesoft.zdbd.api.html.Bye;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
 import nl.zeesoft.zdbd.api.html.form.AddArpeggiator;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
@@ -429,7 +430,10 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected void handlePostModalRequest(HttpRequest request, HttpResponse response) {
 		String name = request.body.toString();
-		if (name.equals("LoadTheme")) {
+		if (name.equals("Bye")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new Bye()).render();
+		} else if (name.equals("LoadTheme")) {
 			List<String> names = controller.listThemes();
 			response.code = HttpURLConnection.HTTP_OK;
 			response.body = (new LoadTheme(names)).render();

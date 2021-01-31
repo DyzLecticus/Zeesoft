@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.sound.midi.Track;
 
-import nl.zeesoft.zdbd.midi.convertors.ArpConvertor;
+import nl.zeesoft.zdbd.midi.convertors.SynthConvertor;
 import nl.zeesoft.zdbd.midi.convertors.MidiNote;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.SequenceChord;
@@ -32,7 +32,7 @@ public class Arpeggiator {
 		return r;
 	}
 	
-	public void generateMidiSequenceOnTrack(Track track, PatternSequence sequence, ArpConvertor convertor) {
+	public void generateMidiSequenceOnTrack(Track track, PatternSequence sequence, SynthConvertor convertor) {
 		long sequenceEndTick = MidiSequenceUtil.getSequenceEndTick(sequence.rythm) * sequence.getSequencedPatterns().size();
 		long nextActiveTick = (sequenceEndTick - 1);
 		int ticksPerStep = MidiSequenceUtil.getTicksPerStep(sequence.rythm);

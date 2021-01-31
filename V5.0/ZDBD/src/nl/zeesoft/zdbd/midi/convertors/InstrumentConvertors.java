@@ -17,10 +17,11 @@ public class InstrumentConvertors {
 	public static final int				PERCUSSION2			= 7;
 	public static final int				BASS				= 8;
 	public static final int				ARPEGGIATOR			= 9;
+	public static final int				STRINGS				= 10;
 	
 	public static final String[]		INSTRUMENT_NAMES	= {
 		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass",
-		Arpeggiator.class.getSimpleName()
+		Arpeggiator.class.getSimpleName(),"Strings"
 	};
 	
 	private List<InstrumentConvertor>	convertors			= new ArrayList<InstrumentConvertor>();
@@ -51,25 +52,25 @@ public class InstrumentConvertors {
 			if (i==BASS) {
 				BassConvertor conv = new BassConvertor();
 				conv.name = name;
-				SoundLayerConvertor layer1 = new SoundLayerConvertor();
+				SynthLayerConvertor layer1 = new SynthLayerConvertor();
 				layer1.channel = SynthConfig.BASS_CHANNEL_1;
 				conv.layers.add(layer1);
-				SoundLayerConvertor layer2 = new SoundLayerConvertor();
+				SynthLayerConvertor layer2 = new SynthLayerConvertor();
 				layer2.channel = SynthConfig.BASS_CHANNEL_2;
 				layer2.velocity = 40;
 				layer2.accentVelocity = 50;
 				conv.layers.add(layer2);
 				convertors.add(conv);
 			} else if (i==ARPEGGIATOR) {
-				ArpConvertor conv = new ArpConvertor();
+				SynthConvertor conv = new SynthConvertor();
 				conv.name = name;
-				SoundLayerConvertor layer1 = new SoundLayerConvertor();
+				SynthLayerConvertor layer1 = new SynthLayerConvertor();
 				layer1.channel = SynthConfig.ARP_CHANNEL_1;
 				layer1.baseOctave = 4;
 				layer1.velocity = 48;
 				layer1.accentVelocity = 52;
 				conv.layers.add(layer1);
-				SoundLayerConvertor layer2 = new SoundLayerConvertor();
+				SynthLayerConvertor layer2 = new SynthLayerConvertor();
 				layer2.channel = SynthConfig.ARP_CHANNEL_2;
 				layer2.baseOctave = 4;
 				layer2.velocity = 48;

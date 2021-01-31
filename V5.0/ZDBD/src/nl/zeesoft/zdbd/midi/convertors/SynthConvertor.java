@@ -3,13 +3,13 @@ package nl.zeesoft.zdbd.midi.convertors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArpConvertor extends InstrumentConvertor {
+public class SynthConvertor extends InstrumentConvertor {
 	public float						hold			= 0.75F;
-	public List<SoundLayerConvertor>	layers			= new ArrayList<SoundLayerConvertor>();
+	public List<SynthLayerConvertor>	layers			= new ArrayList<SynthLayerConvertor>();
 	
 	public List<MidiNote> getMidiNotesForArpeggiatorNote(int note, int duration, boolean accent) {
 		List<MidiNote> r = new ArrayList<MidiNote>();
-		for (SoundLayerConvertor layer: layers) {
+		for (SynthLayerConvertor layer: layers) {
 			MidiNote mn = new MidiNote();
 			mn.channel = layer.channel;
 			mn.midiNote = (layer.baseOctave * 12) + note;
@@ -22,12 +22,6 @@ public class ArpConvertor extends InstrumentConvertor {
 			r.add(mn);
 		}
 		return r;
-	}
-	
-	public static void applyOctaveNote(List<MidiNote> mns, int octave, int note) {
-		for (MidiNote mn: mns) {
-			mn.midiNote += (octave * 12) + note;
-		}
 	}
 
 	@Override
