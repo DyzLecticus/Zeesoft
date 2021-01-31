@@ -45,6 +45,8 @@ public class MidiSequencer implements Sequencer, Waitable {
 	protected List<MidiSequencerEventListener>	listeners			= new ArrayList<MidiSequencerEventListener>();
 	
 	protected SynthConfig						synthConfig			= null;
+	
+	protected Receiver							receiver			= null;
 
 	protected MidiSequence[]					sequence			= new MidiSequence[2];
 	protected MidiSequence[]					lfoSequence			= new MidiSequence[2];
@@ -111,17 +113,21 @@ public class MidiSequencer implements Sequencer, Waitable {
 		sender.stop();
 		recorder.stop();
 		eventPublisher.stop();
+		
+		lock.lock(this);
+		if (receiver!=null) {
+			receiver.close();
+			receiver = null;
+		}
+		for (int c = 0; c < echoBuffers.length; c++) {
+			echoBuffers[c].tickEvents.clear();
+		}
+		lock.unlock(this);
 
 		recordLock.lock(this);
 		recordedSequence = null;
 		recordedSeqTicks = 0;
 		recordLock.unlock(this);
-		
-		lock.lock(this);
-		for (int c = 0; c < echoBuffers.length; c++) {
-			echoBuffers[c].tickEvents.clear();
-		}
-		lock.unlock(this);
 	}
 
 	protected void waitForClose(int waitMs) {
@@ -277,11 +283,23 @@ public class MidiSequencer implements Sequencer, Waitable {
 	public void start() {
 		if (!sender.isBusy()) {
 			Str err = new Str();
+			Exception ex = null;
 			lock.lock(this);
 			if (MidiSys.synthesizer==null) {
 				err.sb().append("Midi system has not been initialized");
 			} else if (sequence[CURR]==null) {
 				err.sb().append("Sequence has not been set");
+			}
+			if (err.length()==0) {
+				if (receiver!=null) {
+					receiver.close();
+				}
+				try {
+					receiver = MidiSys.synthesizer.getReceiver();
+				} catch (MidiUnavailableException e) {
+					err.sb().append("Unable to open receiver");
+					ex = e;
+				}
 			}
 			if (err.length()==0) {
 				if (!paused) {
@@ -293,7 +311,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 			lock.unlock(this);
 			
 			if (err.length()>0) {
-				Logger.err(this, err);
+				Logger.err(this, err, ex);
 			} else {
 				sender.start();
 			}
@@ -477,13 +495,12 @@ public class MidiSequencer implements Sequencer, Waitable {
 				MidiSequence lcSeq = lfoSequence[CURR];
 				MixState pMix = mixState[CURR].copy();
 				MixState cMix = pMix;
-				Synthesizer synth = MidiSys.synthesizer;
 				long pTick = 0;
 				long cTick = 0;
 				long sTick = -1;
 				long eTick = -1;
 				boolean switched = false;
-				if (synth!=null && cSeq!=null) {
+				if (MidiSys.synthesizer!=null && cSeq!=null) {
 					// Determine current ticks to play
 					pTick = prevTick;
 					cTick = getCurrentTickNoLock(pSeq);
@@ -518,7 +535,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 				MidiSequence rSequence = new MidiSequence();
 				long rt = 0;
 				
-				boolean stop = (synth==null || cSeq==null || pSeq==null);
+				boolean stop = (MidiSys.synthesizer==null || receiver==null || cSeq==null || pSeq==null);
 				if (!stop) {
 					List<MidiEvent> events = new ArrayList<MidiEvent>();
 					if (sTick>=0 && eTick>=0) {
@@ -581,12 +598,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 						}
 					}
 					for (MidiEvent event:events) {
-						try {
-							synth.getReceiver().send(event.getMessage(),-1);
-						} catch (MidiUnavailableException e) {
-							stop = true;
-							break;
-						}
+						receiver.send(event.getMessage(),-1);
 					}
 				}
 				
