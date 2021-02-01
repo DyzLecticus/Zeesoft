@@ -78,4 +78,34 @@ public class SynthChannelConfig {
 		}
 		return r;
 	}
+	
+	public void setControlValue(int control, int value) {
+		if (control==SynthConfig.VOLUME) {
+			volume = value;
+		} else if (control==SynthConfig.ATTACK) {
+			attack = value;
+		} else if (control==SynthConfig.DECAY) {
+			decay = value;
+		} else if (control==SynthConfig.RELEASE) {
+			release = value;
+		} else if (control==SynthConfig.PAN) {
+			pan = value;
+		} else if (control==SynthConfig.MODULATION) {
+			modulation = value;
+		} else if (control==SynthConfig.CHORUS) {
+			chorus = value;
+		} else if (control==SynthConfig.FILTER) {
+			filter = value;
+		} else if (control==SynthConfig.RESONANCE) {
+			resonance = value;
+		} else if (control==SynthConfig.REVERB) {
+			reverb = value;
+		} else if (control==SynthConfig.VIB_RATE) {
+			vib_rate = value;
+		} else if (control==SynthConfig.VIB_DEPTH) {
+			vib_depth = value;
+		} else if (control==SynthConfig.VIB_DELAY) {
+			vib_delay = value;
+		}
+	}
 }

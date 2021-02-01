@@ -26,6 +26,10 @@ public class PatternSequenceConvertor {
 	
 	protected InstrumentConvertors	convertors			= new InstrumentConvertors();
 	
+	public void setConvertorLayerProperty(int convertor, int layer, String property, Object value) {
+		convertors.setConvertorLayerProperty(convertor, layer, property, value);
+	}
+	
 	public static List<String> getTrackNames() {
 		List<String> r = new ArrayList<String>();
 		for (PatternInstrument inst: InstrumentPattern.INSTRUMENTS) {

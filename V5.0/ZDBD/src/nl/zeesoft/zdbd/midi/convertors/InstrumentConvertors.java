@@ -144,4 +144,41 @@ public class InstrumentConvertors {
 			}
 		}
 	}
+	
+	public void setConvertorLayerProperty(int convertor, int layer, String property, Object value) {
+		InstrumentConvertor conv = get(INSTRUMENT_NAMES[convertor]);
+		if (conv instanceof DrumConvertor) {
+			DrumConvertor dc = (DrumConvertor) conv;
+			if (dc.samples.size()>layer) {
+				DrumSampleConvertor sample = dc.samples.get(layer);
+				if (property.equals("midiNote")) {
+					sample.midiNote = (int) value;
+				} else if (property.equals("velocity")) {
+					sample.velocity = (int) value;
+				} else if (property.equals("accentVelocity")) {
+					sample.accentVelocity = (int) value;
+				} else if (property.equals("hold")) {
+					sample.hold = (float) value;
+				} else if (property.equals("accentHold")) {
+					sample.accentHold = (float) value;
+				}
+			}
+		} else if (conv instanceof BassConvertor) {
+			BassConvertor bc = (BassConvertor) conv;
+			if (property.equals("hold")) {
+				bc.hold = (float) value;
+			} else {
+				if (bc.layers.size()>layer) {
+					SynthLayerConvertor sl = bc.layers.get(layer);
+					if (property.equals("baseOctave")) {
+						sl.baseOctave = (int) value;
+					} else if (property.equals("velocity")) {
+						sl.velocity = (int) value;
+					} else if (property.equals("accentVelocity")) {
+						sl.accentVelocity = (int) value;
+					}
+				}
+			}
+		}
+	}
 }

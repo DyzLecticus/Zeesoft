@@ -11,6 +11,7 @@ import javax.sound.midi.Sequence;
 import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
+import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -52,8 +53,8 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				GENERATED_SEQUENCE			= "GENERATED_SEQUENCE";
 	
 	public static String				CHANGED_SHUFFLE				= "CHANGED_SHUFFLE";
-	
 	public static String				CHANGED_ARPEGGIATOR			= "CHANGED_ARPEGGIATOR";
+	public static String				CHANGED_SOUND_PATCH			= "CHANGED_SOUND_PATCH";
 
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
@@ -155,6 +156,23 @@ public class ThemeController implements EventListener, Waitable {
 		lock.unlock(this);
 		if (changed) {
 			eventPublisher.publishEvent(this, CHANGED_SHUFFLE, percentage);
+		}
+	}
+	
+	public void setSoundPatch(SoundPatch patch) {
+		boolean changed = false;
+		lock.lock(this);
+		if (theme!=null) {
+			if (MidiSys.sequencer!=null) {
+				MidiSys.sequencer.stop();
+				MidiSys.sequencer.stopRecording();
+			}
+			changed = true;
+			theme.soundPatch = patch;
+		}
+		lock.unlock(this);
+		if (changed) {
+			eventPublisher.publishEvent(this, CHANGED_SOUND_PATCH);
 		}
 	}
 	
@@ -509,6 +527,7 @@ public class ThemeController implements EventListener, Waitable {
 			lock.unlock(this);
 		} else if (event.name.equals(LOADING_THEME)) {
 			MidiSys.sequencer.stop();
+			MidiSys.sequencer.stopRecording();
 		} else if (event.name.equals(LOADED_THEME)) {
 			lock.lock(this);
 			savedTheme = System.currentTimeMillis();
@@ -528,20 +547,27 @@ public class ThemeController implements EventListener, Waitable {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
+		} else if (event.name.equals(CHANGED_SOUND_PATCH)) {
+			lock.lock(this);
+			updateSequencerAndSynthesizerNoLock();
+			lock.unlock(this);
 		} else if (event.name.equals(TRAINING_NETWORK)) {
 			MidiSys.sequencer.stop();
+			MidiSys.sequencer.stopRecording();
 		} else if (event.name.equals(TRAINED_NETWORK)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(RESETTING_NETWORK)) {
 			MidiSys.sequencer.stop();
+			MidiSys.sequencer.stopRecording();
 		} else if (event.name.equals(RESET_NETWORK)) {
 			lock.lock(this);
 			busy.setBusy(false);
 			lock.unlock(this);
 		} else if (event.name.equals(INITIALIZING_THEME)) {
 			MidiSys.sequencer.stop();
+			MidiSys.sequencer.stopRecording();
 		} else if (event.name.equals(INITIALIZED_THEME)) {
 			lock.lock(this);
 			updateSequencerAndSynthesizerNoLock();
@@ -549,6 +575,7 @@ public class ThemeController implements EventListener, Waitable {
 			lock.unlock(this);
 		} else if (event.name.equals(EXPORTING_RECORDING)) {
 			MidiSys.sequencer.stop();
+			MidiSys.sequencer.stopRecording();
 		} else if (event.name.equals(EXPORTED_RECORDING)) {
 			lock.lock(this);
 			updateSequencerAndSynthesizerNoLock();
@@ -565,6 +592,7 @@ public class ThemeController implements EventListener, Waitable {
 		} else if (event.name.equals(DESTROYING)) {
 			if (MidiSys.isInitialized()) {
 				MidiSys.sequencer.stop();
+				MidiSys.sequencer.stopRecording();
 			}
 		} else if (event.name.equals(DESTROYED)) {
 			lock.lock(this);

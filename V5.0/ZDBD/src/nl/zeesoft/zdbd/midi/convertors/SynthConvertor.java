@@ -3,10 +3,7 @@ package nl.zeesoft.zdbd.midi.convertors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SynthConvertor extends InstrumentConvertor {
-	public float						hold			= 0.75F;
-	public List<SynthLayerConvertor>	layers			= new ArrayList<SynthLayerConvertor>();
-	
+public class SynthConvertor extends BassConvertor {	
 	public List<MidiNote> getMidiNotesForArpeggiatorNote(int note, int duration, boolean accent) {
 		List<MidiNote> r = new ArrayList<MidiNote>();
 		for (SynthLayerConvertor layer: layers) {

@@ -68,6 +68,22 @@ public class SynthConfig {
 		initializeDefaults();
 	}
 	
+	public void setChannelInstrument(int channel, int instrument) {
+		lock.lock(this);
+		if (instrument >= 0 && instrument < 128) {
+			channels[channel].instrument = instrument;
+		}
+		lock.unlock(this);
+	}
+	
+	public void setChannelControl(int channel, int control, int value) {
+		lock.lock(this);
+		if (value >= 0 && value < 128) {
+			channels[channel].setControlValue(control, value);
+		}
+		lock.unlock(this);
+	}
+	
 	public void initializeDefaults() {
 		lock.lock(this);
 		lfos.clear();
