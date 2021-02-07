@@ -125,8 +125,13 @@ public class CodeRunner extends RunnerObject implements Runnable {
 	}
 	
 	private final void sleepNs(int sleepNs) {
+		int sleepMs = 0;
+		if (sleepNs > 999999 ) {
+			sleepMs = sleepNs / 1000000;
+			sleepNs = sleepNs % 1000000;
+		}
 		try {
-			Thread.sleep(0,sleepNs);
+			Thread.sleep(sleepMs,sleepNs);
 		} catch (InterruptedException e) {
 			// Ignore
 		}
