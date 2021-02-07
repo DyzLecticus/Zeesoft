@@ -19,6 +19,7 @@ public class IndexJs extends ResponseObject {
 		append(r,(new NetworkJs()).render());
 		append(r,(new GeneratorsJs()).render());
 		append(r,(new ArpeggiatorsJs()).render());
+		append(r,(new SoundpatchJs()).render());
 		return r;
 	}
 

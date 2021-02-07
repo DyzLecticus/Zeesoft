@@ -26,6 +26,7 @@ import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
 import nl.zeesoft.zdbd.api.html.form.SequenceEditor;
 import nl.zeesoft.zdbd.api.html.select.DeleteTheme;
 import nl.zeesoft.zdbd.api.html.select.LoadTheme;
+import nl.zeesoft.zdbd.api.html.select.SelectSoundPatch;
 import nl.zeesoft.zdbd.api.javascript.ArpeggiatorsJs;
 import nl.zeesoft.zdbd.api.javascript.BindingsJs;
 import nl.zeesoft.zdbd.api.javascript.ChordsJs;
@@ -41,6 +42,8 @@ import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
+import nl.zeesoft.zdbd.midi.SoundPatch;
+import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
@@ -90,6 +93,7 @@ public class RequestHandler extends HttpRequestHandler {
 		pathResponses.put("/network.js", (new NetworkJs()).render());
 		pathResponses.put("/generators.js", (new GeneratorsJs()).render());
 		pathResponses.put("/arpeggiators.js", (new ArpeggiatorsJs()).render());
+		pathResponses.put("/soundpatch.js", (new ArpeggiatorsJs()).render());
 	}
 
 	@Override
@@ -351,6 +355,8 @@ public class RequestHandler extends HttpRequestHandler {
 			handlePostArpeggiatorsRequest(request,response);
 		} else if (request.path.equals("/arpeggiator.txt")) {
 			handlePostArpeggiatorRequest(request,response);
+		} else if (request.path.equals("/soundpatch.txt")) {
+			handlePostSoundPatchRequest(request,response);
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -449,6 +455,10 @@ public class RequestHandler extends HttpRequestHandler {
 		} else if (name.equals("NewTheme")) {
 			response.code = HttpURLConnection.HTTP_OK;
 			response.body = (new NewTheme("",120,0.0F)).render();
+		} else if (name.equals("SelectSoundPatch")) {
+			List<String> names = SoundPatchFactory.listSoundPatches();
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new SelectSoundPatch(names)).render();
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}
@@ -1060,6 +1070,23 @@ public class RequestHandler extends HttpRequestHandler {
 					}
 					setPostOk(response);
 				}
+			}
+		} else {
+			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+		}
+	}
+
+	protected void handlePostSoundPatchRequest(HttpRequest request, HttpResponse response) {
+		if (request.body.startsWith("LOAD:")) {
+			String name = request.body.split(":").get(1).toString();
+			SoundPatch patch = SoundPatchFactory.getNewSoundPatch(name);
+			if (patch!=null) {
+				controller.setSoundPatch(patch);
+				setPostOk(response);
+			} else {
+				Str err = new Str("Sound patch not found with name: ");
+				err.sb().append(name);
+				setNotFoundError(response,err);
 			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));

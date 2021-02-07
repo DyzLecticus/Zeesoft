@@ -73,6 +73,7 @@ public class SynthConfig {
 		if (instrument >= 0 && instrument < 128) {
 			channels[channel].instrument = instrument;
 		}
+		applyEchoConfigNoLock();
 		lock.unlock(this);
 	}
 	
@@ -81,6 +82,7 @@ public class SynthConfig {
 		if (value >= 0 && value < 128) {
 			channels[channel].setControlValue(control, value);
 		}
+		applyEchoConfigNoLock();
 		lock.unlock(this);
 	}
 	

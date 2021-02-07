@@ -137,7 +137,18 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    </div>");
 		append(r,"</div>");
 		append(r,"<div id=\"arpeggiatorList\"></div>");
-		append(r,"</div>"); // end generators
+		append(r,"</div>"); // end arpeggiators
+
+		append(r,"<div id=\"soundpatch\">");
+		append(r,"<div class=\"row\">");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <label class=\"column-label\">Sound patch</label >");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" value=\"Select\" onclick=\"soundpatch.select();\" />");
+		append(r,"    </div>");
+		append(r,"</div>");
+		append(r,"</div>"); // end soundpatch
 
 		append(r,"</div>"); // end app column
 		append(r,"</div>"); // end column
