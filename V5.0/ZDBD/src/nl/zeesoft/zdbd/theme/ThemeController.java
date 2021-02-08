@@ -12,6 +12,7 @@ import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.SoundPatch;
+import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -728,9 +729,12 @@ public class ThemeController implements EventListener, Waitable {
 			theme = new Theme();
 			theme.themeDir = settings.getThemeDir();
 			theme.name = name;
-			if (theme.name.toLowerCase().equals("demo")) {
+			if (theme.name.toLowerCase().equals("demo") || theme.name.toLowerCase().equals("demo1")) {
 				theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence());
 				theme.setShuffle(0.15F);
+			} else if (theme.name.toLowerCase().equals("demo2")) {
+				theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence2());
+				theme.soundPatch = SoundPatchFactory.getNewSoundPatch(SoundPatchFactory.TRANCE);
 			}
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);

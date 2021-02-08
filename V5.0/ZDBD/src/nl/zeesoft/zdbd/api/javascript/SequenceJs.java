@@ -6,6 +6,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.Str;
 
 public class SequenceJs extends ResponseObject {
@@ -18,6 +19,9 @@ public class SequenceJs extends ResponseObject {
 		append(r,"sequence.copiedPattern = -1;");
 		append(r,"sequence.pastedPattern = -1;");
 		append(r,"sequence.refresh = function() {");
+		append(r,"    sequence.selectedPattern = 0;");
+		append(r,"    sequence.copiedPattern = -1;");
+		append(r,"    sequence.pastedPattern = -1;");
 		append(r,"    main.xhr.getText(\"/sequenceEditor.txt\",sequence.refreshCallback,sequence.errorCallback);");
 		append(r,"};");
 		append(r,"sequence.refreshCallback = function(response) {");
@@ -140,6 +144,9 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    if (name==\"" + Note.NAME + "\") {");
 		append(r,"        maxValue = 3;");
+		append(r,"    }");
+		append(r,"    if (name==\"" + Stab.NAME + "\") {");
+		append(r,"        maxValue = 16;");
 		append(r,"    }");
 		append(r,"    if (newValue>maxValue) {");
 		append(r,"        newValue = 0;");

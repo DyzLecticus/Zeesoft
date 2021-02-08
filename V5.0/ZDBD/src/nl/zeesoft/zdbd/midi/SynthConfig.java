@@ -25,8 +25,6 @@ public class SynthConfig {
 	public static final int			ARP_ECHO_1_CH_2		= 11;
 	public static final int			ARP_ECHO_2_CH_1		= 12;
 	public static final int			ARP_ECHO_2_CH_2		= 13;
-	//public static final int			ARP_ECHO_3_CH_1		= 14;
-	//public static final int			ARP_ECHO_3_CH_2		= 15;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -144,7 +142,7 @@ public class SynthConfig {
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_2;
 		echo.targetChannel = ARP_ECHO_1_CH_2;
-		echo.pan = 16;
+		echo.pan = 112;
 		echos.add(echo);
 		
 		echo = new EchoConfig();
@@ -161,7 +159,7 @@ public class SynthConfig {
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_2;
 		echo.targetChannel = ARP_ECHO_2_CH_2;
-		echo.pan = 112;
+		echo.pan = 16;
 		echo.delay = 6;
 		echo.velocity = 0.40F;
 		echo.filter = 0.75F;
@@ -169,29 +167,6 @@ public class SynthConfig {
 		echo.chorus = 1.5F;
 		echos.add(echo);
 		
-		/*
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_1;
-		echo.targetChannel = ARP_ECHO_3_CH_1;
-		echo.pan = 64;
-		echo.delay = 9;
-		echo.velocity = 0.2F;
-		echo.filter = 0.7F;
-		echo.reverb = 1.75F;
-		echo.chorus = 1.75F;
-		echos.add(echo);
-		
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_2;
-		echo.targetChannel = ARP_ECHO_3_CH_2;
-		echo.pan = 64;
-		echo.delay = 9;
-		echo.velocity = 0.2F;
-		echo.filter = 0.7F;
-		echo.reverb = 1.75F;
-		echo.chorus = 1.75F;
-		echos.add(echo);
-		*/
 		applyEchoConfigNoLock();
 		
 		lock.unlock(this);
@@ -337,10 +312,6 @@ public class SynthConfig {
 			r = 8;
 		} else if (channel==ARP_ECHO_2_CH_2) {
 			r = 9;
-		//} else if (channel==ARP_ECHO_3_CH_1) {
-		//	r = 10;
-		//} else if (channel==ARP_ECHO_3_CH_2) {
-		//	r = 11;
 		}
 		return r;
 	}
