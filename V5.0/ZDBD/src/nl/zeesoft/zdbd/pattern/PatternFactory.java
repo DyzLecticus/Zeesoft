@@ -200,8 +200,7 @@ public class PatternFactory {
 		pattern.setPercussion2(4,PatternInstrument.ACCENT);
 		pattern.setPercussion2(12,PatternInstrument.ACCENT);
 		if (patternNum>0) {
-			pattern.setPercussion2(13,PatternInstrument.ON);
-			pattern.setPercussion2(15,PatternInstrument.ACCENT);
+			pattern.setPercussion2(14,PatternInstrument.ACCENT);
 		}
 		
 		pattern.setBass(2, 2, true);
