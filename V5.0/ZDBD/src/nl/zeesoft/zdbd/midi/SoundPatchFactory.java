@@ -6,19 +6,19 @@ import java.util.List;
 import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertors;
 
 public class SoundPatchFactory {
-	public static String	DEFAULT		= "Default";
+	public static String	BREAKS		= "Breaks";
 	public static String	TRANCE		= "Trance";
 	
 	public static List<String> listSoundPatches() {
 		List<String> r = new ArrayList<String>();
-		r.add(DEFAULT);
+		r.add(BREAKS);
 		r.add(TRANCE);
 		return r;
 	}
 	
 	public static SoundPatch getNewSoundPatch(String name) {
 		SoundPatch r = null;
-		if (name.equals(DEFAULT)) {
+		if (name.equals(BREAKS)) {
 			r = new SoundPatch();
 		} else if (name.equals(TRANCE)) {
 			r = new SoundPatch();
