@@ -31,4 +31,15 @@ public class DrumConvertor extends InstrumentConvertor {
 		}
 		return r;
 	}
+	
+	@Override
+	protected void copyFrom(InstrumentConvertor conv) {
+		if (conv instanceof DrumConvertor) {
+			DrumConvertor dc = (DrumConvertor) conv;
+			this.channel = dc.channel;
+			for (DrumSampleConvertor dsc: dc.samples) {
+				this.samples.add(dsc.copy());
+			}
+		}
+	}
 }

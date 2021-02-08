@@ -35,4 +35,15 @@ public class BassConvertor extends InstrumentConvertor {
 			mn.midiNote += (octave * 12) + note;
 		}
 	}
+	
+	@Override
+	protected void copyFrom(InstrumentConvertor conv) {
+		if (conv instanceof BassConvertor) {
+			BassConvertor bc = (BassConvertor) conv;
+			this.hold = bc.hold;
+			for (SynthLayerConvertor slc: bc.layers) {
+				this.layers.add(slc.copy());
+			}
+		}
+	}
 }
