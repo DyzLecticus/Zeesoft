@@ -20,6 +20,7 @@ import nl.zeesoft.zdbd.api.html.form.ArpeggiatorList;
 import nl.zeesoft.zdbd.api.html.form.ChordEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
+import nl.zeesoft.zdbd.api.html.form.InstrumentList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
@@ -184,6 +185,12 @@ public class RequestHandler extends HttpRequestHandler {
 						ArpeggiatorList generators = new ArpeggiatorList(controller.listArpeggiators());
 						response.code = HttpURLConnection.HTTP_OK;
 						response.body = generators.render();
+					}
+				} else if (request.path.equals("/soundpatch.txt")) {
+					if (checkInitialized(response)) {
+						InstrumentList instruments = new InstrumentList();
+						response.code = HttpURLConnection.HTTP_OK;
+						response.body = instruments.render();
 					}
 				} else if (request.path.startsWith("/Recordings/")) {
 					if (checkInitialized(response)) {

@@ -44,9 +44,12 @@ public class StateJs extends ResponseObject {
 		append(r,"state.refreshApp = function() {");
 		append(r,"    theme.refresh();");
 		append(r,"    sequencer.refresh();");
+		append(r,"    chords.refresh();");
 		append(r,"    sequence.refresh();");
 		append(r,"    network.refresh();");
 		append(r,"    generators.refresh();");
+		append(r,"    arpeggiators.refresh();");
+		append(r,"    soundpatch.refresh();");
 		append(r,"};");
 		append(r,"state.onload = function() {");
 		append(r,"    state.refresh();");

@@ -142,12 +142,16 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"<div id=\"soundpatch\">");
 		append(r,"<div class=\"row\">");
 		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <label class=\"column-label\">Sound patch</label >");
+		append(r,"    <input type=\"button\" class=\"show-hide\" value=\"+\" onclick=\"soundpatch.toggleShowInstruments(this);\" />");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
-		append(r,"    <input type=\"button\" value=\"Select\" onclick=\"soundpatch.select();\" />");
+		append(r,"    <label class=\"column-label-header\">Sound patch</label >");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" value=\"Load preset\" onclick=\"soundpatch.load();\" />");
 		append(r,"    </div>");
 		append(r,"</div>");
+		append(r,"<div id=\"instrumentList\"></div>");
 		append(r,"</div>"); // end soundpatch
 
 		append(r,"</div>"); // end app column

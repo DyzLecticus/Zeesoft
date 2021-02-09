@@ -10,7 +10,9 @@ public class ChordsJs extends ResponseObject {
 		append(r,"var chords = chords || {};");
 		append(r,"chords.show = false;");
 		append(r,"chords.refresh = function() {");
-		append(r,"    main.xhr.getText(\"/chordEditor.txt\",chords.refreshCallback,chords.errorCallback);");
+		append(r,"    if (chords.show) {");
+		append(r,"        main.xhr.getText(\"/chordEditor.txt\",chords.refreshCallback,chords.errorCallback);");
+		append(r,"    }");
 		append(r,"};");
 		append(r,"chords.refreshCallback = function(response) {");
 		append(r,"    var elem = window.document.getElementById(\"chordEditor\");");
