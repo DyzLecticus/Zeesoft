@@ -107,6 +107,7 @@ public class PatternSequenceConvertor {
 			if (convertor1!=null) {
 				for (int s = 0; s < stepsPerPattern; s++) {
 					List<MidiNote> mns = null;
+					SequenceChord chord = patternSequence.getChordForStep(baseStep + s,false);
 					if (inst.name().equals(Hihat.NAME) && InstrumentPattern.isOpenHihat(inst.stepValues[s])) {
 						mns = convertor2.getMidiNotesForPatternValue(inst.stepValues[s]);
 					} else {
@@ -114,7 +115,6 @@ public class PatternSequenceConvertor {
 						if (inst.name().equals(Bass.NAME)) {
 							int octave = pattern.getInstrument(Octave.NAME).stepValues[s];
 							int note = pattern.getInstrument(Note.NAME).stepValues[s];
-							SequenceChord chord = PatternSequence.getChordForStep(pattern.chords, s);
 							if (note>0) {
 								note = chord.baseNote + chord.interval[note - 1];
 							} else {
@@ -122,7 +122,6 @@ public class PatternSequenceConvertor {
 							}
 							BassConvertor.applyOctaveNote(mns, octave, note);
 						} else if (inst.name().equals(Stab.NAME)) {
-							SequenceChord chord = patternSequence.getChordForStep(baseStep + s,false);
 							StabConvertor.applyChordNotes(mns, 0, chord);
 						}
 					}

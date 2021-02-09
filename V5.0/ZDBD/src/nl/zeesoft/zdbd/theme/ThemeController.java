@@ -735,6 +735,7 @@ public class ThemeController implements EventListener, Waitable {
 			} else if (theme.name.toLowerCase().equals("demo2")) {
 				theme.networkTrainer.setSequence(PatternFactory.getFourOnFloorInstrumentPatternSequence2());
 				theme.soundPatch = SoundPatchFactory.getNewSoundPatch(SoundPatchFactory.TRANCE);
+				theme.generators.initializeDefaults(false);
 			}
 			if (rythm!=null) {
 				theme.rythm.copyFrom(rythm);

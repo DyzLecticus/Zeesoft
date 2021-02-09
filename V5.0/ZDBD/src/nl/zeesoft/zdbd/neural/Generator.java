@@ -117,6 +117,7 @@ public class Generator {
 			for (int p = 0; p < r.sequence.length; p++) {
 				r.sequence[p] = trainingSequence.sequence[p];
 			}
+			r.chordChanges.clear();
 			for (SequenceChord chord: trainingSequence.chordChanges) {
 				r.chordChanges.add(chord.copy());
 			}

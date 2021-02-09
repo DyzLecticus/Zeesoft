@@ -209,10 +209,21 @@ public class PatternFactory {
 		pattern.setBass(14, 2, true);
 
 		if (patternNum>0) {
-			pattern.setNote(2, 1, 0);
-			pattern.setNote(6, 0, 3);
-			pattern.setNote(10, 0, 2);
-			pattern.setNote(14, 0, 1);
+			int note = 0;
+			int octave = 1;
+			for (int s = 0; s < 16; s++) {
+				if (s==4) {
+					octave = 0;
+					note = 3;
+				}
+				if (s==8) {
+					note = 2;
+				}
+				if (s==12) {
+					note = 1;
+				}
+				pattern.setNote(s, octave, note);
+			}
 		}
 		
 		pattern.setStab(2, 1, false);
