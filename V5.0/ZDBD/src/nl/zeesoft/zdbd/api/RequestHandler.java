@@ -20,6 +20,7 @@ import nl.zeesoft.zdbd.api.html.form.ArpeggiatorList;
 import nl.zeesoft.zdbd.api.html.form.ChordEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
+import nl.zeesoft.zdbd.api.html.form.InstrumentEditor;
 import nl.zeesoft.zdbd.api.html.form.InstrumentList;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
@@ -45,6 +46,7 @@ import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SoundPatchFactory;
+import nl.zeesoft.zdbd.midi.SynthChannelConfig;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
@@ -872,33 +874,13 @@ public class RequestHandler extends HttpRequestHandler {
 			String name = request.body.split(":").get(1).toString();
 			if (checkGeneratorName(name,response)) {
 				Generator generator = controller.getGenerator(name);
-				String prevName = "";
-				String nextName = "";
 				List<Generator> list = controller.listGenerators();
-				boolean found = false;
+				List<String> names = new ArrayList<String>();
 				for (Generator gen: list) {
-					if (found) {
-						nextName = gen.name;
-						break;
-					}
-					if (gen.name.equals(generator.name)) {
-						found = true;
-					} else if (!found) {
-						prevName = gen.name;
-					}
+					names.add(gen.name);
 				}
-				if (prevName.length()==0) {
-					prevName = list.get(list.size()-1).name;
-					if (prevName.equals(generator.name)) {
-						prevName = "";
-					}
-				}
-				if (nextName.length()==0) {
-					nextName = list.get(0).name;
-					if (nextName.equals(generator.name)) {
-						nextName = "";
-					}
-				}
+				String prevName = getPreviousName(name, names);
+				String nextName = getNextName(name, names);
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = (new GeneratorEditor(generator,prevName,nextName)).render();
 			}
@@ -1008,33 +990,13 @@ public class RequestHandler extends HttpRequestHandler {
 			String name = request.body.split(":").get(1).toString();
 			if (checkArpeggiatorName(name,response)) {
 				Arpeggiator arpeggiator = controller.getArpeggiator(name);
-				String prevName = "";
-				String nextName = "";
 				List<Arpeggiator> list = controller.listArpeggiators();
-				boolean found = false;
+				List<String> names = new ArrayList<String>();
 				for (Arpeggiator arp: list) {
-					if (found) {
-						nextName = arp.name;
-						break;
-					}
-					if (arp.name.equals(arpeggiator.name)) {
-						found = true;
-					} else if (!found) {
-						prevName = arp.name;
-					}
+					names.add(arp.name);
 				}
-				if (prevName.length()==0) {
-					prevName = list.get(list.size()-1).name;
-					if (prevName.equals(arpeggiator.name)) {
-						prevName = "";
-					}
-				}
-				if (nextName.length()==0) {
-					nextName = list.get(0).name;
-					if (nextName.equals(arpeggiator.name)) {
-						nextName = "";
-					}
-				}
+				String prevName = getPreviousName(name, names);
+				String nextName = getNextName(name, names);
 				response.code = HttpURLConnection.HTTP_OK;
 				response.body = (new ArpeggiatorEditor(arpeggiator,prevName,nextName)).render();
 			}
@@ -1094,6 +1056,32 @@ public class RequestHandler extends HttpRequestHandler {
 				Str err = new Str("Sound patch not found with name: ");
 				err.sb().append(name);
 				setNotFoundError(response,err);
+			}
+		} else if (request.body.startsWith("EDIT:")) {
+			String name = request.body.split(":").get(1).toString();
+			if (checkInstrumentName(name,response)) {
+				List<String> names = SoundPatch.getInstrumentNames();
+				String prevName = getPreviousName(name, names);
+				String nextName = getNextName(name, names);
+				SynthChannelConfig layer1 = controller.getChannelConfig(name,0);
+				SynthChannelConfig layer2 = controller.getChannelConfig(name,1);
+				response.code = HttpURLConnection.HTTP_OK;
+				response.body = (new InstrumentEditor(name,layer1,layer2,prevName,nextName)).render();
+			}
+		} else if (request.body.startsWith("SET_PROPERTY:")) {
+			List<Str> elems = request.body.split(":");
+			String name = request.body.split(":").get(1).toString();
+			if (checkInstrumentName(name,response)) {
+				List<Str> property = elems.get(2).split("-");
+				String propertyName = property.get(0).toString();
+				int layer = Integer.parseInt(property.get(1).toString());
+				int value = parseBit(elems.get(3));
+				List<int[]> changes = controller.setInstrumentProperty(name, layer, propertyName, value);
+				if (changes.size()>0) {
+					setPostOk(response);
+				} else {
+					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+				}
 			}
 		} else {
 			setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
@@ -1160,6 +1148,16 @@ public class RequestHandler extends HttpRequestHandler {
 		return r;
 	}
 	
+	protected boolean checkInstrumentName(String name, HttpResponse response) {
+		boolean r = true;
+		if (!SoundPatch.getInstrumentNames().contains(name)) {
+			Str err = new Str("Specified instrument not found");
+			setError(response,HttpURLConnection.HTTP_BAD_REQUEST,err);
+			r = false;
+		}
+		return r;
+	}
+	
 	protected float parseBeatsPerMinute(Str bpm) {
 		float r = 120;
 		try {
@@ -1204,6 +1202,22 @@ public class RequestHandler extends HttpRequestHandler {
 		return r;
 	}
 	
+	protected int parseBit(Str bit) {
+		int r = SynthChannelConfig.DEFAULT;
+		try {
+			r = Integer.parseInt(bit.toString());
+		} catch(NumberFormatException ex) {
+			r = SynthChannelConfig.DEFAULT;
+		}
+		if (r < 0) {
+			r = 0;
+		}
+		if (r > 127) {
+			r = 127;
+		}
+		return r;
+	}
+	
 	protected void setPostOk(HttpResponse response) {
 		response.code = HttpURLConnection.HTTP_OK;
 		response.body = new Str("OK");
@@ -1211,5 +1225,21 @@ public class RequestHandler extends HttpRequestHandler {
 	
 	protected void setBusyError(HttpResponse response, String msg) {
 		setError(response,HttpURLConnection.HTTP_UNAVAILABLE,new Str(msg));
+	}
+	
+	protected static String getPreviousName(String name, List<String> names) {
+		int pIdx = names.indexOf(name) - 1;
+		if (pIdx<0) {
+			pIdx = names.size() - 1; 
+		}
+		return names.get(pIdx);
+	}
+	
+	protected static String getNextName(String name, List<String> names) {
+		int nIdx = names.indexOf(name) + 1;
+		if (nIdx>=names.size()) {
+			nIdx = 0; 
+		}
+		return names.get(nIdx);
 	}
 }

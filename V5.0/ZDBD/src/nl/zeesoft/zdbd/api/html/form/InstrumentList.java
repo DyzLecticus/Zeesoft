@@ -1,10 +1,9 @@
 package nl.zeesoft.zdbd.api.html.form;
 
+import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdk.Str;
 
-public class InstrumentList extends FormHtml {
-	public static String[]	INSTRUMENT_NAMES = {"Drums","Bass","Stab","Arpeggiator","Echo"};
-	
+public class InstrumentList extends FormHtml {	
 	@Override
 	public Str render() {
 		Str r = new Str();
@@ -15,7 +14,7 @@ public class InstrumentList extends FormHtml {
 	public static Str renderInstruments() {
 		Str r = new Str();
 		int i = 0;
-		for (String name: INSTRUMENT_NAMES) {
+		for (String name: SoundPatch.INSTRUMENT_NAMES) {
 			append(r,"<div class=\"row");
 			if (i % 2==0) {
 				r.sb().append(" row-highlight");
@@ -29,7 +28,7 @@ public class InstrumentList extends FormHtml {
 			
 			append(r,"<div class=\"column-left column-padding\">");
 			append(r,"<input type=\"button\" value=\"Edit");
-			r.sb().append("\" onclick=\"arpeggiators.edit('");
+			r.sb().append("\" onclick=\"soundpatch.edit('");
 			r.sb().append(name);
 			r.sb().append("');\"/>");
 			append(r,"</div>");

@@ -64,7 +64,7 @@ public class ArpeggiatorsJs extends ResponseObject {
 		append(r,"};");
 		append(r,"arpeggiators.propertyChange = function(property) {");
 		append(r,"    if (property.id==\"name\" && property.value.length==0) {");
-		append(r,"        alert(\"Generator name is mandatory\");");
+		append(r,"        alert(\"Arpeggiator name is mandatory\");");
 		append(r,"        return;");
 		append(r,"    }");
 		append(r,"    var body = \"SET_PROPERTY:\";");

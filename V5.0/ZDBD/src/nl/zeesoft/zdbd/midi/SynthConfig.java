@@ -66,6 +66,17 @@ public class SynthConfig {
 		initializeDefaults();
 	}
 	
+	public SynthChannelConfig getChannelConfig(int channel) {
+		SynthChannelConfig r = null;
+		lock.lock(this);
+		if (channel >= 0 && channel < 16) {
+			r = new SynthChannelConfig();
+			r.copyFrom(channels[channel]);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void setChannelInstrument(int channel, int instrument) {
 		lock.lock(this);
 		if (instrument >= 0 && instrument < 128) {
@@ -180,6 +191,33 @@ public class SynthConfig {
 		}
 		lock.unlock(this);
 		return r;
+	}
+	
+	public void addEchoChanges(List<int[]> changes) {
+		lock.lock(this);
+		int[] change = changes.get(0);
+		for (EchoConfig echo: echos) {
+			if (change[0] == echo.sourceChannel) {
+				int[] add = new int[3];
+				add[0] = echo.targetChannel;
+				add[1] = change[1];
+				add[2] = channels[echo.targetChannel].getControlValue(change[1]);
+				changes.add(add);
+			}
+		}
+		lock.unlock(this);
+	}
+	
+	public void applyInstrumentPropertyChange(Synthesizer synthesizer, int[] change) {
+		int channel = change[0];
+		int control = change[1];
+		int value = change[2];
+		MidiChannel chan = synthesizer.getChannels()[channel];
+		if (control==0) {
+			chan.programChange(value);
+		} else {
+			chan.controlChange(control,value);
+		}
 	}
 	
 	public void configureSynthesizer(Synthesizer synthesizer) {

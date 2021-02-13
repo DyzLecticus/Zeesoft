@@ -417,6 +417,25 @@ public class MidiSequencer implements Sequencer, Waitable {
 		return r;
 	}
 
+	public void recordInstrumentPropertyChanges(List<int[]> changes) {
+		recordLock.lock(this);
+		if (recordedSequence!=null && recordedSequence.sequence!=null) {
+			for (int[] change: changes) {
+				int channel = change[0];
+				int control = change[1];
+				int value = change[2];
+				int type = ShortMessage.CONTROL_CHANGE;
+				if (control==0) {
+					type = ShortMessage.PROGRAM_CHANGE;
+				}
+				int trackNum = SynthConfig.getTrackNumForChannel(channel);
+				Track track = recordedSequence.sequence.getTracks()[trackNum];
+				MidiSequenceUtil.createEventOnTrack(track, type, channel, control, value, recordedSeqTicks);
+			}
+		}
+		recordLock.unlock(this);
+	}
+	
 	public Sequence getRecordedSequence() {
 		Sequence r = null;
 		recordLock.lock(this);

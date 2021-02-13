@@ -13,6 +13,7 @@ import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SoundPatchFactory;
+import nl.zeesoft.zdbd.midi.SynthChannelConfig;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -56,6 +57,7 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				CHANGED_SHUFFLE				= "CHANGED_SHUFFLE";
 	public static String				CHANGED_ARPEGGIATOR			= "CHANGED_ARPEGGIATOR";
 	public static String				CHANGED_SOUND_PATCH			= "CHANGED_SOUND_PATCH";
+	public static String				CHANGED_INSTRUMENT_PROPERTY	= "CHANGED_INSTRUMENT_PROPERTY";
 
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
@@ -414,6 +416,34 @@ public class ThemeController implements EventListener, Waitable {
 		return r;
 	}
 	
+	public SynthChannelConfig getChannelConfig(String name, int layer) {
+		SynthChannelConfig r = null;
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.soundPatch.getChannelConfig(name, layer);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public List<int[]> setInstrumentProperty(String name, int layer, String propertyName, int value) {
+		List<int[]> changes = new ArrayList<int[]>();
+		lock.lock(this);
+		if (theme!=null) {
+			changes = theme.soundPatch.setInstrumentProperty(name, layer, propertyName, value);
+			if (MidiSys.synthesizer!=null) {
+				for (int[] change: changes) {
+					theme.soundPatch.synthConfig.applyInstrumentPropertyChange(MidiSys.synthesizer, change);
+				}
+			}
+		}
+		lock.unlock(this);
+		if (changes.size()>0) {
+			eventPublisher.publishEvent(this, CHANGED_INSTRUMENT_PROPERTY, changes);
+		}
+		return changes;
+	}
+	
 	public Sequence generateMidiSequence(PatternSequence sequence, Arpeggiator arp) {
 		Sequence r = null;
 		lock.lock(this);
@@ -552,6 +582,12 @@ public class ThemeController implements EventListener, Waitable {
 			lock.lock(this);
 			updateSequencerAndSynthesizerNoLock();
 			lock.unlock(this);
+		} else if (event.name.equals(ThemeController.CHANGED_INSTRUMENT_PROPERTY)) {
+			if (MidiSys.sequencer!=null && event.param instanceof List<?>) {
+				@SuppressWarnings("unchecked")
+				List<int[]> changes = (List<int[]>)event.param;
+				MidiSys.sequencer.recordInstrumentPropertyChanges(changes);
+			}
 		} else if (event.name.equals(TRAINING_NETWORK)) {
 			MidiSys.sequencer.stop();
 			MidiSys.sequencer.stopRecording();
@@ -609,14 +645,14 @@ public class ThemeController implements EventListener, Waitable {
 	
 	protected void updateSequencerAndSynthesizerNoLock() {
 		if (theme!=null) {
+			theme.soundPatch.synthConfig.setRythm(theme.rythm);
+			if (MidiSys.synthesizer!=null) {
+				theme.soundPatch.synthConfig.configureSynthesizer(MidiSys.synthesizer);
+			}
 			if (MidiSys.sequencer!=null) {
 				MidiSys.sequencer.setTempoInBPM(theme.rythm.beatsPerMinute);
 				MidiSys.sequencer.setTicksPerStep(MidiSequenceUtil.getTicksPerStep(theme.rythm));
 				MidiSys.sequencer.setSynthConfig(theme.soundPatch.synthConfig);
-			}
-			theme.soundPatch.synthConfig.setRythm(theme.rythm);
-			if (MidiSys.synthesizer!=null) {
-				theme.soundPatch.synthConfig.configureSynthesizer(MidiSys.synthesizer);
 			}
 		}
 	}
