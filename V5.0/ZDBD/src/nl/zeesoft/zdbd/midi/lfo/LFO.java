@@ -7,8 +7,8 @@ import nl.zeesoft.zdbd.midi.MidiSequenceUtil;
 import nl.zeesoft.zdbd.pattern.Rythm;
 
 public class LFO {
-	public static final String	SINE			= "SINE"; 
-	public static final String	TRIANGLE		= "LINEAR"; 
+	public static final String	SINE			= "Sine"; 
+	public static final String	LINEAR			= "Linear"; 
 		
 	public static List<Float> getTickValuesForCycleSteps(Rythm rythm, String type, int cycleSteps) {
 		List<Float> r = new ArrayList<Float>();
@@ -19,7 +19,7 @@ public class LFO {
 				float val = ((float)Math.sin(Math.toRadians(rad)) + 1F) / 2F;
 				r.add(val);
 			}
-		} else if (type.equals(TRIANGLE)) {
+		} else if (type.equals(LINEAR)) {
 			float val = 0F;
 			float incrementPerTick = (1F / (float)totalTicks) * 2F;
 			for (int t = 0; t < totalTicks; t++) {

@@ -232,6 +232,19 @@ public class MidiSequencer implements Sequencer, Waitable {
 		}
 	}
 	
+	public void changedLFOs() {
+		lock.lock(this);
+		SynthConfig config = synthConfig;
+		long ticks = 0;
+		if (sequence[NEXT]!=null) {
+			ticks = sequence[NEXT].getTickLength();
+		}
+		lock.unlock(this);
+		if (config!=null) {
+			generateLfo(NEXT,config,ticks);
+		}
+	}
+	
 	public void setMixState(MixState state) {
 		if (state!=null) {
 			state = state.copy();

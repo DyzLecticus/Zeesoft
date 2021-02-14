@@ -11,6 +11,8 @@ public class ChannelLFO {
 	private Lock		lock		= new Lock();
 	
 	private Rythm		rythm		= new Rythm();
+	
+	private boolean		active		= true;
 	private int			channel		= SynthConfig.BASS_CHANNEL_2;
 	private int			control		= SynthConfig.FILTER;
 	private String		type		= LFO.SINE;
@@ -39,12 +41,39 @@ public class ChannelLFO {
 		}
 	}
 	
+	public ChannelLFO copy() {
+		ChannelLFO r = new ChannelLFO();
+		lock.lock(this);
+		r.rythm.copyFrom(this.rythm);
+		r.active = this.active;
+		r.channel = this.channel;
+		r.control = this.control;
+		r.type = this.type;
+		r.cycleSteps = this.cycleSteps;
+		r.change = this.change;
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void setRythm(Rythm rythm) {
 		lock.lock(this);
 		this.rythm = rythm;
 		lock.unlock(this);
 	}
 	
+	public boolean isActive() {
+		lock.lock(this);
+		boolean r = active;
+		lock.unlock(this);
+		return r;
+	}
+
+	public void setActive(boolean active) {
+		lock.lock(this);
+		this.active = active;
+		lock.unlock(this);
+	}
+
 	public int getChannel() {
 		lock.lock(this);
 		int r = channel;

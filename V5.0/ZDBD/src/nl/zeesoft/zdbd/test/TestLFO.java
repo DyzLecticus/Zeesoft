@@ -52,7 +52,7 @@ public class TestLFO extends TestObject {
 		printValues(values);
 		
 		System.out.println();
-		values = LFO.getTickValuesForCycleSteps(rythm, LFO.TRIANGLE, 3);
+		values = LFO.getTickValuesForCycleSteps(rythm, LFO.LINEAR, 3);
 		printValues(values);
 		
 		System.out.println();

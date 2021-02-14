@@ -22,6 +22,7 @@ import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.InstrumentEditor;
 import nl.zeesoft.zdbd.api.html.form.InstrumentList;
+import nl.zeesoft.zdbd.api.html.form.LfoEditor;
 import nl.zeesoft.zdbd.api.html.form.NetworkStatistics;
 import nl.zeesoft.zdbd.api.html.form.NewTheme;
 import nl.zeesoft.zdbd.api.html.form.SaveThemeAs;
@@ -49,6 +50,7 @@ import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.midi.SynthChannelConfig;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
+import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
@@ -1064,11 +1066,17 @@ public class RequestHandler extends HttpRequestHandler {
 				List<String> names = SoundPatch.getInstrumentNames();
 				String prevName = getPreviousName(name, names);
 				String nextName = getNextName(name, names);
-				SynthChannelConfig layer1 = controller.getChannelConfig(name,0);
-				SynthChannelConfig layer2 = controller.getChannelConfig(name,1);
-				List<InstrumentConvertor> convertors = controller.getConvertors(name);
-				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new InstrumentEditor(name,layer1,layer2,convertors,prevName,nextName)).render();
+				if (name.equals(SoundPatch.LFOS)) {
+					List<ChannelLFO> lfos = controller.getLFOs();
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = (new LfoEditor(name,lfos,prevName,nextName)).render();
+				} else {
+					SynthChannelConfig layer1 = controller.getChannelConfig(name,0);
+					SynthChannelConfig layer2 = controller.getChannelConfig(name,1);
+					List<InstrumentConvertor> convertors = controller.getConvertors(name);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = (new InstrumentEditor(name,layer1,layer2,convertors,prevName,nextName)).render();
+				}
 			}
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
@@ -1088,6 +1096,41 @@ public class RequestHandler extends HttpRequestHandler {
 							name = property.get(2).toString();
 						}
 						controller.setConvertorLayerProperty(name, layer, propertyName, value);
+						setPostOk(response);
+					} else {
+						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					}
+				} else if (propertyName.equals("lfo")) {
+					int index = Integer.parseInt(property.get(2).toString());
+					propertyName = property.get(1).toString();
+					Object value = null;
+					if (propertyName.equals("active")) {
+						value = Boolean.parseBoolean(elems.get(3).toString());
+					} else if (propertyName.equals("channel")) {
+						value = LfoEditor.getChannelForName(elems.get(3).toString());
+					} else if (propertyName.equals("control")) {
+						value = LfoEditor.getControlForName(elems.get(3).toString());
+					} else if (propertyName.equals("type")) {
+						value = elems.get(3).toString();
+					} else if (propertyName.equals("cycleSteps")) {
+						int val = Integer.parseInt(elems.get(3).toString());
+						if (val<1) {
+							val = 1;
+						} else if (val>999) {
+							val = 999;
+						}
+						value = val;
+					} else if (propertyName.equals("change")) {
+						float val = Float.parseFloat(elems.get(3).toString());
+						if (val<-1.0F) {
+							val = -1.0F;
+						} else if (val>1.0F) {
+							val = 1.0F;
+						}
+						value = val;
+					}
+					if (value!=null) {
+						controller.setLFOProperty(index, propertyName, value);
 						setPostOk(response);
 					} else {
 						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));

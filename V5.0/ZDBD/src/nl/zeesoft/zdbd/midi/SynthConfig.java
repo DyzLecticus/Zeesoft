@@ -56,6 +56,22 @@ public class SynthConfig {
 		VIB_DELAY,
 	};
 	
+	public static final String[]	CONTROL_NAMES		= {
+		"Volume",
+		"Attack",
+		"Decay",
+		"Release",
+		"Pan",
+		"Modulation",
+		"Chorus",
+		"Filter",
+		"Resonance",
+		"Reverb",
+		"Vibrato rate",
+		"Vibrato depth",
+		"Vibrato delay",
+	};
+	
 	private Lock					lock				= new Lock();
 	
 	private SynthChannelConfig[]	channels 			= new SynthChannelConfig[16];
@@ -95,6 +111,37 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 	
+	public List<ChannelLFO> getLFOs() {
+		List<ChannelLFO> r = new ArrayList<ChannelLFO>();
+		lock.lock(this);
+		for (ChannelLFO lfo: lfos) {
+			r.add(lfo.copy());
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void setLFOProperty(int index, String property, Object value) {
+		lock.lock(this);
+		if (index>=0 && index<lfos.size()) {
+			ChannelLFO lfo = lfos.get(index);
+			if (property.equals("active")) {
+				lfo.setActive((Boolean)value);
+			} else if (property.equals("channel")) {
+				lfo.setChannel((int)value);
+			} else if (property.equals("control")) {
+				lfo.setControl((int)value);
+			} else if (property.equals("type")) {
+				lfo.setType((String)value);
+			} else if (property.equals("cycleSteps")) {
+				lfo.setCycleSteps((int)value);
+			} else if (property.equals("change")) {
+				lfo.setChange((float)value);
+			}
+		}
+		lock.unlock(this);
+	}
+	
 	public void initializeDefaults() {
 		lock.lock(this);
 		lfos.clear();
@@ -123,7 +170,7 @@ public class SynthConfig {
 		bass2Config.resonance = 80;
 		
 		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.TRIANGLE,6,1));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.LINEAR,6,1));
 
 		SynthChannelConfig stabConfig = channels[STAB_CHANNEL];
 		stabConfig.instrument = 81;
@@ -141,8 +188,8 @@ public class SynthConfig {
 
 		lfos.add(new ChannelLFO(ARP_CHANNEL_1,FILTER,LFO.SINE,32,0.75F));
 		lfos.add(new ChannelLFO(ARP_CHANNEL_2,FILTER,LFO.SINE,32,-0.4F));
-		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.TRIANGLE,12,0.5F));
-		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.TRIANGLE,12,-0.5F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.LINEAR,12,0.5F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.LINEAR,12,-0.5F));
 
 		echo = new EchoConfig();
 		echo.sourceChannel = ARP_CHANNEL_1;
@@ -179,6 +226,12 @@ public class SynthConfig {
 		echos.add(echo);
 		
 		applyEchoConfigNoLock();
+		
+		for (int i = lfos.size(); i < 10; i++) {
+			ChannelLFO lfo = new ChannelLFO();
+			lfo.setActive(false);
+			lfos.add(lfo);
+		}
 		
 		lock.unlock(this);
 	}
@@ -287,32 +340,34 @@ public class SynthConfig {
 			lock.lock(this);
 			Track track = r.getTracks()[0]; 
 			for (ChannelLFO lfo: lfos) {
-				int channel = lfo.getChannel();
-				int control = lfo.getControl();
-				List<Float> changes = lfo.getChangesForTicks(ticks);
-				int value = channels[channel].getControlValue(control);
-				long tick = 0;
-				int pVal = value;
-				for (Float change: changes) {
-					int val = value;
-					if (change>0F) {
-						val = value + (int)(127F * change);
-						if (val>127F) {
-							val = 127;
+				if (lfo.isActive()) {
+					int channel = lfo.getChannel();
+					int control = lfo.getControl();
+					List<Float> changes = lfo.getChangesForTicks(ticks);
+					int value = channels[channel].getControlValue(control);
+					long tick = 0;
+					int pVal = value;
+					for (Float change: changes) {
+						int val = value;
+						if (change>0F) {
+							val = value + (int)(127F * change);
+							if (val>127F) {
+								val = 127;
+							}
+						} else if (change<0F) {
+							val = value - (int)(127F * (change * -1F));
+							if (val<0F) {
+								val = 0;
+							}
 						}
-					} else if (change<0F) {
-						val = value - (int)(127F * (change * -1F));
-						if (val<0F) {
-							val = 0;
+						if (val!=pVal) {
+							MidiSequenceUtil.createEventOnTrack(
+								track, ShortMessage.CONTROL_CHANGE, channel, control, val, tick
+							);
 						}
+						pVal = val;
+						tick++;
 					}
-					if (val!=pVal) {
-						MidiSequenceUtil.createEventOnTrack(
-							track, ShortMessage.CONTROL_CHANGE, channel, control, val, tick
-						);
-					}
-					pVal = val;
-					tick++;
 				}
 			}
 			lock.unlock(this);
@@ -323,7 +378,9 @@ public class SynthConfig {
 	public void commitChannelLFOs(long ticks) {
 		lock.lock(this);
 		for (ChannelLFO lfo: lfos) {
-			lfo.commitTicks(ticks);
+			if (lfo.isActive()) {
+				lfo.commitTicks(ticks);
+			}
 		}
 		lock.unlock(this);
 	}

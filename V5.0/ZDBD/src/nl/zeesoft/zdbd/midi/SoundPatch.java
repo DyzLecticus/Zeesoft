@@ -20,9 +20,10 @@ public class SoundPatch {
 	public static String				BASS				= Bass.NAME;
 	public static String				STAB				= Stab.NAME;
 	public static String				ARPEGGIATOR			= Arpeggiator.class.getSimpleName();
+	public static String				LFOS				= "LFOs";
 	
 	public static String[]				INSTRUMENT_NAMES	= {
-		DRUMS,BASS,STAB,ARPEGGIATOR
+		DRUMS,BASS,STAB,ARPEGGIATOR,LFOS
 	};
 	
 	public SynthConfig					synthConfig			= new SynthConfig();
