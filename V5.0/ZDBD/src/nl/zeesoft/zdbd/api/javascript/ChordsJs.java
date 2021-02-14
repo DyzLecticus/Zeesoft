@@ -106,7 +106,7 @@ public class ChordsJs extends ResponseObject {
 		append(r,"    }");
 		append(r,"    var elem = window.document.getElementById(\"showChordChanges\");");
 		append(r,"    if (elem!=null) {");
-		append(r,"        if (sequence.show) {");
+		append(r,"        if (chords.show) {");
 		append(r,"            elem.value = \"-\";");
 		append(r,"        } else {");
 		append(r,"            elem.value = \"+\";");
