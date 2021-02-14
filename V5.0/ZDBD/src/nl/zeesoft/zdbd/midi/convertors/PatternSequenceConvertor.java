@@ -43,6 +43,13 @@ public class PatternSequenceConvertor {
 		return getTrackNames().indexOf(name);
 	}
 	
+	public InstrumentConvertor getConvertor(String name) {
+		lock.lock(this);
+		InstrumentConvertor r = convertors.get(name);
+		lock.unlock(this);
+		return r;
+	}
+	
 	public void setConvertorLayerProperty(int convertor, int layer, String property, Object value) {
 		lock.lock(this);
 		convertors.setConvertorLayerProperty(convertor, layer, property, value);

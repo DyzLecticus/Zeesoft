@@ -5,6 +5,14 @@ import java.util.List;
 
 import nl.zeesoft.zdbd.midi.Arpeggiator;
 import nl.zeesoft.zdbd.midi.SynthConfig;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Crash;
+import nl.zeesoft.zdbd.pattern.instruments.Kick;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
+import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
+import nl.zeesoft.zdbd.pattern.instruments.Ride;
+import nl.zeesoft.zdbd.pattern.instruments.Snare;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.thread.Lock;
 
 public class InstrumentConvertors {
@@ -21,8 +29,8 @@ public class InstrumentConvertors {
 	public static final int				ARPEGGIATOR			= 10;
 	
 	public static final String[]		INSTRUMENT_NAMES	= {
-		"Kick", "Snare", "ClosedHihat", "OpenHihat", "Ride", "Crash", "Percussion1", "Percussion2", "Bass", "Stab",
-		Arpeggiator.class.getSimpleName()
+		Kick.NAME, Snare.NAME, "ClosedHihat", "OpenHihat", Ride.NAME, Crash.NAME, Percussion1.NAME, Percussion2.NAME,
+		Bass.NAME, Stab.NAME, Arpeggiator.class.getSimpleName()
 	};
 	
 	private Lock						lock				= new Lock();
@@ -127,6 +135,7 @@ public class InstrumentConvertors {
 			} else if (i==ARPEGGIATOR) {
 				SynthConvertor conv = new SynthConvertor();
 				conv.name = name;
+				conv.hold = 0.7F;
 				SynthLayerConvertor layer1 = new SynthLayerConvertor();
 				layer1.channel = SynthConfig.ARP_CHANNEL_1;
 				layer1.baseOctave = 4;

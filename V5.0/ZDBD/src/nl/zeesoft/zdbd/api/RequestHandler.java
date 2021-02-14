@@ -48,6 +48,7 @@ import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.midi.SynthChannelConfig;
 import nl.zeesoft.zdbd.midi.SynthConfig;
+import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
@@ -1065,8 +1066,9 @@ public class RequestHandler extends HttpRequestHandler {
 				String nextName = getNextName(name, names);
 				SynthChannelConfig layer1 = controller.getChannelConfig(name,0);
 				SynthChannelConfig layer2 = controller.getChannelConfig(name,1);
+				List<InstrumentConvertor> convertors = controller.getConvertors(name);
 				response.code = HttpURLConnection.HTTP_OK;
-				response.body = (new InstrumentEditor(name,layer1,layer2,prevName,nextName)).render();
+				response.body = (new InstrumentEditor(name,layer1,layer2,convertors,prevName,nextName)).render();
 			}
 		} else if (request.body.startsWith("SET_PROPERTY:")) {
 			List<Str> elems = request.body.split(":");
@@ -1074,13 +1076,31 @@ public class RequestHandler extends HttpRequestHandler {
 			if (checkInstrumentName(name,response)) {
 				List<Str> property = elems.get(2).split("-");
 				String propertyName = property.get(0).toString();
-				int layer = Integer.parseInt(property.get(1).toString());
-				int value = parseBit(elems.get(3));
-				List<int[]> changes = controller.setInstrumentProperty(name, layer, propertyName, value);
-				if (changes.size()>0) {
-					setPostOk(response);
+				if (propertyName.equals("conv")) {
+					int layer = 0;
+					propertyName = property.get(1).toString();
+					Object value = parseValue(elems.get(3),propertyName);
+					if (value!=null) {
+						if (property.size()==3) {
+							layer = Integer.parseInt(property.get(2).toString());
+						} else if (property.size()==4) {
+							layer = Integer.parseInt(property.get(3).toString());
+							name = property.get(2).toString();
+						}
+						controller.setConvertorLayerProperty(name, layer, propertyName, value);
+						setPostOk(response);
+					} else {
+						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					}
 				} else {
-					setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					int layer = Integer.parseInt(property.get(1).toString());
+					int value = parseBit(elems.get(3));
+					List<int[]> changes = controller.setInstrumentProperty(name, layer, propertyName, value);
+					if (changes.size()>0) {
+						setPostOk(response);
+					} else {
+						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					}
 				}
 			}
 		} else {
@@ -1198,6 +1218,53 @@ public class RequestHandler extends HttpRequestHandler {
 		float r = parsePercentage(perc);
 		if (r > Rythm.MAX_SHUFFLE) {
 			r = Rythm.MAX_SHUFFLE;
+		}
+		return r;
+	}
+	
+	protected Object parseValue(Str val, String propertyName) {
+		Object r = null;
+		float f = 0;
+		int i = 0;
+		try {
+			f = Float.parseFloat(val.toString());
+		} catch(NumberFormatException ex) {
+			// Ignore
+		}
+		try {
+			i = Integer.parseInt(val.toString());
+		} catch(NumberFormatException ex) {
+			// Ignore
+		}
+		if (propertyName.equals("baseOctave")) {
+			if (i < 0) {
+				i = 0;
+			}
+			if (i > 9) {
+				i = 9;
+			}
+			r = i;
+		} else if (propertyName.equals("midiNote") ||
+			propertyName.equals("velocity") ||
+			propertyName.equals("accentVelocity")
+			) {
+			if (i < 0) {
+				i = 0;
+			}
+			if (i > 127) {
+				i = 127;
+			}
+			r = i;
+		} else if (propertyName.equals("hold") ||
+			propertyName.equals("accentHold")
+			) {
+			if (f < 0) {
+				f = 0.0F;
+			}
+			if (f > 4.0) {
+				f = 4.0F;
+			}
+			r = f;
 		}
 		return r;
 	}

@@ -36,6 +36,7 @@ public class DrumConvertor extends InstrumentConvertor {
 	protected void copyFrom(InstrumentConvertor conv) {
 		if (conv instanceof DrumConvertor) {
 			DrumConvertor dc = (DrumConvertor) conv;
+			this.name = dc.name;
 			this.channel = dc.channel;
 			for (DrumSampleConvertor dsc: dc.samples) {
 				this.samples.add(dsc.copy());

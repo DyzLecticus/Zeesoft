@@ -309,7 +309,10 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 				}
 			}
 			lock.unlock(this);
-		} else if (event.name.equals(ThemeController.CHANGED_SHUFFLE)) {
+		} else if (
+			event.name.equals(ThemeController.CHANGED_SHUFFLE) ||
+			event.name.equals(ThemeController.CHANGED_CONVERTOR_PROPERTY)
+			) {
 			lock.lock(this);
 			if (currSequence.length()>0 && !MidiSys.sequencer.isRunning()) {
 				changedCurrentSequenceNoLock();

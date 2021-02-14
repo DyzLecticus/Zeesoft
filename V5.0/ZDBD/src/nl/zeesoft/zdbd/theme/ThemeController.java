@@ -14,6 +14,7 @@ import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.midi.SynthChannelConfig;
+import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternFactory;
@@ -58,6 +59,7 @@ public class ThemeController implements EventListener, Waitable {
 	public static String				CHANGED_ARPEGGIATOR			= "CHANGED_ARPEGGIATOR";
 	public static String				CHANGED_SOUND_PATCH			= "CHANGED_SOUND_PATCH";
 	public static String				CHANGED_INSTRUMENT_PROPERTY	= "CHANGED_INSTRUMENT_PROPERTY";
+	public static String				CHANGED_CONVERTOR_PROPERTY	= "CHANGED_CONVERTOR_PROPERTY";
 
 	public static String				EXPORTING_RECORDING			= "EXPORTING_RECORDING";
 	public static String				EXPORTED_RECORDING			= "EXPORTED_RECORDING";
@@ -442,6 +444,29 @@ public class ThemeController implements EventListener, Waitable {
 			eventPublisher.publishEvent(this, CHANGED_INSTRUMENT_PROPERTY, changes);
 		}
 		return changes;
+	}
+	
+	public List<InstrumentConvertor> getConvertors(String name) {
+		List<InstrumentConvertor> r = new ArrayList<InstrumentConvertor>();
+		lock.lock(this);
+		if (theme!=null) {
+			r = theme.soundPatch.getConvertors(name);
+		}
+		lock.unlock(this);
+		return r;
+	}
+	
+	public void setConvertorLayerProperty(String name, int layer, String property, Object value) {
+		boolean changed = false;
+		lock.lock(this);
+		if (theme!=null) {
+			theme.soundPatch.setConvertorLayerProperty(name, layer, property, value);
+			changed = true;
+		}
+		lock.unlock(this);
+		if (changed) {
+			eventPublisher.publishEvent(this, CHANGED_CONVERTOR_PROPERTY, name);
+		}
 	}
 	
 	public Sequence generateMidiSequence(PatternSequence sequence, Arpeggiator arp) {

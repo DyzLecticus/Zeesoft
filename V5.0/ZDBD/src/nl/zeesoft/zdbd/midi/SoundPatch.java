@@ -5,16 +5,21 @@ import java.util.List;
 
 import javax.sound.midi.Sequence;
 
+import nl.zeesoft.zdbd.midi.convertors.DrumConvertor;
+import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
+import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertors;
 import nl.zeesoft.zdbd.midi.convertors.PatternSequenceConvertor;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
+import nl.zeesoft.zdbd.pattern.instruments.Bass;
+import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 import nl.zeesoft.zdk.thread.RunCode;
 
 public class SoundPatch {
 	public static String				DRUMS				= "Drums";
-	public static String				BASS				= "Bass";
-	public static String				STAB				= "Stab";
-	public static String				ARPEGGIATOR			= "Arpeggiator";
+	public static String				BASS				= Bass.NAME;
+	public static String				STAB				= Stab.NAME;
+	public static String				ARPEGGIATOR			= Arpeggiator.class.getSimpleName();
 	
 	public static String[]				INSTRUMENT_NAMES	= {
 		DRUMS,BASS,STAB,ARPEGGIATOR
@@ -94,6 +99,30 @@ public class SoundPatch {
 			synthConfig.addEchoChanges(r);
 		}
 		return r;
+	}
+	
+	public List<InstrumentConvertor> getConvertors(String name) {
+		List<InstrumentConvertor> r = new ArrayList<InstrumentConvertor>();
+		if (name.equals(DRUMS)) {
+			for (int i = 0; i < InstrumentConvertors.INSTRUMENT_NAMES.length; i++) {
+				InstrumentConvertor conv = convertor.getConvertor(InstrumentConvertors.INSTRUMENT_NAMES[i]);
+				if (conv instanceof DrumConvertor) {
+					r.add(conv);
+				}
+			}
+		} else {
+			r.add(convertor.getConvertor(name));
+		}
+		return r;
+	}
+	
+	public void setConvertorLayerProperty(String name, int layer, String property, Object value) {
+		for (int i = 0; i < InstrumentConvertors.INSTRUMENT_NAMES.length; i++) {
+			if (name.equals(InstrumentConvertors.INSTRUMENT_NAMES[i])) {
+				convertor.setConvertorLayerProperty(i, layer, property, value);
+				break;
+			}
+		}
 	}
 	
 	public RunCode getFromFileRunCode(String path) {
