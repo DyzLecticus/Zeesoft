@@ -21,10 +21,10 @@ public class SynthConfig {
 	public static final int			STAB_CHANNEL		= 2;
 	public static final int			ARP_CHANNEL_1		= 7;
 	public static final int			ARP_CHANNEL_2		= 8;
-	public static final int			ARP_ECHO_1_CH_1		= 10;
-	public static final int			ARP_ECHO_1_CH_2		= 11;
-	public static final int			ARP_ECHO_2_CH_1		= 12;
-	public static final int			ARP_ECHO_2_CH_2		= 13;
+	public static final int			ECHO_CHANNEL_1		= 10;
+	public static final int			ECHO_CHANNEL_2		= 11;
+	public static final int			ECHO_CHANNEL_3		= 12;
+	public static final int			ECHO_CHANNEL_4		= 13;
 	
 	public static final int			VOLUME				= 7;
 	public static final int			ATTACK				= 73;
@@ -142,100 +142,6 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 	
-	public void initializeDefaults() {
-		lock.lock(this);
-		lfos.clear();
-		echos.clear();
-		
-		for (int c = 0; c < channels.length; c++) {
-			channels[c] = new SynthChannelConfig();
-			channels[c].channel = c;
-		}
-		
-		EchoConfig echo = null;
-		
-		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
-		drumConfig.instrument = 118;
-
-		SynthChannelConfig bass1Config = channels[BASS_CHANNEL_1];
-		bass1Config.instrument = 87;
-		bass1Config.reverb = 0;
-		bass1Config.decay = 32;
-		bass1Config.filter = 16;
-		SynthChannelConfig bass2Config = channels[BASS_CHANNEL_2];
-		bass2Config.instrument = 84;
-		bass2Config.reverb = 0;
-		bass2Config.chorus = 40;
-		bass2Config.pan = 0;
-		bass2Config.resonance = 80;
-		
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
-		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.LINEAR,6,1));
-
-		SynthChannelConfig stabConfig = channels[STAB_CHANNEL];
-		stabConfig.instrument = 81;
-		stabConfig.reverb = 64;
-		stabConfig.chorus = 40;
-
-		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
-		arp1Config.instrument = 80;
-		arp1Config.reverb = 48;
-		arp1Config.filter = 16;
-		arp1Config.pan = 32;
-		SynthChannelConfig arp2Config = channels[ARP_CHANNEL_2];
-		arp2Config.instrument = 83;
-		arp2Config.reverb = 48;
-
-		lfos.add(new ChannelLFO(ARP_CHANNEL_1,FILTER,LFO.SINE,32,0.75F));
-		lfos.add(new ChannelLFO(ARP_CHANNEL_2,FILTER,LFO.SINE,32,-0.4F));
-		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.LINEAR,12,0.5F));
-		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.LINEAR,12,-0.5F));
-
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_1;
-		echo.targetChannel = ARP_ECHO_1_CH_1;
-		echo.pan = 16;
-		echos.add(echo);
-		
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_2;
-		echo.targetChannel = ARP_ECHO_1_CH_2;
-		echo.pan = 112;
-		echos.add(echo);
-		
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_1;
-		echo.targetChannel = ARP_ECHO_2_CH_1;
-		echo.pan = 112;
-		echo.delay = 6;
-		echo.velocity = 0.40F;
-		echo.filter = 0.75F;
-		echo.reverb = 1.5F;
-		echo.chorus = 1.5F;
-		echos.add(echo);
-		
-		echo = new EchoConfig();
-		echo.sourceChannel = ARP_CHANNEL_2;
-		echo.targetChannel = ARP_ECHO_2_CH_2;
-		echo.pan = 16;
-		echo.delay = 6;
-		echo.velocity = 0.40F;
-		echo.filter = 0.75F;
-		echo.reverb = 1.5F;
-		echo.chorus = 1.5F;
-		echos.add(echo);
-		
-		applyEchoConfigNoLock();
-		
-		for (int i = lfos.size(); i < 10; i++) {
-			ChannelLFO lfo = new ChannelLFO();
-			lfo.setActive(false);
-			lfos.add(lfo);
-		}
-		
-		lock.unlock(this);
-	}
-	
 	public List<EchoConfig> getEchos() {
 		List<EchoConfig> r = new ArrayList<EchoConfig>();
 		lock.lock(this);
@@ -244,6 +150,30 @@ public class SynthConfig {
 		}
 		lock.unlock(this);
 		return r;
+	}
+	
+	public void setEchoProperty(int index, String property, Object value) {
+		lock.lock(this);
+		if (index>=0 && index<echos.size()) {
+			EchoConfig echo = echos.get(index);
+			if (property.equals("sourceChannel")) {
+				echo.sourceChannel = (int)value;
+			} else if (property.equals("delay")) {
+				echo.chorus = (int)value;
+			} else if (property.equals("pan")) {
+				echo.pan = (int)value;
+			} else if (property.equals("velocity")) {
+				echo.velocity = (float)value;
+			} else if (property.equals("filter")) {
+				echo.filter = (float)value;
+			} else if (property.equals("reverb")) {
+				echo.reverb = (float)value;
+			} else if (property.equals("chorus")) {
+				echo.chorus = (float)value;
+			}
+			applyEchoConfigNoLock();
+		}
+		lock.unlock(this);
 	}
 	
 	public void addEchoChanges(List<int[]> changes) {
@@ -385,6 +315,100 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 	
+	public void initializeDefaults() {
+		lock.lock(this);
+		lfos.clear();
+		echos.clear();
+		
+		for (int c = 0; c < channels.length; c++) {
+			channels[c] = new SynthChannelConfig();
+			channels[c].channel = c;
+		}
+		
+		EchoConfig echo = null;
+		
+		SynthChannelConfig drumConfig = channels[DRUM_CHANNEL];
+		drumConfig.instrument = 118;
+
+		SynthChannelConfig bass1Config = channels[BASS_CHANNEL_1];
+		bass1Config.instrument = 87;
+		bass1Config.reverb = 0;
+		bass1Config.decay = 32;
+		bass1Config.filter = 16;
+		SynthChannelConfig bass2Config = channels[BASS_CHANNEL_2];
+		bass2Config.instrument = 84;
+		bass2Config.reverb = 0;
+		bass2Config.chorus = 40;
+		bass2Config.pan = 0;
+		bass2Config.resonance = 80;
+		
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2));
+		lfos.add(new ChannelLFO(BASS_CHANNEL_2,PAN,LFO.LINEAR,6,1));
+
+		SynthChannelConfig stabConfig = channels[STAB_CHANNEL];
+		stabConfig.instrument = 81;
+		stabConfig.reverb = 64;
+		stabConfig.chorus = 40;
+
+		SynthChannelConfig arp1Config = channels[ARP_CHANNEL_1];
+		arp1Config.instrument = 80;
+		arp1Config.reverb = 48;
+		arp1Config.filter = 16;
+		arp1Config.pan = 32;
+		SynthChannelConfig arp2Config = channels[ARP_CHANNEL_2];
+		arp2Config.instrument = 83;
+		arp2Config.reverb = 48;
+
+		lfos.add(new ChannelLFO(ARP_CHANNEL_1,FILTER,LFO.SINE,32,0.75F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_2,FILTER,LFO.SINE,32,-0.4F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_1,PAN,LFO.LINEAR,12,0.5F));
+		lfos.add(new ChannelLFO(ARP_CHANNEL_2,PAN,LFO.LINEAR,12,-0.5F));
+
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_1;
+		echo.targetChannel = ECHO_CHANNEL_1;
+		echo.pan = 16;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_2;
+		echo.targetChannel = ECHO_CHANNEL_2;
+		echo.pan = 112;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_1;
+		echo.targetChannel = ECHO_CHANNEL_3;
+		echo.pan = 112;
+		echo.delay = 6;
+		echo.velocity = 0.40F;
+		echo.filter = 0.75F;
+		echo.reverb = 1.5F;
+		echo.chorus = 1.5F;
+		echos.add(echo);
+		
+		echo = new EchoConfig();
+		echo.sourceChannel = ARP_CHANNEL_2;
+		echo.targetChannel = ECHO_CHANNEL_4;
+		echo.pan = 16;
+		echo.delay = 6;
+		echo.velocity = 0.40F;
+		echo.filter = 0.75F;
+		echo.reverb = 1.5F;
+		echo.chorus = 1.5F;
+		echos.add(echo);
+		
+		applyEchoConfigNoLock();
+		
+		for (int i = lfos.size(); i < 10; i++) {
+			ChannelLFO lfo = new ChannelLFO();
+			lfo.setActive(false);
+			lfos.add(lfo);
+		}
+		
+		lock.unlock(this);
+	}
+	
 	public static int getTrackNumForChannel(int channel) {
 		int r = -1;
 		if (channel==DRUM_CHANNEL) {
@@ -399,13 +423,13 @@ public class SynthConfig {
 			r = 4;
 		} else if (channel==ARP_CHANNEL_2) {
 			r = 5;
-		} else if (channel==ARP_ECHO_1_CH_1) {
+		} else if (channel==ECHO_CHANNEL_1) {
 			r = 6;
-		} else if (channel==ARP_ECHO_1_CH_2) {
+		} else if (channel==ECHO_CHANNEL_2) {
 			r = 7;
-		} else if (channel==ARP_ECHO_2_CH_1) {
+		} else if (channel==ECHO_CHANNEL_3) {
 			r = 8;
-		} else if (channel==ARP_ECHO_2_CH_2) {
+		} else if (channel==ECHO_CHANNEL_4) {
 			r = 9;
 		}
 		return r;
@@ -417,13 +441,30 @@ public class SynthConfig {
 	
 	protected void applyEchoConfigNoLock() {
 		for (EchoConfig echo: echos) {
-			SynthChannelConfig source = channels[echo.sourceChannel];
-			SynthChannelConfig target = channels[echo.targetChannel];
-			target.copyFrom(source);
-			target.pan = echo.pan;
-			target.filter = (int)(target.filter * echo.filter);
-			target.reverb = (int)(target.reverb * echo.reverb);
-			target.chorus = (int)(target.chorus * echo.chorus);
+			if (echo.sourceChannel>=0) {
+				SynthChannelConfig source = channels[echo.sourceChannel];
+				SynthChannelConfig target = channels[echo.targetChannel];
+				target.copyFrom(source);
+				target.pan = echo.pan;
+				target.filter = (int)(target.filter * echo.filter);
+				target.reverb = (int)(target.reverb * echo.reverb);
+				target.chorus = (int)(target.chorus * echo.chorus);
+				if (target.filter < 0) {
+					target.filter = 0;
+				} else if (target.filter > 127) {
+					target.filter = 127;
+				}
+				if (target.reverb < 0) {
+					target.reverb = 0;
+				} else if (target.reverb > 127) {
+					target.reverb = 127;
+				}
+				if (target.chorus < 0) {
+					target.chorus = 0;
+				} else if (target.chorus > 127) {
+					target.chorus = 127;
+				}
+			}
 		}
 	}
 }

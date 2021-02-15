@@ -80,6 +80,11 @@ public class SynthChannelConfig {
 	}
 	
 	public void setControlValue(int control, int value) {
+		if (value < 0) {
+			value = 0;
+		} else if (value > 127) {
+			value = 127;
+		}
 		if (control==SynthConfig.VOLUME) {
 			volume = value;
 		} else if (control==SynthConfig.ATTACK) {
