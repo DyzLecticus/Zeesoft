@@ -8,12 +8,8 @@ import nl.zeesoft.zdbd.midi.convertors.DrumConvertor;
 import nl.zeesoft.zdbd.midi.convertors.DrumSampleConvertor;
 import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
 import nl.zeesoft.zdbd.midi.convertors.SynthLayerConvertor;
-import nl.zeesoft.zdk.Str;
 
-public class InstrumentEditor extends FormHtml {
-	protected String	prevName	= "";
-	protected String	nextName	= "";
-	
+public class InstrumentEditor extends AbstractEditor {
 	public InstrumentEditor(String name, SynthChannelConfig layer1, SynthChannelConfig layer2,
 		List<InstrumentConvertor> convertors, String prevName, String nextName
 		) {
@@ -56,31 +52,7 @@ public class InstrumentEditor extends FormHtml {
 		
 		this.prevName = prevName;
 		this.nextName = nextName;
-	}
-
-	@Override
-	public Str render() {
-		Str r = new Str();
-		append(r,renderPrevNextButtons(prevName,nextName));
-		append(r,super.render());
-		return r;
-	}
-	
-	public static Str renderPrevNextButtons(String prevName, String nextName) {
-		Str r = new Str();
-		if (prevName.length()>0 || nextName.length()>0) {
-			append(r,"<div class=\"row\">");
-			append(r,"<div class=\"column-left column-padding\">");
-			append(r,"<input type=\"button\" value=\"<<\" onclick=\"soundpatch.edit('");
-			r.sb().append(prevName);
-			r.sb().append("');\"/>");
-			append(r,"<input type=\"button\" value=\">>\" onclick=\"soundpatch.edit('");
-			r.sb().append(nextName);
-			r.sb().append("');\"/>");
-			append(r,"</div>");
-			append(r,"</div>");
-		}
-		return r;
+		this.function = "soundpatch.edit";
 	}
 	
 	protected void addSynthChannelConfigProperties(SynthChannelConfig layer, SynthLayerConvertor layerConv, int num) {

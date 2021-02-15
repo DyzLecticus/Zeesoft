@@ -7,12 +7,8 @@ import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;
 import nl.zeesoft.zdbd.midi.lfo.LFO;
-import nl.zeesoft.zdk.Str;
 
-public class LfoEditor extends FormHtml {
-	protected String	prevName	= "";
-	protected String	nextName	= "";
-	
+public class LfoEditor extends AbstractEditor {
 	public LfoEditor(String name, List<ChannelLFO> lfos, String prevName, String nextName) {
 		cancelLabel = "Done";
 		onCancelClick = "soundpatch.editDone();";
@@ -31,14 +27,7 @@ public class LfoEditor extends FormHtml {
 		
 		this.prevName = prevName;
 		this.nextName = nextName;
-	}
-
-	@Override
-	public Str render() {
-		Str r = new Str();
-		append(r,InstrumentEditor.renderPrevNextButtons(prevName,nextName));
-		append(r,super.render());
-		return r;
+		this.function = "soundpatch.edit";
 	}
 	
 	protected void addChannelLFOProperties(ChannelLFO lfo, int index) {

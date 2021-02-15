@@ -18,6 +18,7 @@ import nl.zeesoft.zdbd.api.html.form.AddGenerator;
 import nl.zeesoft.zdbd.api.html.form.ArpeggiatorEditor;
 import nl.zeesoft.zdbd.api.html.form.ArpeggiatorList;
 import nl.zeesoft.zdbd.api.html.form.ChordEditor;
+import nl.zeesoft.zdbd.api.html.form.EchoEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorEditor;
 import nl.zeesoft.zdbd.api.html.form.GeneratorList;
 import nl.zeesoft.zdbd.api.html.form.InstrumentEditor;
@@ -43,6 +44,7 @@ import nl.zeesoft.zdbd.api.javascript.SequencerJs;
 import nl.zeesoft.zdbd.api.javascript.StateJs;
 import nl.zeesoft.zdbd.api.javascript.ThemeJs;
 import nl.zeesoft.zdbd.midi.Arpeggiator;
+import nl.zeesoft.zdbd.midi.EchoConfig;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdbd.midi.SoundPatch;
@@ -1070,6 +1072,10 @@ public class RequestHandler extends HttpRequestHandler {
 					List<ChannelLFO> lfos = controller.getLFOs();
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = (new LfoEditor(name,lfos,prevName,nextName)).render();
+				} else if (name.equals(SoundPatch.ECHOS)) {
+					List<EchoConfig> echos = controller.getEchos(false);
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = (new EchoEditor(name,echos,prevName,nextName)).render();
 				} else {
 					SynthChannelConfig layer1 = controller.getChannelConfig(name,0);
 					SynthChannelConfig layer2 = controller.getChannelConfig(name,1);
@@ -1131,6 +1137,44 @@ public class RequestHandler extends HttpRequestHandler {
 					}
 					if (value!=null) {
 						controller.setLFOProperty(index, propertyName, value);
+						setPostOk(response);
+					} else {
+						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
+					}
+				} else if (propertyName.equals("echo")) {
+					int index = Integer.parseInt(property.get(2).toString());
+					propertyName = property.get(1).toString();
+					Object value = null;
+					if (propertyName.equals("active")) {
+						value = Boolean.parseBoolean(elems.get(3).toString());
+					} else if (propertyName.equals("sourceChannel")) {
+						value = LfoEditor.getChannelForName(elems.get(3).toString());
+					} else if (propertyName.equals("delay")) {
+						int val = Integer.parseInt(elems.get(3).toString());
+						if (val<1) {
+							val = 1;
+						} else if (val>128) {
+							val = 128;
+						}
+						value = val;
+					} else if (propertyName.equals("pan")) {
+						value = parseBit(elems.get(3));
+					} else if (
+						propertyName.equals("velocity") ||
+						propertyName.equals("filter") ||
+						propertyName.equals("reverb") ||
+						propertyName.equals("chorus")
+						) {
+						float val = Float.parseFloat(elems.get(3).toString());
+						if (val<0.0F) {
+							val = 0.0F;
+						} else if (val>10.0F) {
+							val = 10.0F;
+						}
+						value = val;
+					}
+					if (value!=null) {
+						controller.setEchoProperty(index, propertyName, value);
 						setPostOk(response);
 					} else {
 						setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));

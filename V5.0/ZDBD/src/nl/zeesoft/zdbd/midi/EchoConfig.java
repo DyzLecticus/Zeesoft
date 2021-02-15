@@ -1,6 +1,7 @@
 package nl.zeesoft.zdbd.midi;
 
 public class EchoConfig {
+	public boolean	active			= true;
 	public int		sourceChannel	= 0;
 	public int		targetChannel	= 0;
 	public int		delay			= 3;
@@ -12,6 +13,7 @@ public class EchoConfig {
 	
 	public EchoConfig copy() {
 		EchoConfig r = new EchoConfig();
+		r.active = active;
 		r.sourceChannel = sourceChannel;
 		r.targetChannel = targetChannel;
 		r.delay = delay;

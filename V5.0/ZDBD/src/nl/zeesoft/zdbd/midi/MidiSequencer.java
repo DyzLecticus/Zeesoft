@@ -517,7 +517,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 				lock.lock(this);
 				
 				if (synthConfig!=null) {
-					echos = synthConfig.getEchos();
+					echos = synthConfig.getEchos(true);
 				}
 				int tps = ticksPerStep;
 				MidiSequence pSeq = sequence[CURR];

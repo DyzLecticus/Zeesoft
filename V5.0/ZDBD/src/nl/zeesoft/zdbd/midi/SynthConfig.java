@@ -142,11 +142,13 @@ public class SynthConfig {
 		lock.unlock(this);
 	}
 	
-	public List<EchoConfig> getEchos() {
+	public List<EchoConfig> getEchos(boolean active) {
 		List<EchoConfig> r = new ArrayList<EchoConfig>();
 		lock.lock(this);
 		for (EchoConfig echo: echos) {
-			r.add(echo.copy());
+			if (!active || active && echo.active) {
+				r.add(echo.copy());
+			}
 		}
 		lock.unlock(this);
 		return r;
@@ -156,7 +158,9 @@ public class SynthConfig {
 		lock.lock(this);
 		if (index>=0 && index<echos.size()) {
 			EchoConfig echo = echos.get(index);
-			if (property.equals("sourceChannel")) {
+			if (property.equals("active")) {
+				echo.active = (boolean)value;
+			} else if (property.equals("sourceChannel")) {
 				echo.sourceChannel = (int)value;
 			} else if (property.equals("delay")) {
 				echo.chorus = (int)value;

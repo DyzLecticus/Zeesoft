@@ -496,11 +496,11 @@ public class ThemeController implements EventListener, Waitable {
 		}
 	}
 	
-	public List<EchoConfig> getEchos() {
+	public List<EchoConfig> getEchos(boolean active) {
 		List<EchoConfig> r = new ArrayList<EchoConfig>();
 		lock.lock(this);
 		if (theme!=null) {
-			r = theme.soundPatch.synthConfig.getEchos();
+			r = theme.soundPatch.synthConfig.getEchos(active);
 		}
 		lock.unlock(this);
 		return r;
