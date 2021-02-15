@@ -77,6 +77,7 @@ public class SynthConfig {
 	private SynthChannelConfig[]	channels 			= new SynthChannelConfig[16];
 	private List<ChannelLFO>		lfos				= new ArrayList<ChannelLFO>();
 	private List<EchoConfig>		echos				= new ArrayList<EchoConfig>();
+	private long					changed				= System.currentTimeMillis();
 	
 	public SynthConfig() {
 		initializeDefaults();
@@ -97,8 +98,9 @@ public class SynthConfig {
 		lock.lock(this);
 		if (instrument >= 0 && instrument < 128) {
 			channels[channel].instrument = instrument;
+			applyEchoConfigNoLock();
+			changed = System.currentTimeMillis();
 		}
-		applyEchoConfigNoLock();
 		lock.unlock(this);
 	}
 	
@@ -106,8 +108,9 @@ public class SynthConfig {
 		lock.lock(this);
 		if (value >= 0 && value < 128) {
 			channels[channel].setControlValue(control, value);
+			applyEchoConfigNoLock();
+			changed = System.currentTimeMillis();
 		}
-		applyEchoConfigNoLock();
 		lock.unlock(this);
 	}
 	
@@ -138,6 +141,7 @@ public class SynthConfig {
 			} else if (property.equals("change")) {
 				lfo.setChange((float)value);
 			}
+			changed = System.currentTimeMillis();
 		}
 		lock.unlock(this);
 	}
@@ -176,6 +180,7 @@ public class SynthConfig {
 				echo.chorus = (float)value;
 			}
 			applyEchoConfigNoLock();
+			changed = System.currentTimeMillis();
 		}
 		lock.unlock(this);
 	}
@@ -194,8 +199,15 @@ public class SynthConfig {
 		}
 		lock.unlock(this);
 	}
+
+	public long getChanged() {
+		lock.lock(this);
+		long r = changed;
+		lock.unlock(this);
+		return r;
+	}
 	
-	public void applyInstrumentPropertyChange(Synthesizer synthesizer, int[] change) {
+	public static void applyInstrumentPropertyChange(Synthesizer synthesizer, int[] change) {
 		int channel = change[0];
 		int control = change[1];
 		int value = change[2];
@@ -265,6 +277,7 @@ public class SynthConfig {
 		for (ChannelLFO lfo: lfos) {
 			lfo.setRythm(rythm);
 		}
+		changed = System.currentTimeMillis();
 		lock.unlock(this);
 	}
 	
@@ -410,6 +423,7 @@ public class SynthConfig {
 			lfos.add(lfo);
 		}
 		
+		changed = System.currentTimeMillis();
 		lock.unlock(this);
 	}
 	

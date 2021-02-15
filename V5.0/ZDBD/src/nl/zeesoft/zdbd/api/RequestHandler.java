@@ -117,7 +117,12 @@ public class RequestHandler extends HttpRequestHandler {
 					response.headers.addContentTypeHeader("text/css");
 				}
 			} else {
-				if (request.path.equals("/state.txt")) {
+				if (request.path.equals("/quit.txt")) {
+					Str resp = new Str("themeHasChanges:");
+					resp.sb().append(controller.themeHasChanges());
+					response.code = HttpURLConnection.HTTP_OK;
+					response.body = resp;
+				} else if (request.path.equals("/state.txt")) {
 					response.code = HttpURLConnection.HTTP_OK;
 					response.body = monitor.getStateResponse();
 				} else if (request.path.equals("/theme.txt")) {

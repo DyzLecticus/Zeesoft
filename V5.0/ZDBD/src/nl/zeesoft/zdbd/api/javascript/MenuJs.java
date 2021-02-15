@@ -9,7 +9,16 @@ public class MenuJs extends ResponseObject {
 		Str r = new Str();
 		append(r,"var menu = menu || {};");
 		append(r,"menu.quit = function() {");
-		append(r,"    var q = confirm(\"Are you sure you want to quit?\");");
+		append(r,"    main.xhr.getText(\"/quit.txt\",menu.quitCallback);");
+		append(r,"};");
+		append(r,"menu.quitCallback = function(response) {");
+		append(r,"    var obj = main.xhr.parseResponseText(response.responseText);");
+		append(r,"    var q = null;");
+		append(r,"    if (obj.themeHasChanges) {");
+		append(r,"        q = confirm(\"The current theme has changes.\\nAre you sure you want to quit?\");");
+		append(r,"    } else {");
+		append(r,"        q = confirm(\"Are you sure you want to quit?\");");
+		append(r,"    }");
 		append(r,"    if (q==true) {");
 		append(r,"        modal.load(\"Bye\");");
 		append(r,"        main.xhr.postText(\"/state.txt\",\"QUIT\");");

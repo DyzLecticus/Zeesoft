@@ -214,16 +214,13 @@ public class App implements ActionListener {
 	}
 	
 	protected void handleQuitRequest() {
-		int response = JOptionPane.YES_OPTION;
+		String question = "Are you sure you want to quit?";
 		if (controller.themeHasChanges()) {
-	    	response = JOptionPane.showConfirmDialog(
-	    		null,
-				"The current theme has changes.\nAre you sure you want to quit?",
-				"Quit?",
-				JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE
-			);
+			question = "The current theme has changes.\n" + question;
 		}
+    	int response = JOptionPane.showConfirmDialog(null,question,"Quit?",
+    		JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE
+		);
         if (response == JOptionPane.YES_OPTION) {
         	stop(null);
 			System.exit(0);

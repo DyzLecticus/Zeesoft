@@ -14,6 +14,7 @@ public class Arpeggiators {
 	protected Lock					lock	= new Lock();
 	
 	protected List<Arpeggiator>		arps	= new ArrayList<Arpeggiator>();
+	protected long					changed	= System.currentTimeMillis();
 
 	public Arpeggiators() {
 		initializeDefaults();
@@ -28,6 +29,7 @@ public class Arpeggiators {
 				arps.remove(existing);
 			}
 			arps.add(arp);
+			changed	= System.currentTimeMillis();
 			lock.unlock(this);
 		}
 	}
@@ -49,6 +51,7 @@ public class Arpeggiators {
 			Arpeggiator conflict = getArpeggiatorNoLock(newName);
 			if (arp!=null && conflict==null) {
 				arp.name = newName;
+				changed	= System.currentTimeMillis();
 			}
 			lock.unlock(this);
 		}
@@ -59,6 +62,7 @@ public class Arpeggiators {
 		Arpeggiator r = getArpeggiatorNoLock(name);
 		if (r!=null) {
 			arps.remove(r);
+			changed	= System.currentTimeMillis();
 		}
 		lock.unlock(this);
 		return r;
@@ -74,6 +78,13 @@ public class Arpeggiators {
 		for (Entry<String,Arpeggiator> entry: map.entrySet()) {
 			r.add(entry.getValue());
 		}
+		lock.unlock(this);
+		return r;
+	}
+
+	public long getChanged() {
+		lock.lock(this);
+		long r = changed;
 		lock.unlock(this);
 		return r;
 	}
@@ -96,6 +107,7 @@ public class Arpeggiators {
 			for (Arpeggiator arp: arpeggiators.list()) {
 				arps.add(arp);
 			}
+			changed = arpeggiators.changed;
 			lock.unlock(this);
 		}
 	}

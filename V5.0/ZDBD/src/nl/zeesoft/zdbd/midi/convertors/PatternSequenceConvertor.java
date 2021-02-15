@@ -25,6 +25,7 @@ public class PatternSequenceConvertor {
 	protected Lock					lock				= new Lock();
 	
 	protected InstrumentConvertors	convertors			= new InstrumentConvertors();
+	protected long					changed				= System.currentTimeMillis();
 	
 	public static List<String> getTrackNames() {
 		List<String> r = new ArrayList<String>();
@@ -53,6 +54,7 @@ public class PatternSequenceConvertor {
 	public void setConvertorLayerProperty(int convertor, int layer, String property, Object value) {
 		lock.lock(this);
 		convertors.setConvertorLayerProperty(convertor, layer, property, value);
+		changed = System.currentTimeMillis();
 		lock.unlock(this);
 	}
 	
@@ -83,7 +85,14 @@ public class PatternSequenceConvertor {
 		}
 		return r;
 	}
-	
+
+	public long getChanged() {
+		lock.lock(this);
+		long r = changed;
+		lock.unlock(this);
+		return r;
+	}
+
 	protected Sequence generateNoteSequenceForPattern(PatternSequence patternSequence, int patternIndex) {
 		Sequence r = createSequence();
 		addNotesToSequence(r,patternSequence,patternIndex);

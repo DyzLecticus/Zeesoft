@@ -15,6 +15,7 @@ import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SoundPatchFactory;
 import nl.zeesoft.zdbd.midi.SynthChannelConfig;
+import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.midi.convertors.InstrumentConvertor;
 import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;
 import nl.zeesoft.zdbd.neural.Generator;
@@ -439,7 +440,7 @@ public class ThemeController implements EventListener, Waitable {
 			changes = theme.soundPatch.setInstrumentProperty(name, layer, propertyName, value);
 			if (MidiSys.synthesizer!=null) {
 				for (int[] change: changes) {
-					theme.soundPatch.synthConfig.applyInstrumentPropertyChange(MidiSys.synthesizer, change);
+					SynthConfig.applyInstrumentPropertyChange(MidiSys.synthesizer, change);
 				}
 			}
 		}
@@ -543,7 +544,10 @@ public class ThemeController implements EventListener, Waitable {
 		if (theme!=null && (
 			savedTheme<theme.networkTrainer.getChangedSequence() || 
 			savedTheme<theme.networkTrainer.getTrainedNetwork() || 
-			savedTheme<theme.generators.getChanged() 
+			savedTheme<theme.generators.getChanged() ||
+			savedTheme<theme.arpeggiators.getChanged() ||
+			savedTheme<theme.soundPatch.synthConfig.getChanged() ||
+			savedTheme<theme.soundPatch.convertor.getChanged()
 			)) {
 			r = true;
 		}
