@@ -27,7 +27,7 @@ public class Generators {
 	protected long					changed		= System.currentTimeMillis();
 	
 	public Generators() {
-		initializeDefaults(true);
+		initializeDefaults(true,1.0F);
 	}
 
 	public void copyFrom(Generators gens) {
@@ -237,13 +237,14 @@ public class Generators {
 		PersistableCollection.toFile(this, path);
 	}
 	
-	public void initializeDefaults(boolean maintainNote) {
+	public void initializeDefaults(boolean maintainNote, float mixEnd) {
 		lock.lock(this);
 		generators.clear();
 		
 		Generator gen = null;
 		gen = new Generator();
 		gen.name = "Maintain A1";
+		gen.mixEnd = mixEnd;
 		if (!maintainNote) {
 			gen.setMaintainInstruments();
 		}
@@ -251,10 +252,12 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain A2";
+		gen.mixEnd = mixEnd;
 		putNoLock(gen);
 		
 		gen = new Generator();
 		gen.name = "Maintain B1";
+		gen.mixEnd = mixEnd;
 		if (maintainNote) {
 			gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
 		} else {
@@ -264,6 +267,7 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain B2";
+		gen.mixEnd = mixEnd;
 		gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
 		putNoLock(gen);
 		

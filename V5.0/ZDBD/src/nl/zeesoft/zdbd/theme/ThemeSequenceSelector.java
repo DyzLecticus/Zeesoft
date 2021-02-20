@@ -288,11 +288,9 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			if (event.param!=null) {
 				if (event.param.toString().equals(currSequence) && !MidiSys.sequencer.isRunning()) {
 					changedCurrentSequenceNoLock();
-					Logger.dbg(this, new Str("Updated current sequence"));
 				}
 				if (event.param.toString().equals(nextSequence)) {
 					changedNextSequenceNoLock();
-					Logger.dbg(this, new Str("Updated next sequence"));
 				}
 			}
 			lock.unlock(this);
@@ -301,16 +299,15 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			if (event.param!=null) {
 				if (event.param.toString().equals(currArpeggiator.name) && !MidiSys.sequencer.isRunning()) {
 					changedCurrentSequenceNoLock();
-					Logger.dbg(this, new Str("Updated current sequence"));
 				}
 				if (event.param.toString().equals(nextArpeggiator.name)) {
 					changedNextSequenceNoLock();
-					Logger.dbg(this, new Str("Updated next sequence"));
 				}
 			}
 			lock.unlock(this);
 		} else if (
 			event.name.equals(ThemeController.CHANGED_SHUFFLE) ||
+			event.name.equals(ThemeController.CHANGED_SOUND_PATCH) ||
 			event.name.equals(ThemeController.CHANGED_CONVERTOR_PROPERTY)
 			) {
 			lock.lock(this);

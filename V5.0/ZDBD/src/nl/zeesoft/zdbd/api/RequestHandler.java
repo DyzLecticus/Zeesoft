@@ -1353,8 +1353,8 @@ public class RequestHandler extends HttpRequestHandler {
 			if (f < 0) {
 				f = 0.0F;
 			}
-			if (f > 4.0) {
-				f = 4.0F;
+			if (f > 8.0F) {
+				f = 8.0F;
 			}
 			r = f;
 		}
