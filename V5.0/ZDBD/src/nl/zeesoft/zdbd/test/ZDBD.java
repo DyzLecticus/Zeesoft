@@ -47,7 +47,7 @@ public class ZDBD extends LibraryObject {
 		System.out.println("MidiDreamer is a locally running Java application that exposes control over its functionality through a custom HTTP server.  ");
 		System.out.println("It uses the Java MIDI Syntesizer for audio synthesis and a custom Sequencer implementation for sequencing.  ");
 		System.out.println("[ZeeTracker](https://github.com/DyzLecticus/Zeesoft/tree/master/ZeeTracker#zeetracker) sound fonts are used to provide modern electronic sounds.  ");
-		System.out.println("The [ZeesoftDevelopmentKit](https://github.com/DyzLecticus/Zeesoft/tree/master/V5.0/ZDK#zeesoft-development-kit) provides high level components for this application.  ");
+		System.out.println("The [Zeesoft Development Kit](https://github.com/DyzLecticus/Zeesoft/tree/master/V5.0/ZDK#zeesoft-development-kit) provides high level components for this application.  ");
 		System.out.println();
 		System.out.println("**Screen shots**  ");
 		System.out.println("<img alt=\"Main application\" src=\"https://raw.githubusercontent.com/DyzLecticus/Zeesoft/master/V5.0/ZDBD/resources/screenshots/App.bmp\">");
