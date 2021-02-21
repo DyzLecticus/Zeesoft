@@ -43,6 +43,9 @@ public class ZDBD extends LibraryObject {
 		System.out.println(" * Use the arpeggiator to generate a unique solo on top  ");
 		System.out.println(" * Record the performance as MIDI and/or WAV audio  ");
 		System.out.println();
+		System.out.println("**Example**  ");
+		System.out.println("Given [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoTrainingSequence.wav) training sequence one can create [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoRecording.wav) recording.  ");    
+		System.out.println();
 		System.out.println("**Architecture**  ");
 		System.out.println("MidiDreamer is a locally running Java application that exposes control over its functionality through a custom HTTP server.  ");
 		System.out.println("It uses the Java MIDI Syntesizer for audio synthesis and a custom Sequencer implementation for sequencing.  ");

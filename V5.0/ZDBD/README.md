@@ -12,6 +12,9 @@ Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/release
  * Use the arpeggiator to generate a unique solo on top  
  * Record the performance as MIDI and/or WAV audio  
 
+**Example**
+Given [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoTrainingSequence.wav) training sequence one can create [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoRecording.wav) recording.      
+
 **Architecture**  
 MidiDreamer is a locally running Java application that exposes control over its functionality through a custom HTTP server.  
 It uses the Java MIDI Syntesizer for audio synthesis and a custom Sequencer implementation for sequencing.  
