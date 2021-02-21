@@ -12,7 +12,7 @@ Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/release
  * Use the arpeggiator to generate a unique solo on top  
  * Record the performance as MIDI and/or WAV audio  
 
-**Example**
+**Example**  
 Given [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoTrainingSequence.wav) training sequence one can create [this](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/resources/DemoRecording.wav) recording.      
 
 **Architecture**  
