@@ -39,6 +39,8 @@ public class TestEncoders extends TestObject {
 		System.out.println("sdrs = pattern.getSDRsForGroup(1,rythm.getStepsPerPattern());");
 		System.out.println("// Get the group 2 SDRs");
 		System.out.println("sdrs = pattern.getSDRsForGroup(2,rythm.getStepsPerPattern());");
+		System.out.println("// Get the group 3 SDRs");
+		System.out.println("sdrs = pattern.getSDRsForGroup(3,rythm.getStepsPerPattern());");
 		System.out.println("~~~~");
 		System.out.println();
 		System.out.println("Class references;  ");
