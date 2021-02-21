@@ -1,7 +1,7 @@
 Zeesoft MidiDreamer
 ===================
 Zeesoft MidiDreamer is an application that can be used to generate MIDI using HTM.  
-Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/releases/MidiDreamer0.9.0.zip) to download the latest MidiDreamer release (8 MB).  
+Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/releases/MidiDreamer0.9.0.jar) to download the latest MidiDreamer release (8 MB).  
 **Please note** that this is an executable jar file that requires Java 1.8 and 2 GB memory to run.  
 
 **Workflow**  

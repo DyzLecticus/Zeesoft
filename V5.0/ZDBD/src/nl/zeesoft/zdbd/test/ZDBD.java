@@ -32,7 +32,7 @@ public class ZDBD extends LibraryObject {
 		System.out.println(NAME);
 		System.out.println("===================");
 		System.out.println(NAME + " is an application that can be used to generate MIDI using HTM.  ");
-		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/releases/MidiDreamer" + getVersion() + ".zip) to download the latest MidiDreamer release (8 MB).  ");  
+		System.out.println("Click [here](https://github.com/DyzLecticus/Zeesoft/raw/master/V5.0/ZDBD/releases/MidiDreamer" + getVersion() + ".jar) to download the latest MidiDreamer release (8 MB).  ");  
 		System.out.println("**Please note** that this is an executable jar file that requires Java 1.8 and 2 GB memory to run.  ");
 		System.out.println();
 		System.out.println("**Workflow**  ");
