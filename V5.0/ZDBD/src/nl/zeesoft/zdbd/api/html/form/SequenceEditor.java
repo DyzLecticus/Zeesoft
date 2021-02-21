@@ -1,5 +1,6 @@
 package nl.zeesoft.zdbd.api.html.form;
 
+import nl.zeesoft.zdbd.api.html.FormHtml;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdbd.pattern.instruments.Note;

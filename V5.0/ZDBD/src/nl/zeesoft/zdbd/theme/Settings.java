@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.collection.PersistableCollection;
 
 public abstract class Settings {
-	public String		workDir						= "ZDBD/";
+	public String		workDir						= "MidiDreamer/";
 	
 	public Settings() {
 		initialize();

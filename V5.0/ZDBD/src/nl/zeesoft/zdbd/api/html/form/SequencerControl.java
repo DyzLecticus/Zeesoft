@@ -2,6 +2,8 @@ package nl.zeesoft.zdbd.api.html.form;
 
 import java.util.List;
 
+import nl.zeesoft.zdbd.api.html.FormHtml;
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdk.Str;
 

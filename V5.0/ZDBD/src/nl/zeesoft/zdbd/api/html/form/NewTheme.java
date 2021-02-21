@@ -1,5 +1,8 @@
 package nl.zeesoft.zdbd.api.html.form;
 
+import nl.zeesoft.zdbd.api.html.FormHtml;
+import nl.zeesoft.zdbd.api.html.FormProperty;
+
 public class NewTheme extends FormHtml {
 	public NewTheme(String name, int beatsPerMinute, float shufflePercentage) {
 		onOkClick = "menu.newTheme();";

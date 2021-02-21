@@ -10,6 +10,7 @@ import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionListener;
 
 import nl.zeesoft.zdbd.App;
+import nl.zeesoft.zdbd.test.ZDBD;
 import nl.zeesoft.zdk.image.ImageIcon;
 
 public class IconTray {
@@ -23,6 +24,7 @@ public class IconTray {
 			tray = SystemTray.getSystemTray();
 			image = ImageIcon.getZeesoftIcon(32).getBufferedImage();
 			icon = new TrayIcon(image);
+			icon.setToolTip(ZDBD.NAME);
 			icon.setImageAutoSize(true);
 			try {
 				tray.add(icon);

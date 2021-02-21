@@ -2,6 +2,8 @@ package nl.zeesoft.zdbd.api.html.form;
 
 import java.text.DecimalFormat;
 
+import nl.zeesoft.zdbd.api.html.FormHtml;
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.neural.model.ModelStatistics;
 

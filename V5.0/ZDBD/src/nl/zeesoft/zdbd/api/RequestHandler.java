@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdbd.api.css.MainCss;
 import nl.zeesoft.zdbd.api.html.Bye;
 import nl.zeesoft.zdbd.api.html.IndexHtml;
+import nl.zeesoft.zdbd.api.html.NetworkConfiguration;
 import nl.zeesoft.zdbd.api.html.form.AddArpeggiator;
 import nl.zeesoft.zdbd.api.html.form.AddGenerator;
 import nl.zeesoft.zdbd.api.html.form.ArpeggiatorEditor;
@@ -478,6 +479,9 @@ public class RequestHandler extends HttpRequestHandler {
 			List<String> names = SoundPatchFactory.listSoundPatches();
 			response.code = HttpURLConnection.HTTP_OK;
 			response.body = (new SelectSoundPatch(names)).render();
+		} else if (name.equals("NetworkConfiguration")) {
+			response.code = HttpURLConnection.HTTP_OK;
+			response.body = (new NetworkConfiguration()).render();
 		} else {
 			setNotFoundError(response,new Str("Not found"));
 		}

@@ -115,7 +115,7 @@
 		<copy file="../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2" tofile="${build}/ZDBD/build/resources/ZeeTrackerDrumKit.sf2"/>
 		<copy file="../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2" tofile="${build}/ZDBD/build/resources/ZeeTrackerSynthesizers.sf2"/>
 		
-		<jar jarfile="${dist}/zdbd-app.jar" basedir="${build}/ZDBD/build" manifest="${dist}/mymanifest"/>
+		<jar jarfile="${dist}/MidiDreamer.jar" basedir="${build}/ZDBD/build" manifest="${dist}/mymanifest"/>
 		
 		<delete dir="${build}/ZDBD"/>
 	</target>
@@ -129,7 +129,17 @@
 		<fail if="_abort" message="Aborted release"/>		
 		<antcall target="releaseConfirmed"/>
 	</target>
+
+	<target name="releaseConfirmed">
+		<antcall target="failIfReleaseExists"/>
+		<antcall target="clean"/>
+		<antcall target="dist-app"/>
+		<mkdir dir="${releases}"/>
+		<copy file="${dist}/MidiDreamer.jar" tofile="${releases}/MidiDreamer${version}.jar"/>
+		<copy file="${dist}/README.md" tofile="README.md"/>
+	</target>
 	
+	<!--
 	<target name="releaseConfirmed">
 		<antcall target="failIfReleaseExists"/>
 		<antcall target="clean"/>
@@ -146,6 +156,7 @@
 		<delete dir="${releases}/${version}"/>
 		<copy file="${dist}/README.md" tofile="README.md"/>
 	</target>
+	-->
 	
 	<target name="javadoc" description="Generate the ZDBD documentation">
 		<mkdir dir="${dist}"/>
@@ -172,7 +183,7 @@
 
 	<target name="failIfReleaseExists">
 		<condition property="_released">
-			<available file="${releases}/zdbd-${version}.zip"/>
+			<available file="${releases}/MidiDreamer${version}.jar"/>
 		</condition>
 		<fail if="_released" message="Version ${version} has already been released"/>		
 	</target>

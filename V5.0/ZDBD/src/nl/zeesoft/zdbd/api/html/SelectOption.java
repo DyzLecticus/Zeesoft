@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.api.html.select;
+package nl.zeesoft.zdbd.api.html;
 
 import nl.zeesoft.zdbd.api.ResponseObject;
 import nl.zeesoft.zdk.Str;

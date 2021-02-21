@@ -1,5 +1,6 @@
 package nl.zeesoft.zdbd.api.html.form;
 
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.MixState;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;

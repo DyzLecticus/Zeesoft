@@ -1,4 +1,4 @@
-package nl.zeesoft.zdbd.api.html.form;
+package nl.zeesoft.zdbd.api.html;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,7 +17,7 @@ public class TestApp extends TestObject {
 
 	@Override
 	protected void describe() {
-		System.out.println("This test is not included in the ZDBD test set");
+		System.out.println("This test is not included in the test set");
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package nl.zeesoft.zdbd.api.html.form;
 
 import java.util.List;
 
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.EchoConfig;
 
 public class EchoEditor extends AbstractEditor {

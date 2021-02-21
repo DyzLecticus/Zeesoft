@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.api.html.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.SoundPatch;
 import nl.zeesoft.zdbd.midi.SynthConfig;
 import nl.zeesoft.zdbd.midi.lfo.ChannelLFO;

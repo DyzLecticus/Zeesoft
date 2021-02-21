@@ -1,11 +1,12 @@
 package nl.zeesoft.zdbd.api.html;
 
 import nl.zeesoft.zdbd.api.HtmlResponse;
+import nl.zeesoft.zdbd.test.ZDBD;
 import nl.zeesoft.zdk.Str;
 
 public class IndexHtml extends HtmlResponse {
 	public IndexHtml() {
-		title = "ZDBD";
+		title = ZDBD.NAME;
 		onload = "state.onload();";
 		styleFiles.add("/main.css");
 		scriptFiles.add("/index.js");
@@ -101,6 +102,9 @@ public class IndexHtml extends HtmlResponse {
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <label class=\"column-label-header\">Network</label >");
+		append(r,"    </div>");
+		append(r,"    <div class=\"column-left column-padding\">");
+		append(r,"    <input type=\"button\" id=\"describeNetwork\" value=\"Configuration\" onclick=\"network.configuration();\" />");
 		append(r,"    </div>");
 		append(r,"    <div class=\"column-left column-padding\">");
 		append(r,"    <input type=\"button\" id=\"trainNetwork\" value=\"Train\" onclick=\"network.train();\" DISABLED />");

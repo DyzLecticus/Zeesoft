@@ -65,6 +65,9 @@ public class NetworkJs extends ResponseObject {
 		append(r,"        elem.innerHTML = \"\";");
 		append(r,"    }");
 		append(r,"};");
+		append(r,"network.configuration = function() {");
+		append(r,"    modal.load(\"NetworkConfiguration\");");
+		append(r,"};");
 		append(r,"network.train = function() {");
 		append(r,"    var cb = function() { network.refresh(); state.refresh(); };");
 		append(r,"    main.xhr.postText(\"/network.txt\",\"TRAIN\",cb,main.xhr.alertErrorCallback);");

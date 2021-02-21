@@ -1,5 +1,6 @@
 package nl.zeesoft.zdbd.api.html.form;
 
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.Arpeggiator;
 
 public class ArpeggiatorEditor extends AbstractEditor {

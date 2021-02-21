@@ -3,6 +3,7 @@ package nl.zeesoft.zdbd.api.html.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.pattern.InstrumentPattern;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;

@@ -1,10 +1,9 @@
-package nl.zeesoft.zdbd.api.html.select;
+package nl.zeesoft.zdbd.api.html;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdbd.api.ResponseObject;
-import nl.zeesoft.zdbd.api.html.form.FormHtml;
 import nl.zeesoft.zdk.Str;
 
 public class SelectHtml extends ResponseObject {
