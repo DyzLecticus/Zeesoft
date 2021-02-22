@@ -244,6 +244,9 @@ public class Generators {
 		Generator gen = null;
 		gen = new Generator();
 		gen.name = "Maintain A1";
+		gen.group1Distortion = 1;
+		gen.group2Distortion = 1;
+		gen.group3Distortion = 1;
 		gen.mixEnd = mixEnd;
 		if (!maintainNote) {
 			gen.setMaintainInstruments();
@@ -252,11 +255,17 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain A2";
+		gen.group1Distortion = 1;
+		gen.group2Distortion = 0;
+		gen.group3Distortion = 0;
 		gen.mixEnd = mixEnd;
 		putNoLock(gen);
 		
 		gen = new Generator();
 		gen.name = "Maintain B1";
+		gen.group1Distortion = 1;
+		gen.group2Distortion = 1;
+		gen.group3Distortion = 1;
 		gen.mixEnd = mixEnd;
 		if (maintainNote) {
 			gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
@@ -267,12 +276,18 @@ public class Generators {
 		
 		gen = new Generator();
 		gen.name = "Maintain B2";
+		gen.group1Distortion = 1;
+		gen.group2Distortion = 0;
+		gen.group3Distortion = 0;
 		gen.mixEnd = mixEnd;
 		gen.setMaintainInstruments(Bass.NAME, Note.NAME, Stab.NAME);
 		putNoLock(gen);
 		
 		gen = new Generator();
 		gen.name = "Free form";
+		gen.group1Distortion = 1;
+		gen.group2Distortion = 1;
+		gen.group3Distortion = 1;
 		gen.maintainBeat = 0;
 		gen.maintainFeedback = false;
 		if (maintainNote) {
@@ -286,6 +301,7 @@ public class Generators {
 		gen.name = "Undistorted";
 		gen.group1Distortion = 0;
 		gen.group2Distortion = 0;
+		gen.group3Distortion = 0;
 		gen.maintainBeat = 0;
 		gen.setMaintainInstruments(Ride.NAME, Crash.NAME, Note.NAME);
 		putNoLock(gen);

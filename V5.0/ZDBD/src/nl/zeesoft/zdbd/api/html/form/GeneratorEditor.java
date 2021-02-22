@@ -16,6 +16,7 @@ public class GeneratorEditor extends AbstractEditor {
 		addProperty("name", "Name", generator.name, FormProperty.TEXT_INPUT);
 		addProperty("group1Distortion", "Group 1 distortion", generator.group1Distortion, FormProperty.ANY_INPUT);
 		addProperty("group2Distortion", "Group 2 distortion", generator.group2Distortion, FormProperty.ANY_INPUT);
+		addProperty("group3Distortion", "Group 3 distortion", generator.group3Distortion, FormProperty.ANY_INPUT);
 		addProperty("randomChunkOffset", "Random chunk offset", generator.randomChunkOffset, FormProperty.CHECKBOX_INPUT);
 
 		addProperty("mixStart", "Mix start", generator.mixStart, FormProperty.ANY_INPUT);

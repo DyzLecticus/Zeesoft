@@ -859,6 +859,8 @@ public class RequestHandler extends HttpRequestHandler {
 							gen.group1Distortion = parsePercentage(kv.get(1));
 						} else if (prop.equals("group2Distortion")) {
 							gen.group2Distortion = parsePercentage(kv.get(1));
+						} else if (prop.equals("group3Distortion")) {
+							gen.group3Distortion = parsePercentage(kv.get(1));
 						} else if (prop.equals("randomChunkOffset")) {
 							gen.randomChunkOffset = parseBoolean(kv.get(1));
 						} else if (prop.equals("mixStart")) {
@@ -912,6 +914,8 @@ public class RequestHandler extends HttpRequestHandler {
 					generator.group1Distortion = parsePercentage(elems.get(3));
 				} else if (propertyName.equals("group2Distortion")) {
 					generator.group2Distortion = parsePercentage(elems.get(3));
+				} else if (propertyName.equals("group3Distortion")) {
+					generator.group3Distortion = parsePercentage(elems.get(3));
 				} else if (propertyName.equals("randomChunkOffset")) {
 					generator.randomChunkOffset = parseBoolean(elems.get(3));
 				} else if (propertyName.equals("mixStart")) {
