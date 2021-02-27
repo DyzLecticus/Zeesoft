@@ -11,6 +11,7 @@ import nl.zeesoft.zdbd.neural.encoders.HihatEncoder;
 import nl.zeesoft.zdbd.neural.encoders.NoteEncoder;
 import nl.zeesoft.zdbd.neural.encoders.OctaveEncoder;
 import nl.zeesoft.zdbd.neural.encoders.PercussionEncoder;
+import nl.zeesoft.zdbd.neural.encoders.ShiftEncoder;
 import nl.zeesoft.zdbd.neural.encoders.StabEncoder;
 import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Crash;
@@ -22,6 +23,7 @@ import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
 import nl.zeesoft.zdbd.pattern.instruments.Ride;
+import nl.zeesoft.zdbd.pattern.instruments.Shift;
 import nl.zeesoft.zdbd.pattern.instruments.Snare;
 import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.neural.KeyValueSDR;
@@ -187,6 +189,10 @@ public class InstrumentPattern {
 		}
 	}
 	
+	public void setShift(int step, int shift) {
+		setStepValue(Shift.NAME,step,shift);
+	}
+	
 	public static boolean isAccent(int value) {
 		boolean r = false;
 		if (value>0) {
@@ -303,6 +309,7 @@ public class InstrumentPattern {
 
 	public SDR getSDRForGroup3Step(int step) {
 		StabEncoder sEnc = EncoderFactory.stabEncoder;
+		ShiftEncoder hEnc = EncoderFactory.shiftEncoder;
 		
 		int l = sEnc.getEncodeLength();
 		KeyValueSDR kvSdr = new KeyValueSDR(l , 1);
@@ -310,6 +317,8 @@ public class InstrumentPattern {
 		int offset = 0;
 		kvSdr.concat(sEnc.getEncodedValue(getStepValue(Stab.NAME,step)), offset);
 		offset += sEnc.getEncodeLength();
+		
+		kvSdr.concat(hEnc.getEncodedValue(getStepValue(Shift.NAME,step)), offset);
 
 		for (PatternInstrument inst: instruments) {
 			if (inst.group()==3) {
@@ -356,6 +365,7 @@ public class InstrumentPattern {
 		r.add(new Octave(8));
 		r.add(new Note(9));
 		r.add(new Stab(10));
+		r.add(new Shift(11));
 		return r;
 	}
 }

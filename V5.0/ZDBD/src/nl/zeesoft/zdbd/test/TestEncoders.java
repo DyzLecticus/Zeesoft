@@ -81,7 +81,7 @@ public class TestEncoders extends TestObject {
 		sdrs = pattern.getSDRsForGroup(3,rythm.getStepsPerPattern());
 		System.out.println();
 		System.out.println("Group 3 pattern (" + InstrumentPattern.sizeX(3) + "*" + InstrumentPattern.sizeY(3) + ");");
-		System.out.println("(Stab)");
+		System.out.println("(Stab, Shift)");
 		displaySDRList(sdrs);
 
 		assertEqual(InstrumentPattern.getValueForDuration(0,false),0,"Note does not match expectation (1)");

@@ -6,6 +6,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Bass;
 import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Shift;
 import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.Str;
 
@@ -148,10 +149,13 @@ public class SequenceJs extends ResponseObject {
 		append(r,"    if (name==\"" + Stab.NAME + "\") {");
 		append(r,"        maxValue = 16;");
 		append(r,"    }");
+		append(r,"    if (name==\"" + Shift.NAME + "\") {");
+		append(r,"        maxValue = 4;");
+		append(r,"    }");
 		append(r,"    if (newValue>maxValue) {");
 		append(r,"        newValue = 0;");
 		append(r,"    }");
-		append(r,"    if (name!=\"" + Note.NAME + "\") {");
+		append(r,"    if (name!=\"" + Note.NAME + "\" && name!=\"" + Shift.NAME + "\") {");
 		append(r,"        var oldClass=\"grey\";");
 		append(r,"        var newClass=\"grey\";");
 		append(r,"        if (value!=0) {");

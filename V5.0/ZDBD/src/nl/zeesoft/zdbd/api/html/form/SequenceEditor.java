@@ -7,6 +7,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion1;
 import nl.zeesoft.zdbd.pattern.instruments.Percussion2;
+import nl.zeesoft.zdbd.pattern.instruments.Shift;
 import nl.zeesoft.zdk.Str;
 
 public class SequenceEditor extends FormHtml {
@@ -94,7 +95,7 @@ public class SequenceEditor extends FormHtml {
 					append(r,"<input type=\"button\" value=\"");
 					r.sb().append(value);
 					r.sb().append("\" class=\"pattern-step ");
-					if (!name.equals(Note.NAME)) { 
+					if (!name.equals(Note.NAME) && !name.equals(Shift.NAME)) { 
 						if (InstrumentPattern.isAccent(value)) { 
 							r.sb().append("yellow");
 						} else if (value!=PatternInstrument.OFF) {

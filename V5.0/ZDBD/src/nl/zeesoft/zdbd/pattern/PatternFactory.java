@@ -155,10 +155,17 @@ public class PatternFactory {
 
 		pattern.setStab(2, 1, false);
 		pattern.setStab(4, 1, true);
+		pattern.setShift(4, 1);
+		pattern.setShift(5, 1);
+		pattern.setShift(6, 1);
 		pattern.setStab(7, 1, true);
 		if (patternNum>0) {
 			pattern.setStab(10, 1, false);
 			pattern.setStab(12, 3, true);
+			pattern.setShift(12, 1);
+			pattern.setShift(13, 1);
+			pattern.setShift(14, 1);
+			pattern.setShift(15, 1);
 		}
 
 		return pattern;
@@ -337,26 +344,6 @@ public class PatternFactory {
 			pattern.setNote(14, 0, 2);
 			pattern.setNote(15, 0, 1);
 		}
-
-		/*
-		if (patternNum>0) {
-			int note = 0;
-			int octave = 1;
-			for (int s = 0; s < 16; s++) {
-				if (s==4) {
-					octave = 0;
-					note = 3;
-				}
-				if (s==8) {
-					note = 2;
-				}
-				if (s==12) {
-					note = 1;
-				}
-				pattern.setNote(s, octave, note);
-			}
-		}
-		*/
 		
 		if (patternNum==0) {
 			pattern.setStab(0, 1, true);

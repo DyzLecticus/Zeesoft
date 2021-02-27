@@ -6,7 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdbd.pattern.SequenceChord;
 
 public class StabConvertor extends BassConvertor {
-	public static void applyChordNotes(List<MidiNote> mns, int octave, SequenceChord chord) {
+	public static void applyChordNotes(List<MidiNote> mns, int octave, SequenceChord chord, int shift) {
 		List<Integer> chordNotes = new ArrayList<Integer>();
 		chordNotes.add(chord.baseNote);
 		for (int i = 0; i < chord.interval.length; i++) {
@@ -17,13 +17,19 @@ public class StabConvertor extends BassConvertor {
 		}
 		List<MidiNote> list = new ArrayList<MidiNote>();
 		for (MidiNote mn: mns) {
+			int i = 0;
 			for (Integer note: chordNotes) {
+				int mnv = mn.midiNote + note;
+				if (i < shift) {
+					mnv += 12;
+				}
 				MidiNote n = new MidiNote();
 				n.channel = mn.channel;
 				n.hold = mn.hold;
-				n.midiNote = mn.midiNote + note;
+				n.midiNote = mnv;
 				n.velocity = mn.velocity;
 				list.add(n);
+				i++;
 			}
 		}
 		mns.clear();

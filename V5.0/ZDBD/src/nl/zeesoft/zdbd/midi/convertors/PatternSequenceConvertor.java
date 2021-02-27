@@ -18,6 +18,7 @@ import nl.zeesoft.zdbd.pattern.instruments.Hihat;
 import nl.zeesoft.zdbd.pattern.instruments.Note;
 import nl.zeesoft.zdbd.pattern.instruments.Octave;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
+import nl.zeesoft.zdbd.pattern.instruments.Shift;
 import nl.zeesoft.zdbd.pattern.instruments.Stab;
 import nl.zeesoft.zdk.thread.Lock;
 
@@ -138,7 +139,8 @@ public class PatternSequenceConvertor {
 							}
 							BassConvertor.applyOctaveNote(mns, octave, note);
 						} else if (inst.name().equals(Stab.NAME)) {
-							StabConvertor.applyChordNotes(mns, 0, chord);
+							int shift = pattern.getInstrument(Shift.NAME).stepValues[s];
+							StabConvertor.applyChordNotes(mns, 0, chord, shift);
 						}
 					}
 					if (mns.size()>0) {

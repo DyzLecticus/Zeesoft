@@ -19,6 +19,7 @@ public class EncoderFactory {
 	public static OctaveEncoder			octaveEncoder		= new OctaveEncoder(ON_BITS);
 	public static NoteEncoder			noteEncoder			= new NoteEncoder(ON_BITS);
 	public static StabEncoder			stabEncoder			= new StabEncoder(ON_BITS);
+	public static ShiftEncoder			shiftEncoder		= new ShiftEncoder(ON_BITS);
 	
 	public static Str testEncoders() {
 		Str r = new Str();
@@ -45,6 +46,7 @@ public class EncoderFactory {
 		r.add(octaveEncoder);
 		r.add(noteEncoder);
 		r.add(stabEncoder);
+		r.add(shiftEncoder);
 		return r;
 	}
 }
