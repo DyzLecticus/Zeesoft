@@ -7,7 +7,7 @@ import nl.zeesoft.zdbd.neural.Generator;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
-import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.theme.ThemeSequenceController;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.util.TestObject;
@@ -98,13 +98,13 @@ public class TestThemeController extends TestObject {
 			assertNotNull(controller.getGenerator("TestGenerator").generatedPatternSequence,"Generated pattern sequence does not match expectation");
 			assertEqual(controller.getSequences().size(),2,"Number of sequences does not match expectation (2)");
 			
-			ThemeSequenceSelector selector = new ThemeSequenceSelector();
+			ThemeSequenceController sequencer = new ThemeSequenceController();
 			if (PLAY_SEQUENCES) {
 				System.out.println();
 				System.out.println("Playing sequence '" + NetworkTrainer.TRAINING_SEQUENCE + "'");
-				MidiSys.sequencer.addListener(selector);
-				selector.setController(controller);
-				selector.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
+				MidiSys.sequencer.addListener(sequencer);
+				sequencer.setController(controller);
+				sequencer.startSequence(NetworkTrainer.TRAINING_SEQUENCE);
 				sleep(11000);
 				MidiSys.sequencer.stop();
 
@@ -115,7 +115,7 @@ public class TestThemeController extends TestObject {
 				
 				System.out.println();
 				System.out.println("Playing theme");
-				selector.startTheme("TestGenerator");
+				sequencer.startTheme("TestGenerator");
 				sleep(PLAY_SECONDS * 1000);
 				MidiSys.sequencer.stop();
 				
@@ -140,7 +140,7 @@ public class TestThemeController extends TestObject {
 				chain = controller2.initialize(settings);
 				Waiter.startAndWaitFor(chain,20000);
 				if (PLAY_SEQUENCES) {
-					selector.setController(controller2);
+					sequencer.setController(controller2);
 				}
 				settings = controller2.getSettings();
 				assertEqual(settings.workingTheme,"Demo","Working theme does not match expectation");

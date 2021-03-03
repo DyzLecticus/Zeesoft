@@ -5,6 +5,7 @@ import java.util.List;
 import nl.zeesoft.zdbd.api.html.FormHtml;
 import nl.zeesoft.zdbd.api.html.FormProperty;
 import nl.zeesoft.zdbd.midi.MixState;
+import nl.zeesoft.zdbd.midi.VolumeControl;
 import nl.zeesoft.zdk.Str;
 
 public class SequencerControl extends FormHtml {
@@ -18,6 +19,7 @@ public class SequencerControl extends FormHtml {
 		List<String> names, String currentSequence, String nextSequence,
 		boolean hold, boolean selectRandom, boolean selectTrainingSequence, boolean regenerateOnPlay,
 		MixState currentMix, MixState nextMix,
+		VolumeControl volumeControl,
 		List<String> arpeggiators, String nextArpeggiator,
 		boolean recording, long recordedTicks,
 		String midiRecording, String audioRecording
@@ -29,6 +31,14 @@ public class SequencerControl extends FormHtml {
 		addProperty("shufflePercentage", "Shuffle", shufflePercentage, FormProperty.ANY_INPUT);
 		addProperty("currentSequence", "Play sequence", names, FormProperty.SELECT, currentSequence);
 		properties.add(new MuteButtons(currentMix,true));
+		
+		int[] range = {0,100};
+		addProperty("volumeGlobal", "Global volume", (int)(volumeControl.getGlobal() * 100), FormProperty.RANGE_INPUT, range);
+		addProperty("volumeDrums", "Drum volume", (int)(volumeControl.getDrums() * 100), FormProperty.RANGE_INPUT, range);
+		addProperty("volumeBass", "Bass volume", (int)(volumeControl.getBass() * 100), FormProperty.RANGE_INPUT, range);
+		addProperty("volumeStab", "Stab volume", (int)(volumeControl.getStab() * 100), FormProperty.RANGE_INPUT, range);
+		addProperty("volumeArpeggiator", "Arpeggiator volume", (int)(volumeControl.getArpeggiator() * 100), FormProperty.RANGE_INPUT, range);
+		
 		addProperty("nextSequence", "Next sequence", names, FormProperty.SELECT, nextSequence);
 		addProperty("nextArpeggiator", "Next arpeggiator", arpeggiators, FormProperty.SELECT, nextArpeggiator);
 		properties.add(new MuteButtons(nextMix,false));

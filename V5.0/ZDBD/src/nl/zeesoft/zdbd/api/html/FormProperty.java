@@ -11,6 +11,7 @@ public class FormProperty extends ResponseObject {
 	public static String	TEXT_INPUT		= "TEXT_INPUT";
 	public static String	NUMBER_INPUT	= "NUMBER_INPUT";
 	public static String	ANY_INPUT		= "ANY_INPUT";
+	public static String	RANGE_INPUT		= "RANGE_INPUT";
 	public static String	CHECKBOX_INPUT	= "CHECKBOX_INPUT";
 	public static String	BUTTON_INPUT	= "BUTTON_INPUT";
 	public static String	BUTTON_DISABLED	= "BUTTON_DISABLED";
@@ -53,6 +54,7 @@ public class FormProperty extends ResponseObject {
 			renderAs.equals(TEXT_INPUT) ||
 			renderAs.equals(NUMBER_INPUT) ||
 			renderAs.equals(ANY_INPUT) ||
+			renderAs.equals(RANGE_INPUT) ||
 			renderAs.equals(CHECKBOX_INPUT) ||
 			renderAs.equals(BUTTON_INPUT) ||
 			renderAs.equals(BUTTON_DISABLED)
@@ -70,6 +72,17 @@ public class FormProperty extends ResponseObject {
 					val.sb().append("\"");
 				}
 			}
+			Str range = new Str();
+			if (renderAs.equals(RANGE_INPUT) && param!=null && param instanceof int[]) {
+				int[] minMax = (int[])param;
+				if (minMax.length==2) {
+					range.sb().append(" min=\"");
+					range.sb().append(minMax[0]);
+					range.sb().append("\" max=\"");
+					range.sb().append(minMax[1]);
+					range.sb().append("\"");
+				}
+			}
 			append(r,"<input id=\"");
 			r.sb().append(name);
 			r.sb().append("\"");
@@ -80,12 +93,17 @@ public class FormProperty extends ResponseObject {
 				r.sb().append("number");
 			} else if (renderAs.equals(ANY_INPUT)) {
 				r.sb().append("any");
+			} else if (renderAs.equals(RANGE_INPUT)) {
+				r.sb().append("range");
 			} else if (renderAs.equals(CHECKBOX_INPUT)) {
 				r.sb().append("checkbox");
 			} else if (renderAs.equals(BUTTON_INPUT) || renderAs.equals(BUTTON_DISABLED)) {
 				r.sb().append("button");
 			}
 			r.sb().append("\"");
+			if (range.length()>0) {
+				r.sb().append(range);
+			}
 			if ((renderAs.equals(BUTTON_INPUT) || renderAs.equals(BUTTON_DISABLED))
 				&& param!=null
 				) {

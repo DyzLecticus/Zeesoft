@@ -62,7 +62,7 @@ import nl.zeesoft.zdbd.pattern.Rythm;
 import nl.zeesoft.zdbd.pattern.SequenceChord;
 import nl.zeesoft.zdbd.pattern.instruments.PatternInstrument;
 import nl.zeesoft.zdbd.theme.ThemeController;
-import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.theme.ThemeSequenceController;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
@@ -73,15 +73,15 @@ import nl.zeesoft.zdk.neural.network.NetworkIO;
 public class RequestHandler extends HttpRequestHandler {
 	protected ThemeController			controller		= null;
 	protected ControllerMonitor			monitor			= null;
-	protected ThemeSequenceSelector		selector		= null;
+	protected ThemeSequenceController	sequencer		= null;
 	
 	protected SortedMap<String,Str>	pathResponses	= new TreeMap<String,Str>();
 	
-	protected RequestHandler(HttpServerConfig config, ThemeController controller, ControllerMonitor monitor, ThemeSequenceSelector selector) {
+	protected RequestHandler(HttpServerConfig config, ThemeController controller, ControllerMonitor monitor, ThemeSequenceController sequencer) {
 		super(config);
 		this.controller = controller;
 		this.monitor = monitor;
-		this.selector = selector;
+		this.sequencer = sequencer;
 		
 		pathResponses.put("/", (new IndexHtml()).render());
 		pathResponses.put("/index.html", (new IndexHtml()).render());
@@ -153,10 +153,10 @@ public class RequestHandler extends HttpRequestHandler {
 							audioRecording = name + ".wav";
 						}
 						response.code = HttpURLConnection.HTTP_OK;
-						response.body = selector.getSequencerControl(bpm,shufflePercentage,midiRecording,audioRecording).render();
+						response.body = sequencer.getSequencerControl(bpm,shufflePercentage,midiRecording,audioRecording).render();
 					} else {
 						response.code = HttpURLConnection.HTTP_OK;
-						response.body = selector.getSequencerControl(120,0.0F,"","").render();
+						response.body = sequencer.getSequencerControl(120,0.0F,"","").render();
 					}
 				} else if (request.path.equals("/chordEditor.txt")) {
 					if (checkInitialized(response)) {
@@ -274,13 +274,13 @@ public class RequestHandler extends HttpRequestHandler {
 
 		r.sb().append("\n");
 		r.sb().append("currentSequence:");
-		r.sb().append(selector.getCurrentSequence());
+		r.sb().append(sequencer.getCurrentSequence());
 		
 		r.sb().append("\n");
 		r.sb().append("nextSequence:");
-		r.sb().append(selector.getNextSequence());
+		r.sb().append(sequencer.getNextSequence());
 		
-		MixState mix = selector.getCurrentMix();
+		MixState mix = sequencer.getCurrentMix();
 		List<Integer> channels = new ArrayList<Integer>();
 		channels.add(SynthConfig.DRUM_CHANNEL);
 		channels.add(SynthConfig.BASS_CHANNEL_1);
@@ -311,7 +311,7 @@ public class RequestHandler extends HttpRequestHandler {
 
 		r.sb().append("\n");
 		r.sb().append("isRecording:");
-		r.sb().append(selector.isRecording());
+		r.sb().append(sequencer.isRecording());
 		
 		r.sb().append("\n");
 		r.sb().append("recordedTicks:");
@@ -492,18 +492,18 @@ public class RequestHandler extends HttpRequestHandler {
 			if (MidiSys.isInitialized() && !MidiSys.sequencer.isRunning()) {
 				String name = NetworkTrainer.TRAINING_SEQUENCE;
 				if (checkSequenceName(name,response)) {
-					selector.startSequence(name);
+					sequencer.startSequence(name);
 					setPostOk(response);
 				}
 			} else {
 				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("START")) {
-			String name = selector.getCurrentSequence();
+			String name = sequencer.getCurrentSequence();
 			if (MidiSys.isInitialized()) {
 				if(!MidiSys.sequencer.isRunning()) {
 					if (checkSequenceName(name,response)) {
-						selector.start();
+						sequencer.start();
 						setPostOk(response);
 					}
 				} else {
@@ -520,12 +520,12 @@ public class RequestHandler extends HttpRequestHandler {
 			}
 		} else if (request.body.toString().equals("START_RECORDING")) {
 			if (MidiSys.isInitialized()) {
-				selector.startRecording();
+				sequencer.startRecording();
 				setPostOk(response);
 			}
 		} else if (request.body.toString().equals("STOP_RECORDING")) {
 			if (MidiSys.isInitialized()) {
-				selector.stopRecording();
+				sequencer.stopRecording();
 				setPostOk(response);
 			}
 		} else if (
@@ -551,13 +551,23 @@ public class RequestHandler extends HttpRequestHandler {
 			} else if (name.equals("shufflePercentage")) {
 				controller.setShuffle(parseShufflePercentage(elems.get(2)));;
 			} else if (name.equals("currentSequence")) {
-				selector.setCurrentSequence(elems.get(2).toString());
+				sequencer.setCurrentSequence(elems.get(2).toString());
+			} else if (name.equals("volumeGlobal")) {
+				sequencer.setVolumeGlobal(parsePercentage(elems.get(2)));
+			} else if (name.equals("volumeDrums")) {
+				sequencer.setVolumeDrums(parsePercentage(elems.get(2)));
+			} else if (name.equals("volumeBass")) {
+				sequencer.setVolumeBass(parsePercentage(elems.get(2)));
+			} else if (name.equals("volumeStab")) {
+				sequencer.setVolumeStab(parsePercentage(elems.get(2)));
+			} else if (name.equals("volumeArpeggiator")) {
+				sequencer.setVolumeArpeggiator(parsePercentage(elems.get(2)));
 			} else if (name.equals("nextSequence")) {
-				selector.setNextSequence(elems.get(2).toString());
+				sequencer.setNextSequence(elems.get(2).toString());
 			} else if (name.equals("nextArpeggiator")) {
 				Arpeggiator arp = controller.getArpeggiator(elems.get(2).toString());
 				if (arp!=null) {
-					selector.setNextArpeggiator(arp);
+					sequencer.setNextArpeggiator(arp);
 				} else {
 					Str err = new Str("Arpeggiator not found: ");
 					err.sb().append(elems.get(2).toString());
@@ -565,13 +575,13 @@ public class RequestHandler extends HttpRequestHandler {
 					error = true;
 				}
 			} else if (name.equals("hold")) {
-				selector.setHold(parseBoolean(elems.get(2)));
+				sequencer.setHold(parseBoolean(elems.get(2)));
 			} else if (name.equals("selectRandom")) {
-				selector.setSelectRandom(parseBoolean(elems.get(2)));
+				sequencer.setSelectRandom(parseBoolean(elems.get(2)));
 			} else if (name.equals("selectTrainingSequence")) {
-				selector.setSelectTrainingSequence(parseBoolean(elems.get(2)));
+				sequencer.setSelectTrainingSequence(parseBoolean(elems.get(2)));
 			} else if (name.equals("regenerateOnPlay")) {
-				selector.setRegenerateOnPlay(parseBoolean(elems.get(2)));
+				sequencer.setRegenerateOnPlay(parseBoolean(elems.get(2)));
 			} else {
 				setError(response,HttpURLConnection.HTTP_UNSUPPORTED_TYPE,new Str("Not supported"));
 				error = true;
@@ -585,9 +595,9 @@ public class RequestHandler extends HttpRequestHandler {
 			boolean current = idElems.get(0).toString().equals("mute");
 			MixState state = null;
 			if (current) {
-				state = selector.getCurrentMix();
+				state = sequencer.getCurrentMix();
 			} else {
-				state = selector.getNextMix();
+				state = sequencer.getNextMix();
 			}
  			if (elems.get(1).contains("-channel-")) {
 				int channel = Integer.parseInt(idElems.get(2).toString());
@@ -607,9 +617,9 @@ public class RequestHandler extends HttpRequestHandler {
 				}
 			}
 			if (current) {
-				selector.setCurrentMix(state);
+				sequencer.setCurrentMix(state);
 			} else {
-				selector.setNextMix(state);
+				sequencer.setNextMix(state);
 			}
 			setPostOk(response);
 		} else {

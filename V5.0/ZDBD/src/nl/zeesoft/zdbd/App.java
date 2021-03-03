@@ -18,7 +18,7 @@ import nl.zeesoft.zdbd.gui.IconTray;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.theme.ThemeController;
 import nl.zeesoft.zdbd.theme.ThemeControllerSettings;
-import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.theme.ThemeSequenceController;
 import nl.zeesoft.zdk.FileIO;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Str;
@@ -92,7 +92,7 @@ public class App implements ActionListener {
 		// Create the controller monitor
 		ControllerMonitor monitor = new ControllerMonitor(controller);
 		// Create the sequence selector
-		ThemeSequenceSelector selector = new ThemeSequenceSelector();
+		ThemeSequenceController selector = new ThemeSequenceController();
 		selector.setController(controller);
 		
 		// Create the server configuration

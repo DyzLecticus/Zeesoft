@@ -10,6 +10,7 @@ import nl.zeesoft.zdbd.midi.MidiSequencer;
 import nl.zeesoft.zdbd.midi.MidiSequencerEventListener;
 import nl.zeesoft.zdbd.midi.MidiSys;
 import nl.zeesoft.zdbd.midi.MixState;
+import nl.zeesoft.zdbd.midi.VolumeControl;
 import nl.zeesoft.zdbd.neural.NetworkTrainer;
 import nl.zeesoft.zdbd.pattern.PatternSequence;
 import nl.zeesoft.zdk.Logger;
@@ -17,7 +18,7 @@ import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Str;
 import nl.zeesoft.zdk.thread.Lock;
 
-public class ThemeSequenceSelector implements MidiSequencerEventListener, EventListener {
+public class ThemeSequenceController implements MidiSequencerEventListener, EventListener {
 	private Lock				lock					= new Lock();
 	
 	private boolean				hold					= false;
@@ -31,6 +32,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 	private MixState			nextMix					= new MixState();
 	private Arpeggiator			currArpeggiator			= new Arpeggiator();
 	private Arpeggiator			nextArpeggiator			= new Arpeggiator();
+	private VolumeControl		volumeControl			= new VolumeControl();
 
 	private boolean				recording				= false;
 
@@ -202,6 +204,35 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 		return r;
 	}
 
+	public VolumeControl getVolumeControl() {
+		return volumeControl;
+	}
+
+	public void setVolumeGlobal(float percentage) {
+		volumeControl.setGlobal(percentage);
+		MidiSys.sequencer.getVolumeControl().setGlobal(percentage);
+	}
+
+	public void setVolumeDrums(float percentage) {
+		volumeControl.setDrums(percentage);
+		MidiSys.sequencer.getVolumeControl().setDrums(percentage);
+	}
+
+	public void setVolumeBass(float percentage) {
+		volumeControl.setBass(percentage);
+		MidiSys.sequencer.getVolumeControl().setBass(percentage);
+	}
+
+	public void setVolumeStab(float percentage) {
+		volumeControl.setStab(percentage);
+		MidiSys.sequencer.getVolumeControl().setStab(percentage);
+	}
+
+	public void setVolumeArpeggiator(float percentage) {
+		volumeControl.setArpeggiator(percentage);
+		MidiSys.sequencer.getVolumeControl().setArpeggiator(percentage);
+	}
+	
 	public void startRecording() {
 		lock.lock(this);
 		if (!recording) {
@@ -389,6 +420,7 @@ public class ThemeSequenceSelector implements MidiSequencerEventListener, EventL
 			regenerateOnPlay,
 			currMix,
 			nextMix,
+			volumeControl,
 			controller.getArpeggiatorNames(),
 			nextArpeggiator.name,
 			recording,

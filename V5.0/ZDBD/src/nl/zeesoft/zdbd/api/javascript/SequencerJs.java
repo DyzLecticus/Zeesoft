@@ -106,6 +106,8 @@ public class SequencerJs extends ResponseObject {
 		append(r,"            value = 0.0;");
 		append(r,"            property.value = value;");
 		append(r,"        }");
+		append(r,"    } else if (property.id.indexOf(\"volume\")==0) {");
+		append(r,"        value = value / 100;");
 		append(r,"    } else if (property.id.indexOf(\"Sequence\")>0) {");
 		append(r,"        cb = function() { sequencer.refresh(); };");
 		append(r,"    } else if (property.type==\"checkbox\") {");
@@ -114,7 +116,7 @@ public class SequencerJs extends ResponseObject {
 		append(r,"    var body = \"SET_PROPERTY:\";");
 		append(r,"    body += property.id;");
 		append(r,"    body += \":\";");
-		append(r,"    body += main.dom.getElementValue(property.id);");
+		append(r,"    body += value;");
 		append(r,"    main.xhr.postText(\"/sequencer.txt\",body,cb);");
 		append(r,"}");
 		append(r,"sequencer.toggleMute = function(button) {");

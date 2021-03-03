@@ -1,19 +1,19 @@
 package nl.zeesoft.zdbd.api;
 
 import nl.zeesoft.zdbd.theme.ThemeController;
-import nl.zeesoft.zdbd.theme.ThemeSequenceSelector;
+import nl.zeesoft.zdbd.theme.ThemeSequenceController;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 
 public class ServerConfig extends HttpServerConfig {
 	protected ThemeController			controller	= null;
 	protected ControllerMonitor			monitor		= null;
-	protected ThemeSequenceSelector		selector	= null;
+	protected ThemeSequenceController	sequencer	= null;
 	
-	public ServerConfig(ThemeController controller, ControllerMonitor monitor, ThemeSequenceSelector selector) {
+	public ServerConfig(ThemeController controller, ControllerMonitor monitor, ThemeSequenceController sequencer) {
 		this.controller = controller;
 		this.monitor = monitor;
-		this.selector = selector;
+		this.sequencer = sequencer;
 		this.setAllowPost(true);
 	}
 	
@@ -23,7 +23,7 @@ public class ServerConfig extends HttpServerConfig {
 
 	@Override
 	protected HttpRequestHandler getNewHttpRequestHandler() {
-		return new RequestHandler(this.copy(),controller,monitor,selector);
+		return new RequestHandler(this.copy(),controller,monitor,sequencer);
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ public class ServerConfig extends HttpServerConfig {
 		ServerConfig r = (ServerConfig) super.copy();
 		r.controller = this.controller;
 		r.monitor = this.monitor;
-		r.selector = this.selector;
+		r.sequencer = this.sequencer;
 		return r;
 	}
 }

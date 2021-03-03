@@ -74,7 +74,7 @@ public class MainJs extends ResponseObject {
 		append(r,"    if (elem!=null) {");
 		append(r,"        if (elem.nodeName==\"SELECT\") {");
 		append(r,"            r = elem.options[elem.selectedIndex].value;");
-		append(r,"        } else if (elem.type==\"text\" || elem.type==\"number\" || elem.type==\"any\") {");
+		append(r,"        } else if (elem.type==\"text\" || elem.type==\"number\" || elem.type==\"any\" || elem.type==\"range\") {");
 		append(r,"            r = elem.value;");
 		append(r,"        } else if (elem.type==\"checkbox\") {");
 		append(r,"            r = elem.checked;");

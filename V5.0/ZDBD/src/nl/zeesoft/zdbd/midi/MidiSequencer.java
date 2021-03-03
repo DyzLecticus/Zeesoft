@@ -50,6 +50,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 	protected MidiSequence[]					sequence			= new MidiSequence[2];
 	protected MidiSequence[]					lfoSequence			= new MidiSequence[2];
 	protected MixState[]						mixState			= new MixState[2];
+	protected VolumeControl						volumeControl		= new VolumeControl();
 	
 	protected boolean							paused				= false;
 	protected long								startedNs			= 0;
@@ -261,6 +262,10 @@ public class MidiSequencer implements Sequencer, Waitable {
 			mixState[NEXT] = state;
 			lock.unlock(this);
 		}
+	}
+	
+	public VolumeControl getVolumeControl() {
+		return volumeControl;
 	}
 	
 	@Override
@@ -581,6 +586,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 							
 							// Add regular events
 							Set<MidiEvent> evts = pSeq.getEventsForTick(t,pMix);
+							volumeControl.applyToEvents(evts);
 							events.addAll(evts);
 							tickEvents.addAll(evts);
 	
@@ -607,6 +613,7 @@ public class MidiSequencer implements Sequencer, Waitable {
 						
 						// Add regular events
 						Set<MidiEvent> evts = cSeq.getEventsForTick(t,cMix);
+						volumeControl.applyToEvents(evts);
 						events.addAll(evts);
 						tickEvents.addAll(evts);
 						
