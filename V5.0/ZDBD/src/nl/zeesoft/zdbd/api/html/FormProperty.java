@@ -112,7 +112,11 @@ public class FormProperty extends ResponseObject {
 				r.sb().append("\"");
 			}
 			if (onChange.length()>0) {
-				r.sb().append(" onchange=\"");
+				if (renderAs.equals(RANGE_INPUT)) {
+					r.sb().append(" oninput=\"");
+				} else {
+					r.sb().append(" onchange=\"");
+				}
 				r.sb().append(onChange);
 				r.sb().append("\"");
 			}
