@@ -17,7 +17,7 @@ public class TimeStamp {
 	 * 
 	 * @param ymd Indicates the year should be first in the date format
 	 * @param ms Indicates milliseconds should be included in the time format
-	 * @return  The formatted date string
+	 * @return The formatted date string
 	 */
 	public static Str getDateTimeString(boolean ymd,boolean ms) {
 		Str r = new Str();
@@ -31,7 +31,7 @@ public class TimeStamp {
 	 * Formats the date object to 'YYYY-MM-DD||DD-MM-YYYY'
 	 * 
 	 * @param ymd Indicates the year should be first in the date format
-	 * @return  The formatted date string
+	 * @return The formatted date string
 	 */
 	public static Str getDateString(boolean ymd) {
 		Calendar cal = Calendar.getInstance();
@@ -56,7 +56,7 @@ public class TimeStamp {
 	 * Formats the date object to 'HH:MM:SS[:MS0]'
 	 * 
 	 * @param ms Indicates milliseconds should be included in the time format
-	 * @return  The formatted date string
+	 * @return The formatted date string
 	 */
 	public static Str getTimeString(boolean ms) {
 		Calendar cal = Calendar.getInstance();

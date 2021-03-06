@@ -1,0 +1,62 @@
+<!DOCTYPE project>
+<project name="ZDK2" default="dist" basedir=".">
+	<description>ZDK2 build file</description>
+
+	<property name="creator" value="Andre van der Zee, Leiden, The Netherlands"/>
+	
+	<property name="src" location="src"/>
+	<property name="test" location="test"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+
+	<property name="classpath" value="nl/zeesoft/zdk nl/zeesoft/zdk/function nl/zeesoft/zdk/test"/>
+
+	<target name="compile">
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" debug="on" includeantruntime="false"/>
+		<javac srcdir="${test}" destdir="${build}" debug="on" includeantruntime="false"/>
+	</target>
+
+	<target name="dist" depends="compile" description="Generate the ZDK distribution">
+		<!-- Copy sources to build directory -->
+		<copy todir="${build}">
+            <fileset dir="${src}" />
+        </copy>		
+		<copy todir="${build}">
+            <fileset dir="${test}" />
+        </copy>		
+		<copy file="build.xml" tofile="${build}/build.xml"/>
+		<copy file="README.md" tofile="${build}/README.md"/>
+		
+		<!-- Create distribution directory -->
+		<mkdir dir="${dist}"/>
+		<manifest file="${dist}/mymanifest">
+			<attribute name="Built-By" value="${version} ${creator}"/>
+			<attribute name="Class-path" value="${classpath}"/>
+			<attribute name="Main-Class" value="nl.zeesoft.zdk.test.AllTests"/>
+		</manifest>
+		
+		<!-- Build jar file -->
+		<jar jarfile="${dist}/zdk.jar" basedir="${build}" manifest="dist/mymanifest"/>
+		
+		<!-- Run tests and generate README.md -->
+		<exec dir="${dist}" executable="cmd" output="${dist}/output.txt" error="${dist}/error.txt" resultproperty="_error" logError="true"> 
+			<arg line="/c java -ea -jar zdk.jar"/>
+		</exec>
+		<condition property="_abort">
+			<equals arg1="${_error}" arg2="1"/>
+		</condition>
+		<fail if="_abort" message="One or more tests failed"/>
+				
+		<!-- Remove sources from build directory -->
+		<delete>
+            <fileset dir="${build}" includes="**/*.java"/>
+		</delete>
+	</target>
+
+	<target name="clean" description="Clean up">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
+
