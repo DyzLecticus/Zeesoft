@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
+import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 
 public class AllTests {
 	public static int sleepMs = 0;
@@ -33,6 +34,7 @@ public class AllTests {
 	protected static void runAllTests(String[] args) {
 		TestLock.main(args);
 		TestLogger.main(args);
+		TestRand.main(args);
 		TestFunction.main(args);
 		TestFunctionList.main(args);
 		TestPosition.main(args);
@@ -40,5 +42,6 @@ public class AllTests {
 		TestMatrix.main(args);
 		TestSdr.main(args);
 		TestSdrHistory.main(args);
+		TestSpatialPooler.main(args);
 	}
 }
