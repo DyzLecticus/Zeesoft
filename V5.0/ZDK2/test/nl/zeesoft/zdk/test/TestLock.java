@@ -31,7 +31,6 @@ public class TestLock implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		lock.lock();
 		if (!locked) {
 			locked = true;

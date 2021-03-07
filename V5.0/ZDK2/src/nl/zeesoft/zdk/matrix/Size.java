@@ -59,4 +59,16 @@ public class Size {
 		}
 		return r;
 	}
+	
+	public Position projectPositionOn(Position position, Size other) {
+		Position r = new Position(0,0,0);
+		r.x = Math.round(position.x * getFactor(x, other.x));
+		r.y = Math.round(position.y * getFactor(y, other.y));
+		r.z = Math.round(position.z * getFactor(z, other.z));
+		return r;
+	}
+	
+	private float getFactor(float fromSize, float toSize) {
+		return (toSize - 1) / (fromSize - 1);
+	}
 }

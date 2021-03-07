@@ -77,5 +77,27 @@ public class TestSize {
 		
 		assert size.getPositionForIndex(23).equals(new Position(1,2,3));
 		assert size.getPositionForIndex(999).equals(new Position(1,124,3));
+		
+		size = new Size(5,5,5);
+		Size size2 = new Size(3,3,3);
+		assert size.projectPositionOn(new Position(0,0,0), size2).equals(new Position(0,0,0));
+		assert size.projectPositionOn(new Position(2,2,2), size2).equals(new Position(1,1,1));
+		assert size.projectPositionOn(new Position(4,4,4), size2).equals(new Position(2,2,2));
+		assert size2.projectPositionOn(new Position(0,0,0), size).equals(new Position(0,0,0));
+		assert size2.projectPositionOn(new Position(1,1,1), size).equals(new Position(2,2,2));
+		assert size2.projectPositionOn(new Position(2,2,2), size).equals(new Position(4,4,4));
+		
+		size2 = new Size(15,15,15);
+		assert size.projectPositionOn(new Position(0,0,0), size2).equals(new Position(0,0,0));
+		assert size.projectPositionOn(new Position(1,1,1), size2).equals(new Position(4,4,4));
+		assert size.projectPositionOn(new Position(2,2,2), size2).equals(new Position(7,7,7));
+		assert size.projectPositionOn(new Position(4,4,4), size2).equals(new Position(14,14,14));
+		assert size2.projectPositionOn(new Position(0,0,0), size).equals(new Position(0,0,0));
+		assert size2.projectPositionOn(new Position(7,7,7), size).equals(new Position(2,2,2));
+		assert size2.projectPositionOn(new Position(14,14,14), size).equals(new Position(4,4,4));
+
+		size2 = new Size(150,150,150);
+		assert size.projectPositionOn(new Position(2,2,2), size2).equals(new Position(75,75,75));
+		assert size.projectPositionOn(new Position(4,4,4), size2).equals(new Position(149,149,149));
 	}
 }
