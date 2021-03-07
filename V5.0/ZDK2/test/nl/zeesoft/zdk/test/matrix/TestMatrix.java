@@ -11,46 +11,12 @@ import nl.zeesoft.zdk.matrix.Size;
 public class TestMatrix {
 	private static TestMatrix	self	= new TestMatrix();
 	
-	@SuppressWarnings("unlikely-arg-type")
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
-		Size size = new Size(0,0);
-		assert size.x == 1;
-		assert size.y == 1;
-		assert size.z == 1;
-
-		size = new Size(2,3);
-		assert size.x == 2;
-		assert size.y == 3;
-		assert size.z == 1;
-		
-		size = new Size(0,0,0);
-		assert size.x == 1;
-		assert size.y == 1;
-		assert size.z == 1;
-
-		size = new Size(2,3,4);
-		assert size.x == 2;
-		assert size.y == 3;
-		assert size.z == 4;
-
+		Size size = new Size(2,3,4);
 		Position position1 = new Position(1,2);
-		assert position1.x == 1;
-		assert position1.y == 2;
-		assert position1.z == 0;
-
 		Position position2 = new Position(1,2,3);
-		assert position2.x == 1;
-		assert position2.y == 2;
-		assert position2.z == 3;
-
-		assert position2.equals(null) == false;
-		assert position2.equals(size) == false;
-		assert position2.equals(position1) == false;
-		assert position2.equals(new Position(0,2,3)) == false;
-		assert position2.equals(new Position(1,0,3)) == false;
-		assert position2.equals(new Position(1,2,3)) == true;
 		
 		Matrix matrix = new Matrix();
 		

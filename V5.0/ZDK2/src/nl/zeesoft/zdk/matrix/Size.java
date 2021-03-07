@@ -35,4 +35,28 @@ public class Size {
 	public Size copy() {
 		return new Size(x, y, z);
 	}
+	
+	public int getIndexForPosition(Position position) {
+		int r = -1;
+		r = position.x + (position.y * x);
+		r = (r * z) + position.z;
+		return r;
+	}
+	
+	public Position getPositionForIndex(int index) {
+		Position r = new Position(0,0,0);
+		if (index>0) {
+			if (z>1) {
+				r.z = index % z;
+				r.x = (index - r.z) / z;
+				int tx = r.x;
+				r.x = tx % x;
+				r.y = (tx - r.x) / x;
+			} else {
+				r.x = index % x;
+				r.y = (index - r.x) / x;
+			}
+		}
+		return r;
+	}
 }

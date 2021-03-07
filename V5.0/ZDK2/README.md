@@ -1,6 +1,8 @@
 Zeesoft Development Kit
 =======================
-Zeesoft Development Kit (ZDK) is a Java library that provides support for;
- * Functional programming
+The Zeesoft Development Kit (ZDK) is a Java library that provides support for;  
+ * Functional programming  
  * Matrixes
- * Sparse distributed representations
+ * [Hierarchical Temporal Memory](https://numenta.com/)  
+   * Sparse distributed representations  
+   * Spatial pooling  

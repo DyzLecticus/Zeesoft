@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.test;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
+import nl.zeesoft.zdk.test.matrix.TestPosition;
+import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 
@@ -33,6 +35,8 @@ public class AllTests {
 		TestLogger.main(args);
 		TestFunction.main(args);
 		TestFunctionList.main(args);
+		TestPosition.main(args);
+		TestSize.main(args);
 		TestMatrix.main(args);
 		TestSdr.main(args);
 		TestSdrHistory.main(args);
