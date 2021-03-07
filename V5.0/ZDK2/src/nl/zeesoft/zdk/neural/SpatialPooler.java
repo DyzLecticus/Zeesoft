@@ -25,9 +25,9 @@ public class SpatialPooler {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
-				Matrix matrix = new Matrix();
-				matrix.initialize(config.inputSize);
-				return matrix;
+				Matrix permanences = new Matrix();
+				permanences.initialize(config.inputSize);
+				return permanences;
 			}
 		};
 		connections.applyFunction(this,function);
