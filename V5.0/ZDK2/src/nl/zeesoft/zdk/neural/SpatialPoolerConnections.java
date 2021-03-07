@@ -4,8 +4,28 @@ import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 
-public class SpatialPoolerConnections {
-	public static Function getResetConnectionsFunction(Object myCaller, SpatialPoolerConfig config) {
+public class SpatialPoolerConnections extends Matrix {
+	public void initialize(Object caller, SpatialPoolerConfig config) {
+		applyFunction(caller,getInitializeFunction(config));
+	}
+	
+	public void reset(Object caller, SpatialPoolerConfig config) {
+		applyFunction(caller, getResetFunction(caller, config));
+	}
+
+	protected static Function getInitializeFunction(SpatialPoolerConfig config) {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				Matrix permanences = new Matrix();
+				permanences.initialize(config.inputSize);
+				return permanences;
+			}
+		};
+		return r;
+	}
+	
+	protected static Function getResetFunction(Object myCaller, SpatialPoolerConfig config) {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {

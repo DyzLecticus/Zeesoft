@@ -7,8 +7,6 @@ import nl.zeesoft.zdk.neural.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.SpatialPoolerConnections;
 
 public class TestSpatialPooler {
-	private static TestSpatialPooler self = new TestSpatialPooler();
-	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -25,7 +23,7 @@ public class TestSpatialPooler {
 		assert permanences.size() == 9;
 		assert permanences.data[0][0][0] == null;
 		
-		sp.resetConnections(self);
+		sp.resetConnections();
 		assert permanences.data[0][0][0] != null;
 		assert permanences.data[0][0][0] instanceof Float;
 		assert (float)permanences.data[0][0][0] >= -1;
