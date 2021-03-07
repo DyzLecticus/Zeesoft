@@ -9,21 +9,20 @@ public class SpatialPoolerConnections {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
-				Matrix inputConnections = (Matrix) param2;
-				Function init = getInitialzeInputConnectionsFunction(config);
-				inputConnections.applyFunction(myCaller,init);
-				return inputConnections;
+				Matrix permanences = (Matrix) param2;
+				permanences.applyFunction(myCaller,getResetPermanencesFunction(config));
+				return permanences;
 			}
 		};
 		return r;
 	}
 	
-	protected static Function getInitialzeInputConnectionsFunction(SpatialPoolerConfig config) {
+	protected static Function getResetPermanencesFunction(SpatialPoolerConfig config) {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
 				float r = -1;
-				// TODO determine initial value using randomness and config
+				// TODO determine if target is in range
 				boolean inRange = true;
 				if (inRange && Rand.getRandomFloat(0, 1) < config.potentialConnections) {
 					if (Rand.getRandomInt(0, 1) == 1) {

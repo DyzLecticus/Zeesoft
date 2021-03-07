@@ -21,14 +21,14 @@ public class TestSpatialPooler {
 		
 		assert sp.connections.size() == 100;
 		assert sp.connections.data[0][0][0] instanceof Matrix;
-		Matrix inputConnections = (Matrix) sp.connections.data[0][0][0];
-		assert inputConnections.size() == 9;
-		assert inputConnections.data[0][0][0] == null;
+		Matrix permanences = (Matrix) sp.connections.data[0][0][0];
+		assert permanences.size() == 9;
+		assert permanences.data[0][0][0] == null;
 		
 		sp.resetConnections(self);
-		assert inputConnections.data[0][0][0] != null;
-		assert inputConnections.data[0][0][0] instanceof Float;
-		assert (float)inputConnections.data[0][0][0] >= -1;
-		assert (float)inputConnections.data[0][0][0] <= 1;
+		assert permanences.data[0][0][0] != null;
+		assert permanences.data[0][0][0] instanceof Float;
+		assert (float)permanences.data[0][0][0] >= -1;
+		assert (float)permanences.data[0][0][0] <= 1;
 	}
 }
