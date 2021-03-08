@@ -51,11 +51,7 @@ public class SpatialPoolerConnections extends Matrix {
 					inRange = projected.getDistance(other) < config.potentialRadius;
 				}
 				if (inRange && Rand.getRandomFloat(0, 1) < config.potentialConnections) {
-					if (Rand.getRandomInt(0, 1) == 1) {
-						r = Rand.getRandomFloat(config.permanenceThreshold, 1);
-					} else {
-						r = Rand.getRandomFloat(0, config.permanenceThreshold);
-					}
+					r = Rand.getRandomFloat(0, 1);
 				}
 				return r;
 			}

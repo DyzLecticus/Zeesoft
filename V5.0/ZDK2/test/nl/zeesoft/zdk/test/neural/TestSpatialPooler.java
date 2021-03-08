@@ -4,14 +4,11 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.neural.SpatialPooler;
 import nl.zeesoft.zdk.neural.SpatialPoolerConfig;
-import nl.zeesoft.zdk.neural.SpatialPoolerConnections;
 
 public class TestSpatialPooler {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
-		assert new SpatialPoolerConnections() != null;
-		
 		SpatialPoolerConfig config = new SpatialPoolerConfig();
 		SpatialPooler sp = new SpatialPooler();
 		
@@ -23,6 +20,17 @@ public class TestSpatialPooler {
 		assert permanences.volume() == 16;
 		assert permanences.data[0][0][0] == null;
 		
+		assert sp.activations.volume() == 100;
+		assert sp.activations.data[0][0][0] instanceof Float;
+		assert (float)sp.activations.data[0][0][0] == 0F;
+
+		assert sp.activationHistory.length == 100;
+		assert sp.activationHistory.capacity == 1000;
+
+		assert sp.boostFactors.volume() == 100;
+		assert sp.boostFactors.data[0][0][0] instanceof Float;
+		assert (float)sp.boostFactors.data[0][0][0] == 1F;
+
 		sp.resetConnections();
 		assert permanences.data[0][0][0] != null;
 		assert permanences.data[0][0][0] instanceof Float;
