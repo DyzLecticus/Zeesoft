@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
@@ -13,6 +14,7 @@ public class AllTests {
 	public static int sleepMs = 0;
 	
 	public static void main(String[] args) {
+		Logger.setLoggerConsole(new MockConsole());
 		long started = System.currentTimeMillis();
 		runAllTests(args);
 		System.out.println();

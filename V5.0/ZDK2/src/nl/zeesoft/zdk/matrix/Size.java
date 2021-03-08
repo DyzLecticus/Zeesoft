@@ -36,6 +36,10 @@ public class Size {
 		return new Size(x, y, z);
 	}
 	
+	public int volume() {
+		return x * y * z;
+	}
+
 	public int getIndexForPosition(Position position) {
 		int r = -1;
 		r = position.x + (position.y * x);

@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.neural;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class SpatialPoolerConfig {
-	public Size		inputSize					= new Size(3,3);
+	public Size		inputSize					= new Size(4,4);
 	public Size		outputSize					= new Size(10,10);
 	public int		outputOnBits				= 2;
 
@@ -12,7 +12,7 @@ public class SpatialPoolerConfig {
 	public float	permanenceDecrement			= 0.008F;
 
 	public float	potentialConnections		= 0.85F;
-	public float	potentialRadius				= 16;
+	public float	potentialRadius				= 2;
 	
 	public int		activationHistorySize		= 1000;
 	public int		boostFactorPeriod			= 10;

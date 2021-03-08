@@ -21,12 +21,12 @@ public class TestMatrix {
 		Matrix matrix = new Matrix();
 		
 		// Test not initialized
-		assert matrix.size() == 0;
+		assert matrix.volume() == 0;
 		matrix.setValue(0,self);
 		
 		// Test happy flow
 		matrix.initialize(size);
-		assert matrix.size() == 24;
+		assert matrix.volume() == 24;
 		matrix.setValue(self,0);
 		assert matrix.getValue(position1) != null;
 		assert matrix.getValue(position1) instanceof Integer;

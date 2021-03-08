@@ -6,19 +6,18 @@ import java.util.List;
 import nl.zeesoft.zdk.function.Function;
 
 public class Matrix {
-	public Object[][][]		data		= null;
-	
-	private Size 			size		= null;
+	public Size 			size	= null;
+	public Object[][][]		data	= null;
 	
 	public void initialize(Size size) {
 		this.size = size.copy();
 		this.data = new Object[this.size.x][this.size.y][this.size.z];
 	}
 	
-	public int size() {
+	public int volume() {
 		int r = 0;
 		if (size!=null) {
-			r = size.x * size.y * size.z;
+			r = size.volume();
 		}
 		return r;
 	}
