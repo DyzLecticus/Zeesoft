@@ -3,6 +3,9 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.matrix.Size;
+
 public class Sdr {
 	public int				length	= 1;
 	public List<Integer>	onBits	= new ArrayList<Integer>();
@@ -60,6 +63,14 @@ public class Sdr {
 			if (sdr.onBits.contains(onBit)) {
 				r++;
 			}
+		}
+		return r;
+	}
+	
+	public List<Position> getActivePositions(Size size) {
+		List<Position> r = new ArrayList<Position>();
+		for (Integer onBit: onBits) {
+			r.add(size.getPositionForIndex(onBit));
 		}
 		return r;
 	}

@@ -1,8 +1,8 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.sp;
 
 import nl.zeesoft.zdk.matrix.Size;
 
-public class SpatialPoolerConfig {
+public class SpConfig {
 	public Size		inputSize					= new Size(4,4);
 	public Size		outputSize					= new Size(10,10);
 	public int		outputOnBits				= 2;
@@ -18,8 +18,8 @@ public class SpatialPoolerConfig {
 	public int		boostFactorPeriod			= 10;
 	public int		boostStrength				= 2;
 	
-	public SpatialPoolerConfig copy() {
-		SpatialPoolerConfig r = new SpatialPoolerConfig();
+	public SpConfig copy() {
+		SpConfig r = new SpConfig();
 		r.inputSize = inputSize.copy();
 		r.outputSize = outputSize.copy();
 		r.outputOnBits = outputOnBits;
