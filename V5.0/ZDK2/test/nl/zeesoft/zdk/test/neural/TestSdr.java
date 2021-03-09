@@ -26,7 +26,7 @@ public class TestSdr {
 		assert sdr.onBits.contains(3);
 		assert sdr.toString().equals("9,0,3");
 		
-		List<Position> positions = sdr.getActivePositions(new Size(3,3));
+		List<Position> positions = sdr.getOnPositions(new Size(3,3));
 		assert positions.size() == 2;
 		assert positions.get(0).equals(new Position(0,0));
 		assert positions.get(1).equals(new Position(0,1));
@@ -52,5 +52,8 @@ public class TestSdr {
 		sdr.setBit(0, true);
 		assert sdr2.equals(sdr) == false;
 		
+		sdr2 = new Sdr(9);
+		sdr2.setOnPositions(new Size(3,3), positions);
+		assert sdr2.toString().equals("9,0,3");		
 	}
 }

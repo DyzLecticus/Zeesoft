@@ -67,11 +67,17 @@ public class Sdr {
 		return r;
 	}
 	
-	public List<Position> getActivePositions(Size size) {
+	public List<Position> getOnPositions(Size size) {
 		List<Position> r = new ArrayList<Position>();
 		for (Integer onBit: onBits) {
 			r.add(size.getPositionForIndex(onBit));
 		}
 		return r;
+	}
+	
+	public void setOnPositions(Size size, List<Position> positions) {
+		for (Position position: positions) {
+			setBit(size.getIndexForPosition(position),true);
+		}
 	}
 }

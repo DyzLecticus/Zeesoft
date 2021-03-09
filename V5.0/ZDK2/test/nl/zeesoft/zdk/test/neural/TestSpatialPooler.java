@@ -15,6 +15,9 @@ public class TestSpatialPooler {
 		SpatialPooler sp = new SpatialPooler();
 		
 		sp.initialize(config);
+
+		assert sp.activationHistory.length == 100;
+		assert sp.activationHistory.capacity == 1000;
 		
 		assert sp.connections.config == sp.config;
 		assert sp.connections.volume() == 100;
@@ -31,9 +34,6 @@ public class TestSpatialPooler {
 		assert sp.activations.config == sp.config;
 		assert sp.activations.volume() == 100;
 		assert sp.activations.data[0][0][0] == null;
-
-		assert sp.activationHistory.length == 100;
-		assert sp.activationHistory.capacity == 1000;
 
 		sp.resetConnections();
 		assert permanences.data[0][0][0] != null;
@@ -78,5 +78,9 @@ public class TestSpatialPooler {
 		sp.processIO(io);
 		assert sp.activations.data[0][0][0] instanceof Float;
 		assert (float)sp.activations.data[0][0][0] >= 0;
+		assert io.outputs.size()>0;
+		Sdr output = io.outputs.get(0);
+		assert output.length == 100;
+		assert output.onBits.size() == 2;
 	}
 }
