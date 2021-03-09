@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.neural.sp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
@@ -14,7 +13,6 @@ public class SpatialPooler implements Processor {
 	public SpConfig			config						= null;
 	
 	// State
-	public List<Position>	activeInputPositions		= new ArrayList<Position>();
 	public SpConnections	connections					= null;
 	public SpBoostFactors	boostFactors				= null;
 	public SpActivations	activations					= null;
