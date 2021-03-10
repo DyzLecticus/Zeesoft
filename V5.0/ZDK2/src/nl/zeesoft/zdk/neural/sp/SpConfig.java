@@ -25,6 +25,7 @@ public class SpConfig {
 		r.inputSize = inputSize.copy();
 		r.outputSize = outputSize.copy();
 		r.outputOnBits = outputOnBits;
+		r.learn = learn;
 		r.permanenceThreshold = permanenceThreshold;
 		r.permanenceIncrement = permanenceIncrement;
 		r.permanenceDecrement = permanenceDecrement;
