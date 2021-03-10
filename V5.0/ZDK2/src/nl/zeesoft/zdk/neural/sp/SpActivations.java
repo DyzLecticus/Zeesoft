@@ -74,14 +74,13 @@ public class SpActivations extends Matrix {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
-				Position position = (Position) param1;
 				float val = (float) param2;
-				List<Position> positions = r.get(val);
+				List<Position> positions = r.get((float) param2);
 				if (positions==null) {
 					positions = new ArrayList<Position>();
 					r.put(val,positions);
 				}
-				positions.add(position);
+				positions.add((Position) param1);
 				return param2;
 			}
 		};

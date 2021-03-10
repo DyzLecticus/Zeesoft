@@ -32,6 +32,16 @@ public class Size {
 		this.z = z;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		boolean r = false;
+		if (other!=null && other instanceof Size) {
+			Size size = (Size) other;
+			r = size.x == x && size.y == y && size.z == z;
+		}
+		return r;
+	}
+	
 	public Size copy() {
 		return new Size(x, y, z);
 	}

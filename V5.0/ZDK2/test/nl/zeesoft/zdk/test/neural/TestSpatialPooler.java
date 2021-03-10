@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.neural.sp.SpConfig;
 import nl.zeesoft.zdk.neural.sp.SpatialPooler;
 
 public class TestSpatialPooler {
+	private static TestSpatialPooler	self	= new TestSpatialPooler();
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -73,6 +75,9 @@ public class TestSpatialPooler {
 		
 		io = new ProcessorIO();
 		io.inputs.add(input);
+	
+		Matrix before = sp.connections.copy(self);
+		assert before.equals(sp.connections);
 		
 		sp.boostFactors.data[0][0][0] = 1.00001F;
 		sp.processIO(io);
@@ -82,5 +87,7 @@ public class TestSpatialPooler {
 		Sdr output = io.outputs.get(0);
 		assert output.length == 100;
 		assert output.onBits.size() == 2;
+		
+		assert !sp.connections.equals(before);
 	}
 }

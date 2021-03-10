@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.neural.sp;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
@@ -15,7 +17,14 @@ public class SpConnections extends Matrix {
 	}
 	
 	public void reset(Object caller) {
-		applyFunction(caller, getResetFunction(caller, config));
+		applyFunction(caller, getResetFunction(caller));
+	}
+	
+	public void adjustPermanences(Object caller, List<Position> activeInputPositions, List<Position> winners) {
+		for (Position winner: winners) {
+			Matrix permanences = (Matrix) getValue(winner);
+			permanences.applyFunction(caller, getAdjustPermanencesFunction(activeInputPositions));
+		}
 	}
 
 	protected Function getInitializeFunction() {
@@ -30,13 +39,12 @@ public class SpConnections extends Matrix {
 		return r;
 	}
 	
-	protected Function getResetFunction(Object myCaller, SpConfig config) {
+	protected Function getResetFunction(Object myCaller) {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
-				Position position = (Position) param1;
 				Matrix permanences = (Matrix) param2;
-				permanences.applyFunction(myCaller,getResetPermanencesFunction(position));
+				permanences.applyFunction(myCaller,getResetPermanencesFunction((Position) param1));
 				return permanences;
 			}
 		};
@@ -53,8 +61,7 @@ public class SpConnections extends Matrix {
 					config.potentialRadius < config.inputSize.volume()
 					) {
 					Position projected = config.outputSize.projectPositionOn(position, config.inputSize);
-					Position other = (Position) param1;
-					inRange = projected.getDistance(other) < config.potentialRadius;
+					inRange = projected.getDistance((Position) param1) < config.potentialRadius;
 				}
 				if (inRange && Rand.getRandomFloat(0, 1) < config.potentialConnections) {
 					r = Rand.getRandomFloat(0, 1);
@@ -63,5 +70,30 @@ public class SpConnections extends Matrix {
 			}
 		};
 		return function;
+	}
+	
+	protected Function getAdjustPermanencesFunction(List<Position> activeInputPositions) {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				float permanence = (float) param2;
+				if (permanence>=0) {
+					// TODO: Cover branches
+					if (activeInputPositions.contains((Position) param1)) {
+						permanence += config.permanenceIncrement;
+						if (permanence > 1F) {
+							permanence = 1F;
+						}
+					} else {
+						permanence -= config.permanenceIncrement;
+						if (permanence < 0F) {
+							permanence = 0F;
+						}
+					}
+				}
+				return permanence;
+			}
+		};
+		return r;
 	}
 }

@@ -8,10 +8,38 @@ import nl.zeesoft.zdk.function.Function;
 public class Matrix {
 	public Size 			size	= null;
 	public Object[][][]		data	= null;
-	
+		
 	public void initialize(Size size) {
 		this.size = size.copy();
 		this.data = new Object[this.size.x][this.size.y][this.size.z];
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		boolean r = false;
+		// TODO: Cover branches
+		if (other!=null && other instanceof Matrix) {
+			Matrix matrix = (Matrix) other;
+			if (size==null && matrix.size==null) {
+				r = true;
+			} else if (size!=null && matrix.size!=null && size.equals(matrix.size)) {
+				r = true;
+				for (int x = 0; x < size.x; x++) {
+					for (int y = 0; y < size.y; y++) {
+						for (int z = 0; z < size.z; z++) {
+							if (data[x][y][z]==null && matrix.data[x][y][z]!=null ||
+								data[x][y][z]!=null && matrix.data[x][y][z]==null ||
+								data[x][y][z]!=null && matrix.data[x][y][z]!=null && !data[x][y][z].equals(matrix.data[x][y][z]) 
+								) {
+								r = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return r;
 	}
 	
 	public int volume() {
@@ -69,5 +97,30 @@ public class Matrix {
 		};
 		applyFunction(caller,function);
 		return r;
+	}
+	
+	public Matrix copy(Object caller) {
+		Matrix r = new Matrix();
+		if (size!=null) {
+			r.initialize(size);
+			r.copyDataFrom(caller, this);
+		}
+		return r;
+	}
+	
+	public void copyDataFrom(Object caller, Matrix other) {
+		if (this.size!=null && other.size!=null && this.size.equals(other.size)) {
+			Function function = new Function() {
+				@Override
+				protected Object exec() {
+					Object value = other.getValue((Position) param1);
+					if (value instanceof Matrix) {
+						value = ((Matrix) value).copy(caller);
+					}
+					return value;
+				}
+			};
+			applyFunction(caller,function);
+		}
 	}
 }

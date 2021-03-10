@@ -34,9 +34,13 @@ public class SpatialPooler implements Processor {
 	@Override
 	public void processIO(ProcessorIO io) {
 		if (isValidIO(io)) {
-			activations.activate(this, io.inputs.get(0).getOnPositions(config.inputSize));
+			List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(config.inputSize);
+			activations.activate(this, activeInputPositions);
 			List<Position> winners = activations.getWinners(this, config.outputOnBits);
 			setOutput(io, winners);
+			if (config.learn) {
+				connections.adjustPermanences(this, activeInputPositions, winners);
+			}
 		}
 	}
 	

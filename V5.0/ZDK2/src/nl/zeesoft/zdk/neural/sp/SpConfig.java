@@ -11,6 +11,8 @@ public class SpConfig {
 	public float	permanenceIncrement			= 0.05F;
 	public float	permanenceDecrement			= 0.008F;
 
+	public boolean	learn						= true;
+	
 	public float	potentialConnections		= 0.85F;
 	public float	potentialRadius				= 2;
 	

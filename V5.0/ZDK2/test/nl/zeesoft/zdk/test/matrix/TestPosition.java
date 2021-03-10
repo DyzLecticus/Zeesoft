@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.test.matrix;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
 
@@ -35,5 +38,9 @@ public class TestPosition {
 		assert position.getDistance(new Position(2,6,2)) == 4;
 		assert position.getDistance(new Position(5,6,2)) == 5;
 		assert position.getDistance(new Position(5,6,14)) == 13;
+		
+		List<Position> positions = new ArrayList<Position>();
+		positions.add(position);
+		assert positions.contains(new Position(2,2,2));
 	}
 }

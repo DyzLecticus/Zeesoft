@@ -5,6 +5,9 @@ import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class TestSize {
+	private static TestSize	self = new TestSize();
+	
+	@SuppressWarnings("unlikely-arg-type")
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -17,6 +20,12 @@ public class TestSize {
 		assert size.x == 2;
 		assert size.y == 3;
 		assert size.z == 1;
+		assert size.equals(new Size(2,3));
+		assert !size.equals(new Size(1,3));
+		assert !size.equals(new Size(2,2));
+		assert !size.equals(new Size(2,3,2));
+		assert !size.equals(null);
+		assert !size.equals(self);
 		
 		size = new Size(0,0,0);
 		assert size.x == 1;

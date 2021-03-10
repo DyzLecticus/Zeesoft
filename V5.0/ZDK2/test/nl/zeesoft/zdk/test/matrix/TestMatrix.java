@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.matrix.Size;
 public class TestMatrix {
 	private static TestMatrix	self	= new TestMatrix();
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -64,5 +65,31 @@ public class TestMatrix {
 		positions = matrix.getPositionsForValue(self,2);
 		assert positions.size() == 1;
 		assert positions.get(0).equals(position2);
+		
+		Matrix matrix2 = (new Matrix()).copy(self);
+		assert matrix2.size == null;
+		assert matrix2.equals(new Matrix());
+		assert !matrix2.equals(null);
+		assert !matrix2.equals(self);
+		matrix2.copyDataFrom(self, new Matrix());
+		matrix2.copyDataFrom(self, matrix);
+		
+		matrix2.initialize(new Size(1,1));
+		matrix2.copyDataFrom(self, new Matrix());
+		matrix2.copyDataFrom(self, matrix);
+		assert matrix2.data[0][0][0] == null;
+		
+		matrix2.initialize(matrix.size);
+		assert !matrix2.equals(matrix);
+		matrix2.copyDataFrom(self, matrix);
+		assert matrix2.data[0][0][0] != null;
+		assert matrix2.data[0][0][0] == matrix.data[0][0][0];
+		assert matrix2.data[1][0][0] == matrix.data[1][0][0];
+		assert matrix2.equals(matrix);
+		matrix2.data[1][0][0] = null;
+		assert !matrix2.equals(matrix);
+		
+		matrix2 = matrix.copy(self);
+		assert matrix2.equals(matrix);
 	}
 }
