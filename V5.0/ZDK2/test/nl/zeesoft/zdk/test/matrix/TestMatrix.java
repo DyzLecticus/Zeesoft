@@ -65,10 +65,11 @@ public class TestMatrix {
 		positions = matrix.getPositionsForValue(self,2);
 		assert positions.size() == 1;
 		assert positions.get(0).equals(position2);
-		
+
 		Matrix matrix2 = (new Matrix()).copy(self);
 		assert matrix2.size == null;
 		assert matrix2.equals(new Matrix());
+		assert !matrix2.equals(matrix);
 		assert !matrix2.equals(null);
 		assert !matrix2.equals(self);
 		matrix2.copyDataFrom(self, new Matrix());
@@ -78,7 +79,15 @@ public class TestMatrix {
 		matrix2.copyDataFrom(self, new Matrix());
 		matrix2.copyDataFrom(self, matrix);
 		assert matrix2.data[0][0][0] == null;
-		
+		assert !matrix2.equals(new Matrix());
+		assert !matrix2.equals(matrix);
+
+		assert Matrix.equals(matrix, matrix);
+		assert !Matrix.equals(matrix, matrix2);
+		assert Matrix.equals(null, null);
+		assert !Matrix.equals(matrix, null);
+		assert !Matrix.equals(null, matrix);
+
 		matrix2.initialize(matrix.size);
 		assert !matrix2.equals(matrix);
 		matrix2.copyDataFrom(self, matrix);

@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.sp.SpConfig;
+import nl.zeesoft.zdk.neural.sp.SpConnections;
 import nl.zeesoft.zdk.neural.sp.SpatialPooler;
 
 public class TestSpatialPooler {
@@ -56,6 +57,11 @@ public class TestSpatialPooler {
 		assert (float)permanences.data[0][0][0] >= -1;
 		assert (float)permanences.data[0][0][0] <= 1;
 
+		float permanence = SpConnections.getAdjustedPermanence(0.999F,true,0.1F,0.1F);
+		assert permanence == 1F;
+		permanence = SpConnections.getAdjustedPermanence(0.001F,false,0.1F,0.1F);
+		assert permanence == 0F;
+		
 		ProcessorIO io = new ProcessorIO();
 		sp.processIO(io);
 		assert io.error.length() > 0;
@@ -75,10 +81,9 @@ public class TestSpatialPooler {
 		
 		io = new ProcessorIO();
 		io.inputs.add(input);
-	
+			
 		Matrix before = sp.connections.copy(self);
 		assert before.equals(sp.connections);
-		
 		sp.boostFactors.data[0][0][0] = 1.00001F;
 		sp.processIO(io);
 		assert sp.activations.data[0][0][0] instanceof Float;
@@ -87,7 +92,17 @@ public class TestSpatialPooler {
 		Sdr output = io.outputs.get(0);
 		assert output.length == 100;
 		assert output.onBits.size() == 2;
-		
 		assert !sp.connections.equals(before);
+		
+		input = new Sdr(16);
+		input.setBit(4, true);
+		input.setBit(5, true);
+		input.setBit(6, true);
+		input.setBit(7, true);
+		
+		before = sp.connections.copy(self);
+		sp.config.learn = false;
+		sp.processIO(io);
+		assert sp.connections.equals(before);
 	}
 }

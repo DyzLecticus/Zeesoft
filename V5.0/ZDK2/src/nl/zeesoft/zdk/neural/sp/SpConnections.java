@@ -77,23 +77,30 @@ public class SpConnections extends Matrix {
 			@Override
 			protected Object exec() {
 				float permanence = (float) param2;
-				if (permanence>=0) {
-					// TODO: Cover branches
-					if (activeInputPositions.contains((Position) param1)) {
-						permanence += config.permanenceIncrement;
-						if (permanence > 1F) {
-							permanence = 1F;
-						}
-					} else {
-						permanence -= config.permanenceIncrement;
-						if (permanence < 0F) {
-							permanence = 0F;
-						}
-					}
-				}
-				return permanence;
+				boolean isActiveInput = activeInputPositions.contains((Position) param1);
+				return getAdjustedPermanence(
+					permanence, isActiveInput, config.permanenceIncrement, config.permanenceDecrement
+				);
 			}
 		};
+		return r;
+	}
+	
+	public static float getAdjustedPermanence(float permanence, boolean isActiveInput, float increment, float decrement) {
+		float r = permanence;
+		if (r>=0) {
+			if (isActiveInput) {
+				r += increment;
+				if (r > 1F) {
+					r = 1F;
+				}
+			} else {
+				r -= decrement;
+				if (r < 0F) {
+					r = 0F;
+				}
+			}
+		}
 		return r;
 	}
 }

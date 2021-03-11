@@ -17,20 +17,20 @@ public class Matrix {
 	@Override
 	public boolean equals(Object other) {
 		boolean r = false;
-		// TODO: Cover branches
 		if (other!=null && other instanceof Matrix) {
 			Matrix matrix = (Matrix) other;
 			if (size==null && matrix.size==null) {
 				r = true;
-			} else if (size!=null && matrix.size!=null && size.equals(matrix.size)) {
+			} else if (
+				size!=null && 
+				matrix.size!=null &&
+				size.equals(matrix.size)
+				) {
 				r = true;
 				for (int x = 0; x < size.x; x++) {
 					for (int y = 0; y < size.y; y++) {
 						for (int z = 0; z < size.z; z++) {
-							if (data[x][y][z]==null && matrix.data[x][y][z]!=null ||
-								data[x][y][z]!=null && matrix.data[x][y][z]==null ||
-								data[x][y][z]!=null && matrix.data[x][y][z]!=null && !data[x][y][z].equals(matrix.data[x][y][z]) 
-								) {
+							if (!equals(data[x][y][z], matrix.data[x][y][z])) {
 								r = false;
 								break;
 							}
@@ -122,5 +122,16 @@ public class Matrix {
 			};
 			applyFunction(caller,function);
 		}
+	}
+	
+	public static boolean equals(Object obj1, Object obj2) {
+		boolean r = true;
+		if ((obj1==null && obj2!=null) ||
+			(obj1!=null && obj2==null) ||
+			(obj1!=null && !obj1.equals(obj2)) 
+			) {
+			r = false;
+		}
+		return r;
 	}
 }
