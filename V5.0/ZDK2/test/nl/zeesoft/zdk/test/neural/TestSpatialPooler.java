@@ -17,8 +17,13 @@ public class TestSpatialPooler {
 		SpConfig config = new SpConfig();
 		SpatialPooler sp = new SpatialPooler();
 		
-		sp.initialize(config);
+		ProcessorIO io = new ProcessorIO();
+		sp.processIO(io);
+		assert io.error.length() > 0;
+		assert io.error.equals("SpatialPooler is not initialized");
 
+		sp.initialize(config);
+		
 		assert sp.activationHistory.length == 100;
 		assert sp.activationHistory.capacity == 1000;
 		
@@ -37,6 +42,11 @@ public class TestSpatialPooler {
 		assert sp.activations.config == sp.config;
 		assert sp.activations.volume() == 100;
 		assert sp.activations.data[0][0][0] == null;
+
+		io = new ProcessorIO();
+		sp.processIO(io);
+		assert io.error.length() > 0;
+		assert io.error.equals("SpatialPooler connections are not initialized");
 
 		sp.resetConnections();
 		assert permanences.data[0][0][0] != null;
@@ -62,13 +72,12 @@ public class TestSpatialPooler {
 		permanence = SpConnections.getAdjustedPermanence(0.001F,false,0.1F,0.1F);
 		assert permanence == 0F;
 		
-		ProcessorIO io = new ProcessorIO();
+		io = new ProcessorIO();
 		sp.processIO(io);
 		assert io.error.length() > 0;
 		assert io.error.equals("SpatialPooler requires at least one input SDR");
 		
-		io = new ProcessorIO();
-		io.inputs.add(new Sdr(17));
+		io = new ProcessorIO(new Sdr(17));
 		sp.processIO(io);
 		assert io.error.length() > 0;
 		assert io.error.equals("SpatialPooler input SDR may not be longer than 16");
@@ -82,8 +91,8 @@ public class TestSpatialPooler {
 		io = new ProcessorIO();
 		io.inputs.add(input);
 			
-		Matrix before = sp.connections.copy(self);
-		assert before.equals(sp.connections);
+		Matrix connectionsBefore = sp.connections.copy(self);
+		assert connectionsBefore.equals(sp.connections);
 		sp.boostFactors.data[0][0][0] = 1.00001F;
 		sp.processIO(io);
 		assert sp.activations.data[0][0][0] instanceof Float;
@@ -92,7 +101,7 @@ public class TestSpatialPooler {
 		Sdr output = io.outputs.get(0);
 		assert output.length == 100;
 		assert output.onBits.size() == 2;
-		assert !sp.connections.equals(before);
+		assert !sp.connections.equals(connectionsBefore);
 		
 		input = new Sdr(16);
 		input.setBit(4, true);
@@ -100,9 +109,28 @@ public class TestSpatialPooler {
 		input.setBit(6, true);
 		input.setBit(7, true);
 		
-		before = sp.connections.copy(self);
+		connectionsBefore = sp.connections.copy(self);
+		Matrix activationsBefore = sp.activations.copy(self);
 		sp.config.learn = false;
+		io = new ProcessorIO(input);
 		sp.processIO(io);
-		assert sp.connections.equals(before);
+		assert sp.connections.equals(connectionsBefore);
+		assert !sp.activations.equals(activationsBefore);
+		
+		sp.connections.data[0][0][0] = null;
+		io = new ProcessorIO(input);
+		sp.processIO(io);
+		assert io.error.equals("SpatialPooler connections are not initialized");
+
+		sp.connections.size = null;
+		io = new ProcessorIO(input);
+		sp.processIO(io);
+		assert io.error.equals("SpatialPooler connections are not initialized");
+
+		sp.connections = null;
+		io = new ProcessorIO(input);
+		sp.processIO(io);
+		assert io.error.equals("SpatialPooler connections are not initialized");
+
 	}
 }

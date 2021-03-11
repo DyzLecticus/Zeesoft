@@ -20,6 +20,10 @@ public class SpConnections extends Matrix {
 		applyFunction(caller, getResetFunction(caller));
 	}
 	
+	public boolean isInitialized() {
+		return size!=null && data[0][0][0]!=null && ((Matrix)data[0][0][0]).data[0][0][0]!=null;
+	}
+	
 	public void adjustPermanences(Object caller, List<Position> activeInputPositions, List<Position> winners) {
 		for (Position winner: winners) {
 			Matrix permanences = (Matrix) getValue(winner);

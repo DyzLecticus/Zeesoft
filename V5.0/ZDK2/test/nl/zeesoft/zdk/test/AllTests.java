@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
+import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
 
 public class AllTests {
 	public static int sleepMs = 0;
@@ -45,5 +46,6 @@ public class AllTests {
 		TestSdr.main(args);
 		TestSdrHistory.main(args);
 		TestSpatialPooler.main(args);
+		TestSpatialPoolerOverlap.main(args);
 	}
 }

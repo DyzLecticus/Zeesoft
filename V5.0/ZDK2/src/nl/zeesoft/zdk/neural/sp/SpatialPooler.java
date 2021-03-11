@@ -33,7 +33,7 @@ public class SpatialPooler implements Processor {
 
 	@Override
 	public void processIO(ProcessorIO io) {
-		if (isValidIO(io)) {
+		if (isInitialized(io) && isValidIO(io)) {
 			List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(config.inputSize);
 			activations.activate(this, activeInputPositions);
 			List<Position> winners = activations.getWinners(this, config.outputOnBits);
@@ -42,6 +42,15 @@ public class SpatialPooler implements Processor {
 				connections.adjustPermanences(this, activeInputPositions, winners);
 			}
 		}
+	}
+	
+	protected boolean isInitialized(ProcessorIO io) {
+		if (config==null) {
+			io.error = this.getClass().getSimpleName() + " is not initialized";
+		} else if (connections==null || !connections.isInitialized()) {
+			io.error = this.getClass().getSimpleName() + " connections are not initialized";
+		}
+		return io.error.length()==0;
 	}
 	
 	protected boolean isValidIO(ProcessorIO io) {
