@@ -14,7 +14,7 @@ public class SpatialPooler implements Processor {
 	public SpConnections	connections					= null;
 	public SpBoostFactors	boostFactors				= null;
 	public SpActivations	activations					= null;
-	public float			averageGlobalActivation		= 0.0F;
+	public int				processed					= 0;
 
 	public void initialize(SpConfig config) {
 		this.config = config.copy();
@@ -41,6 +41,10 @@ public class SpatialPooler implements Processor {
 			if (config.learn) {
 				connections.adjustPermanences(this, activeInputPositions, winners);
 			}
+			
+			activationHistory.push(io.outputs.get(0));
+			processed++;
+			boostFactors.update(this, processed);
 		}
 	}
 	

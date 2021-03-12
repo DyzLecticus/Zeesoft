@@ -24,7 +24,7 @@ public class SdrHistory {
 	
 	public void push(Sdr sdr) {
 		if (totals!=null && sdr.length == length) {
-			sdrs.add(sdr);
+			sdrs.add(0,sdr);
 			for (Integer onBit: sdr.onBits) {
 				totals[onBit]++;
 			}
@@ -42,5 +42,26 @@ public class SdrHistory {
 				}
 			}
 		}
+	}
+	
+	public float getAverage(Integer bit) {
+		float r = 0;
+		if (sdrs.size()>0) {
+			r = totals[bit] / (float) sdrs.size();
+		}
+		return r;
+	}
+	
+	public float getTotalAverage() {
+		float r = 0;
+		if (sdrs.size()>0) {
+			for (int i = 0; i < totals.length; i++) {
+				r += totals[i];
+			}
+			if (r>0) {
+				r = r / (float) (totals.length * sdrs.size());
+			}
+		}
+		return r;
 	}
 }

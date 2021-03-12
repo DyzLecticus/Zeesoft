@@ -25,8 +25,7 @@ public class TestSpatialPoolerOverlap {
 		int iterations = 250;
 		for (int i = 0; i < iterations; i++) {
 			for (Sdr sdr: inputs) {
-				ProcessorIO io = new ProcessorIO();
-				io.inputs.add(sdr);
+				ProcessorIO io = new ProcessorIO(sdr);
 				sp.processIO(io);
 				assert io.error.length()==0;
 				assert io.outputs.size()==1;
