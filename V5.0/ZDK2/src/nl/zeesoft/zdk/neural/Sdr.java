@@ -20,6 +20,12 @@ public class Sdr {
 		}
 	}
 	
+	public Sdr copy() {
+		Sdr r = new Sdr();
+		r.copyFrom(this);
+		return r;
+	}
+	
 	public void setBit(Integer bit, boolean value) {
 		if (value) {
 			if (!onBits.contains(bit) && bit < length) {
@@ -78,6 +84,13 @@ public class Sdr {
 	public void setOnPositions(Size size, List<Position> positions) {
 		for (Position position: positions) {
 			setBit(size.getIndexForPosition(position),true);
+		}
+	}
+	
+	protected void copyFrom(Sdr other) {
+		length = other.length;
+		for (Integer onBit: other.onBits) {
+			onBits.add(onBit);
 		}
 	}
 }

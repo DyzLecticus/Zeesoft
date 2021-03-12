@@ -18,6 +18,7 @@ public class TestSdr {
 		assert sdr.onBits.size() == 1;
 		assert sdr.onBits.contains(0);
 		assert sdr.toString().equals("1,0");
+		assert sdr.copy().toString().equals("1,0");
 		
 		sdr.length = 9;
 		sdr.setBit(3,true);

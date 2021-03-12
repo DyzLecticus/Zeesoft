@@ -41,8 +41,7 @@ public class SpatialPooler implements Processor {
 			if (config.learn) {
 				connections.adjustPermanences(this, activeInputPositions, winners);
 			}
-			
-			activationHistory.push(io.outputs.get(0));
+			activationHistory.push(io.outputs.get(0).copy());
 			processed++;
 			boostFactors.update(this, processed);
 		}
