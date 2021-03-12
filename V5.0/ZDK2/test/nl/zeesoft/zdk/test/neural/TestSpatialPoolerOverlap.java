@@ -13,27 +13,58 @@ public class TestSpatialPoolerOverlap {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		testOverlap(1000);
+	}
+	
+	public static List<Sdr> testOverlap(int iterations) {
 		SpConfig config = new SpConfig();
 		SpatialPooler sp = new SpatialPooler();
-		
+
 		sp.initialize(config);
 		sp.resetConnections();
 		
 		List<Sdr> inputs = getInputSdrs();
 		List<Sdr> outputs = new ArrayList<Sdr>();
 		
-		int iterations = 250;
 		for (int i = 0; i < iterations; i++) {
 			for (Sdr sdr: inputs) {
 				ProcessorIO io = new ProcessorIO(sdr);
 				sp.processIO(io);
-				assert io.error.length()==0;
-				assert io.outputs.size()==1;
+				assert io.error.length() == 0;
+				assert io.outputs.size() == 1;
 				outputs.add(io.outputs.get(0));
 			}
 		}
+		assert outputs.size() == iterations * 4;
 		
-		assert outputs.size()==1000;
+		float overlap = 0;
+		float similarOverlap = 0;
+		int lastIndex = (iterations * 4 - 1);
+		int startIndex = (iterations * 3 - 1);
+		Sdr lastOutput = outputs.get((iterations*4 - 1));
+		int i = 0;
+		for (Sdr output: outputs) {
+			if (i==startIndex) {
+				sp.config.learn = false;
+				sp.config.boostStrength = 1;
+			}
+			if (i>=startIndex && i<lastIndex) {
+				if (i % 4 == 3) {
+					similarOverlap += output.getOverlap(lastOutput); 
+				} else {
+					overlap += output.getOverlap(lastOutput);
+				}
+			}
+			i++;
+		}
+		float factor = Float.MAX_VALUE;
+		if (overlap > 0) {
+			overlap = overlap / 3;
+			factor = (similarOverlap / overlap);
+		}
+		assert factor > 1F;
+		
+		return outputs;
 	}
 	
 	public static List<Sdr> getInputSdrs() {
@@ -41,9 +72,10 @@ public class TestSpatialPoolerOverlap {
 		int s = 0;
 		for (int i = 0; i < 4; i++) {
 			Sdr sdr = new Sdr(16);
-			for (int b = s; b < 4; b++) {
+			for (int b = s; b < s + 4; b++) {
 				sdr.setBit(b, true);
 			}
+			assert sdr.onBits.size() == 4;
 			r.add(sdr);
 			s += 4;
 		}
