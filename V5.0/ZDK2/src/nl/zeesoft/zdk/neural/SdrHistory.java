@@ -46,7 +46,7 @@ public class SdrHistory {
 	
 	public float getAverage(Integer bit) {
 		float r = 0;
-		if (sdrs.size()>0) {
+		if (totals!=null && sdrs.size()>0) {
 			r = totals[bit] / (float) sdrs.size();
 		}
 		return r;
@@ -54,7 +54,7 @@ public class SdrHistory {
 	
 	public float getTotalAverage() {
 		float r = 0;
-		if (sdrs.size()>0) {
+		if (totals!=null && sdrs.size()>0) {
 			for (int i = 0; i < totals.length; i++) {
 				r += totals[i];
 			}
