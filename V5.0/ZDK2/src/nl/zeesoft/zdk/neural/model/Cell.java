@@ -55,6 +55,15 @@ public class Cell {
 		}
 	}
 	
+	public void classifySegmentActivity() {
+		matchingDistalSegment = classifySegmentActivity(
+			distalSegments, activeDistalSegments, matchingDistalSegments
+		);
+		matchingApicalSegment = classifySegmentActivity(
+			apicalSegments, activeApicalSegments, matchingApicalSegments
+		);
+	}
+	
 	public void createSegments(
 		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions
 		) {
@@ -62,6 +71,45 @@ public class Cell {
 		if (distalSegment!=null) {
 			createSegment(Segment.APICAL, prevActiveApicalCellPositions, config.apicalPotentialRadius);
 		}
+	}
+	
+	protected Segment classifySegmentActivity(List<Segment> segments, List<Segment> active, List<Segment> matching) {
+		Segment r = null;
+		active.clear();
+		matching.clear();
+		r = classifyActiveAndMatchingSegments(
+			segments,active,matching
+		);
+		if (r!=null) {
+			segments.remove(r);
+			segments.add(0, r);
+			List<Segment> list = new ArrayList<Segment>(matching);
+			for (Segment segment: list) {
+				matching.add(segment);
+				segments.remove(segment);
+				segments.add(0,segment);
+			}
+		}
+		return r;
+	}
+
+	protected Segment classifyActiveAndMatchingSegments(List<Segment> segments, List<Segment> active, List<Segment> matching) {
+		Segment r = null;
+		for (Segment segment: segments) {
+			if (segment.activeSynapses.size() >= config.activationThreshold) {
+				active.add(segment);
+			} else if (segment.potentialSynapses.size() >= config.matchingThreshold) {
+				matching.add(segment);
+			}
+		}
+		int potential = 0;
+		for (Segment segment: matching) {
+			if (segment.potentialSynapses.size()>potential) {
+				r = segment;
+				potential = segment.potentialSynapses.size();
+			}
+		}
+		return r;
 	}
 	
 	protected Segment createSegment(String type, List<Position> growPositions, float potentialRadius) {
