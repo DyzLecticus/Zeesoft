@@ -42,5 +42,8 @@ public class TestPosition {
 		List<Position> positions = new ArrayList<Position>();
 		positions.add(position);
 		assert positions.contains(new Position(2,2,2));
+		
+		assert position2.selectPositionsLimitDistance(10, positions).size() == 1;
+		assert position2.selectPositionsLimitDistance(1, positions).size() == 0;
 	}
 }

@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.matrix;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Position {
 	public int x = 0;
 	public int y = 0;
@@ -23,6 +26,18 @@ public class Position {
 		if (other!=null && other instanceof Position) {
 			Position pos = (Position) other;
 			r = pos.x == x && pos.y == y && pos.z == z;
+		}
+		return r;
+	}
+	
+	public List<Position> selectPositionsLimitDistance(float maxDistance, List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		float dist = 0;
+		for (Position pos: positions) {
+			dist = getDistance(pos);
+			if (dist<=maxDistance) {
+				r.add(pos);
+			}
 		}
 		return r;
 	}

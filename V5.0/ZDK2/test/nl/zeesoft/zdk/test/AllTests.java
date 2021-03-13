@@ -6,8 +6,11 @@ import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
+import nl.zeesoft.zdk.test.neural.TestCell;
+import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
+import nl.zeesoft.zdk.test.neural.TestSegment;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
 
@@ -47,5 +50,8 @@ public class AllTests {
 		TestSdrHistory.main(args);
 		TestSpatialPooler.main(args);
 		TestSpatialPoolerOverlap.main(args);
+		TestSegment.main(args);
+		TestCell.main(args);
+		TestCells.main(args);
 	}
 }
