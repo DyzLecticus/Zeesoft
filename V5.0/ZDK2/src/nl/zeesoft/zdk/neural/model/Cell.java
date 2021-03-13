@@ -64,8 +64,38 @@ public class Cell {
 		);
 	}
 	
+	public void adaptActiveSegments(
+		List<Position> prevActiveCellPositions,
+		List<Position> prevWinnerCellPositions,
+		List<Position> prevActiveApicalCellPositions
+		) {
+		adaptActiveSegments(
+			activeDistalSegments, prevActiveCellPositions, prevWinnerCellPositions, config.distalPotentialRadius
+		);
+		if (prevActiveApicalCellPositions.size()>0) {
+			adaptActiveSegments(
+				activeApicalSegments, prevActiveApicalCellPositions, prevActiveApicalCellPositions, config.apicalPotentialRadius
+			);
+		}
+	}
+	
+	public void adaptMatchingSegments(
+		List<Position> prevActiveCellPositions,
+		List<Position> prevWinnerCellPositions,
+		List<Position> prevActiveApicalCellPositions
+		) {
+		if (matchingDistalSegment!=null) {
+			adaptMatchingSegment(matchingDistalSegment, prevActiveApicalCellPositions, prevWinnerCellPositions, config.distalPotentialRadius);
+			if (matchingApicalSegment!=null) {
+				adaptMatchingSegment(matchingApicalSegment, prevActiveApicalCellPositions, prevActiveApicalCellPositions, config.apicalPotentialRadius);
+			}
+		}
+	}
+
 	public void createSegments(
-		List<Position> prevActiveCellPositions, List<Position> prevWinnerCellPositions, List<Position> prevActiveApicalCellPositions
+		List<Position> prevActiveCellPositions,
+		List<Position> prevWinnerCellPositions,
+		List<Position> prevActiveApicalCellPositions
 		) {
 		Segment distalSegment = createSegment(Segment.DISTAL, prevWinnerCellPositions, config.distalPotentialRadius);
 		if (distalSegment!=null) {
@@ -81,19 +111,22 @@ public class Cell {
 			segments,active,matching
 		);
 		if (r!=null) {
-			segments.remove(r);
-			segments.add(0, r);
 			List<Segment> list = new ArrayList<Segment>(matching);
 			for (Segment segment: list) {
 				matching.add(segment);
 				segments.remove(segment);
 				segments.add(0,segment);
 			}
+			segments.remove(r);
+			segments.add(0, r);
 		}
 		return r;
 	}
 
-	protected Segment classifyActiveAndMatchingSegments(List<Segment> segments, List<Segment> active, List<Segment> matching) {
+	protected Segment classifyActiveAndMatchingSegments(
+		List<Segment> segments,
+		List<Segment> active,List<Segment> matching
+		) {
 		Segment r = null;
 		for (Segment segment: segments) {
 			if (segment.activeSynapses.size() >= config.activationThreshold) {
@@ -110,6 +143,46 @@ public class Cell {
 			}
 		}
 		return r;
+	}
+	
+	protected void adaptActiveSegments(
+		List<Segment> activeSegments,
+		List<Position> prevActiveCellPositions,
+		List<Position> prevWinnerCellPositions,
+		float potentialRadius
+		) {
+		List<Position> growPositions = prevWinnerCellPositions;
+		if (potentialRadius>0) {
+			growPositions = position.selectPositionsLimitDistance(potentialRadius, growPositions);
+		}
+		for (Segment segment: activeSegments) {
+			segment.adaptSynapses(prevActiveCellPositions, config.permanenceIncrement, config.permanenceDecrement);
+			int growNum = config.maxNewSynapseCount - segment.activeSynapses.size();
+			if (growNum>0) {
+				segment.growSynapses(
+					position, growNum, growPositions, config.initialPermanence, config.maxSynapsesPerSegment
+				);								
+			}
+		}
+	}
+	
+	protected void adaptMatchingSegment(
+		Segment matchingSegment,
+		List<Position> prevActiveCellPositions,
+		List<Position> prevWinnerCellPositions,
+		float potentialRadius
+		) {
+		List<Position> growPositions = prevWinnerCellPositions;
+		if (potentialRadius>0) {
+			growPositions = position.selectPositionsLimitDistance(potentialRadius, growPositions);
+		}
+		matchingSegment.adaptSynapses(prevActiveCellPositions, config.permanenceIncrement, config.permanenceDecrement);
+		int growNum = config.maxNewSynapseCount - matchingSegment.potentialSynapses.size();
+		if (growNum>0) {
+			matchingSegment.growSynapses(
+				position, growNum, growPositions, config.initialPermanence, config.maxSynapsesPerSegment
+			);								
+		}
 	}
 	
 	protected Segment createSegment(String type, List<Position> growPositions, float potentialRadius) {
