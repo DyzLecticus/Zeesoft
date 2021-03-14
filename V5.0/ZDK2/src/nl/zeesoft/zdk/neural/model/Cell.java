@@ -85,7 +85,7 @@ public class Cell {
 		List<Position> prevActiveApicalCellPositions
 		) {
 		if (matchingDistalSegment!=null) {
-			adaptMatchingSegment(matchingDistalSegment, prevActiveApicalCellPositions, prevWinnerCellPositions, config.distalPotentialRadius);
+			adaptMatchingSegment(matchingDistalSegment, prevActiveCellPositions, prevWinnerCellPositions, config.distalPotentialRadius);
 			if (matchingApicalSegment!=null) {
 				adaptMatchingSegment(matchingApicalSegment, prevActiveApicalCellPositions, prevActiveApicalCellPositions, config.apicalPotentialRadius);
 			}
