@@ -18,6 +18,10 @@ public class TestSpatialPooler {
 
 		ProcessorIO io = new ProcessorIO(new Sdr(10));
 		MockProcessor processor = new MockProcessor();
+		assert processor.getInputNames().size() == 1;
+		assert processor.getInputNames().get(0).equals("InputName");
+		assert processor.getOutputNames().size() == 1;
+		assert processor.getOutputNames().get(0).equals("OutputName");
 		processor.processIO(io);
 		processor.reset();
 		assert io.outputs.size() == 1;
@@ -27,7 +31,12 @@ public class TestSpatialPooler {
 		config.outputSize = new Size(10,10);
 		config.outputOnBits = 2;
 		config.boostFactorPeriod = 2;
+		
 		SpatialPooler sp = new SpatialPooler();
+		assert sp.getInputNames().size() == 1;
+		assert sp.getInputNames().get(0).equals("EncodedSensor");
+		assert sp.getOutputNames().size() == 1;
+		assert sp.getOutputNames().get(0).equals("ActiveColumns");
 		
 		io = new ProcessorIO();
 		sp.processIO(io);

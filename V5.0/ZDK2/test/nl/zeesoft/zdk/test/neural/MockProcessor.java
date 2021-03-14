@@ -11,4 +11,14 @@ public class MockProcessor extends Processor {
 	protected void processValidIO(ProcessorIO io) {
 		addOutput(io, new ArrayList<Position>());
 	}
+
+	@Override
+	protected String getInputName(int index) {
+		return "InputName";
+	}
+
+	@Override
+	protected String getOutputName(int index) {
+		return "OutputName";
+	}
 }

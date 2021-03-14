@@ -25,6 +25,14 @@ public class TestTemporalMemory {
 		config.matchingThreshold = 1;
 		
 		TemporalMemory tm = new TemporalMemory();
+		assert tm.getInputNames().size() == 2;
+		assert tm.getInputNames().get(0).equals("ActiveColumns");
+		assert tm.getInputNames().get(1).equals("ActiveApicalCells");
+		assert tm.getOutputNames().size() == 4;
+		assert tm.getOutputNames().get(0).equals("ActiveCells");
+		assert tm.getOutputNames().get(1).equals("BurstingColumns");
+		assert tm.getOutputNames().get(2).equals("PredictiveCells");
+		assert tm.getOutputNames().get(3).equals("WinnerCells");
 		
 		ProcessorIO io = new ProcessorIO();
 		tm.processIO(io);

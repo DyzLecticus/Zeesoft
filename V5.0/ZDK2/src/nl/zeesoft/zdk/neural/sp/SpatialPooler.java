@@ -9,7 +9,8 @@ import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.SdrHistory;
 
 public class SpatialPooler extends Processor {
-	public static final int		DEFAULT_INPUT			= 0;
+	public static final int		ENCODED_SENSOR_INPUT	= 0;
+	
 	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
 	
 	public SpConfig				config					= null;
@@ -51,11 +52,7 @@ public class SpatialPooler extends Processor {
 
 	@Override
 	protected int getMaxInputVolume(int index) {
-		int r = super.getMaxInputVolume(index);
-		if (index==DEFAULT_INPUT) {
-			r = config.inputSize.volume();
-		}
-		return r;
+		return config.inputSize.volume();
 	}
 	
 	@Override
@@ -71,5 +68,15 @@ public class SpatialPooler extends Processor {
 			io.error = this.getClass().getSimpleName() + " connections are not initialized";
 		}
 		return io.error.length() == 0;
+	}
+
+	@Override
+	protected String getInputName(int index) {
+		return "EncodedSensor";
+	}
+
+	@Override
+	protected String getOutputName(int index) {
+		return "ActiveColumns";
 	}
 }

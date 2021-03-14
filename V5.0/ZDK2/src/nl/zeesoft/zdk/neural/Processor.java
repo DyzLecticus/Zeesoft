@@ -1,13 +1,12 @@
 package nl.zeesoft.zdk.neural;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 
 public abstract class Processor {
-	public static final int		DEFAULT_INPUT	= 0;
-	
 	public void reset() {
 		
 	}
@@ -17,7 +16,23 @@ public abstract class Processor {
 			processValidIO(io);
 		}
 	}
-
+	
+	public List<String> getInputNames() {
+		List<String> r = new ArrayList<String>();
+		for (int i = 0; i < getNumberOfInputs(); i++) {
+			r.add(getInputName(i));
+		}
+		return r;
+	}
+	
+	public List<String> getOutputNames() {
+		List<String> r = new ArrayList<String>();
+		for (int i = 0; i < getNumberOfOutputs(); i++) {
+			r.add(getOutputName(i));
+		}
+		return r;
+	}
+	
 	protected boolean isInitialized(ProcessorIO io) {
 		return true;
 	}
@@ -55,4 +70,16 @@ public abstract class Processor {
 	protected Size getOutputSize(int index) {
 		return new Size(1,1,1);
 	}
+
+	protected int getNumberOfInputs() {
+		return 1;
+	}
+
+	protected abstract String getInputName(int index);
+
+	public int getNumberOfOutputs() {
+		return 1;
+	}
+
+	protected abstract String getOutputName(int index);
 }

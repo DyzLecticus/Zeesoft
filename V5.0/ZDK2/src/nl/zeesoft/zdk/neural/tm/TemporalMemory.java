@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.neural.Processor;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 
 public class TemporalMemory extends Processor {
+	public static final int		ACTIVE_COLUMNS_INPUT		= 0;
 	public static final int		ACTIVE_APICAL_INPUT			= 1;
 	
 	public static final int		ACTIVE_CELLS_OUTPUT			= 0;
@@ -31,7 +32,7 @@ public class TemporalMemory extends Processor {
 	public void reset() {
 		cells.reset(this);
 	}
-
+	
 	@Override
 	protected void processValidIO(ProcessorIO io) {
 		cells.cycleState(getNewActiveApicalCellPositions(io));
@@ -48,7 +49,7 @@ public class TemporalMemory extends Processor {
 	@Override
 	protected int getMaxInputVolume(int index) {
 		int r = 0;
-		if (index==0) {
+		if (index==ACTIVE_COLUMNS_INPUT) {
 			r = (config.size.x * config.size.y);
 		} else {
 			r = config.size.volume();
@@ -73,6 +74,38 @@ public class TemporalMemory extends Processor {
 			io.error = this.getClass().getSimpleName() + " cells are not initialized";
 		}
 		return io.error.length() == 0;
+	}
+
+	@Override
+	protected int getNumberOfInputs() {
+		return 2;
+	}
+
+	@Override
+	protected String getInputName(int index) {
+		String r = "ActiveApicalCells";
+		if (index == ACTIVE_COLUMNS_INPUT) {
+			r = "ActiveColumns";
+		}
+		return r;
+	}
+
+	@Override
+	public int getNumberOfOutputs() {
+		return 4;
+	}
+
+	@Override
+	protected String getOutputName(int index) {
+		String r = "WinnerCells";
+		if (index == ACTIVE_CELLS_OUTPUT) {
+			r = "ActiveCells";
+		} else if (index == BURSTING_COLUMNS_OUTPUT) {
+			r = "BurstingColumns";
+		} else if (index == PREDICTIVE_CELLS_OUTPUT) {
+			r = "PredictiveCells";
+		}
+		return r;
 	}
 	
 	protected List<Position> getNewActiveApicalCellPositions(ProcessorIO io) {
