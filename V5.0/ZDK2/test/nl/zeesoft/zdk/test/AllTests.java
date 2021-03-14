@@ -42,6 +42,7 @@ public class AllTests {
 		TestLock.main(args);
 		TestLogger.main(args);
 		TestRand.main(args);
+		TestUtil.main(args);
 		TestFunction.main(args);
 		TestFunctionList.main(args);
 		TestPosition.main(args);

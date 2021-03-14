@@ -82,12 +82,6 @@ public class TestMatrix {
 		assert !matrix2.equals(new Matrix());
 		assert !matrix2.equals(matrix);
 
-		assert Matrix.equals(matrix, matrix);
-		assert !Matrix.equals(matrix, matrix2);
-		assert Matrix.equals(null, null);
-		assert !Matrix.equals(matrix, null);
-		assert !Matrix.equals(null, matrix);
-
 		matrix2.initialize(matrix.size);
 		assert !matrix2.equals(matrix);
 		matrix2.copyDataFrom(self, matrix);

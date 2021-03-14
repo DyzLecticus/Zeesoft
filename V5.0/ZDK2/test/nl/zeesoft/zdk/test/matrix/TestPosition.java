@@ -45,5 +45,7 @@ public class TestPosition {
 		
 		assert position2.selectPositionsLimitDistance(10, positions).size() == 1;
 		assert position2.selectPositionsLimitDistance(1, positions).size() == 0;
+		assert position.isIn(positions);
+		assert !position2.isIn(positions);
 	}
 }

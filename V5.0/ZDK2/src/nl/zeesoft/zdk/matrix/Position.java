@@ -42,6 +42,17 @@ public class Position {
 		return r;
 	}
 	
+	public boolean isIn(List<Position> positions) {
+		boolean r = false;
+		for (Position position: positions) {
+			if (position.equals(this)) {
+				r = true;
+				break;
+			}
+		}
+		return r;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
