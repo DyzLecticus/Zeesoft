@@ -1,10 +1,13 @@
 package nl.zeesoft.zdk.test.neural;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrHistory;
 
 public class TestSdrHistory {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		Sdr sdr = new Sdr(10);
 		sdr.setBit(0,true);
 		sdr.setBit(9,true);

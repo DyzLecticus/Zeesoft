@@ -3,9 +3,9 @@ package nl.zeesoft.zdk.neural.sp;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class SpConfig {
-	public Size		inputSize					= new Size(4,4);
-	public Size		outputSize					= new Size(10,10);
-	public int		outputOnBits				= 2;
+	public Size		inputSize					= new Size(16,16);
+	public Size		outputSize					= new Size(48,48);
+	public int		outputOnBits				= 46;
 
 	public float	permanenceThreshold			= 0.1F;
 	public float	permanenceIncrement			= 0.05F;

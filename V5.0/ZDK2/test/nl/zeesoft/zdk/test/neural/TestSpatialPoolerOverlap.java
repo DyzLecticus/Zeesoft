@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.sp.SpConfig;
@@ -18,10 +19,13 @@ public class TestSpatialPoolerOverlap {
 	
 	public static List<Sdr> testOverlap(int iterations) {
 		SpConfig config = new SpConfig();
+		config.inputSize = new Size(4,4);
+		config.outputSize = new Size(10,10);
+		config.outputOnBits = 2;
 		SpatialPooler sp = new SpatialPooler();
 
 		sp.initialize(config);
-		sp.resetConnections();
+		sp.reset();
 		
 		List<Sdr> inputs = getInputSdrs();
 		List<Sdr> outputs = new ArrayList<Sdr>();

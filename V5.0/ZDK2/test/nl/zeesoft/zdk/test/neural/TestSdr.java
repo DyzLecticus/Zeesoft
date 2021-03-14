@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.neural;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
@@ -11,6 +12,8 @@ public class TestSdr {
 	
 	@SuppressWarnings("unlikely-arg-type")
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		Sdr sdr = new Sdr();
 		assert sdr.length == 1;
 		sdr.setBit(0,true);

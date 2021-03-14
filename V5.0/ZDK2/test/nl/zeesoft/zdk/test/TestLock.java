@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Lock;
+import nl.zeesoft.zdk.Logger;
 
 public class TestLock implements Runnable {
 	private static TestLock	self	= new TestLock();
@@ -16,6 +17,8 @@ public class TestLock implements Runnable {
 	private static boolean	locked	= false;
 	
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		lock.lock();
 		Thread runner = new Thread(self);
 		runner.start();

@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellConfig;
@@ -11,6 +12,8 @@ import nl.zeesoft.zdk.neural.model.Synapse;
 
 public class TestCell {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		CellConfig config = new CellConfig();
 		Position position = new Position(0,0,0);
 		Cell cell = new Cell();

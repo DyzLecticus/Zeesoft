@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 import nl.zeesoft.zdk.test.neural.TestSegment;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
+import nl.zeesoft.zdk.test.neural.TestTemporalMemory;
 
 public class AllTests {
 	public static int sleepMs = 0;
@@ -53,5 +54,6 @@ public class AllTests {
 		TestSegment.main(args);
 		TestCell.main(args);
 		TestCells.main(args);
+		TestTemporalMemory.main(args);
 	}
 }

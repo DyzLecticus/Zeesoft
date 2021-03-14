@@ -3,11 +3,14 @@ package nl.zeesoft.zdk.test.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Segment;
 
 public class TestSegment {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		Position cellPosition = new Position(0,0,0);
 		
 		Position winner1 = new Position(0,0,1);

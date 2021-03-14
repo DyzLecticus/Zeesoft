@@ -1,9 +1,12 @@
 package nl.zeesoft.zdk.test;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 
 public class TestRand {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		assert new Rand() != null;
 		assert Rand.getRandomFloat(4,4) == 4;
 		assert Rand.getRandomFloat(9,3) == 9;

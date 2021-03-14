@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Matrix;
+import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.sp.SpBoostFactors;
@@ -15,11 +16,20 @@ public class TestSpatialPooler {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		ProcessorIO io = new ProcessorIO(new Sdr(10));
+		MockProcessor processor = new MockProcessor();
+		processor.processIO(io);
+		processor.reset();
+		assert io.outputs.size() == 1;
+		
 		SpConfig config = new SpConfig();
+		config.inputSize = new Size(4,4);
+		config.outputSize = new Size(10,10);
+		config.outputOnBits = 2;
 		config.boostFactorPeriod = 2;
 		SpatialPooler sp = new SpatialPooler();
 		
-		ProcessorIO io = new ProcessorIO();
+		io = new ProcessorIO();
 		sp.processIO(io);
 		assert io.error.length() > 0;
 		assert io.error.equals("SpatialPooler is not initialized");
@@ -55,7 +65,7 @@ public class TestSpatialPooler {
 		assert io.error.length() > 0;
 		assert io.error.equals("SpatialPooler connections are not initialized");
 
-		sp.resetConnections();
+		sp.reset();
 		assert permanences.data[0][0][0] != null;
 		assert permanences.data[0][0][0] instanceof Float;
 		assert (float)permanences.data[0][0][0] >= -1;
@@ -64,13 +74,13 @@ public class TestSpatialPooler {
 		
 		sp.initialize(config);
 		sp.config.potentialRadius = 16;
-		sp.resetConnections();
+		sp.reset();
 		assert (float)permanences.data[0][0][0] >= -1;
 		assert (float)permanences.data[0][0][0] <= 1;
 		
 		sp.initialize(config);
 		sp.config.potentialRadius = 0;
-		sp.resetConnections();
+		sp.reset();
 		assert (float)permanences.data[0][0][0] >= -1;
 		assert (float)permanences.data[0][0][0] <= 1;
 
