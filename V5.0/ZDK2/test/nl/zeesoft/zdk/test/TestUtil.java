@@ -1,8 +1,5 @@
 package nl.zeesoft.zdk.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 
@@ -18,20 +15,7 @@ public class TestUtil {
 		assert Util.equals(null, null);
 		assert !Util.equals(util1, null);
 		assert !Util.equals(null, util1);
-		
-		List<Util> utils = new ArrayList<Util>();
-		for (int i = 0; i < 100; i++) {
-			utils.add(new Util());
-		}
-		List<Util> utilsBefore = new ArrayList<Util>(utils);
-		Util.randomizeList(utils);
-		int same = 0;
-		for (Util util: utils) {
-			if (utilsBefore.get(same)!=util) {
-				break;
-			}
-			same++;
-		}
-		assert same < 100;
+				
+		assert Util.getHypotenuse(3, 4) == 5;
 	}
 }

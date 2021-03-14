@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Util;
+
 public class Position {
 	public int x = 0;
 	public int y = 0;
@@ -41,7 +43,7 @@ public class Position {
 		}
 		return r;
 	}
-	
+
 	public boolean isIn(List<Position> positions) {
 		boolean r = false;
 		for (Position position: positions) {
@@ -86,7 +88,7 @@ public class Position {
 		} else if (len2==0) {
 			r = len1;
 		} else {
-			r = getHypotenuse(len1, len2);
+			r = Util.getHypotenuse(len1, len2);
 		}
 		if (other.z!=z) {
 			len1 = r;
@@ -98,13 +100,20 @@ public class Position {
 			if (len1==0) {
 				r = len2;
 			} else {
-				r = getHypotenuse(len1, len2);
+				r = Util.getHypotenuse(len1, len2);
 			}
 		}
 		return r;
 	}
 	
-	private static float getHypotenuse(float len1, float len2) {
-		return (float) Math.sqrt((len1 * len1) + (len2 * len2));
+	public static List<Position> squashTo2D(List<Position> positions) {
+		List<Position> r = new ArrayList<Position>();
+		for (Position position: positions) {
+			Position add = new Position(position.x, position.y);
+			if (!r.contains(add)) {
+				r.add(add);
+			}
+		}
+		return r;
 	}
 }

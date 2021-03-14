@@ -47,5 +47,12 @@ public class TestPosition {
 		assert position2.selectPositionsLimitDistance(1, positions).size() == 0;
 		assert position.isIn(positions);
 		assert !position2.isIn(positions);
+		
+		positions.add(position1);
+		positions.add(position2);
+		List<Position> squashed = Position.squashTo2D(positions);
+		assert squashed.size() == 2;
+		assert squashed.get(0).equals(new Position(2,2,0));
+		assert squashed.get(1).equals(position1);
 	}
 }

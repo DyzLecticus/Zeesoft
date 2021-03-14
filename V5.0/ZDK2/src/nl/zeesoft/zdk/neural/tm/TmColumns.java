@@ -26,9 +26,20 @@ public class TmColumns extends Matrix {
 			@Override
 			protected Object exec() {
 				boolean burst = false;
-				Position position = (Position) param1;
-				if (position.isIn(activeInputPositions)) {
-					
+				Position column = (Position) param1;
+				if (column.isIn(activeInputPositions)) {
+					boolean predicted = false;
+					for (Position pos: cells.predictiveCellPositions) {
+						if (pos.x==column.x && pos.y==column.y) {
+							cells.activatePredictedCell(pos);
+							predicted = true;
+							break;
+						}
+					}
+					if (!predicted) {
+						burst = true;
+						cells.burstColumn(column);
+					}
 				}
 				return burst;
 			}
