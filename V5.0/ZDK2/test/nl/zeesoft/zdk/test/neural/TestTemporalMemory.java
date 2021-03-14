@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.neural;
 
 import java.util.ArrayList;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
@@ -19,6 +20,10 @@ public class TestTemporalMemory {
 
 		TmConfig config = new TmConfig();
 		config.size = new Size(10,10,4);
+		config.segmentCreationSubsample = 1F;
+		config.activationThreshold = 2;
+		config.matchingThreshold = 1;
+		
 		TemporalMemory tm = new TemporalMemory();
 		
 		ProcessorIO io = new ProcessorIO();
@@ -64,9 +69,56 @@ public class TestTemporalMemory {
 		tm.processIO(io);
 		assert io.error.length() == 0;
 
-		io = new ProcessorIO(new Sdr(100), new Sdr(100));
+		io = new ProcessorIO(new Sdr(100), new Sdr(400));
 		tm.processIO(io);
 		assert io.error.length() == 0;
+
+		tm.reset();
+		assert tm.cells.size.volume() == 400;
+		ProcessorIO io1 = getIO(0);
+		ProcessorIO io2 = getIO(1);
 		
+		tm.processIO(io1);
+		checkIO(io1,8,2,0,2,false);
+
+		tm.processIO(io2);
+		checkIO(io2,8,2,0,2,false);
+	}
+	
+	protected static ProcessorIO getIO(int index) {
+		int i = index * 2;
+		Sdr activeColumnInput = new Sdr(100);
+		activeColumnInput.setBit(i, true);
+		activeColumnInput.setBit(i+1, true);
+		i = index * 3;
+		Sdr apicalInput = new Sdr(400);
+		apicalInput.setBit(i, true);
+		apicalInput.setBit(i+1, true);
+		apicalInput.setBit(i+2, true);
+		return new ProcessorIO(activeColumnInput, apicalInput);
+	}
+	
+	protected static void checkIO(ProcessorIO io, int expectActive, int expectBursting, int expectPredictive, int expectWinners, boolean log) {
+		assert io.outputs.size() == 4;
+		Sdr active = io.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT);
+		Sdr bursting = io.outputs.get(TemporalMemory.BURSTING_COLUMNS_OUTPUT);
+		Sdr predictive = io.outputs.get(TemporalMemory.PREDICTIVE_CELLS_OUTPUT);
+		Sdr winners = io.outputs.get(TemporalMemory.WINNER_CELLS_OUTPUT);
+		
+		if (log) {
+			Console.log(active.onBits.size());
+			Console.log(bursting.onBits.size());
+			Console.log(predictive.onBits.size());
+			Console.log(winners.onBits.size());
+		}
+
+		assert active.length == 400;
+		assert active.onBits.size() == expectActive;
+		assert bursting.length == 100;
+		assert bursting.onBits.size() == expectBursting;
+		assert predictive.length == 400;
+		assert predictive.onBits.size() == expectPredictive;
+		assert winners.length == 400;
+		assert winners.onBits.size() == expectWinners;
 	}
 }

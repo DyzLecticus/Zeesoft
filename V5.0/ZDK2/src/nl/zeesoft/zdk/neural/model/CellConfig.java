@@ -26,7 +26,7 @@ public class CellConfig {
 	public int		maxNewSynapseCount			= 20;
 	
 	public void copyFrom(CellConfig other) {
-		this.size = size.copy();
+		this.size = other.size.copy();
 		
 		this.maxSegmentsPerCell = other.maxSegmentsPerCell;
 		this.maxSynapsesPerSegment = other.maxSynapsesPerSegment;

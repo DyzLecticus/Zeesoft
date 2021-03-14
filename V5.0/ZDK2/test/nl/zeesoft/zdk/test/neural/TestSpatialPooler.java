@@ -97,7 +97,7 @@ public class TestSpatialPooler {
 		io = new ProcessorIO(new Sdr(17));
 		sp.processIO(io);
 		assert io.error.length() > 0;
-		assert io.error.equals("SpatialPooler input SDR may not be longer than 16");
+		assert io.error.equals("SpatialPooler input SDR 1 may not be longer than 16");
 		
 		Sdr input = new Sdr(16);
 		input.setBit(0, true);

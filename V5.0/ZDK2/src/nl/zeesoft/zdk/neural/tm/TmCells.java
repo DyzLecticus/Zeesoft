@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.neural.tm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Position;
@@ -48,42 +47,13 @@ public class TmCells extends Cells {
 		Cell winnerCell = null;
 		
 		// Find potential match
-		SortedMap<Integer,List<Cell>> cellsByPotential = new TreeMap<Integer,List<Cell>>();
-		for (Position pos: columnPositions) {
-			Cell cell = getCell(pos);
-			int potential = 0;
-			if (cell.matchingDistalSegment!=null) {
-				potential = cell.matchingDistalSegment.potentialSynapses.size();
-			}
-			if (cell.matchingApicalSegment!=null) {
-				potential = potential + cell.matchingApicalSegment.potentialSynapses.size();
-			}
-			if (potential>0) {
-				List<Cell> cells = cellsByPotential.get(potential);
-				if (cells==null) {
-					cells = new ArrayList<Cell>();
-					cellsByPotential.put(potential, cells);
-				}
-				cells.add(cell);
-			}
-		}
-		
+		SortedMap<Integer,List<Cell>> cellsByPotential = getCellsByPotential(columnPositions); 
 		if (cellsByPotential.size()>0) {
 			List<Cell> potentialCells = cellsByPotential.get(cellsByPotential.lastKey());
 			winnerCell = (Cell) Rand.selectRandomFromList(potentialCells);
 		} else {
 			// Find least connected cell
-			SortedMap<Integer,List<Cell>> cellsBySegments = new TreeMap<Integer,List<Cell>>();
-			for (Position pos: columnPositions) {
-				Cell cell = getCell(pos);
-				int segments = cell.distalSegments.size() + cell.apicalSegments.size();
-				List<Cell> cells = cellsBySegments.get(segments);
-				if (cells==null) {
-					cells = new ArrayList<Cell>();
-					cellsBySegments.put(segments, cells);
-				}
-				cells.add(cell);
-			}
+			SortedMap<Integer,List<Cell>> cellsBySegments = getCellsBySegments(columnPositions);
 			List<Cell> leastConnectedCells = cellsBySegments.get(cellsBySegments.firstKey());
 			winnerCell = (Cell) Rand.selectRandomFromList(leastConnectedCells);
 		}

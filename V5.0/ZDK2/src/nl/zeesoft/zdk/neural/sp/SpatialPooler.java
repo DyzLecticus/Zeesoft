@@ -4,17 +4,20 @@ import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.AbstractProcessor;
+import nl.zeesoft.zdk.neural.Processor;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.SdrHistory;
 
-public class SpatialPooler extends AbstractProcessor {
-	public SpConfig			config				= null;
-	public SdrHistory		activationHistory	= new SdrHistory();
-	public SpConnections	connections			= null;
-	public SpBoostFactors	boostFactors		= null;
-	public SpActivations	activations			= null;
-	public int				processed			= 0;
+public class SpatialPooler extends Processor {
+	public static final int		DEFAULT_INPUT			= 0;
+	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
+	
+	public SpConfig				config					= null;
+	public SdrHistory			activationHistory		= new SdrHistory();
+	public SpConnections		connections				= null;
+	public SpBoostFactors		boostFactors			= null;
+	public SpActivations		activations				= null;
+	public int					processed				= 0;
 
 	public void initialize(SpConfig config) {
 		this.config = config.copy();
@@ -47,12 +50,16 @@ public class SpatialPooler extends AbstractProcessor {
 	}
 
 	@Override
-	protected int getMaxInputVolume() {
-		return config.inputSize.volume();
+	protected int getMaxInputVolume(int index) {
+		int r = super.getMaxInputVolume(index);
+		if (index==DEFAULT_INPUT) {
+			r = config.inputSize.volume();
+		}
+		return r;
 	}
 	
 	@Override
-	protected Size getOutputSize() {
+	protected Size getOutputSize(int index) {
 		return config.outputSize;
 	}
 	
