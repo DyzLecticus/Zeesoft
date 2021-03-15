@@ -36,7 +36,7 @@ public class TestSpatialPoolerOverlap {
 				sp.processIO(io);
 				assert io.error.length() == 0;
 				assert io.outputs.size() == 1;
-				outputs.add(io.outputs.get(0));
+				outputs.add(io.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT));
 			}
 		}
 		assert outputs.size() == iterations * 4;
@@ -48,10 +48,6 @@ public class TestSpatialPoolerOverlap {
 		Sdr lastOutput = outputs.get((iterations*4 - 1));
 		int i = 0;
 		for (Sdr output: outputs) {
-			if (i==startIndex) {
-				sp.config.learn = false;
-				sp.config.boostStrength = 1;
-			}
 			if (i>=startIndex && i<lastIndex) {
 				if (i % 4 == 3) {
 					similarOverlap += output.getOverlap(lastOutput); 
