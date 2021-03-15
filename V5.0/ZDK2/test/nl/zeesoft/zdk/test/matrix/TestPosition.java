@@ -45,8 +45,12 @@ public class TestPosition {
 		
 		assert position2.selectPositionsLimitDistance(10, positions).size() == 1;
 		assert position2.selectPositionsLimitDistance(1, positions).size() == 0;
-		assert position.isIn(positions);
-		assert !position2.isIn(positions);
+		
+		assert position.columnContains(positions);
+		assert !position2.columnContains(positions);
+		assert !(new Position(1,2)).columnContains(positions);
+		assert !(new Position(2,1)).columnContains(positions);
+		assert (new Position(2,2)).columnContains(positions);
 		
 		positions.add(position1);
 		positions.add(position2);

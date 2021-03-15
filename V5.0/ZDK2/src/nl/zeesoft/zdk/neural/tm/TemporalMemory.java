@@ -36,10 +36,11 @@ public class TemporalMemory extends Processor {
 	@Override
 	protected void processValidIO(ProcessorIO io) {
 		cells.cycleState(getNewActiveApicalCellPositions(io));
-		
-		List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(columns.size);
-		columns.activate(this, activeInputPositions);
-		
+		columns.activate(this, getNewActiveColumnPositions(io));
+		if (config.learn) {
+			columns.adapt(this);
+		}
+		cells.predictActiveCells(this);
 		addOutput(io, cells.activeCellPositions);
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);
@@ -110,9 +111,13 @@ public class TemporalMemory extends Processor {
 	
 	protected List<Position> getNewActiveApicalCellPositions(ProcessorIO io) {
 		List<Position> r = new ArrayList<Position>();
-		if (io.inputs.size()>1) {
-			r = io.inputs.get(1).getOnPositions(config.size);
+		if (io.inputs.size()>ACTIVE_APICAL_INPUT) {
+			r = io.inputs.get(ACTIVE_APICAL_INPUT).getOnPositions(cells.size);
 		}
 		return r;
+	}
+	
+	protected List<Position> getNewActiveColumnPositions(ProcessorIO io) {
+		return io.inputs.get(ACTIVE_COLUMNS_INPUT).getOnPositions(columns.size);
 	}
 }

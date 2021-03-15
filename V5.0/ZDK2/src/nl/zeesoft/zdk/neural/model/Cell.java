@@ -26,7 +26,14 @@ public class Cell {
 		clearSegments(proximalSegments);
 		clearSegments(distalSegments);
 		clearSegments(apicalSegments);
+		reset();
+	}
 
+	public void reset() {
+		resetSegments(proximalSegments);
+		resetSegments(distalSegments);
+		resetSegments(apicalSegments);
+		
 		activeDistalSegments.clear();
 		matchingDistalSegments.clear();
 		matchingDistalSegment = null;
@@ -48,11 +55,22 @@ public class Cell {
 		return r;
 	}
 
-	public void calculateSegmentActivity(String type, List<Position> activeCellPositions) {
-		List<Segment> list = getSegments(type);
-		for (Segment segment: list) {
-			segment.calculateActiveAndPotentialSynapses(activeCellPositions, config.permanenceThreshold);
+	public List<Segment> getMatchingSegments(String type) {
+		List<Segment> r = null;
+		if (type.equals(Segment.DISTAL)) {
+			r = matchingDistalSegments;
+		} else if (type.equals(Segment.APICAL)) {
+			r = matchingApicalSegments;
 		}
+		return r;
+	}
+	
+	public void calculateSegmentActivity(
+		List<Position> activeCellPositions,
+		List<Position> activeApicalCellPositions
+		) {
+		calculateSegmentActivity(Segment.DISTAL, activeCellPositions);
+		calculateSegmentActivity(Segment.APICAL, activeApicalCellPositions);
 	}
 	
 	public void classifySegmentActivity() {
@@ -62,6 +80,16 @@ public class Cell {
 		matchingApicalSegment = classifySegmentActivity(
 			apicalSegments, activeApicalSegments, matchingApicalSegments
 		);
+	}
+
+	public boolean isPredictive(List<Position> activeApicalCellPositions) {
+		boolean r = false;
+		if ((activeApicalCellPositions.size()==0 && activeDistalSegments.size()>0) ||
+			(activeApicalCellPositions.size()>0 && activeDistalSegments.size()>0 && activeApicalSegments.size()>0)
+			) {
+			r = true;
+		}
+		return r;
 	}
 	
 	public void adaptActiveSegments(
@@ -100,6 +128,13 @@ public class Cell {
 		Segment distalSegment = createSegment(Segment.DISTAL, prevWinnerCellPositions, config.distalPotentialRadius);
 		if (distalSegment!=null) {
 			createSegment(Segment.APICAL, prevActiveApicalCellPositions, config.apicalPotentialRadius);
+		}
+	}
+
+	protected void calculateSegmentActivity(String type, List<Position> activeCellPositions) {
+		List<Segment> list = getSegments(type);
+		for (Segment segment: list) {
+			segment.calculateActiveAndPotentialSynapses(activeCellPositions, config.permanenceThreshold);
 		}
 	}
 	
@@ -222,5 +257,11 @@ public class Cell {
 			segment.clear();
 		}
 		segments.clear();
+	}
+	
+	protected static void resetSegments(List<Segment> segments) {
+		for (Segment segment: segments) {
+			segment.reset();
+		}
 	}
 }

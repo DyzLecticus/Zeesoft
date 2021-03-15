@@ -9,8 +9,10 @@ import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellConfig;
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.model.Segment;
+import nl.zeesoft.zdk.neural.model.Synapse;
 
 public class TestCells {
 	private static TestCells	self	= new TestCells();
@@ -86,15 +88,13 @@ public class TestCells {
 
 		cell.createSegments(winners1, winners1, apical1);
 		cell.createSegments(winners2, winners2, apical2);
-		cell.calculateSegmentActivity(Segment.DISTAL,winners1);
-		cell.calculateSegmentActivity(Segment.APICAL,apical1);
+		cell.calculateSegmentActivity(winners1,apical1);
 		cell.classifySegmentActivity();
 
 		Cell cell2 = cells.getCell(new Position(1,0,0));
 		cell2.createSegments(winners1, winners1, apical1);
 		cell2.createSegments(winners2, winners2, apical2);
-		cell2.calculateSegmentActivity(Segment.DISTAL,winners1);
-		cell2.calculateSegmentActivity(Segment.APICAL,apical1);
+		cell2.calculateSegmentActivity(winners1, apical1);
 		cell2.classifySegmentActivity();
 		
 		cellsByPotential = cells.getCellsByPotential(columnPositions);
@@ -108,5 +108,69 @@ public class TestCells {
 		assert cellsBySegments.lastKey() == 4;
 		segmentsCells = cellsBySegments.get(cellsBySegments.lastKey());
 		assert segmentsCells.size() == 2;
+		
+		Synapse synapse1 = cell.getMatchingSegments(Segment.DISTAL).get(0).synapses.get(0);
+		Synapse synapse2 = cell.getMatchingSegments(Segment.APICAL).get(0).synapses.get(0);
+		assert synapse1.permanence == 0.21F;
+		assert synapse2.permanence == 0.21F;
+		cells.punishPredictedColumn(cell.position, Segment.DISTAL, winners1, 0F);
+		assert synapse1.permanence == 0.21F;
+		cells.punishPredictedColumn(cell.position, Segment.DISTAL, winners1, 0.1F);
+		cells.punishPredictedColumn(cell.position, Segment.APICAL, apical1, 0.1F);
+		assert synapse1.permanence == 0.00999999F;
+		assert synapse2.permanence == 0.00999999F;
+		
+		Segment segment = new Segment();
+		Synapse synapse = new Synapse();
+		synapse.permanence = 0.2F;
+		segment.synapses.add(synapse);
+		synapse = new Synapse();
+		synapse.permanence = 0F;
+		segment.synapses.add(synapse);
+		cell.proximalSegments.add(segment);
+		cell.distalSegments.get(0).synapses.get(0).permanence = 0;
+		cell.apicalSegments.get(0).synapses.get(0).permanence = 0;
+		
+		CellStats stats = new CellStats();
+		stats.addModelCells(self, cells, cells.config.permanenceThreshold);
+		assert stats.cells == 64;
+		assert stats.proximalSegments == 1;
+		assert stats.proximalSynapses == 1;
+		assert stats.activeProximalSynapses == 0;
+		assert stats.distalSegments == 4;
+		assert stats.distalSynapses == 8;
+		assert stats.activeDistalSynapses == 0;
+		assert stats.apicalSegments == 4;
+		assert stats.apicalSynapses == 11;
+		assert stats.activeApicalSynapses == 0;
+		
+		stats = new CellStats();
+		stats.addModelCells(self, cells, 0.1F);
+		assert stats.cells == 64;
+		assert stats.proximalSegments == 1;
+		assert stats.proximalSynapses == 1;
+		assert stats.activeProximalSynapses == 1;
+		assert stats.distalSegments == 4;
+		assert stats.distalSynapses == 8;
+		assert stats.activeDistalSynapses == 7;
+		assert stats.apicalSegments == 4;
+		assert stats.apicalSynapses == 11;
+		assert stats.activeApicalSynapses == 8;
+		
+		stats.addStats(stats);
+		assert stats.cells == 128;
+		assert stats.proximalSegments == 2;
+		assert stats.proximalSynapses == 2;
+		assert stats.activeProximalSynapses == 2;
+		assert stats.distalSegments == 8;
+		assert stats.distalSynapses == 16;
+		assert stats.activeDistalSynapses == 14;
+		assert stats.apicalSegments == 8;
+		assert stats.apicalSynapses == 22;
+		assert stats.activeApicalSynapses == 16;
+		
+		assert stats.toString().length() == 209;
+		stats = new CellStats();
+		assert stats.toString().length() == 23;
 	}
 }

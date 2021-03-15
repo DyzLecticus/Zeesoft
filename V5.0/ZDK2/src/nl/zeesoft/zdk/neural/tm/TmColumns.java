@@ -17,31 +17,35 @@ public class TmColumns extends Matrix {
 		initialize(new Size(config.size.x,config.size.y));
 	}
 	
-	public void activate(Object caller, List<Position> activeInputPositions) {
-		applyFunction(caller, getActivateFunction(caller, activeInputPositions));
+	public void activate(Object caller, List<Position> activeColumnPositions) {
+		applyFunction(caller, getActivateFunction(activeColumnPositions));
 	}
 	
-	protected Function getActivateFunction(Object myCaller, List<Position> activeInputPositions) {
+	public void adapt(Object caller) {
+		applyFunction(caller, getAdaptFunction());
+	}
+	
+	protected Function getActivateFunction(List<Position> activeColumnPositions) {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
 				boolean burst = false;
 				Position column = (Position) param1;
-				if (column.isIn(activeInputPositions)) {
-					boolean predicted = false;
-					for (Position pos: cells.predictiveCellPositions) {
-						if (pos.x==column.x && pos.y==column.y) {
-							cells.activatePredictedCell(pos);
-							predicted = true;
-							break;
-						}
-					}
-					if (!predicted) {
-						burst = true;
-						cells.burstColumn(column);
-					}
+				if (activeColumnPositions.contains(column)) {
+					burst = cells.activateColumn(column);
 				}
 				return burst;
+			}
+		};
+		return r;
+	}
+
+	protected Function getAdaptFunction() {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				cells.adaptColumn((Position) param1, (boolean) param2);
+				return param2;
 			}
 		};
 		return r;

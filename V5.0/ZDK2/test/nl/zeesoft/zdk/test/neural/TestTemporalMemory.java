@@ -1,20 +1,26 @@
 package nl.zeesoft.zdk.test.neural;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Segment;
+import nl.zeesoft.zdk.neural.model.Synapse;
 import nl.zeesoft.zdk.neural.tm.TemporalMemory;
 import nl.zeesoft.zdk.neural.tm.TmCells;
 import nl.zeesoft.zdk.neural.tm.TmConfig;
 
 public class TestTemporalMemory {
+	private static TestTemporalMemory	self	= new TestTemporalMemory();
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -83,14 +89,76 @@ public class TestTemporalMemory {
 
 		tm.reset();
 		assert tm.cells.size.volume() == 400;
+
 		ProcessorIO io1 = getIO(0);
 		ProcessorIO io2 = getIO(1);
 		
 		tm.processIO(io1);
 		checkIO(io1,8,2,0,2,false);
-
+		CellStats stats = new CellStats(tm);
+		assert stats.distalSegments == 0;
+		assert stats.apicalSegments == 0;
+		
 		tm.processIO(io2);
 		checkIO(io2,8,2,0,2,false);
+		stats = new CellStats(tm);
+		assert stats.distalSegments == 2;
+		assert stats.apicalSegments == 2;
+
+		io1.outputs.clear();
+		tm.processIO(io1);
+		checkIO(io1,8,2,0,2,false);
+		io1.outputs.clear();
+		stats = new CellStats(tm);
+		assert stats.distalSegments == 4;
+		assert stats.apicalSegments == 4;
+		
+		io2.outputs.clear();
+		tm.processIO(io2);
+		checkIO(io2,8,2,0,2,false);
+		stats = new CellStats(tm);
+		assert stats.distalSegments == 4;
+		assert stats.apicalSegments == 4;
+		int distal = stats.distalSynapses;
+		int apical = stats.apicalSynapses;
+		
+		tm.config.learn = false;
+		io1.outputs.clear();
+		tm.processIO(io1);
+		checkIO(io1,8,2,0,2,false);
+		assert stats.distalSegments == 4;
+		assert stats.apicalSegments == 4;
+		assert stats.distalSynapses == distal;
+		assert stats.apicalSynapses == apical;
+		
+		tm.cells.predictiveCellPositions.add(cell.position);
+		boolean burst = tm.cells.activateColumn(new Position(0,0));
+		assert !burst;
+		assert tm.cells.activeCellPositions.contains(cell.position);
+		assert tm.cells.winnerCellPositions.contains(cell.position);
+		burst = tm.cells.activateColumn(new Position(0,1));
+		assert burst;
+		burst = tm.cells.activateColumn(new Position(1,0));
+		assert burst;
+
+		tm.cells.activeCellPositions.clear();
+		tm.cells.winnerCellPositions.clear();
+		List<Segment> segments = new ArrayList<Segment>(); 
+		Function function = new Function() {
+			@Override
+			protected Object exec() {
+				Cell cell = (Cell) param2;
+				segments.addAll(cell.distalSegments);
+				cell.matchingDistalSegments.clear();
+				cell.matchingDistalSegments.addAll(cell.distalSegments);
+				return param2;
+			}
+		};
+		tm.cells.applyFunction(self, function);
+		Synapse synapse = segments.get(0).synapses.get(0);
+		assert synapse.permanence == 0.21F;
+		tm.cells.adaptColumn(new Position(0,0),false);
+		assert synapse.permanence == 0.00999999F;
 	}
 	
 	protected static ProcessorIO getIO(int index) {
@@ -114,10 +182,17 @@ public class TestTemporalMemory {
 		Sdr winners = io.outputs.get(TemporalMemory.WINNER_CELLS_OUTPUT);
 		
 		if (log) {
-			Console.log(active.onBits.size());
-			Console.log(bursting.onBits.size());
-			Console.log(predictive.onBits.size());
-			Console.log(winners.onBits.size());
+			Console.log("Expected: " +
+				expectActive + ", " +
+				expectBursting + ", " +
+				expectPredictive + ", " +
+				expectActive
+			);
+			Console.log("Received: " +
+				active.onBits.size() + ", " +
+				bursting.onBits.size() + ", " +
+				predictive.onBits.size() + ", " +
+				active.onBits.size());
 		}
 
 		assert active.length == 400;

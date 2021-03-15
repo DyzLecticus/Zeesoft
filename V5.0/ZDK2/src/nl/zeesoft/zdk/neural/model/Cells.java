@@ -29,29 +29,17 @@ public class Cells extends Matrix {
 	public void reset(Object caller) {
 		applyFunction(caller, getResetFunction(caller));
 	}
-	
-	protected Function getInitializeFunction() {
-		Function r = new Function() {
-			@Override
-			protected Object exec() {
-				Cell cell = new Cell();
-				cell.position = (Position) param1;
-				cell.config = config;
-				return cell;
+
+	public void punishPredictedColumn(Position columnPosition, String type, List<Position> prevActivePositions, float segmentDecrement) {
+		if (segmentDecrement > 0F) {
+			for (int z = 0; z < config.size.z; z++) {
+				Cell cell = getCell(new Position(columnPosition.x, columnPosition.y, z));
+				List<Segment> segments = cell.getMatchingSegments(type);
+				for (Segment segment: segments) {
+					segment.adaptSynapses(prevActivePositions, segmentDecrement * -1F, 0F);
+				}
 			}
-		};
-		return r;
-	}
-	
-	protected Function getResetFunction(Object myCaller) {
-		Function r = new Function() {
-			@Override
-			protected Object exec() {
-				((Cell) param2).clear();
-				return param2;
-			}
-		};
-		return r;
+		}
 	}
 
 	public SortedMap<Integer,List<Cell>> getCellsByPotential(List<Position> columnPositions) {
@@ -89,6 +77,30 @@ public class Cells extends Matrix {
 			}
 			cells.add(cell);
 		}
+		return r;
+	}
+	
+	protected Function getInitializeFunction() {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				Cell cell = new Cell();
+				cell.position = (Position) param1;
+				cell.config = config;
+				return cell;
+			}
+		};
+		return r;
+	}
+	
+	protected Function getResetFunction(Object myCaller) {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				((Cell) param2).clear();
+				return param2;
+			}
+		};
 		return r;
 	}
 }

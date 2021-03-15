@@ -40,7 +40,7 @@ public class TestCell {
 		assert cell.getSegments(Segment.DISTAL) == cell.distalSegments;
 		assert cell.getSegments(Segment.APICAL) == cell.apicalSegments;
 		assert cell.getSegments("Pizza") == null;
-		
+
 		config.segmentCreationSubsample = 1F;
 		cell.createSegments(null, winners1, new ArrayList<Position>());
 		assert cell.distalSegments.size() == 1;
@@ -120,16 +120,14 @@ public class TestCell {
 		active.add(winners1.get(1));
 		active.add(apical1.get(0));
 		active.add(apical1.get(1));
-		cell.calculateSegmentActivity(Segment.DISTAL, active);
-		cell.calculateSegmentActivity(Segment.APICAL, active);
+		cell.calculateSegmentActivity(active, active);
 		assert cell.distalSegments.get(0).activeSynapses.size() == 0;
 		assert cell.distalSegments.get(0).potentialSynapses.size() == 1;
 		assert cell.apicalSegments.get(0).activeSynapses.size() == 0;
 		assert cell.apicalSegments.get(0).potentialSynapses.size() == 1;
 		
 		config.permanenceThreshold = config.initialPermanence - 0.01F;
-		cell.calculateSegmentActivity(Segment.DISTAL, active);
-		cell.calculateSegmentActivity(Segment.APICAL, active);
+		cell.calculateSegmentActivity(active, active);
 		assert cell.distalSegments.get(0).activeSynapses.size() == 1;
 		assert cell.distalSegments.get(0).potentialSynapses.size() == 1;
 		assert cell.apicalSegments.get(0).activeSynapses.size() == 1;
@@ -156,8 +154,7 @@ public class TestCell {
 		List<Position> subset = new ArrayList<Position>(active);
 		subset.remove(1);
 		subset.remove(2);
-		cell.calculateSegmentActivity(Segment.DISTAL, subset);
-		cell.calculateSegmentActivity(Segment.APICAL, subset);
+		cell.calculateSegmentActivity(subset, subset);
 		cell.classifySegmentActivity();
 		assert cell.activeDistalSegments.size() == 0;
 		assert cell.matchingDistalSegments.size() == 6;
@@ -166,12 +163,26 @@ public class TestCell {
 		assert cell.matchingApicalSegments.size() == 6;
 		assert cell.matchingApicalSegment != null;
 		
+		cell.activeDistalSegments.add(cell.matchingDistalSegments.remove(0));
+		cell.activeApicalSegments.add(cell.matchingApicalSegments.remove(0));
+		cell.reset();
+		assert cell.activeDistalSegments.size() == 0;
+		assert cell.matchingDistalSegments.size() == 0;
+		assert cell.matchingDistalSegment == null;
+		assert cell.activeApicalSegments.size() == 0;
+		assert cell.matchingApicalSegments.size() == 0;
+		assert cell.matchingApicalSegment == null;
+		assert !cell.isPredictive(new ArrayList<Position>());
+		assert !cell.isPredictive(active);
+		cell.activeDistalSegments.add(new Segment());
+		assert cell.isPredictive(new ArrayList<Position>());
+		assert !cell.isPredictive(active);
+
 		cell.clear();
 		cell.createSegments(null, winners1, apical1);
 		cell.createSegments(null, winners1, apical1);
 		cell.createSegments(null, winners2, apical2);
-		cell.calculateSegmentActivity(Segment.DISTAL, active);
-		cell.calculateSegmentActivity(Segment.APICAL, active);
+		cell.calculateSegmentActivity(active, active);
 		cell.classifySegmentActivity();
 		assert cell.activeDistalSegments.size() == 2;
 		assert cell.matchingDistalSegments.size() == 2;
@@ -179,6 +190,12 @@ public class TestCell {
 		assert cell.activeApicalSegments.size() == 2;
 		assert cell.matchingApicalSegments.size() == 2;
 		assert cell.matchingApicalSegment != null;
+		assert cell.isPredictive(new ArrayList<Position>());
+		assert cell.isPredictive(active);
+		
+		assert cell.getMatchingSegments(Segment.DISTAL) == cell.matchingDistalSegments;
+		assert cell.getMatchingSegments(Segment.APICAL) == cell.matchingApicalSegments;
+		assert cell.getMatchingSegments("Pizza") == null;
 		
 		Synapse synapse1 = cell.activeDistalSegments.get(0).synapses.get(0);
 		Synapse synapse2 = cell.activeApicalSegments.get(0).synapses.get(0);
@@ -229,5 +246,6 @@ public class TestCell {
 		cell.adaptMatchingSegments(winners2, winners2, apical2);
 		assert synapse1.permanence == 0.51F;
 		assert synapse2.permanence == 0.41F;
+		
 	}
 }
