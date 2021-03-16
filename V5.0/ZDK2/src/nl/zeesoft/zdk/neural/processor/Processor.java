@@ -34,6 +34,42 @@ public abstract class Processor {
 		return r;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder r = new StringBuilder();
+		List<String> inputNames = getInputNames();
+		List<String> outputNames = getOutputNames();
+		int i = 0;
+		r.append(this.getClass().getSimpleName());
+		boolean initialized = isInitialized(new ProcessorIO());
+		for (String input: inputNames) {
+			r.append("\n");
+			r.append("<- ");
+			r.append(input);
+			r.append(": ");
+			if (initialized) {
+				r.append(getMaxInputVolume(i));
+			} else {
+				r.append("?");
+			}
+			i++;
+		}
+		i = 0;
+		for (String output: outputNames) {
+			r.append("\n");
+			r.append("-> ");
+			r.append(output);
+			r.append(": ");
+			if (initialized) {
+				r.append(getOutputSize(i).volume());
+			} else {
+				r.append("?");
+			}
+			i++;
+		}
+		return r.toString();
+	}
+	
 	protected boolean isInitialized(ProcessorIO io) {
 		return true;
 	}

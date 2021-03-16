@@ -25,6 +25,7 @@ public class TestSpatialPooler {
 		processor.processIO(io);
 		processor.reset();
 		assert io.outputs.size() == 1;
+		assert processor.toString().length() == 55;
 		
 		SpConfig config = new SpConfig();
 		config.inputSize = new Size(4,4);
