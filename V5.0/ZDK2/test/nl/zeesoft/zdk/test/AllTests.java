@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestCell;
 import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
+import nl.zeesoft.zdk.test.neural.TestMerger;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 import nl.zeesoft.zdk.test.neural.TestSegment;
@@ -60,5 +61,6 @@ public class AllTests {
 		TestTemporalMemory.main(args);
 		TestTemporalMemoryBurst.main(args);
 		TestClassifier.main(args);
+		TestMerger.main(args);
 	}
 }

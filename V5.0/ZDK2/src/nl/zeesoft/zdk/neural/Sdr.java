@@ -100,8 +100,43 @@ public class Sdr {
 		}
 	}
 	
+	public void concat(List<Sdr> sdrs) {
+		int offset = 0;
+		for (Sdr sdr: sdrs) {
+			concat(sdr, offset);
+			offset += sdr.length;
+			if (offset>=length) {
+				break;
+			}
+		}
+	}
+	
 	public void subsample(int maxOnBits) {
 		Rand.subsampleList(onBits, maxOnBits);
+	}
+
+	public void invert() {
+		for (int onBit = 0; onBit < length; onBit++) {
+			setBit(onBit, !onBits.contains(onBit));
+		}
+	}
+
+	public void distort(float distortion) {
+		if (distortion > 1F) {
+			distortion = 1F;
+		}
+		if (distortion>0.0F) {
+			int remove = (int) ((float) onBits.size() * distortion);
+			if (remove>0) {
+				Sdr inverted = copy();
+				inverted.invert();
+				subsample(onBits.size() - remove);
+				for (int i = 0; i < remove; i++) {
+					Integer onBit = (Integer) Rand.selectRandomFromList(inverted.onBits);
+					setBit(onBit, true);
+				}
+			}
+		}
 	}
 	
 	protected void copyFrom(Sdr other) {
