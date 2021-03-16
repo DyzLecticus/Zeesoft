@@ -38,4 +38,15 @@ public class Rand {
 	public static Object selectRandomFromList(List list) {
 		return list.get(Rand.getRandomInt(0, list.size() - 1));
 	}
+	
+	@SuppressWarnings({ "rawtypes" })
+	public static void subsampleList(List list, int max) {
+		if (max<=0) {
+			list.clear();
+		} else {
+			while (list.size()>max) {
+				list.remove(Rand.getRandomInt(0, list.size()-1));
+			}
+		}
+	}
 }

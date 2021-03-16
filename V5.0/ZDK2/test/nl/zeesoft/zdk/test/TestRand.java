@@ -43,5 +43,11 @@ public class TestRand {
 		assert same < 100;
 		
 		assert Rand.selectRandomFromList(rands) != null;
+		
+		assert rands.size() == 100;
+		Rand.subsampleList(rands, 10);
+		assert rands.size() == 10;
+		Rand.subsampleList(rands, -1);
+		assert rands.size() == 0;
 	}
 }

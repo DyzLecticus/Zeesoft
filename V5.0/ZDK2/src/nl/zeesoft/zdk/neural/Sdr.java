@@ -88,13 +88,6 @@ public class Sdr {
 		}
 	}
 	
-	protected void copyFrom(Sdr other) {
-		length = other.length;
-		for (Integer onBit: other.onBits) {
-			onBits.add(onBit);
-		}
-	}
-	
 	public void or(Sdr sdr) {
 		for (Integer onBit: sdr.onBits) {
 			setBit(onBit,true);
@@ -108,12 +101,13 @@ public class Sdr {
 	}
 	
 	public void subsample(int maxOnBits) {
-		if (maxOnBits<=0) {
-			onBits.clear();
-		} else {
-			while (onBits.size()>maxOnBits) {
-				onBits.remove(Rand.getRandomInt(0, onBits.size()-1));
-			}
+		Rand.subsampleList(onBits, maxOnBits);
+	}
+	
+	protected void copyFrom(Sdr other) {
+		length = other.length;
+		for (Integer onBit: other.onBits) {
+			onBits.add(onBit);
 		}
 	}
 }

@@ -63,6 +63,8 @@ public class TestSdr {
 		Sdr sdr3 = new Sdr(9);
 		sdr3.concat(sdr, 0);
 		assert sdr3.equals(sdr);
+		sdr3.concat(sdr, 9);
+		assert sdr3.equals(sdr);
 		
 		sdr3.or(sdr2);
 		assert sdr3.onBits.size() == 2;
