@@ -106,7 +106,14 @@ public class TestClassifier {
 		assert classification.getMostCountedValues().size() == 1;
 		assert (int)classification.getMostCountedValues().get(0) == 2;
 		assert classification.getStandardDeviation() == 6.363961F;
+		
+		cl.config.learn = false;
+		io1.outputs.clear();
+		cl.processIO(io1);
+		classification = ((Classification)io1.outputValue);
+		assert classification.getStandardDeviation() == 6.363961F;
 
+		cl.config.learn = true;
 		for (int i = 0; i < 10; i++) {
 			io1.outputs.clear();
 			cl.processIO(io1);

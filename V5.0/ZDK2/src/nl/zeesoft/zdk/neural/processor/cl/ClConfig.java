@@ -15,6 +15,7 @@ public class ClConfig {
 		r.size = size.copy();
 		r.learn = learn;
 		r.maxOnBits = maxOnBits;
+		r.valueName = valueName;
 		r.predictStep = predictStep;
 		r.maxCount = maxCount;
 		return r;

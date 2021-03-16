@@ -34,12 +34,12 @@ public class Classifier extends Processor {
 	protected void processValidIO(ProcessorIO io) {
 		Sdr input = io.inputs.get(ASSOCIATE_SDR_INPUT).copy();
 		input.subsample(config.maxOnBits);
-		io.outputs.add(input.copy());
 		activationHistory.push(input);
-		
-		bits.associateBits(io.inputValue);
-		
+		if (config.learn) {
+			bits.associateBits(io.inputValue);
+		}
 		io.outputValue = bits.generatePrediction(input);
+		io.outputs.add(input.copy());
 	}
 
 	@Override
