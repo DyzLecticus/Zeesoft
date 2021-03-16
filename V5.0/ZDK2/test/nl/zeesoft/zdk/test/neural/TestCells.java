@@ -132,7 +132,7 @@ public class TestCells {
 		cell.apicalSegments.get(0).synapses.get(0).permanence = 0;
 		
 		CellStats stats = new CellStats();
-		stats.addModelCells(self, cells, cells.config.permanenceThreshold);
+		stats.addModelCells(self, cells);
 		assert stats.cells == 64;
 		assert stats.proximalSegments == 1;
 		assert stats.proximalSynapses == 1;
@@ -145,7 +145,8 @@ public class TestCells {
 		assert stats.activeApicalSynapses == 0;
 		
 		stats = new CellStats();
-		stats.addModelCells(self, cells, 0.1F);
+		cells.config.permanenceThreshold = 0.1F;
+		stats.addModelCells(self, cells);
 		assert stats.cells == 64;
 		assert stats.proximalSegments == 1;
 		assert stats.proximalSynapses == 1;

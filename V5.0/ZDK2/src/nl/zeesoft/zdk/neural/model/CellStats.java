@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.model;
 
 import nl.zeesoft.zdk.function.Function;
+import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
 
 public class CellStats {
@@ -22,8 +23,12 @@ public class CellStats {
 		
 	}
 	
+	public CellStats(SpatialPooler sp) {
+		addModelCells(this,sp.connections.toCells(this));
+	}
+	
 	public CellStats(TemporalMemory tm) {
-		addModelCells(this,tm.cells,tm.config.permanenceThreshold);
+		addModelCells(this,tm.cells);
 	}
 	
 	public void addStats(CellStats s) {
@@ -39,11 +44,11 @@ public class CellStats {
 		this.activeApicalSynapses += s.activeApicalSynapses;
 	}
 	
-	public void addModelCells(Object caller, Cells modelCells, float permanenceThreshold) {
+	public void addModelCells(Object caller, Cells modelCells) {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
-				addCell((Cell) param2, permanenceThreshold);
+				addCell((Cell) param2, modelCells.config.permanenceThreshold);
 				return param2;
 			}
 		};

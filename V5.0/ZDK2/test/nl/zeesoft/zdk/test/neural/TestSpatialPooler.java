@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.sp.SpBoostFactors;
 import nl.zeesoft.zdk.neural.processor.sp.SpConfig;
@@ -84,6 +85,10 @@ public class TestSpatialPooler {
 		
 		sp.initialize(config);
 		sp.config.potentialRadius = 16;
+		CellStats stats = new CellStats(sp);
+		assert stats.cells == 100;
+		assert stats.proximalSegments == 0;
+		
 		sp.reset();
 		assert (float)permanences.data[0][0][0] >= -1;
 		assert (float)permanences.data[0][0][0] <= 1;
@@ -148,6 +153,12 @@ public class TestSpatialPooler {
 		assert !sp.activations.equals(activationsBefore);
 		assert sp.processed == 2;
 		assert (float)sp.boostFactors.data[0][0][0] != 1.00001F;
+		
+		stats = new CellStats(sp);
+		assert stats.cells == 100;
+		assert stats.proximalSegments == 100;
+		assert stats.proximalSynapses > 1000;
+		assert stats.activeProximalSynapses > 1000;
 		
 		sp.connections.data[0][0][0] = null;
 		io = new ProcessorIO(input);
