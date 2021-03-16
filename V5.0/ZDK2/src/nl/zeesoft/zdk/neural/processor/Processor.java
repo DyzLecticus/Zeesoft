@@ -1,10 +1,11 @@
-package nl.zeesoft.zdk.neural;
+package nl.zeesoft.zdk.neural.processor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.Sdr;
 
 public abstract class Processor {
 	public void reset() {
@@ -60,10 +61,10 @@ public abstract class Processor {
 	
 	protected abstract void processValidIO(ProcessorIO io);
 	
-	protected void addOutput(ProcessorIO io, List<Position> activePositions) {
+	protected void addOutput(ProcessorIO io, List<Position> positions) {
 		Size size = getOutputSize(io.outputs.size());
 		Sdr output = new Sdr(size.volume());
-		output.setOnPositions(size, activePositions);
+		output.setOnPositions(size, positions);
 		io.outputs.add(output);
 	}
 	

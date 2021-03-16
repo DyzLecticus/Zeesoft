@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.sp;
+package nl.zeesoft.zdk.neural.processor.sp;
 
 import java.util.List;
 

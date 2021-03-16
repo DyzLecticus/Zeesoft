@@ -5,10 +5,10 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
-import nl.zeesoft.zdk.neural.tm.TemporalMemory;
-import nl.zeesoft.zdk.neural.tm.TmConfig;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
+import nl.zeesoft.zdk.neural.processor.tm.TmConfig;
 
 public class TestTemporalMemoryBurst {
 	public static void main(String[] args) {

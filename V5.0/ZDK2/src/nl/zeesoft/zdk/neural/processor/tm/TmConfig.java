@@ -1,9 +1,9 @@
-package nl.zeesoft.zdk.neural.tm;
+package nl.zeesoft.zdk.neural.processor.tm;
 
 import nl.zeesoft.zdk.neural.model.CellConfig;
 
 public class TmConfig extends CellConfig {
-	public boolean	learn			= true;
+	public boolean	learn	= true;
 	
 	public TmConfig copy() {
 		TmConfig r = new TmConfig();

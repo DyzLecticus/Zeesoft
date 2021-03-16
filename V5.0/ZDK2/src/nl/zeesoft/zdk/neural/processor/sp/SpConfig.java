@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.sp;
+package nl.zeesoft.zdk.neural.processor.sp;
 
 import nl.zeesoft.zdk.matrix.Size;
 
@@ -7,11 +7,11 @@ public class SpConfig {
 	public Size		outputSize					= new Size(48,48);
 	public int		outputOnBits				= 46;
 
+	public boolean	learn						= true;
+
 	public float	permanenceThreshold			= 0.1F;
 	public float	permanenceIncrement			= 0.05F;
 	public float	permanenceDecrement			= 0.008F;
-
-	public boolean	learn						= true;
 	
 	public float	potentialConnections		= 0.85F;
 	public float	potentialRadius				= 2;

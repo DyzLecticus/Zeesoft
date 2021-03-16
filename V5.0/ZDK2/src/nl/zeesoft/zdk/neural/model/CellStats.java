@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.neural.model;
 
 import nl.zeesoft.zdk.function.Function;
-import nl.zeesoft.zdk.neural.tm.TemporalMemory;
+import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
 
 public class CellStats {
 	public int	cells					= 0;

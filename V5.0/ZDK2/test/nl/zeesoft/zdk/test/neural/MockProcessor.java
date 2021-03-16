@@ -3,8 +3,8 @@ package nl.zeesoft.zdk.test.neural;
 import java.util.ArrayList;
 
 import nl.zeesoft.zdk.matrix.Position;
-import nl.zeesoft.zdk.neural.Processor;
-import nl.zeesoft.zdk.neural.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class MockProcessor extends Processor {
 	@Override

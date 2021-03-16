@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.sp;
+package nl.zeesoft.zdk.neural.processor.sp;
 
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;

@@ -58,6 +58,18 @@ public class TestSdr {
 		
 		sdr2 = new Sdr(9);
 		sdr2.setOnPositions(new Size(3,3), positions);
-		assert sdr2.toString().equals("9,0,3");		
+		assert sdr2.toString().equals("9,0,3");
+		
+		Sdr sdr3 = new Sdr(9);
+		sdr3.concat(sdr, 0);
+		assert sdr3.equals(sdr);
+		
+		sdr3.or(sdr2);
+		assert sdr3.onBits.size() == 2;
+		
+		sdr3.subsample(1);
+		assert sdr3.onBits.size() == 1;
+		sdr3.subsample(0);
+		assert sdr3.onBits.size() == 0;
 	}
 }

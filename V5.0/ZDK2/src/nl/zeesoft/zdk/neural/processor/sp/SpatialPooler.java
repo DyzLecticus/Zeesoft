@@ -1,12 +1,12 @@
-package nl.zeesoft.zdk.neural.sp;
+package nl.zeesoft.zdk.neural.processor.sp;
 
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.Processor;
-import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.SdrHistory;
+import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class SpatialPooler extends Processor {
 	public static final int		ENCODED_SENSOR_INPUT	= 0;

@@ -3,12 +3,12 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
-import nl.zeesoft.zdk.neural.sp.SpBoostFactors;
-import nl.zeesoft.zdk.neural.sp.SpConfig;
-import nl.zeesoft.zdk.neural.sp.SpConnections;
-import nl.zeesoft.zdk.neural.sp.SpatialPooler;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.sp.SpBoostFactors;
+import nl.zeesoft.zdk.neural.processor.sp.SpConfig;
+import nl.zeesoft.zdk.neural.processor.sp.SpConnections;
+import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 
 public class TestSpatialPooler {
 	private static TestSpatialPooler	self	= new TestSpatialPooler();

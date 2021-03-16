@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 
@@ -91,6 +92,28 @@ public class Sdr {
 		length = other.length;
 		for (Integer onBit: other.onBits) {
 			onBits.add(onBit);
+		}
+	}
+	
+	public void or(Sdr sdr) {
+		for (Integer onBit: sdr.onBits) {
+			setBit(onBit,true);
+		}
+	}
+	
+	public void concat(Sdr sdr,int offset) {
+		for (Integer onBit: sdr.onBits) {
+			setBit(offset + onBit,true);
+		}
+	}
+	
+	public void subsample(int maxOnBits) {
+		if (maxOnBits<=0) {
+			onBits.clear();
+		} else {
+			while (onBits.size()>maxOnBits) {
+				onBits.remove(Rand.getRandomInt(0, onBits.size()-1));
+			}
 		}
 	}
 }

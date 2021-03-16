@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.tm;
+package nl.zeesoft.zdk.neural.processor.tm;
 
 import java.util.ArrayList;
 import java.util.List;

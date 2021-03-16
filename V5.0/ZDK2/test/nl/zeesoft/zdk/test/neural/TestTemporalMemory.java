@@ -8,15 +8,15 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ProcessorIO;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Segment;
 import nl.zeesoft.zdk.neural.model.Synapse;
-import nl.zeesoft.zdk.neural.tm.TemporalMemory;
-import nl.zeesoft.zdk.neural.tm.TmCells;
-import nl.zeesoft.zdk.neural.tm.TmConfig;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
+import nl.zeesoft.zdk.neural.processor.tm.TmCells;
+import nl.zeesoft.zdk.neural.processor.tm.TmConfig;
 
 public class TestTemporalMemory {
 	private static TestTemporalMemory	self	= new TestTemporalMemory();
