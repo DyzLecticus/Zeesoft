@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Util;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class NetworkConfig {
 	protected List<String>				inputNames			= new ArrayList<String>();
@@ -12,13 +12,13 @@ public class NetworkConfig {
 	
 	public StringBuilder test() {
 		StringBuilder r = new StringBuilder();
-		for (ProcessorConfig pc: processorConfigs) {
-			Processor toProcessor = pc.getNewInstance();
-			for (LinkConfig link: pc.inputLinks) {
+		for (ProcessorConfig toConfig: processorConfigs) {
+			InputOutputConfig toIOConfig = toConfig.getInputOutputConfig();
+			for (LinkConfig link: toConfig.inputLinks) {
 				ProcessorConfig fromConfig = getProcessorConfig(link.fromName);
 				if (fromConfig!=null) {
-					Processor fromProcessor = fromConfig.getNewInstance();
-					String err = link.checkLinkIO(fromProcessor, pc.name, toProcessor);
+					InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
+					String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
 					if (err.length()>0) {
 						Util.appendLine(r, err);
 					}

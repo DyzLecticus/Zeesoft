@@ -1,8 +1,10 @@
 package nl.zeesoft.zdk.neural.processor.sp;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
-public class SpConfig {
+public class SpConfig implements ConfigurableIO {
 	public Size		inputSize					= new Size(16,16);
 	public Size		outputSize					= new Size(48,48);
 	public int		outputOnBits				= 46;
@@ -34,6 +36,14 @@ public class SpConfig {
 		r.activationHistorySize = activationHistorySize;
 		r.boostFactorPeriod = boostFactorPeriod;
 		r.boostStrength = boostStrength;
+		return r;
+	}
+	
+	@Override
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = new InputOutputConfig();
+		r.addInput("EncodedSensor", inputSize.volume());
+		r.addOutput("ActiveColumns", outputSize);
 		return r;
 	}
 }

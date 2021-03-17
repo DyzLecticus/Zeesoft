@@ -3,7 +3,9 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.se.ScConfig;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 
 public class TestScalarEncoder {
@@ -77,10 +79,14 @@ public class TestScalarEncoder {
 		assert enc.testMinimalOverlap().length()==0;
 		
 		ScalarEncoder se = new ScalarEncoder();
-		assert se.getInputNames().size() == 1;
-		assert se.getInputNames().get(0).equals("SensorValue");
-		assert se.getOutputNames().size() == 1;
-		assert se.getOutputNames().get(0).equals("EncodedSensor");
+		assert se.getInputOutputConfig()!=null;
+		
+		InputOutputConfig ioConfig = se.encoder.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 1;
+		assert ioConfig.inputs.get(ScalarEncoder.SENSOR_VALUE_INPUT).name.equals("SensorValue");
+		assert ioConfig.outputs.size() == 1;
+		assert ioConfig.outputs.get(ScalarEncoder.ENCODED_SENSOR_OUTPUT).name.equals("EncodedSensor");
+		assert ioConfig.toString().length() == 41;
 		assert se.toString().length() == 55;
 		
 		ProcessorIO io = new ProcessorIO();
@@ -113,5 +119,13 @@ public class TestScalarEncoder {
 		assert copy.maxValue == enc.maxValue;
 		assert copy.resolution == enc.resolution;
 		assert copy.periodic == enc.periodic;
+		
+		ScConfig scCopy = se.encoder.copy();
+		assert scCopy.encodeLength == se.encoder.encodeLength;
+		assert scCopy.onBits == se.encoder.onBits;
+		assert scCopy.minValue == se.encoder.minValue;
+		assert scCopy.maxValue == se.encoder.maxValue;
+		assert scCopy.resolution == se.encoder.resolution;
+		assert scCopy.periodic == se.encoder.periodic;
 	}
 }

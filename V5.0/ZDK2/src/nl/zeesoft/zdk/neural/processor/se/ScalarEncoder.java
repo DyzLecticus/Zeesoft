@@ -1,23 +1,22 @@
 package nl.zeesoft.zdk.neural.processor.se;
 
-import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class ScalarEncoder extends Processor {
+	public static final int		SENSOR_VALUE_INPUT		= 0;
 	public static final int		ENCODED_SENSOR_OUTPUT	= 0;
 	
-	public ScalarSdrEncoder		encoder					= new ScalarSdrEncoder();
+	public ScConfig				encoder					= new ScConfig();
 	
 	@Override
-	public int getMaxInputVolume(int index) {
-		return (int)encoder.maxValue;
-	}
-	
-	@Override
-	public Size getOutputSize(int index) {
-		return new Size(encoder.encodeLength,1);
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = super.getInputOutputConfig();
+		if (encoder!=null) {
+			r = encoder.getInputOutputConfig();
+		}
+		return r;
 	}
 
 	@Override
@@ -36,15 +35,5 @@ public class ScalarEncoder extends Processor {
 			io.error = this.getClass().getSimpleName() + " requires an integer or float value";
 		}
 		return io.error.length() == 0;
-	}
-
-	@Override
-	protected String getInputName(int index) {
-		return "SensorValue";
-	}
-
-	@Override
-	protected String getOutputName(int index) {
-		return "EncodedSensor";
 	}
 }

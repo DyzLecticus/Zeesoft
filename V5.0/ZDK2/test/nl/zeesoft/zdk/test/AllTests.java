@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.test.neural.TestCell;
 import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
 import nl.zeesoft.zdk.test.neural.TestMerger;
+import nl.zeesoft.zdk.test.neural.TestNetwork;
 import nl.zeesoft.zdk.test.neural.TestNetworkConfig;
 import nl.zeesoft.zdk.test.neural.TestScalarEncoder;
 import nl.zeesoft.zdk.test.neural.TestSdr;
@@ -85,5 +86,6 @@ public class AllTests {
 		TestMerger.main(args);
 		Console.log("Test Network ...");
 		TestNetworkConfig.main(args);
+		TestNetwork.main(args);
 	}
 }

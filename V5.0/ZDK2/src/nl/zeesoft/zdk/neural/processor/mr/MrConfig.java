@@ -1,8 +1,10 @@
 package nl.zeesoft.zdk.neural.processor.mr;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
-public class MrConfig {
+public class MrConfig implements ConfigurableIO {
 	public Size		size			= new Size(48,48,16);
 
 	public boolean	concatenate		= false;
@@ -15,6 +17,16 @@ public class MrConfig {
 		r.concatenate = concatenate;
 		r.maxOnBits = maxOnBits;
 		r.distortion = distortion;
+		return r;
+	}
+	
+	@Override
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = new InputOutputConfig();
+		for (int i = 0; i < 9; i++) {
+			r.addInput("MergeSDR" + (i + 1), size.volume());
+		}
+		r.addOutput("MergedSDR", size);
 		return r;
 	}
 }

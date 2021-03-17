@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.ClConfig;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
@@ -15,13 +16,16 @@ public class TestClassifier {
 		ClConfig config = new ClConfig();
 		config.size = new Size(10,10,4);
 		config.maxCount = 6;
+
+		InputOutputConfig ioConfig = config.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 1;
+		assert ioConfig.inputs.get(Classifier.ASSOCIATE_SDR_INPUT).name.equals("AssociateSDR");
+		assert ioConfig.outputs.size() == 1;
+		assert ioConfig.outputs.get(Classifier.ASSOCIATED_SDR_OUTPUT).name.equals("AssociatedSDR");
+		assert ioConfig.toString().length() == 42;
 		
 		Classifier cl = new Classifier();
-		assert cl.getInputNames().size() == 1;
-		assert cl.getInputNames().get(0).equals("AssociateSDR");
-		assert cl.getOutputNames().size() == 1;
-		assert cl.getOutputNames().get(0).equals("AssociatedSDR");
-		assert cl.toString().length() == 58;
+		assert cl.getInputOutputConfig()!=null;
 		
 		ProcessorIO io = new ProcessorIO();
 		cl.processIO(io);

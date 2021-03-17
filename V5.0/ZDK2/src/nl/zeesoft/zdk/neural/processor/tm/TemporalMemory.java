@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
-import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
@@ -32,28 +32,12 @@ public class TemporalMemory extends Processor {
 	public void reset() {
 		cells.reset(this);
 	}
-
-	@Override
-	public int getMaxInputVolume(int index) {
-		int r = super.getMaxInputVolume(index);
-		if (config!=null) {
-			if (index==ACTIVE_COLUMNS_INPUT) {
-				r = (config.size.x * config.size.y);
-			} else {
-				r = config.size.volume();
-			}
-		}
-		return r;
-	}
 	
 	@Override
-	public Size getOutputSize(int index) {
-		Size r = super.getOutputSize(index);
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = super.getInputOutputConfig();
 		if (config!=null) {
-			r = config.size;
-			if (index==BURSTING_COLUMNS_OUTPUT) {
-				r = new Size(config.size.x,config.size.y);
-			}
+			r = config.getInputOutputConfig();
 		}
 		return r;
 	}
@@ -80,38 +64,6 @@ public class TemporalMemory extends Processor {
 			io.error = this.getClass().getSimpleName() + " cells are not initialized";
 		}
 		return io.error.length() == 0;
-	}
-
-	@Override
-	protected int getNumberOfInputs() {
-		return 2;
-	}
-
-	@Override
-	protected String getInputName(int index) {
-		String r = "ActiveApicalCells";
-		if (index == ACTIVE_COLUMNS_INPUT) {
-			r = "ActiveColumns";
-		}
-		return r;
-	}
-
-	@Override
-	protected int getNumberOfOutputs() {
-		return 4;
-	}
-
-	@Override
-	protected String getOutputName(int index) {
-		String r = "WinnerCells";
-		if (index == ACTIVE_CELLS_OUTPUT) {
-			r = "ActiveCells";
-		} else if (index == BURSTING_COLUMNS_OUTPUT) {
-			r = "BurstingColumns";
-		} else if (index == PREDICTIVE_CELLS_OUTPUT) {
-			r = "PredictiveCells";
-		}
-		return r;
 	}
 	
 	protected List<Position> getNewActiveApicalCellPositions(ProcessorIO io) {

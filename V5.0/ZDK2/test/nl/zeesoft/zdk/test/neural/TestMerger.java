@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.mr.Merger;
 import nl.zeesoft.zdk.neural.processor.mr.MrConfig;
@@ -14,13 +15,16 @@ public class TestMerger {
 		MrConfig config = new MrConfig();
 		config.size = new Size(4,4,4);
 		
+		InputOutputConfig ioConfig = config.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 9;
+		assert ioConfig.inputs.get(Merger.SDR_INPUT_1).name.equals("MergeSDR1");
+		assert ioConfig.inputs.get(Merger.SDR_INPUT_2).name.equals("MergeSDR2");
+		assert ioConfig.outputs.size() == 1;
+		assert ioConfig.outputs.get(Merger.MERGED_SDR_OUTPUT).name.equals("MergedSDR");
+		assert ioConfig.toString().length() == 169;
+		
 		Merger mr = new Merger();
-		assert mr.getInputNames().size() == 8;
-		assert mr.getInputNames().get(0).equals("SDR1");
-		assert mr.getInputNames().get(1).equals("SDR2");
-		assert mr.getOutputNames().size() == 1;
-		assert mr.getOutputNames().get(0).equals("MergedSDR");
-		assert mr.toString().length() == 182;
+		assert mr.getInputOutputConfig()!=null;
 		
 		ProcessorIO io = new ProcessorIO();
 		mr.processIO(io);
@@ -28,7 +32,7 @@ public class TestMerger {
 		assert io.error.equals("Merger is not initialized");
 
 		mr.initialize(config);
-		assert mr.toString().length() == 119;
+		assert mr.toString().length() == 176;
 		
 		Sdr sdr1 = new Sdr(32);
 		sdr1.setBit(0, true);

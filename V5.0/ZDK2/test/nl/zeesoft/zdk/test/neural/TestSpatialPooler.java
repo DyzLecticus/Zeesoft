@@ -5,6 +5,7 @@ import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.sp.SpBoostFactors;
 import nl.zeesoft.zdk.neural.processor.sp.SpConfig;
@@ -19,10 +20,11 @@ public class TestSpatialPooler {
 
 		ProcessorIO io = new ProcessorIO(new Sdr(10));
 		MockProcessor processor = new MockProcessor();
-		assert processor.getInputNames().size() == 1;
-		assert processor.getInputNames().get(0).equals("InputName");
-		assert processor.getOutputNames().size() == 1;
-		assert processor.getOutputNames().get(0).equals("OutputName");
+		InputOutputConfig ioConfig = processor.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 1;
+		assert ioConfig.inputs.get(0).name.equals("InputName");
+		assert ioConfig.outputs.size() == 1;
+		assert ioConfig.outputs.get(0).name.equals("OutputName");
 		processor.processIO(io);
 		processor.reset();
 		assert io.outputs.size() == 1;
@@ -34,12 +36,15 @@ public class TestSpatialPooler {
 		config.outputOnBits = 2;
 		config.boostFactorPeriod = 2;
 		
+		ioConfig = config.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 1;
+		assert ioConfig.inputs.get(SpatialPooler.ENCODED_SENSOR_INPUT).name.equals("EncodedSensor");
+		assert ioConfig.outputs.size() == 1;
+		assert ioConfig.outputs.get(SpatialPooler.ACTIVE_COLUMNS_OUTPUT).name.equals("ActiveColumns");
+		assert ioConfig.toString().length() == 42;
+		
 		SpatialPooler sp = new SpatialPooler();
-		assert sp.getInputNames().size() == 1;
-		assert sp.getInputNames().get(0).equals("EncodedSensor");
-		assert sp.getOutputNames().size() == 1;
-		assert sp.getOutputNames().get(0).equals("ActiveColumns");
-		assert sp.toString().length() == 62;
+		assert sp.toString().length() == 14;
 		
 		io = new ProcessorIO();
 		sp.processIO(io);

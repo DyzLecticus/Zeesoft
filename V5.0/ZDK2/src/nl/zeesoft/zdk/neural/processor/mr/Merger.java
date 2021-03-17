@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.neural.processor.mr;
 
-import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
@@ -14,6 +14,7 @@ public class Merger extends Processor {
 	public static final int		SDR_INPUT_6				= 5;
 	public static final int		SDR_INPUT_7				= 6;
 	public static final int		SDR_INPUT_8				= 7;
+	public static final int		SDR_INPUT_9				= 8;
 	
 	public static final int		MERGED_SDR_OUTPUT		= 0;
 	
@@ -22,21 +23,12 @@ public class Merger extends Processor {
 	public void initialize(MrConfig config) {
 		this.config = config.copy();
 	}
-
-	@Override
-	public int getMaxInputVolume(int index) {
-		int r = super.getMaxInputVolume(index);
-		if (config!=null) {
-			r = config.size.volume();
-		}
-		return r;
-	}
 	
 	@Override
-	public Size getOutputSize(int index) {
-		Size r = super.getOutputSize(index);
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = super.getInputOutputConfig();
 		if (config!=null) {
-			r = config.size;
+			r = config.getInputOutputConfig();
 		}
 		return r;
 	}
@@ -63,20 +55,5 @@ public class Merger extends Processor {
 			io.error = this.getClass().getSimpleName() + " is not initialized";
 		}
 		return io.error.length() == 0;
-	}
-
-	@Override
-	protected int getNumberOfInputs() {
-		return 8;
-	}
-
-	@Override
-	protected String getInputName(int index) {
-		return "SDR" + (index+1);
-	}
-
-	@Override
-	protected String getOutputName(int index) {
-		return "MergedSDR";
 	}
 }

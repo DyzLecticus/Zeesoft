@@ -3,8 +3,8 @@ package nl.zeesoft.zdk.neural.processor.sp;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
-import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.SdrHistory;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
@@ -35,21 +35,12 @@ public class SpatialPooler extends Processor {
 	public void reset() {
 		connections.reset(this);
 	}
-
-	@Override
-	public int getMaxInputVolume(int index) {
-		int r = super.getMaxInputVolume(index);
-		if (config!=null) {
-			r = config.inputSize.volume();
-		}
-		return r;
-	}
 	
 	@Override
-	public Size getOutputSize(int index) {
-		Size r = super.getOutputSize(index);
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = super.getInputOutputConfig();
 		if (config!=null) {
-			r = config.outputSize;
+			r = config.getInputOutputConfig();
 		}
 		return r;
 	}
@@ -76,15 +67,5 @@ public class SpatialPooler extends Processor {
 			io.error = this.getClass().getSimpleName() + " connections are not initialized";
 		}
 		return io.error.length() == 0;
-	}
-
-	@Override
-	protected String getInputName(int index) {
-		return "EncodedSensor";
-	}
-
-	@Override
-	protected String getOutputName(int index) {
-		return "ActiveColumns";
 	}
 }

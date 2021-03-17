@@ -1,13 +1,13 @@
 package nl.zeesoft.zdk.neural.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 
-public abstract class Processor {
+public abstract class Processor implements ConfigurableIO {
 	public void reset() {
 		
 	}
@@ -18,46 +18,24 @@ public abstract class Processor {
 		}
 	}
 	
-	public List<String> getInputNames() {
-		List<String> r = new ArrayList<String>();
-		for (int i = 0; i < getNumberOfInputs(); i++) {
-			r.add(getInputName(i));
-		}
-		return r;
+	@Override
+	public InputOutputConfig getInputOutputConfig() {
+		return new InputOutputConfig();
 	}
-	
-	public List<String> getOutputNames() {
-		List<String> r = new ArrayList<String>();
-		for (int i = 0; i < getNumberOfOutputs(); i++) {
-			r.add(getOutputName(i));
-		}
-		return r;
+
+	public int getMaxInputVolume(int index) {
+		return getInputOutputConfig().inputs.get(index).maxVolume;
+	}
+
+	public Size getOutputSize(int index) {
+		return getInputOutputConfig().outputs.get(index).size;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		List<String> inputNames = getInputNames();
-		List<String> outputNames = getOutputNames();
-		int i = 0;
 		r.append(this.getClass().getSimpleName());
-		for (String input: inputNames) {
-			r.append("\n");
-			r.append("<- ");
-			r.append(input);
-			r.append(": ");
-			r.append(getMaxInputVolume(i));
-			i++;
-		}
-		i = 0;
-		for (String output: outputNames) {
-			r.append("\n");
-			r.append("-> ");
-			r.append(output);
-			r.append(": ");
-			r.append(getOutputSize(i).volume());
-			i++;
-		}
+		Util.appendLine(r, getInputOutputConfig().toString());
 		return r.toString();
 	}
 	
@@ -81,33 +59,13 @@ public abstract class Processor {
 		}
 		return io.error.length() == 0;
 	}
-
-	public int getMaxInputVolume(int index) {
-		return Integer.MAX_VALUE;
-	}
 	
 	protected abstract void processValidIO(ProcessorIO io);
 	
 	protected void addOutput(ProcessorIO io, List<Position> positions) {
-		Size size = getOutputSize(io.outputs.size());
+		Size size = getInputOutputConfig().outputs.get(io.outputs.size()).size;
 		Sdr output = new Sdr(size.volume());
 		output.setOnPositions(size, positions);
 		io.outputs.add(output);
 	}
-	
-	public Size getOutputSize(int index) {
-		return new Size(1,1,1);
-	}
-
-	protected int getNumberOfInputs() {
-		return 1;
-	}
-
-	protected abstract String getInputName(int index);
-
-	protected int getNumberOfOutputs() {
-		return 1;
-	}
-
-	protected abstract String getOutputName(int index);
 }

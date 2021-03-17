@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Segment;
 import nl.zeesoft.zdk.neural.model.Synapse;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
 import nl.zeesoft.zdk.neural.processor.tm.TmCells;
@@ -30,16 +31,19 @@ public class TestTemporalMemory {
 		config.activationThreshold = 2;
 		config.matchingThreshold = 1;
 		
+		InputOutputConfig ioConfig = config.getInputOutputConfig();
+		assert ioConfig.inputs.size() == 2;
+		assert ioConfig.inputs.get(TemporalMemory.ACTIVE_COLUMNS_INPUT).name.equals("ActiveColumns");
+		assert ioConfig.inputs.get(TemporalMemory.ACTIVE_APICAL_INPUT).name.equals("ActiveApicalCells");
+		assert ioConfig.outputs.size() == 4;
+		assert ioConfig.outputs.get(TemporalMemory.ACTIVE_CELLS_OUTPUT).name.equals("ActiveCells");
+		assert ioConfig.outputs.get(TemporalMemory.BURSTING_COLUMNS_OUTPUT).name.equals("BurstingColumns");
+		assert ioConfig.outputs.get(TemporalMemory.PREDICTIVE_CELLS_OUTPUT).name.equals("PredictiveCells");
+		assert ioConfig.outputs.get(TemporalMemory.WINNER_CELLS_OUTPUT).name.equals("WinnerCells");
+		assert ioConfig.toString().length() == 135;
+		
 		TemporalMemory tm = new TemporalMemory();
-		assert tm.getInputNames().size() == 2;
-		assert tm.getInputNames().get(0).equals("ActiveColumns");
-		assert tm.getInputNames().get(1).equals("ActiveApicalCells");
-		assert tm.getOutputNames().size() == 4;
-		assert tm.getOutputNames().get(0).equals("ActiveCells");
-		assert tm.getOutputNames().get(1).equals("BurstingColumns");
-		assert tm.getOutputNames().get(2).equals("PredictiveCells");
-		assert tm.getOutputNames().get(3).equals("WinnerCells");
-		assert tm.toString().length() == 156;
+		assert tm.toString().length() == 15;
 		
 		ProcessorIO io = new ProcessorIO();
 		tm.processIO(io);

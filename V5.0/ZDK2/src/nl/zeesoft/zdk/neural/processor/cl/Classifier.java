@@ -1,8 +1,8 @@
 package nl.zeesoft.zdk.neural.processor.cl;
 
-import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrHistory;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
@@ -29,21 +29,12 @@ public class Classifier extends Processor {
 		activationHistory.sdrs.clear();
 		bits.reset();
 	}
-
-	@Override
-	public int getMaxInputVolume(int index) {
-		int r = super.getMaxInputVolume(index);
-		if (config!=null) {
-			r = config.size.volume();
-		}
-		return r;
-	}
 	
 	@Override
-	public Size getOutputSize(int index) {
-		Size r = super.getOutputSize(index);
+	public InputOutputConfig getInputOutputConfig() {
+		InputOutputConfig r = super.getInputOutputConfig();
 		if (config!=null) {
-			r = config.size;
+			r = config.getInputOutputConfig();
 		}
 		return r;
 	}
@@ -66,15 +57,5 @@ public class Classifier extends Processor {
 			io.error = this.getClass().getSimpleName() + " is not initialized";
 		}
 		return io.error.length() == 0;
-	}
-
-	@Override
-	protected String getInputName(int index) {
-		return "AssociateSDR";
-	}
-
-	@Override
-	protected String getOutputName(int index) {
-		return "AssociatedSDR";
 	}
 }

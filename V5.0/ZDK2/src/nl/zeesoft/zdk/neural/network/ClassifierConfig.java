@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural.network;
 
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.cl.ClConfig;
 import nl.zeesoft.zdk.neural.processor.cl.Classifier;
@@ -16,5 +17,10 @@ public class ClassifierConfig extends ProcessorConfig {
 		Classifier r = new Classifier();
 		r.initialize(config);
 		return r;
+	}
+
+	@Override
+	public InputOutputConfig getInputOutputConfig() {
+		return config.getInputOutputConfig();
 	}
 }

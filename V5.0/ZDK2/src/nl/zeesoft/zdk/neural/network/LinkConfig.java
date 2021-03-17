@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural.network;
 
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class LinkConfig {
 	public String		fromName	= "";
@@ -13,13 +13,13 @@ public class LinkConfig {
 		this.toInput = toInput;
 	}
 	
-	protected String checkLinkIO(Processor fromProcessor, String toName, Processor toProcessor) {
+	protected String checkLinkIO(InputOutputConfig fromConfig, String toName, InputOutputConfig toConfig) {
 		String err = "";
-		if (fromOutput >= fromProcessor.getOutputNames().size()) {
+		if (fromOutput >= fromConfig.outputs.size()) {
 			err = toName + ": link from " + fromName + " does not provide output index " + fromOutput;
 		} else {
-			int outVolume = fromProcessor.getOutputSize(fromOutput).volume();
-			int maxVolume = toProcessor.getMaxInputVolume(toInput);
+			int outVolume = fromConfig.outputs.get(fromOutput).size.volume();
+			int maxVolume = toConfig.inputs.get(toInput).maxVolume;
 			if (outVolume>maxVolume) {
 				err = toName + ": link from " + fromName + "/" + fromOutput +
 					" output volume is greater than input volume " +

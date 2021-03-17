@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.neural.network;
 
+import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
 import nl.zeesoft.zdk.neural.processor.tm.TmConfig;
@@ -16,5 +17,10 @@ public class TemporalMemoryConfig extends ProcessorConfig {
 		TemporalMemory r = new TemporalMemory();
 		r.initialize(config);
 		return r;
+	}
+
+	@Override
+	public InputOutputConfig getInputOutputConfig() {
+		return config.getInputOutputConfig();
 	}
 }
