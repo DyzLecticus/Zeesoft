@@ -7,10 +7,12 @@ public class TestLogger {
 	private static TestLogger	self	= new TestLogger();
 	
 	public static void main(String[] args) {
+		Console.log("");
 		Console console = new Console();
 		console.logObject("Test debug message");
 		Console.err("Test error message");
 		console.errObject("Test error message with exception",new Exception("Test exception"));
+		Console.log("");
 
 		Logger.setLoggerDebug(false);
 		assert Logger.isLoggerDebug() == false;

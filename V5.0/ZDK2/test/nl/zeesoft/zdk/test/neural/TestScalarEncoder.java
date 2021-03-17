@@ -81,7 +81,7 @@ public class TestScalarEncoder {
 		assert se.getInputNames().get(0).equals("SensorValue");
 		assert se.getOutputNames().size() == 1;
 		assert se.getOutputNames().get(0).equals("EncodedSensor");
-		assert se.toString().length() == 62;
+		assert se.toString().length() == 55;
 		
 		ProcessorIO io = new ProcessorIO();
 		se.processIO(io);

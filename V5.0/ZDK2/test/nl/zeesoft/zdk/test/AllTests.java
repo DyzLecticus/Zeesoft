@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
@@ -26,11 +27,11 @@ public class AllTests {
 		Logger.setLoggerConsole(new MockConsole());
 		long started = System.currentTimeMillis();
 		runAllTests(args);
-		System.out.println();
-		System.out.println("Tests: SUCCESS");
+		Console.log("");
+		Console.log("Tests: SUCCESS");
 		long totalMs = (System.currentTimeMillis() - started);
-		System.out.println("Total time: " + totalMs + " ms");
-		System.out.println("Sleep time: " + sleepMs + " ms");
+		Console.log("Total time: " + totalMs + " ms");
+		Console.log("Sleep time: " + sleepMs + " ms");
 	}
 	
 	public static synchronized void sleep(int millis) {
@@ -43,26 +44,43 @@ public class AllTests {
 	}
 	
 	protected static void runAllTests(String[] args) {
+		Console.log("Test Lock ...");
 		TestLock.main(args);
+		Console.log("Test Logger ...");
 		TestLogger.main(args);
+		Console.log("Test Rand ...");
 		TestRand.main(args);
+		Console.log("Test Util ...");
 		TestUtil.main(args);
+		Console.log("Test Function ...");
 		TestFunction.main(args);
+		Console.log("Test FunctionList ...");
 		TestFunctionList.main(args);
+		Console.log("Test Position ...");
 		TestPosition.main(args);
+		Console.log("Test Size ...");
 		TestSize.main(args);
+		Console.log("Test Matrix ...");
 		TestMatrix.main(args);
+		Console.log("Test Sdr ...");
 		TestSdr.main(args);
+		Console.log("Test SdrHistory ...");
 		TestSdrHistory.main(args);
+		Console.log("Test ScalarEncoder ...");
 		TestScalarEncoder.main(args);
-		TestSpatialPooler.main(args);
-		TestSpatialPoolerOverlap.main(args);
+		Console.log("Test Cells ...");
 		TestSegment.main(args);
 		TestCell.main(args);
 		TestCells.main(args);
+		Console.log("Test SpatialPooler ...");
+		TestSpatialPooler.main(args);
+		TestSpatialPoolerOverlap.main(args);
+		Console.log("Test TemporalMemory ...");
 		TestTemporalMemory.main(args);
 		TestTemporalMemoryBurst.main(args);
+		Console.log("Test Classifier ...");
 		TestClassifier.main(args);
+		Console.log("Test Merger ...");
 		TestMerger.main(args);
 	}
 }

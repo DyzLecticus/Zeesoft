@@ -16,6 +16,11 @@ public class ScalarEncoder extends Processor {
 	}
 	
 	@Override
+	protected int getMaxInputVolume(int index) {
+		return (int)encoder.maxValue;
+	}
+	
+	@Override
 	protected Size getOutputSize(int index) {
 		return new Size(encoder.encodeLength,1);
 	}
