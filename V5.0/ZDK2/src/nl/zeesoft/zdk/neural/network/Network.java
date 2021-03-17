@@ -12,6 +12,8 @@ public class Network {
 	protected SortedMap<String,Processor>			processors			= new TreeMap<String,Processor>();
 	protected SortedMap<Integer,List<Processor>>	layerProcessors		= new TreeMap<Integer,List<Processor>>();
 	
+	protected NetworkIO								previousIO			= null;
+	
 	public void initialize(NetworkConfig config) {
 		inputNames = new ArrayList<String>(config.inputNames);
 		for (ProcessorConfig pc: config.processorConfigs) {
@@ -34,6 +36,11 @@ public class Network {
 		if (isInitialized(io) && isValidIO(io)) {
 			
 		}
+		previousIO = io;
+	}
+	
+	public NetworkIO getPreviousIO() {
+		return previousIO;
 	}
 	
 	public List<String> getInputNames() {

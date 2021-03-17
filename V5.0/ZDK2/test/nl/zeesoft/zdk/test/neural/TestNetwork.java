@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.neural;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
@@ -20,6 +19,7 @@ public class TestNetwork {
 		network.processIO(io);
 		assert io.errors.size() == 1;
 		assert io.errors.get(0).equals("Network is not initialized");
+		assert network.getPreviousIO() == io;
 
 		network.initialize(config);
 		assert network.isInitialized();

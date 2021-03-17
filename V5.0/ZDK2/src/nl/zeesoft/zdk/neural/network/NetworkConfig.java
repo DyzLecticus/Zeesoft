@@ -17,6 +17,7 @@ public class NetworkConfig {
 	
 	public StringBuilder test() {
 		StringBuilder r = new StringBuilder();
+		List<String> unused = new ArrayList<String>(inputNames);
 		if (inputNames.size()==0) {
 			Util.appendLine(r, "A network must have at least one inputs");
 		}
@@ -25,16 +26,25 @@ public class NetworkConfig {
 		}
 		for (ProcessorConfig toConfig: processorConfigs) {
 			InputOutputConfig toIOConfig = toConfig.getInputOutputConfig();
-			for (LinkConfig link: toConfig.inputLinks) {
-				ProcessorConfig fromConfig = getProcessorConfig(link.fromName);
-				if (fromConfig!=null) {
-					InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
-					String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
-					if (err.length()>0) {
-						Util.appendLine(r, err);
+			if (toConfig.inputLinks.size()==0) {
+				Util.appendLine(r, toConfig.name + ": Processor has no input link(s)");
+			} else {
+				for (LinkConfig link: toConfig.inputLinks) {
+					ProcessorConfig fromConfig = getProcessorConfig(link.fromName);
+					if (fromConfig!=null) {
+						InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
+						String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
+						if (err.length()>0) {
+							Util.appendLine(r, err);
+						}
+					} else {
+						unused.remove(link.fromName);
 					}
 				}
 			}
+		}
+		for (String name: unused) {
+			Util.appendLine(r, name + ": Input is not used");
 		}
 		return r;
 	}

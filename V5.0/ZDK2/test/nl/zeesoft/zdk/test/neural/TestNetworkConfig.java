@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.neural.network.LinkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.ProcessorConfig;
 import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
@@ -30,10 +31,20 @@ public class TestNetworkConfig {
 		pc.inputLinks.remove(1);
 
 		pc = config.getProcessorConfig("TestSpatialPooler");
+		LinkConfig save = pc.inputLinks.get(0);
 		pc.inputLinks.clear();
 		config.addLink("TestTemporalMemory", 1, "TestSpatialPooler", 0);
 		err = config.test();
 		assert err.toString().equals("TestSpatialPooler: link from TestTemporalMemory/1 output volume is greater than input volume  (2304 > 256)");
+
+		pc.inputLinks.clear();
+		err = config.test();
+		assert err.toString().equals("TestSpatialPooler: Processor has no input link(s)");
+		pc.inputLinks.add(save);
+		
+		config.addInput("Pizza");
+		err = config.test();
+		assert err.toString().equals("Pizza: Input is not used"); // Some would call it a crime
 	}
 	
 	public static NetworkConfig getNewNetworkConfig() {
