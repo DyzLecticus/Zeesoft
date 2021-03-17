@@ -33,6 +33,12 @@ public class ScalarSdrEncoder {
 		return r;
 	}
 
+	public ScalarSdrEncoder copy() {
+		ScalarSdrEncoder r = new ScalarSdrEncoder();
+		r.copyFrom(this);
+		return r;
+	}
+	
 	public StringBuilder testOnBits() {
 		StringBuilder r = new StringBuilder();
 		for (float val = minValue; val <= maxValue; val+=resolution) {
@@ -127,5 +133,14 @@ public class ScalarSdrEncoder {
 			}
 		}
 		return r;
+	}
+	
+	protected void copyFrom(ScalarSdrEncoder other) {
+		this.encodeLength = other.encodeLength;
+		this.onBits = other.onBits;
+		this.minValue = other.minValue;
+		this.maxValue = other.maxValue;
+		this.resolution = other.resolution;
+		this.periodic = other.periodic;
 	}
 }

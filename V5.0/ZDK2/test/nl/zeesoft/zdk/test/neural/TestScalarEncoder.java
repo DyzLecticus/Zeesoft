@@ -105,5 +105,13 @@ public class TestScalarEncoder {
 		assert io.error.length() == 0;
 		assert io.outputs.size() == 1;
 		assert io.outputs.get(0).toString().equals("256,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
+		
+		ScalarSdrEncoder copy = enc.copy();
+		assert copy.encodeLength == enc.encodeLength;
+		assert copy.onBits == enc.onBits;
+		assert copy.minValue == enc.minValue;
+		assert copy.maxValue == enc.maxValue;
+		assert copy.resolution == enc.resolution;
+		assert copy.periodic == enc.periodic;
 	}
 }
