@@ -41,17 +41,12 @@ public abstract class Processor {
 		List<String> outputNames = getOutputNames();
 		int i = 0;
 		r.append(this.getClass().getSimpleName());
-		boolean initialized = isInitialized(new ProcessorIO());
 		for (String input: inputNames) {
 			r.append("\n");
 			r.append("<- ");
 			r.append(input);
 			r.append(": ");
-			if (initialized) {
-				r.append(getMaxInputVolume(i));
-			} else {
-				r.append("?");
-			}
+			r.append(getMaxInputVolume(i));
 			i++;
 		}
 		i = 0;
@@ -60,11 +55,7 @@ public abstract class Processor {
 			r.append("-> ");
 			r.append(output);
 			r.append(": ");
-			if (initialized) {
-				r.append(getOutputSize(i).volume());
-			} else {
-				r.append("?");
-			}
+			r.append(getOutputSize(i).volume());
 			i++;
 		}
 		return r.toString();
@@ -91,7 +82,7 @@ public abstract class Processor {
 		return io.error.length() == 0;
 	}
 
-	protected int getMaxInputVolume(int index) {
+	public int getMaxInputVolume(int index) {
 		return Integer.MAX_VALUE;
 	}
 	
@@ -104,7 +95,7 @@ public abstract class Processor {
 		io.outputs.add(output);
 	}
 	
-	protected Size getOutputSize(int index) {
+	public Size getOutputSize(int index) {
 		return new Size(1,1,1);
 	}
 

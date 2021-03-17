@@ -39,6 +39,7 @@ public class TestTemporalMemory {
 		assert tm.getOutputNames().get(1).equals("BurstingColumns");
 		assert tm.getOutputNames().get(2).equals("PredictiveCells");
 		assert tm.getOutputNames().get(3).equals("WinnerCells");
+		assert tm.toString().length() == 156;
 		
 		ProcessorIO io = new ProcessorIO();
 		tm.processIO(io);

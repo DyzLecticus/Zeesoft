@@ -32,6 +32,31 @@ public class TemporalMemory extends Processor {
 	public void reset() {
 		cells.reset(this);
 	}
+
+	@Override
+	public int getMaxInputVolume(int index) {
+		int r = super.getMaxInputVolume(index);
+		if (config!=null) {
+			if (index==ACTIVE_COLUMNS_INPUT) {
+				r = (config.size.x * config.size.y);
+			} else {
+				r = config.size.volume();
+			}
+		}
+		return r;
+	}
+	
+	@Override
+	public Size getOutputSize(int index) {
+		Size r = super.getOutputSize(index);
+		if (config!=null) {
+			r = config.size;
+			if (index==BURSTING_COLUMNS_OUTPUT) {
+				r = new Size(config.size.x,config.size.y);
+			}
+		}
+		return r;
+	}
 	
 	@Override
 	protected void processValidIO(ProcessorIO io) {
@@ -45,26 +70,6 @@ public class TemporalMemory extends Processor {
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);
 		addOutput(io, cells.winnerCellPositions);
-	}
-
-	@Override
-	protected int getMaxInputVolume(int index) {
-		int r = 0;
-		if (index==ACTIVE_COLUMNS_INPUT) {
-			r = (config.size.x * config.size.y);
-		} else {
-			r = config.size.volume();
-		}
-		return r;
-	}
-	
-	@Override
-	protected Size getOutputSize(int index) {
-		Size r = config.size;
-		if (index==BURSTING_COLUMNS_OUTPUT) {
-			r = new Size(config.size.x,config.size.y);
-		}
-		return r;
 	}
 	
 	@Override

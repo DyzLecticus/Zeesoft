@@ -20,7 +20,7 @@ public class TestMerger {
 		assert mr.getInputNames().get(1).equals("SDR2");
 		assert mr.getOutputNames().size() == 1;
 		assert mr.getOutputNames().get(0).equals("MergedSDR");
-		assert mr.toString().length() == 110;
+		assert mr.toString().length() == 182;
 		
 		ProcessorIO io = new ProcessorIO();
 		mr.processIO(io);

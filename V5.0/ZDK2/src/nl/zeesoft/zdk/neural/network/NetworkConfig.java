@@ -3,18 +3,33 @@ package nl.zeesoft.zdk.neural.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.neural.processor.Processor;
+
 public class NetworkConfig {
 	protected List<String>				inputNames			= new ArrayList<String>();
 	protected List<ProcessorConfig>		processorConfigs	= new ArrayList<ProcessorConfig>();
 	
 	public StringBuilder test() {
 		StringBuilder r = new StringBuilder();
-		
+		for (ProcessorConfig pc: processorConfigs) {
+			Processor toProcessor = pc.getNewInstance();
+			for (LinkConfig link: pc.inputLinks) {
+				ProcessorConfig fromConfig = getProcessorConfig(link.fromName);
+				if (fromConfig!=null) {
+					Processor fromProcessor = fromConfig.getNewInstance();
+					String err = link.checkLinkIO(fromProcessor, pc.name, toProcessor);
+					if (err.length()>0) {
+						Util.appendLine(r, err);
+					}
+				}
+			}
+		}
 		return r;
 	}
 	
 	public void addInput(String name) {
-		if (name.length()>0 && !inputNames.contains(name)) {
+		if (name.length()>0 && !inputNames.contains(name) && getProcessorConfig(name)==null) {
 			inputNames.add(name);
 		}
 	}
@@ -89,7 +104,7 @@ public class NetworkConfig {
 		return processorConfigs.size();
 	}
 	
-	protected ProcessorConfig getProcessorConfig(String name) {
+	public ProcessorConfig getProcessorConfig(String name) {
 		ProcessorConfig r = null;
 		for (ProcessorConfig pc: processorConfigs) {
 			if (pc.name.equals(name)) {
@@ -101,7 +116,7 @@ public class NetworkConfig {
 	}
 	
 	protected void addProcessorConfig(ProcessorConfig config) {
-		if (config.name.length()>0) {
+		if (config.name.length()>0 && !inputNames.contains(config.name)) {
 			ProcessorConfig pc = getProcessorConfig(config.name);
 			if (pc==null) {
 				processorConfigs.add(config);

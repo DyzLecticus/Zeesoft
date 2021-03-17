@@ -9,20 +9,20 @@ public class ScalarEncoder extends Processor {
 	public static final int		ENCODED_SENSOR_OUTPUT	= 0;
 	
 	public ScalarSdrEncoder		encoder					= new ScalarSdrEncoder();
-
-	@Override
-	protected void processValidIO(ProcessorIO io) {
-		io.outputs.add(encoder.getEncodedValue(io.inputValue));
-	}
 	
 	@Override
-	protected int getMaxInputVolume(int index) {
+	public int getMaxInputVolume(int index) {
 		return (int)encoder.maxValue;
 	}
 	
 	@Override
-	protected Size getOutputSize(int index) {
+	public Size getOutputSize(int index) {
 		return new Size(encoder.encodeLength,1);
+	}
+
+	@Override
+	protected void processValidIO(ProcessorIO io) {
+		io.outputs.add(encoder.getEncodedValue(io.inputValue));
 	}
 	
 	@Override

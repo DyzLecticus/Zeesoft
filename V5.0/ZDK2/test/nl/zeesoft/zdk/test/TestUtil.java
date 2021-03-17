@@ -17,5 +17,11 @@ public class TestUtil {
 		assert !Util.equals(null, util1);
 				
 		assert Util.getHypotenuse(3, 4) == 5;
+		
+		StringBuilder sb = new StringBuilder();
+		Util.appendLine(sb, "Test");
+		assert sb.toString().equals("Test");
+		Util.appendLine(sb, "Test");
+		assert sb.toString().equals("Test\nTest");
 	}
 }

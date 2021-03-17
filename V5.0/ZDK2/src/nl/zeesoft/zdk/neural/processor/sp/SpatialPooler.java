@@ -37,6 +37,24 @@ public class SpatialPooler extends Processor {
 	}
 
 	@Override
+	public int getMaxInputVolume(int index) {
+		int r = super.getMaxInputVolume(index);
+		if (config!=null) {
+			r = config.inputSize.volume();
+		}
+		return r;
+	}
+	
+	@Override
+	public Size getOutputSize(int index) {
+		Size r = super.getOutputSize(index);
+		if (config!=null) {
+			r = config.outputSize;
+		}
+		return r;
+	}
+
+	@Override
 	protected void processValidIO(ProcessorIO io) {
 		List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(config.inputSize);
 		activations.activate(this, activeInputPositions);
@@ -48,16 +66,6 @@ public class SpatialPooler extends Processor {
 		activationHistory.push(io.outputs.get(0).copy());
 		processed++;
 		boostFactors.update(this, processed);
-	}
-
-	@Override
-	protected int getMaxInputVolume(int index) {
-		return config.inputSize.volume();
-	}
-	
-	@Override
-	protected Size getOutputSize(int index) {
-		return config.outputSize;
 	}
 	
 	@Override

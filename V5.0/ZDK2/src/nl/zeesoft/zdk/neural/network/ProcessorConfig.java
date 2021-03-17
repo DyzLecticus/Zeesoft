@@ -8,7 +8,6 @@ import nl.zeesoft.zdk.neural.processor.Processor;
 public abstract class ProcessorConfig {
 	public int					layer		= 0;
 	public String				name		= "";
-	public Processor			processor	= null;
 	public List<LinkConfig>		inputLinks	= new ArrayList<LinkConfig>();
 	
 	protected ProcessorConfig(int layer, String name) {

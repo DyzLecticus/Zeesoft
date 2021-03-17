@@ -15,4 +15,11 @@ public class Util {
 	public static float getHypotenuse(float len1, float len2) {
 		return (float) Math.sqrt((len1 * len1) + (len2 * len2));
 	}
+	
+	public static void appendLine(StringBuilder sb, String line) {
+		if (sb.length()>0) {
+			sb.append("\n");
+		}
+		sb.append(line);
+	}
 }

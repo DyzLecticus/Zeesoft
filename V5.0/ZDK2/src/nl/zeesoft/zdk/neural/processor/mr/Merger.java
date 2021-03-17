@@ -24,6 +24,24 @@ public class Merger extends Processor {
 	}
 
 	@Override
+	public int getMaxInputVolume(int index) {
+		int r = super.getMaxInputVolume(index);
+		if (config!=null) {
+			r = config.size.volume();
+		}
+		return r;
+	}
+	
+	@Override
+	public Size getOutputSize(int index) {
+		Size r = super.getOutputSize(index);
+		if (config!=null) {
+			r = config.size;
+		}
+		return r;
+	}
+
+	@Override
 	protected void processValidIO(ProcessorIO io) {
 		int length = getOutputSize(MERGED_SDR_OUTPUT).volume();
 		Sdr output = new Sdr(length);
@@ -37,16 +55,6 @@ public class Merger extends Processor {
 		output.subsample(config.maxOnBits);
 		output.distort(config.distortion);
 		io.outputs.add(output);
-	}
-
-	@Override
-	protected int getMaxInputVolume(int index) {
-		return config.size.volume();
-	}
-	
-	@Override
-	protected Size getOutputSize(int index) {
-		return config.size;
 	}
 	
 	@Override

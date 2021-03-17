@@ -31,6 +31,24 @@ public class Classifier extends Processor {
 	}
 
 	@Override
+	public int getMaxInputVolume(int index) {
+		int r = super.getMaxInputVolume(index);
+		if (config!=null) {
+			r = config.size.volume();
+		}
+		return r;
+	}
+	
+	@Override
+	public Size getOutputSize(int index) {
+		Size r = super.getOutputSize(index);
+		if (config!=null) {
+			r = config.size;
+		}
+		return r;
+	}
+
+	@Override
 	protected void processValidIO(ProcessorIO io) {
 		Sdr input = io.inputs.get(ASSOCIATE_SDR_INPUT).copy();
 		input.subsample(config.maxOnBits);
@@ -40,16 +58,6 @@ public class Classifier extends Processor {
 		}
 		io.outputValue = bits.generatePrediction(input);
 		io.outputs.add(input.copy());
-	}
-
-	@Override
-	protected int getMaxInputVolume(int index) {
-		return config.size.volume();
-	}
-	
-	@Override
-	protected Size getOutputSize(int index) {
-		return config.size;
 	}
 	
 	@Override

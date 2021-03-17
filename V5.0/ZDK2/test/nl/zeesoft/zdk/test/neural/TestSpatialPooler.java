@@ -39,6 +39,7 @@ public class TestSpatialPooler {
 		assert sp.getInputNames().get(0).equals("EncodedSensor");
 		assert sp.getOutputNames().size() == 1;
 		assert sp.getOutputNames().get(0).equals("ActiveColumns");
+		assert sp.toString().length() == 62;
 		
 		io = new ProcessorIO();
 		sp.processIO(io);

@@ -15,6 +15,6 @@ public class ClassifierConfig extends ProcessorConfig {
 	public Processor getNewInstance() {
 		Classifier r = new Classifier();
 		r.initialize(config);
-		return null;
+		return r;
 	}
 }

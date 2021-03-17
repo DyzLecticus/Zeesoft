@@ -15,6 +15,6 @@ public class MergerConfig extends ProcessorConfig {
 	public Processor getNewInstance() {
 		Merger r = new Merger();
 		r.initialize(config);
-		return null;
+		return r;
 	}
 }

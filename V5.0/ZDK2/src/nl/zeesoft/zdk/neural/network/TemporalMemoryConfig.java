@@ -15,6 +15,6 @@ public class TemporalMemoryConfig extends ProcessorConfig {
 	public Processor getNewInstance() {
 		TemporalMemory r = new TemporalMemory();
 		r.initialize(config);
-		return null;
+		return r;
 	}
 }

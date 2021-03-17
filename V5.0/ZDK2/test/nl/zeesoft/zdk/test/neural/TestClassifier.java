@@ -21,7 +21,7 @@ public class TestClassifier {
 		assert cl.getInputNames().get(0).equals("AssociateSDR");
 		assert cl.getOutputNames().size() == 1;
 		assert cl.getOutputNames().get(0).equals("AssociatedSDR");
-		assert cl.toString().length() == 49;
+		assert cl.toString().length() == 58;
 		
 		ProcessorIO io = new ProcessorIO();
 		cl.processIO(io);

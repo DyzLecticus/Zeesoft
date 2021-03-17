@@ -15,6 +15,6 @@ public class SpatialPoolerConfig extends ProcessorConfig {
 	public Processor getNewInstance() {
 		SpatialPooler r = new SpatialPooler();
 		r.initialize(config);
-		return null;
+		return r;
 	}
 }

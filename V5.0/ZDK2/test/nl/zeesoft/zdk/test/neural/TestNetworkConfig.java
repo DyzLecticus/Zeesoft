@@ -4,12 +4,33 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.MergerConfig;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
+import nl.zeesoft.zdk.neural.network.ProcessorConfig;
 import nl.zeesoft.zdk.neural.network.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.network.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.network.TemporalMemoryConfig;
 
 public class TestNetworkConfig {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
+		NetworkConfig config = getNewNetworkConfig();
+		assert config.getNumberOfInputs() == 1;
+		assert config.getNumberOfProcessors() == 5;
+		
+		config.addLink("TestSpatialPooler", 1, "TestMerger", 1);
+		StringBuilder err = config.test();
+		assert err.toString().equals("TestMerger: link from TestSpatialPooler does not provide output index 1");
+		ProcessorConfig pc = config.getProcessorConfig("TestMerger");
+		pc.inputLinks.remove(1);
+
+		pc = config.getProcessorConfig("TestSpatialPooler");
+		pc.inputLinks.clear();
+		config.addLink("TestTemporalMemory", 1, "TestSpatialPooler", 0);
+		err = config.test();
+		assert err.toString().equals("TestSpatialPooler: link from TestTemporalMemory/1 output volume is greater than input volume  (2304 > 256)");
+	}
+	
+	public static NetworkConfig getNewNetworkConfig() {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = new NetworkConfig();
@@ -22,6 +43,11 @@ public class TestNetworkConfig {
 		assert config.getNumberOfProcessors() == 1;
 		config.addLink("TestInput", "TestEncoder");
 		assert sec.inputLinks.size() == 1;
+		
+		config.addInput("TestEncoder");
+		assert config.getNumberOfInputs() == 1;
+		config.addScalarEncoder("TestInput");
+		assert config.getNumberOfProcessors() == 1;
 		
 		SpatialPoolerConfig spc = config.addSpatialPooler("TestSpatialPooler");
 		assert spc != null;
@@ -81,5 +107,7 @@ public class TestNetworkConfig {
 		
 		StringBuilder err = config.test();
 		assert err.length() == 0;
+		
+		return config;
 	}
 }
