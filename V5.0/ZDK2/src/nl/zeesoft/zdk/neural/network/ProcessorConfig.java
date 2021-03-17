@@ -1,19 +1,16 @@
 package nl.zeesoft.zdk.neural.network;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.Processor;
 
-public abstract class ProcessorConfig implements ConfigurableIO {
-	public int					layer		= 0;
-	public String				name		= "";
-	public List<LinkConfig>		inputLinks	= new ArrayList<LinkConfig>();
-	
+public abstract class ProcessorConfig extends AbstractNetworkProcessor implements ConfigurableIO {
 	protected ProcessorConfig(int layer, String name) {
 		this.layer = layer;
 		this.name = name;
+	}
+	
+	protected NetworkProcessor getNewNetworkProcessor() {
+		return new NetworkProcessor(layer, name, getNewInstance(), inputLinks);
 	}
 	
 	protected abstract Processor getNewInstance();

@@ -9,34 +9,26 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class Network {
-	protected List<String>							inputNames			= null;
-	protected SortedMap<String,Processor>			processors			= new TreeMap<String,Processor>();
-	protected SortedMap<String,List<LinkConfig>>	processorLinks		= new TreeMap<String,List<LinkConfig>>();
-	protected SortedMap<Integer,List<Processor>>	layerProcessors		= new TreeMap<Integer,List<Processor>>();
+	protected List<String>								inputNames			= null;
+	protected SortedMap<String,NetworkProcessor>		processors			= new TreeMap<String,NetworkProcessor>();
+	protected SortedMap<Integer,List<NetworkProcessor>>	layerProcessors		= new TreeMap<Integer,List<NetworkProcessor>>();
 	
-	protected NetworkIO								previousIO			= null;
+	protected NetworkIO									previousIO			= null;
 	
 	public void initialize(NetworkConfig config) {
 		inputNames = new ArrayList<String>(config.inputNames);
 		for (ProcessorConfig pc: config.processorConfigs) {
-			Processor processor = pc.getNewInstance();
-			processors.put(pc.name, processor);
-			
-			List<LinkConfig> links = new ArrayList<LinkConfig>();
-			for (LinkConfig link: pc.inputLinks) {
-				links.add(link.copy());
-			}
-			processorLinks.put(pc.name, links);
-			
-			List<Processor> lps = layerProcessors.get(pc.layer);
+			NetworkProcessor np = pc.getNewNetworkProcessor();
+			processors.put(pc.name, np);
+			List<NetworkProcessor> lps = layerProcessors.get(pc.layer);
 			if (lps==null) {
-				lps = new ArrayList<Processor>();
+				lps = new ArrayList<NetworkProcessor>();
 				layerProcessors.put(pc.layer, lps);
 			}
-			lps.add(processor);
+			lps.add(np);
 		}
 	}
 	
@@ -47,19 +39,33 @@ public class Network {
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
 			FunctionListList fll = new FunctionListList();
-			for (Entry<Integer,List<Processor>> entry: layerProcessors.entrySet()) {
+			for (Entry<Integer,List<NetworkProcessor>> entry: layerProcessors.entrySet()) {
 				FunctionList list = new FunctionList();
 				fll.functionLists.add(list);
-				for (Processor processor: entry.getValue()) {
+				for (NetworkProcessor np: entry.getValue()) {
 					Function function = new Function() {
 						@Override
 						protected Object exec() {
-							Processor processor = (Processor) param1;
-							
+							NetworkProcessor toProcessor = (NetworkProcessor) param1;
+							ProcessorIO pio = new ProcessorIO();
+							for (LinkConfig link: toProcessor.inputLinks) {
+								if (inputNames.contains(link.fromName)) {
+									pio.inputValue = io.inputs.get(link.fromName);
+								} else {
+									NetworkIO sourceIO = io;
+									NetworkProcessor fromProcessor = processors.get(link.fromName);
+									//if (fromProcessor.layer>=toProcessor.layer) {
+									//	sourceIO = previousIO;
+									//}
+									// TODO: Finish
+								}
+							}
+							toProcessor.processor.processIO(pio);
+							io.addProcessorIO(toProcessor.name,pio);
 							return true;
 						}
 					};
-					function.param1 = processor;
+					function.param1 = np;
 					list.functions.add(function);
 				}
 			}
@@ -80,12 +86,12 @@ public class Network {
 		return new ArrayList<String>(processors.keySet());
 	}
 	
-	public List<Processor> getProcessorsForLayer(int layer) {
-		List<Processor> r = layerProcessors.get(layer);
+	public List<NetworkProcessor> getProcessorsForLayer(int layer) {
+		List<NetworkProcessor> r = layerProcessors.get(layer);
 		if (r==null) {
-			r = new ArrayList<Processor>();
+			r = new ArrayList<NetworkProcessor>();
 		} else {
-			r = new ArrayList<Processor>(r);
+			r = new ArrayList<NetworkProcessor>(r);
 		}
 		return r;
 	}
