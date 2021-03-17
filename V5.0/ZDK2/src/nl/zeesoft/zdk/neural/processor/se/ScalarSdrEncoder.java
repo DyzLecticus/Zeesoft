@@ -12,26 +12,7 @@ public class ScalarSdrEncoder {
 
 	public Sdr getEncodedValue(Object value) {
 		Sdr r = new Sdr(encodeLength);
-		float val = 0;
-		if (value instanceof Float) {
-			val = (float) value;
-		} else if (value instanceof Integer) {
-			val = (int) value;
-		}
-		
-		if (periodic) {
-			val = getCorrectedValue(val) % (getCorrectedMaxValue() + resolution);
-		} else {
-			if (val < minValue) {
-				val = minValue;
-			}
-			if (val > maxValue) {
-				val = maxValue;
-			}
-			val = getCorrectedValue(val);
-		}
-		
-		float percentage = val / getCorrectedMaxValue();
+		float percentage = getCorrectedInputValue(value) / getCorrectedMaxValue();
 		int sBit = (int) (percentage * getBuckets());
 		int eBit = sBit + onBits;
 		for (int bit = sBit; bit < eBit; bit++) {
@@ -108,6 +89,28 @@ public class ScalarSdrEncoder {
 			r.append(sdr.onBits.size());
 			r.append(", required: ");
 			r.append(onBits);
+		}
+		return r;
+	}
+	
+	protected float getCorrectedInputValue(Object value) {
+		float r = 0;
+		if (value instanceof Float) {
+			r = (float) value;
+		} else if (value instanceof Integer) {
+			r = (int) value;
+		}
+		
+		if (periodic) {
+			r = getCorrectedValue(r) % (getCorrectedMaxValue() + resolution);
+		} else {
+			if (r < minValue) {
+				r = minValue;
+			}
+			if (r > maxValue) {
+				r = maxValue;
+			}
+			r = getCorrectedValue(r);
 		}
 		return r;
 	}
