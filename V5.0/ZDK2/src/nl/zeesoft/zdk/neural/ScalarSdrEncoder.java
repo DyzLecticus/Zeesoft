@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural;
 
-public class ScalarEncoder {
+public class ScalarSdrEncoder {
 	public int			encodeLength	= 256;
 	public int			onBits			= 16;
 	public float		minValue		= 0;

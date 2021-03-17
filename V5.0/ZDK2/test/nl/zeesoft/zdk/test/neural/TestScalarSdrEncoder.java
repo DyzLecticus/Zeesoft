@@ -1,19 +1,19 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.neural.ScalarEncoder;
+import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.Sdr;
 
-public class TestScalarEncoder {
+public class TestScalarSdrEncoder {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		ScalarEncoder enc = new ScalarEncoder();
+		ScalarSdrEncoder enc = new ScalarSdrEncoder();
 		
 		Sdr sdr1 = enc.getEncodedValue(-1);
 		Sdr sdr2 = enc.getEncodedValue(0);
 		assert sdr1.equals(sdr2);
-		assert ScalarEncoder.checkOnBits(sdr1, 32, 10).length()>0;
+		assert ScalarSdrEncoder.checkOnBits(sdr1, 32, 10).length()>0;
 
 		sdr1 = enc.getEncodedValue(true);
 		assert sdr1.equals(sdr2);
@@ -58,7 +58,7 @@ public class TestScalarEncoder {
 		sb = enc.testOnBits();
 		assert sb.length() == 0;
 		
-		enc = new ScalarEncoder();
+		enc = new ScalarSdrEncoder();
 		enc.encodeLength = 16;
 		enc.minValue = -8;
 		enc.maxValue = 7;
@@ -66,7 +66,7 @@ public class TestScalarEncoder {
 		enc.periodic = true;
 		assert enc.testMinimalOverlap().length()==0;
 		
-		enc = new ScalarEncoder();
+		enc = new ScalarSdrEncoder();
 		enc.encodeLength = 16;
 		enc.minValue = 8;
 		enc.maxValue = 24;
