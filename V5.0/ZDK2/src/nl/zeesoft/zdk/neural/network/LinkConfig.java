@@ -13,6 +13,10 @@ public class LinkConfig {
 		this.toInput = toInput;
 	}
 	
+	protected LinkConfig copy() {
+		return new LinkConfig(fromName, fromOutput, toInput);
+	}
+	
 	protected String checkLinkIO(InputOutputConfig fromConfig, String toName, InputOutputConfig toConfig) {
 		String r = "";
 		if (toInput >= toConfig.inputs.size()) {

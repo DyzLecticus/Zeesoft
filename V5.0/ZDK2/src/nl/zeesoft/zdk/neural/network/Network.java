@@ -2,14 +2,19 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.function.Function;
+import nl.zeesoft.zdk.function.FunctionList;
+import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.processor.Processor;
 
 public class Network {
 	protected List<String>							inputNames			= null;
 	protected SortedMap<String,Processor>			processors			= new TreeMap<String,Processor>();
+	protected SortedMap<String,List<LinkConfig>>	processorLinks		= new TreeMap<String,List<LinkConfig>>();
 	protected SortedMap<Integer,List<Processor>>	layerProcessors		= new TreeMap<Integer,List<Processor>>();
 	
 	protected NetworkIO								previousIO			= null;
@@ -19,6 +24,13 @@ public class Network {
 		for (ProcessorConfig pc: config.processorConfigs) {
 			Processor processor = pc.getNewInstance();
 			processors.put(pc.name, processor);
+			
+			List<LinkConfig> links = new ArrayList<LinkConfig>();
+			for (LinkConfig link: pc.inputLinks) {
+				links.add(link.copy());
+			}
+			processorLinks.put(pc.name, links);
+			
 			List<Processor> lps = layerProcessors.get(pc.layer);
 			if (lps==null) {
 				lps = new ArrayList<Processor>();
@@ -34,7 +46,24 @@ public class Network {
 	
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
-			
+			FunctionListList fll = new FunctionListList();
+			for (Entry<Integer,List<Processor>> entry: layerProcessors.entrySet()) {
+				FunctionList list = new FunctionList();
+				fll.functionLists.add(list);
+				for (Processor processor: entry.getValue()) {
+					Function function = new Function() {
+						@Override
+						protected Object exec() {
+							Processor processor = (Processor) param1;
+							
+							return true;
+						}
+					};
+					function.param1 = processor;
+					list.functions.add(function);
+				}
+			}
+			fll.execute(this);
 		}
 		previousIO = io;
 	}
