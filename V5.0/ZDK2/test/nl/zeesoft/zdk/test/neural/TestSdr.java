@@ -70,6 +70,16 @@ public class TestSdr {
 		sdr3.or(sdr2);
 		assert sdr3.onBits.size() == 2;
 		
+		Sdr sdr4 = new Sdr(18);
+		List<Sdr> sdrs = new ArrayList<Sdr>();
+		sdr4.concat(sdrs);
+		assert sdr4.onBits.size() == 0;
+		sdrs.add(sdr2);
+		sdrs.add(sdr3);
+		sdrs.add(sdr);
+		sdr4.concat(sdrs);
+		assert sdr4.onBits.size() == 4;
+
 		sdr3.subsample(1);
 		assert sdr3.onBits.size() == 1;
 		sdr3.subsample(0);
@@ -85,15 +95,5 @@ public class TestSdr {
 		sdr3 = sdr2.copy();
 		sdr3.distort(2F);
 		assert sdr3.getOverlap(sdr2) == 0;
-		
-		Sdr sdr4 = new Sdr(18);
-		List<Sdr> sdrs = new ArrayList<Sdr>();
-		sdr4.concat(sdrs);
-		assert sdr4.onBits.size() == 0;
-		sdrs.add(sdr2);
-		sdrs.add(sdr3);
-		sdrs.add(sdr);
-		sdr4.concat(sdrs);
-		assert sdr4.onBits.size() == 4;
 	}
 }
