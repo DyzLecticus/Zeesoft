@@ -92,7 +92,7 @@ public class TemporalMemory extends Processor {
 	}
 
 	@Override
-	public int getNumberOfOutputs() {
+	protected int getNumberOfOutputs() {
 		return 4;
 	}
 

@@ -114,7 +114,7 @@ public abstract class Processor {
 
 	protected abstract String getInputName(int index);
 
-	public int getNumberOfOutputs() {
+	protected int getNumberOfOutputs() {
 		return 1;
 	}
 

@@ -1,10 +1,12 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
+import nl.zeesoft.zdk.neural.processor.se.ScalarSdrEncoder;
 
-public class TestScalarSdrEncoder {
+public class TestScalarEncoder {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
@@ -73,5 +75,35 @@ public class TestScalarSdrEncoder {
 		enc.onBits = 4;
 		enc.periodic = true;
 		assert enc.testMinimalOverlap().length()==0;
+		
+		ScalarEncoder se = new ScalarEncoder();
+		assert se.getInputNames().size() == 1;
+		assert se.getInputNames().get(0).equals("SensorValue");
+		assert se.getOutputNames().size() == 1;
+		assert se.getOutputNames().get(0).equals("EncodedSensor");
+		assert se.toString().length() == 62;
+		
+		ProcessorIO io = new ProcessorIO();
+		se.processIO(io);
+		assert io.error.equals("ScalarEncoder requires an input value");
+		
+		io.error = "";
+		io.inputValue = true;
+		se.processIO(io);
+		assert io.error.equals("ScalarEncoder requires an integer or float value");
+		
+		io.error = "";
+		io.inputValue = 0;
+		se.processIO(io);
+		assert io.error.length() == 0;
+		assert io.outputs.size() == 1;
+		assert io.outputs.get(0).toString().equals("256,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
+
+		io.outputs.clear();
+		io.inputValue = 0F;
+		se.processIO(io);
+		assert io.error.length() == 0;
+		assert io.outputs.size() == 1;
+		assert io.outputs.get(0).toString().equals("256,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
 	}
 }
