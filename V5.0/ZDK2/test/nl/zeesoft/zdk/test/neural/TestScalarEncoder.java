@@ -1,10 +1,10 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
-import nl.zeesoft.zdk.neural.processor.se.ScalarSdrEncoder;
 
 public class TestScalarEncoder {
 	public static void main(String[] args) {

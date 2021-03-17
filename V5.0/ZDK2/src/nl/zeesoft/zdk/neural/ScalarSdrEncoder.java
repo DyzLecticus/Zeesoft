@@ -1,6 +1,4 @@
-package nl.zeesoft.zdk.neural.processor.se;
-
-import nl.zeesoft.zdk.neural.Sdr;
+package nl.zeesoft.zdk.neural;
 
 public class ScalarSdrEncoder {
 	public int			encodeLength	= 256;

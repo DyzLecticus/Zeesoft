@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.processor.se;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
