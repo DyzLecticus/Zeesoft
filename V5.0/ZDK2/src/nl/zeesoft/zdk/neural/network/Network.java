@@ -69,6 +69,11 @@ public class Network {
 	}
 	
 	protected boolean isValidIO(NetworkIO io) {
-		return true;
+		for (String name: inputNames) {
+			if (!io.inputs.containsKey(name) || io.inputs.get(name)==null) {
+				io.errors.add("Missing network input value for " + name);
+			}
+		}
+		return io.errors.size() == 0;
 	}
 }

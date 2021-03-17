@@ -10,6 +10,7 @@ public class TestNetwork {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = TestNetworkConfig.getNewNetworkConfig();
+		config.addInput("TestInput2");
 		config.addMerger(4,"TestMerger2");
 		
 		Network network = new Network();
@@ -23,7 +24,7 @@ public class TestNetwork {
 
 		network.initialize(config);
 		assert network.isInitialized();
-		assert network.getInputNames().size() == 1;
+		assert network.getInputNames().size() == 2;
 		assert network.getProcessorNames().size() == 6;
 		assert network.getProcessorsForLayer(0).size() == 1;
 		assert network.getProcessorsForLayer(4).size() == 2;
@@ -31,6 +32,18 @@ public class TestNetwork {
 		
 		io = new NetworkIO("TestInput",0);
 		network.processIO(io);
+		assert io.errors.size() == 1;
+		assert io.errors.get(0).equals("Missing network input value for TestInput2");
 		
+		io = new NetworkIO("TestInput",0);
+		io.inputs.put("TestInput2", null);
+		network.processIO(io);
+		assert io.errors.size() == 1;
+		assert io.errors.get(0).equals("Missing network input value for TestInput2");
+		
+		io = new NetworkIO("TestInput",0);
+		io.inputs.put("TestInput2", "Pizza");
+		network.processIO(io);
+		assert io.errors.size() == 0;
 	}
 }
