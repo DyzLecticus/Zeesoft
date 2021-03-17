@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
+import java.util.List;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
@@ -18,8 +20,8 @@ public class TestNetwork {
 		
 		NetworkIO io = new NetworkIO();
 		network.processIO(io);
-		assert io.errors.size() == 1;
-		assert io.errors.get(0).equals("Network is not initialized");
+		assert io.getErrors().size() == 1;
+		assert io.getErrors().get(0).equals("Network is not initialized");
 		assert network.getPreviousIO() == io;
 
 		network.initialize(config);
@@ -32,18 +34,24 @@ public class TestNetwork {
 		
 		io = new NetworkIO("TestInput",0);
 		network.processIO(io);
-		assert io.errors.size() == 1;
-		assert io.errors.get(0).equals("Missing network input value for TestInput2");
+		assert io.getErrors().size() == 1;
+		assert io.getErrors().get(0).equals("Missing network input value for TestInput2");
 		
 		io = new NetworkIO("TestInput",0);
-		io.inputs.put("TestInput2", null);
+		io.addInput("TestInput2", null);
 		network.processIO(io);
-		assert io.errors.size() == 1;
-		assert io.errors.get(0).equals("Missing network input value for TestInput2");
+		assert io.getErrors().size() == 1;
+		assert io.getErrors().get(0).equals("Missing network input value for TestInput2");
 		
 		io = new NetworkIO("TestInput",0);
-		io.inputs.put("TestInput2", "Pizza");
+		io.addInput("TestInput2", "Pizza");
 		network.processIO(io);
-		assert io.errors.size() == 0;
+		List<String> errors = io.getErrors();
+		assert errors.size() == 5;
+		assert errors.get(0).toString().equals("Classifier requires at least one input SDR");
+		assert errors.get(1).toString().equals("Merger requires at least one input SDR");
+		assert errors.get(2).toString().equals("Merger requires at least one input SDR");
+		assert errors.get(3).toString().equals("SpatialPooler connections are not initialized");
+		assert errors.get(4).toString().equals("TemporalMemory requires at least one input SDR");
 	}
 }

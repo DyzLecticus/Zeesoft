@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
+import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class Network {
@@ -47,22 +48,46 @@ public class Network {
 						@Override
 						protected Object exec() {
 							NetworkProcessor toProcessor = (NetworkProcessor) param1;
-							ProcessorIO pio = new ProcessorIO();
+							
+							boolean complete = true;
+							Object inputValue = null;
+							Sdr[] inputs = new Sdr[toProcessor.inputLinks.size()];
 							for (LinkConfig link: toProcessor.inputLinks) {
 								if (inputNames.contains(link.fromName)) {
-									pio.inputValue = io.inputs.get(link.fromName);
+									Object value = io.inputs.get(link.fromName);
+									if (value instanceof Sdr) {
+										inputs[0] = (Sdr)value;
+									} else {
+										inputValue = io.inputs.get(link.fromName);
+									}
 								} else {
 									NetworkIO sourceIO = io;
 									NetworkProcessor fromProcessor = processors.get(link.fromName);
-									//if (fromProcessor.layer>=toProcessor.layer) {
-									//	sourceIO = previousIO;
-									//}
-									// TODO: Finish
+									if (fromProcessor.layer>=toProcessor.layer) {
+										sourceIO = previousIO;
+									}
+									if (sourceIO!=null) {
+										ProcessorIO sourcePIO = sourceIO.getProcessorIO(link.fromName);
+										if (link.fromOutput < sourcePIO.outputs.size()) {
+											Sdr sdr = sourcePIO.outputs.get(link.fromOutput);
+											inputs[link.toInput] = sdr;
+										} else {
+											complete = false;
+										}
+									}
 								}
 							}
+							
+							ProcessorIO pio = new ProcessorIO();
+							if (complete) {
+								for (int i = 0; i < inputs.length; i++) {
+									pio.inputs.add(inputs[i]);
+								}
+							}
+							pio.inputValue = inputValue;
 							toProcessor.processor.processIO(pio);
 							io.addProcessorIO(toProcessor.name,pio);
-							return true;
+							return pio.error.length() == 0;
 						}
 					};
 					function.param1 = np;
