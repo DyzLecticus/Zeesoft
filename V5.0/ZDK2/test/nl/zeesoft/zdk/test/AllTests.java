@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.test.neural.TestCell;
 import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
 import nl.zeesoft.zdk.test.neural.TestMerger;
+import nl.zeesoft.zdk.test.neural.TestScalarEncoder;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 import nl.zeesoft.zdk.test.neural.TestSegment;
@@ -52,6 +53,7 @@ public class AllTests {
 		TestSize.main(args);
 		TestMatrix.main(args);
 		TestSdr.main(args);
+		TestScalarEncoder.main(args);
 		TestSdrHistory.main(args);
 		TestSpatialPooler.main(args);
 		TestSpatialPoolerOverlap.main(args);

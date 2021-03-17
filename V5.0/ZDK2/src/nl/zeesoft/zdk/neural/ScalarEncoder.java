@@ -35,11 +35,7 @@ public class ScalarEncoder {
 		for (int bit = sBit; bit < eBit; bit++) {
 			int b = bit;
 			if (bit >= encodeLength) {
-				if (periodic) {
-					b = b % encodeLength;
-				} else {
-					break;
-				}
+				b = b % encodeLength;
 			}
 			r.setBit(b, true);
 		}
@@ -47,22 +43,20 @@ public class ScalarEncoder {
 	}
 	
 	public float getBuckets() {
-		return encodeLength - onBits;
+		float r = 0;
+		if (periodic) {
+			r = encodeLength;
+		} else {
+			r = encodeLength - onBits;
+		}
+		return r;
 	}
 
 	public StringBuilder testOnBits() {
 		StringBuilder r = new StringBuilder();
 		for (float val = minValue; val <= maxValue; val+=resolution) {
 			Sdr sdr = getEncodedValue(val);
-			if (sdr.onBits.size()!=onBits) {
-				r.append("Invalid on bits for value: ");
-				r.append(val);
-				r.append(", on bits: ");
-				r.append(sdr.onBits.size());
-				r.append(", required: ");
-				r.append(onBits);
-				break;
-			}
+			r = checkOnBits(sdr, onBits, val);
 		}
 		return r;
 	}
@@ -99,6 +93,19 @@ public class ScalarEncoder {
 				break;
 			}
 			curr = next;
+		}
+		return r;
+	}
+	
+	public static StringBuilder checkOnBits(Sdr sdr, int onBits, Object value) {
+		StringBuilder r = new StringBuilder();
+		if (sdr.onBits.size()!=onBits) {
+			r.append("Invalid on bits for value: ");
+			r.append(value);
+			r.append(", on bits: ");
+			r.append(sdr.onBits.size());
+			r.append(", required: ");
+			r.append(onBits);
 		}
 		return r;
 	}

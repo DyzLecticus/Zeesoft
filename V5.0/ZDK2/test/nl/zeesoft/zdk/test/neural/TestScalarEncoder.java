@@ -13,6 +13,7 @@ public class TestScalarEncoder {
 		Sdr sdr1 = enc.getEncodedValue(-1);
 		Sdr sdr2 = enc.getEncodedValue(0);
 		assert sdr1.equals(sdr2);
+		assert ScalarEncoder.checkOnBits(sdr1, 32, 10).length()>0;
 
 		sdr1 = enc.getEncodedValue(true);
 		assert sdr1.equals(sdr2);
@@ -53,8 +54,24 @@ public class TestScalarEncoder {
 		enc.periodic = true;
 		enc.maxValue = 300;
 		sdr1 = enc.getEncodedValue(400);
-		assert sdr1.toString().equals("256,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94");
+		assert sdr1.toString().equals("256,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99");
 		sb = enc.testOnBits();
 		assert sb.length() == 0;
+		
+		enc = new ScalarEncoder();
+		enc.encodeLength = 16;
+		enc.minValue = -8;
+		enc.maxValue = 7;
+		enc.onBits = 4;
+		enc.periodic = true;
+		assert enc.testMinimalOverlap().length()==0;
+		
+		enc = new ScalarEncoder();
+		enc.encodeLength = 16;
+		enc.minValue = 8;
+		enc.maxValue = 24;
+		enc.onBits = 4;
+		enc.periodic = true;
+		assert enc.testMinimalOverlap().length()==0;
 	}
 }
