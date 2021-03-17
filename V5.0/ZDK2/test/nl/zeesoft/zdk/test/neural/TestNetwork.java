@@ -1,8 +1,10 @@
 package nl.zeesoft.zdk.test.neural;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class TestNetwork {
 	public static void main(String[] args) {
@@ -13,6 +15,12 @@ public class TestNetwork {
 		
 		Network network = new Network();
 		assert !network.isInitialized();
+		
+		NetworkIO io = new NetworkIO();
+		network.processIO(io);
+		assert io.errors.size() == 1;
+		assert io.errors.get(0).equals("Network is not initialized");
+
 		network.initialize(config);
 		assert network.isInitialized();
 		assert network.getInputNames().size() == 1;
@@ -20,5 +28,9 @@ public class TestNetwork {
 		assert network.getProcessorsForLayer(0).size() == 1;
 		assert network.getProcessorsForLayer(4).size() == 2;
 		assert network.getProcessorsForLayer(100).size() == 0;
+		
+		io = new NetworkIO("TestInput",0);
+		network.processIO(io);
+		
 	}
 }

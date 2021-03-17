@@ -30,6 +30,12 @@ public class Network {
 		return inputNames!=null;
 	}
 	
+	public void processIO(NetworkIO io) {
+		if (isInitialized(io) && isValidIO(io)) {
+			
+		}
+	}
+	
 	public List<String> getInputNames() {
 		return new ArrayList<String>(inputNames);
 	}
@@ -46,5 +52,16 @@ public class Network {
 			r = new ArrayList<Processor>(r);
 		}
 		return r;
+	}
+	
+	protected boolean isInitialized(NetworkIO io) {
+		if (!isInitialized()) {
+			io.errors.add(this.getClass().getSimpleName() + " is not initialized");
+		}
+		return io.errors.size() == 0;
+	}
+	
+	protected boolean isValidIO(NetworkIO io) {
+		return true;
 	}
 }

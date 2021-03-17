@@ -1,13 +1,13 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.neural.network.ClassifierConfig;
-import nl.zeesoft.zdk.neural.network.MergerConfig;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.ProcessorConfig;
-import nl.zeesoft.zdk.neural.network.ScalarEncoderConfig;
-import nl.zeesoft.zdk.neural.network.SpatialPoolerConfig;
-import nl.zeesoft.zdk.neural.network.TemporalMemoryConfig;
+import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
+import nl.zeesoft.zdk.neural.network.config.MergerConfig;
+import nl.zeesoft.zdk.neural.network.config.ScalarEncoderConfig;
+import nl.zeesoft.zdk.neural.network.config.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.network.config.TemporalMemoryConfig;
 
 public class TestNetworkConfig {
 	public static void main(String[] args) {
@@ -40,6 +40,13 @@ public class TestNetworkConfig {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = new NetworkConfig();
+		
+		StringBuilder err = config.test();
+		assert err.toString().equals(
+			"A network must have at least one inputs\n" + 
+			"A network must have at least one processor"
+		);
+		
 		config.addInput("TestInput");
 		assert config.getNumberOfInputs() == 1;
 		
@@ -111,7 +118,7 @@ public class TestNetworkConfig {
 		assert mrc.inputLinks.size() == 2;
 		mrc.inputLinks.remove(1);
 		
-		StringBuilder err = config.test();
+		err = config.test();
 		assert err.length() == 0;
 		
 		return config;

@@ -1,5 +1,6 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.config;
 
+import nl.zeesoft.zdk.neural.network.ProcessorConfig;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;

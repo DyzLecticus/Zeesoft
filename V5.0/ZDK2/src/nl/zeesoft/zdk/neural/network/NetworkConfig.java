@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
+import nl.zeesoft.zdk.neural.network.config.MergerConfig;
+import nl.zeesoft.zdk.neural.network.config.ScalarEncoderConfig;
+import nl.zeesoft.zdk.neural.network.config.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.network.config.TemporalMemoryConfig;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class NetworkConfig {
@@ -12,6 +17,12 @@ public class NetworkConfig {
 	
 	public StringBuilder test() {
 		StringBuilder r = new StringBuilder();
+		if (inputNames.size()==0) {
+			Util.appendLine(r, "A network must have at least one inputs");
+		}
+		if (processorConfigs.size()==0) {
+			Util.appendLine(r, "A network must have at least one processor");
+		}
 		for (ProcessorConfig toConfig: processorConfigs) {
 			InputOutputConfig toIOConfig = toConfig.getInputOutputConfig();
 			for (LinkConfig link: toConfig.inputLinks) {
