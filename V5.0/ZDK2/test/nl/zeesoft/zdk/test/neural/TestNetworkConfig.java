@@ -17,10 +17,16 @@ public class TestNetworkConfig {
 		assert config.getNumberOfInputs() == 1;
 		assert config.getNumberOfProcessors() == 5;
 		
-		config.addLink("TestSpatialPooler", 1, "TestMerger", 1);
+		ProcessorConfig pc = config.getProcessorConfig("TestSpatialPooler");
+		pc.inputLinks.get(0).toInput = 2;
 		StringBuilder err = config.test();
-		assert err.toString().equals("TestMerger: link from TestSpatialPooler does not provide output index 1");
-		ProcessorConfig pc = config.getProcessorConfig("TestMerger");
+		assert err.toString().equals("TestSpatialPooler: link can not connect to input index 2");
+		pc.inputLinks.get(0).toInput = 0;
+		
+		config.addLink("TestSpatialPooler", 1, "TestMerger", 1);
+		err = config.test();
+		assert err.toString().equals("TestMerger: link from TestSpatialPooler can not connect to output index 1");
+		pc = config.getProcessorConfig("TestMerger");
 		pc.inputLinks.remove(1);
 
 		pc = config.getProcessorConfig("TestSpatialPooler");

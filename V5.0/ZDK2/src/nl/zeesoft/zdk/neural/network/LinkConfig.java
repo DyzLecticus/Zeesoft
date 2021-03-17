@@ -15,8 +15,10 @@ public class LinkConfig {
 	
 	protected String checkLinkIO(InputOutputConfig fromConfig, String toName, InputOutputConfig toConfig) {
 		String err = "";
-		if (fromOutput >= fromConfig.outputs.size()) {
-			err = toName + ": link from " + fromName + " does not provide output index " + fromOutput;
+		if (toInput >= toConfig.inputs.size()) {
+			err = toName + ": link can not connect to input index " + toInput;
+		} else if (fromOutput >= fromConfig.outputs.size()) {
+			err = toName + ": link from " + fromName + " can not connect to output index " + fromOutput;
 		} else {
 			int outVolume = fromConfig.outputs.get(fromOutput).size.volume();
 			int maxVolume = toConfig.inputs.get(toInput).maxVolume;
