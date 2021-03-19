@@ -113,14 +113,16 @@ public class TestNetworkConfig {
 		config.addClassifier("TestClassifier");
 		assert config.getNumberOfProcessors() == 5;
 		
-		config.addLink("","TestMerger");
+		String error = config.addLink("","TestMerger");
 		assert mrc.inputLinks.size() == 1;
+		assert error.length() > 0;
 		
-		config.addLink("Pizza","TestMerger");
+		error = config.addLink("Pizza","TestMerger");
 		assert mrc.inputLinks.size() == 1;
+		assert error.length() > 0;
 		
-		config.addLink("TestClassifier","Pizza");
-		assert mrc.inputLinks.size() == 1;
+		error = config.addLink("TestClassifier","Pizza");
+		assert error.length() > 0;
 		
 		config.addLink("TestClassifier", "TestMerger");
 		assert mrc.inputLinks.size() == 1;

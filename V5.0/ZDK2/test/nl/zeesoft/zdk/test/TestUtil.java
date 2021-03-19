@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 
@@ -23,5 +26,12 @@ public class TestUtil {
 		assert sb.toString().equals("Test");
 		Util.appendLine(sb, "Test");
 		assert sb.toString().equals("Test\nTest");
+		
+		List<Util> utils = new ArrayList<Util>();
+		utils.add(new Util());
+		utils.add(null);
+		utils.add(new Util());
+		Util.removeNullValuesFromList(utils);
+		assert utils.size() == 2;
 	}
 }

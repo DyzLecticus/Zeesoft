@@ -105,16 +105,24 @@ public class NetworkConfig {
 		return r;
 	}
 
-	public void addLink(String fromName, String toName) {
-		addLink(fromName, 0, toName, 0);
+	public String addLink(String fromName, String toName) {
+		return addLink(fromName, 0, toName, 0);
 	}
 
-	public void addLink(String fromName, int fromOutput, String toName, int toInput) {
+	public String addLink(String fromName, int fromOutput, String toName, int toInput) {
+		String r = "";
 		ProcessorConfig pcF = getProcessorConfig(fromName);
 		ProcessorConfig pcT = getProcessorConfig(toName);
 		if ((pcF!=null || inputNames.contains(fromName)) && pcT!=null) {
 			pcT.addLink(fromName,fromOutput,toInput);
+		} else {
+			if (pcT==null) {
+				r = "Link to processor not found: " + fromName;
+			} else {
+				r = "Link from processor or input not found: ";
+			}
 		}
+		return r;
 	}
 	
 	public int getNumberOfInputs() {

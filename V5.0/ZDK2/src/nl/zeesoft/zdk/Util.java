@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk;
 
+import java.util.List;
+
 public class Util {
 	public static boolean equals(Object obj1, Object obj2) {
 		boolean r = true;
@@ -21,5 +23,17 @@ public class Util {
 			sb.append("\n");
 		}
 		sb.append(line);
+	}
+	
+	@SuppressWarnings({ "rawtypes" })
+	public static void removeNullValuesFromList(List list) {
+		int r = 0;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(r)==null) {
+				list.remove(r);
+			} else {
+				r++;
+			}
+		}
 	}
 }

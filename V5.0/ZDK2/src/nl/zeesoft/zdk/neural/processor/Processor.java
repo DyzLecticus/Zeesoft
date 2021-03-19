@@ -44,6 +44,7 @@ public abstract class Processor implements ConfigurableIO {
 	}
 	
 	protected boolean isValidIO(ProcessorIO io) {
+		Util.removeNullValuesFromList(io.inputs);
 		if (io.inputs.size()==0) {
 			io.error = this.getClass().getSimpleName() + " requires at least one input SDR";
 		} else {
