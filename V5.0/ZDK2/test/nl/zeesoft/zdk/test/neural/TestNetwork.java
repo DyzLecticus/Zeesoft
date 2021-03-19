@@ -32,7 +32,6 @@ public class TestNetwork {
 		network.processIO(io);
 		assert io.getErrors().size() == 1;
 		assert io.getErrors().get(0).equals("Network is not initialized");
-		assert network.getPreviousIO() == io;
 
 		network.initialize(config);
 		assert network.isInitialized();
@@ -69,6 +68,7 @@ public class TestNetwork {
 		assert errors.get(2).equals("Merger requires at least one input SDR");
 		assert errors.get(3).equals("SpatialPooler connections are not initialized");
 		assert errors.get(4).equals("TemporalMemory requires at least one input SDR");
+		assert network.getPreviousIO() == io;
 		
 		io = new NetworkIO("TestInput",new Sdr(100));
 		io.addInput("TestInput2", "Pizza");

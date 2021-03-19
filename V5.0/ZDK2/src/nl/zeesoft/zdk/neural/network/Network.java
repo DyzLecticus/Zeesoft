@@ -17,23 +17,13 @@ public class Network {
 	public static final String							ALL_PROCESSORS		= "*";
 	
 	protected List<String>								inputNames			= null;
-	protected SortedMap<String,NetworkProcessor>		processors			= new TreeMap<String,NetworkProcessor>();
-	protected SortedMap<Integer,List<NetworkProcessor>>	layerProcessors		= new TreeMap<Integer,List<NetworkProcessor>>();
+	protected NetworkProcessors							processors			= new NetworkProcessors();
 	
 	protected NetworkIO									previousIO			= null;
 	
 	public void initialize(NetworkConfig config) {
 		inputNames = new ArrayList<String>(config.inputNames);
-		for (ProcessorConfig pc: config.processorConfigs) {
-			NetworkProcessor np = pc.getNewNetworkProcessor();
-			processors.put(pc.name, np);
-			List<NetworkProcessor> lps = layerProcessors.get(pc.layer);
-			if (lps==null) {
-				lps = new ArrayList<NetworkProcessor>();
-				layerProcessors.put(pc.layer, lps);
-			}
-			lps.add(np);
-		}
+		processors.initialize(config.processorConfigs);
 	}
 	
 	public boolean isInitialized() {
@@ -41,31 +31,25 @@ public class Network {
 	}
 	
 	public int getNumberOfLayers() {
-		return layerProcessors.size();
+		return processors.getNumberOfLayers();
 	}
 	
 	public int getNumberOfProcessors() {
-		return processors.size();
+		return processors.getNumberOfProcessors();
 	}
 	
 	public int getWidth() {
-		int r = 0;
-		for (List<NetworkProcessor> lps: layerProcessors.values()) {
-			if (lps.size()>r) {
-				r = lps.size();
-			}
-		}
-		return r;
+		return processors.getWidth();
 	}
 	
 	public void reset() {
-		previousIO = null;
 		reset(ALL_LAYERS, ALL_PROCESSORS);
 	}
 	
 	public void reset(int layer, String name) {
+		previousIO = null;
 		if (isInitialized()) {
-			FunctionListList fll = getResetFunctionForProcessors(layer, name);
+			FunctionListList fll = processors.getResetFunctionForProcessors(layer, name);
 			fll.execute(this);
 		}
 	}
@@ -74,8 +58,8 @@ public class Network {
 		if (isInitialized(io) && isValidIO(io)) {
 			FunctionListList fll = getProcessFunctionForNetworkIO(io);
 			fll.execute(this);
+			previousIO = io;
 		}
-		previousIO = io;
 	}
 	
 	public NetworkIO getPreviousIO() {
@@ -87,19 +71,19 @@ public class Network {
 	}
 	
 	public List<String> getProcessorNames() {
-		return new ArrayList<String>(processors.keySet());
+		return processors.getProcessorNames();
 	}
 	
 	public List<NetworkProcessor> getProcessors(int layer) {
-		return this.getNetworkProcessors(layer, ALL_PROCESSORS);
+		return this.getProcessors(layer, ALL_PROCESSORS);
 	}
 	
 	public List<NetworkProcessor> getProcessors(String name) {
-		return this.getNetworkProcessors(ALL_LAYERS, name);
+		return this.getProcessors(ALL_LAYERS, name);
 	}
 	
 	public List<NetworkProcessor> getProcessors(int layer, String name) {
-		return this.getNetworkProcessors(layer, name);
+		return processors.getProcessors(layer, name);
 	}
 	
 	protected boolean isInitialized(NetworkIO io) {
@@ -118,27 +102,13 @@ public class Network {
 		return io.errors.size() == 0;
 	}
 
-	protected FunctionListList getResetFunctionForProcessors(int layer, String name) {
-		return getNewProcessorFunctionListList(getProcessorResetFunctions(layer,name));
-	}
-
 	protected FunctionListList getProcessFunctionForNetworkIO(NetworkIO io) {
 		return getNewLayerProcessorFunctionListList(getProcessorFunctionsForNetworkIO(io));
 	}
 
-	protected FunctionListList getNewProcessorFunctionListList(SortedMap<String,Function> processorFunctions) {
-		FunctionListList r = new FunctionListList();
-		FunctionList list = new FunctionList();
-		for (NetworkProcessor np: processors.values()) {
-			list.addFunction(processorFunctions.get(np.name));
-		}
-		r.addFunctionList(list);
-		return r;
-	}
-
 	protected FunctionListList getNewLayerProcessorFunctionListList(SortedMap<String,Function> processorFunctions) {
 		FunctionListList r = new FunctionListList();
-		for (Entry<Integer,List<NetworkProcessor>> entry: layerProcessors.entrySet()) {
+		for (Entry<Integer,List<NetworkProcessor>> entry: processors.getLayerProcessors().entrySet()) {
 			FunctionList list = new FunctionList();
 			for (NetworkProcessor np: entry.getValue()) {
 				list.addFunction(processorFunctions.get(np.name));
@@ -148,26 +118,9 @@ public class Network {
 		return r;
 	}
 
-	protected SortedMap<String,Function> getProcessorResetFunctions(int layer, String name) {
-		SortedMap<String,Function> r = new TreeMap<String,Function>();
-		List<NetworkProcessor> nps = getNetworkProcessors(layer, name);
-		for (NetworkProcessor np: nps) {
-			Function function = new Function() {
-				@Override
-				protected Object exec() {
-					np.processor.reset();
-					return true;
-				}
-			};
-			function.param2 = np;
-			r.put(np.name, function);
-		}
-		return r;
-	}
-
 	protected SortedMap<String,Function> getProcessorFunctionsForNetworkIO(NetworkIO io) {
 		SortedMap<String,Function> r = new TreeMap<String,Function>();
-		for (NetworkProcessor np: processors.values()) {
+		for (NetworkProcessor np: processors.getProcessors()) {
 			Function function = new Function() {
 				@Override
 				protected Object exec() {
@@ -182,9 +135,9 @@ public class Network {
 	}
 	
 	protected boolean processNetworkIOForProcessor(NetworkIO io, NetworkProcessor toProcessor) {
-		boolean complete = true;
 		Object inputValue = null;
 		Sdr[] inputs = new Sdr[toProcessor.inputLinks.size()];
+		boolean complete = processors.addInputsForProcessor(inputs, io, previousIO, toProcessor);
 		for (LinkConfig link: toProcessor.inputLinks) {
 			if (inputNames.contains(link.fromName)) {
 				Object value = io.inputs.get(link.fromName);
@@ -193,27 +146,8 @@ public class Network {
 				} else {
 					inputValue = io.inputs.get(link.fromName);
 				}
-			} else {
-				NetworkIO sourceIO = io;
-				ProcessorIO sourcePIO = null;
-				NetworkProcessor fromProcessor = processors.get(link.fromName);
-				if (fromProcessor.layer>=toProcessor.layer) {
-					sourceIO = previousIO;
-				}
-				if (sourceIO!=null) {
-					sourcePIO = sourceIO.getProcessorIO(link.fromName);
-				}
-				if (sourcePIO!=null) {
-					if (link.fromOutput < sourcePIO.outputs.size()) {
-						Sdr sdr = sourcePIO.outputs.get(link.fromOutput);
-						inputs[link.toInput] = sdr;
-					} else {
-						complete = false;
-					}
-				}
 			}
 		}
-		
 		ProcessorIO pio = new ProcessorIO();
 		if (complete) {
 			for (int i = 0; i < inputs.length; i++) {
@@ -224,18 +158,5 @@ public class Network {
 		toProcessor.processor.processIO(pio);
 		io.addProcessorIO(toProcessor.name,pio);
 		return pio.error.length() == 0;
-	}
-	
-	protected List<NetworkProcessor> getNetworkProcessors(int layer, String name) {
-		List<NetworkProcessor> r = new ArrayList<NetworkProcessor>();
-		for (NetworkProcessor np: processors.values()) {
-			if ((layer<=ALL_LAYERS || np.layer == layer) &&
-				(name.equals(ALL_PROCESSORS) 
-						|| np.name.equals(name))
-				) {
-				r.add(np);
-			}
-		}
-		return r;
 	}
 }
