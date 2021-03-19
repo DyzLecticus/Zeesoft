@@ -59,6 +59,7 @@ public class Network {
 	}
 	
 	public void reset() {
+		previousIO = null;
 		reset(ALL_LAYERS, ALL_PROCESSORS);
 	}
 	
@@ -89,14 +90,16 @@ public class Network {
 		return new ArrayList<String>(processors.keySet());
 	}
 	
-	public List<NetworkProcessor> getProcessorsForLayer(int layer) {
-		List<NetworkProcessor> r = layerProcessors.get(layer);
-		if (r==null) {
-			r = new ArrayList<NetworkProcessor>();
-		} else {
-			r = new ArrayList<NetworkProcessor>(r);
-		}
-		return r;
+	public List<NetworkProcessor> getProcessors(int layer) {
+		return this.getNetworkProcessors(layer, ALL_PROCESSORS);
+	}
+	
+	public List<NetworkProcessor> getProcessors(String name) {
+		return this.getNetworkProcessors(ALL_LAYERS, name);
+	}
+	
+	public List<NetworkProcessor> getProcessors(int layer, String name) {
+		return this.getNetworkProcessors(layer, name);
 	}
 	
 	protected boolean isInitialized(NetworkIO io) {
@@ -127,14 +130,9 @@ public class Network {
 		FunctionListList r = new FunctionListList();
 		FunctionList list = new FunctionList();
 		for (NetworkProcessor np: processors.values()) {
-			Function function = processorFunctions.get(np.name);
-			if (function!=null) {
-				list.functions.add(function);
-			}
+			list.addFunction(processorFunctions.get(np.name));
 		}
-		if (list.functions.size()>0) {
-			r.functionLists.add(list);
-		}
+		r.addFunctionList(list);
 		return r;
 	}
 
@@ -143,14 +141,9 @@ public class Network {
 		for (Entry<Integer,List<NetworkProcessor>> entry: layerProcessors.entrySet()) {
 			FunctionList list = new FunctionList();
 			for (NetworkProcessor np: entry.getValue()) {
-				Function function = processorFunctions.get(np.name);
-				if (function!=null) {
-					list.functions.add(function);
-				}
+				list.addFunction(processorFunctions.get(np.name));
 			}
-			if (list.functions.size()>0) {
-				r.functionLists.add(list);
-			}
+			r.addFunctionList(list);
 		}
 		return r;
 	}
@@ -237,7 +230,8 @@ public class Network {
 		List<NetworkProcessor> r = new ArrayList<NetworkProcessor>();
 		for (NetworkProcessor np: processors.values()) {
 			if ((layer<=ALL_LAYERS || np.layer == layer) &&
-				(name.equals(ALL_PROCESSORS) || np.name.equals(name))
+				(name.equals(ALL_PROCESSORS) 
+						|| np.name.equals(name))
 				) {
 				r.add(np);
 			}

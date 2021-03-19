@@ -36,14 +36,17 @@ public class TestNetwork {
 
 		network.initialize(config);
 		assert network.isInitialized();
-		assert network.getInputNames().size() == 2;
 		assert network.getNumberOfLayers() == 5;
 		assert network.getNumberOfProcessors() == 6;
 		assert network.getWidth() == 2;
+		assert network.getInputNames().size() == 2;
 		assert network.getProcessorNames().size() == 6;
-		assert network.getProcessorsForLayer(0).size() == 1;
-		assert network.getProcessorsForLayer(4).size() == 2;
-		assert network.getProcessorsForLayer(100).size() == 0;
+		assert network.getProcessors(0).size() == 1;
+		assert network.getProcessors(4).size() == 2;
+		assert network.getProcessors(100).size() == 0;
+		assert network.getProcessors("Pizza").size() == 0;
+		assert network.getProcessors("TestEncoder").size() == 1;
+		assert network.getProcessors(1,"TestEncoder").size() == 0;
 		
 		io = new NetworkIO("TestInput",0);
 		network.processIO(io);
@@ -79,12 +82,19 @@ public class TestNetwork {
 		io = new NetworkIO("TestInput",0);
 		io.addInput("TestInput2", new Sdr(100));
 		network.processIO(io);
-		errors = io.getErrors();
-		assert errors.size() == 1;
-		assert errors.get(0).toString().equals("Merger requires at least one input SDR");
+		assert io.getErrors().size() == 0;
 		assert io.getProcessorIO("TestClassifier").outputValue != null;
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
 		Classification cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
+		assert cl.valueCounts.size() == 0;
+
+		io = new NetworkIO("TestInput",1);
+		io.addInput("TestInput2", new Sdr(100));
+		network.processIO(io);
+		assert io.getErrors().size() == 0;
+		assert io.getProcessorIO("TestClassifier").outputValue != null;
+		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
+		cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
 		assert cl.valueCounts.size() == 0;
 	}
 }

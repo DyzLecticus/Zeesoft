@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.function.Function;
+import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 
 public class TestFunctionListList {
@@ -34,6 +35,9 @@ public class TestFunctionListList {
 		fll.addFunction(function);
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues2 = (List<Object>) fll.execute(self);
+		fll.addFunction(null);
+		fll.addFunctionList(null);
+		fll.addFunctionList(new FunctionList());
 		assert returnValues2!=null;
 		assert returnValues2.size()==2;
 		assert returnValues2.get(0)!=null;

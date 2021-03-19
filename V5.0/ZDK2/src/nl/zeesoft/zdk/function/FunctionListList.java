@@ -20,9 +20,17 @@ public class FunctionListList extends Function {
 		return returnValues;
 	}
 	
+	public void addFunctionList(FunctionList fl) {
+		if (fl!=null && fl.functions.size()>0) {
+			functionLists.add(fl);
+		}
+	}
+	
 	public void addFunction(Function function) {
-		FunctionList fl = new FunctionList();
-		fl.functions.add(function);
-		functionLists.add(fl);
+		if (function!=null) {
+			FunctionList fl = new FunctionList();
+			fl.functions.add(function);
+			addFunctionList(fl);
+		}
 	}
 }

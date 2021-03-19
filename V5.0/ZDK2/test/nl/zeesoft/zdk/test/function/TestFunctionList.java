@@ -29,7 +29,8 @@ public class TestFunctionList {
 		list.functions.add(function);
 		function = new MockFunction();
 		function.param1 = "Pizza";
-		list.functions.add(function);
+		list.addFunction(function);
+		list.addFunction(null);
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues2 = (List<Object>) list.execute(self);
 		assert returnValues2!=null;

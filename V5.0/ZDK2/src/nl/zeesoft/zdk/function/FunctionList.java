@@ -17,4 +17,10 @@ public class FunctionList extends Function {
 		}
 		return returnValues;
 	}
+	
+	public void addFunction(Function function) {
+		if (function!=null) {
+			functions.add(function);
+		}
+	}
 }
