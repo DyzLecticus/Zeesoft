@@ -6,7 +6,9 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 
-public class TestUtil {
+public class TestUtil implements Runnable {
+	private static InterruptedException caughtException = null;
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
@@ -33,5 +35,21 @@ public class TestUtil {
 		utils.add(new Util());
 		Util.removeNullValuesFromList(utils);
 		assert utils.size() == 2;
+		
+		Exception ex = Util.sleep(1);
+		AllTests.sleep(10);
+		assert ex == null;
+		
+		Thread runner = new Thread(new TestUtil());
+		runner.start();
+		AllTests.sleep(1);
+		runner.interrupt();
+		AllTests.sleep(1);
+		assert caughtException != null;
+	}
+
+	@Override
+	public void run() {
+		caughtException = Util.sleep(100);
 	}
 }

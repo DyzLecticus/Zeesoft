@@ -75,11 +75,11 @@ public class Network {
 	}
 	
 	public List<NetworkProcessor> getProcessors(int layer) {
-		return this.getProcessors(layer, ALL_PROCESSORS);
+		return getProcessors(layer, ALL_PROCESSORS);
 	}
 	
 	public List<NetworkProcessor> getProcessors(String name) {
-		return this.getProcessors(ALL_LAYERS, name);
+		return getProcessors(ALL_LAYERS, name);
 	}
 	
 	public List<NetworkProcessor> getProcessors(int layer, String name) {

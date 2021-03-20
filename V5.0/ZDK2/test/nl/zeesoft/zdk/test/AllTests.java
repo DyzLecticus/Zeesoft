@@ -55,18 +55,23 @@ public class AllTests {
 		TestRand.main(args);
 		Console.log("Test Util ...");
 		TestUtil.main(args);
+		Console.log("Test Worker ...");
+		TestWorker.main(args);
+		
 		Console.log("Test Function ...");
 		TestFunction.main(args);
 		Console.log("Test FunctionList ...");
 		TestFunctionList.main(args);
 		Console.log("Test FunctionListList ...");
 		TestFunctionListList.main(args);
+		
 		Console.log("Test Position ...");
 		TestPosition.main(args);
 		Console.log("Test Size ...");
 		TestSize.main(args);
 		Console.log("Test Matrix ...");
 		TestMatrix.main(args);
+		
 		Console.log("Test Sdr ...");
 		TestSdr.main(args);
 		Console.log("Test SdrHistory ...");

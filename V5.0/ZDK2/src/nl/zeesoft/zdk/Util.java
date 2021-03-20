@@ -36,4 +36,14 @@ public class Util {
 			}
 		}
 	}
+	
+	public static InterruptedException sleep(int ms) {
+		InterruptedException r = null;
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			r = e;
+		}
+		return r;
+	}
 }
