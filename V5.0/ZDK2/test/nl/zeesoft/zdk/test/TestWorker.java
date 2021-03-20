@@ -16,6 +16,7 @@ public class TestWorker {
 				increment++;
 			}
 		};
+		
 		assert worker.getSleepMs() == 100;
 		worker.setSleepMs(1);
 		assert worker.getSleepMs() == 1;
@@ -30,7 +31,5 @@ public class TestWorker {
 		}
 		assert !worker.stop();
 		assert increment > 1;
-		
-		
 	}
 }

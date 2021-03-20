@@ -41,16 +41,15 @@ public class Worker implements Runnable {
 	public final void run() {
 		while (!threadIsNull()) {
 			exec();
-			lock.lock();
-			int sleep = sleepMs;
-			lock.unlock();
+			int sleep = getSleepMs();
 			int slept = 0;
 			while (slept < sleep) {
 				Util.sleep(1);
-				slept++;
 				if (threadIsNull()) {
 					break;
 				}
+				slept++;
+				sleep = getSleepMs();
 			}
 		}
 		lock.lock();
