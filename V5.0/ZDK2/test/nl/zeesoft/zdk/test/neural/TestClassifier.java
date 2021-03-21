@@ -26,6 +26,7 @@ public class TestClassifier {
 		
 		Classifier cl = new Classifier();
 		assert cl.getInputOutputConfig()!=null;
+		cl.setLearn(false);
 		
 		ProcessorIO io = new ProcessorIO();
 		cl.processIO(io);
@@ -36,6 +37,10 @@ public class TestClassifier {
 		assert cl.activationHistory.length == 400;
 		assert cl.activationHistory.capacity == config.predictStep + 1;
 		assert cl.toString().length() == 53;
+		cl.setLearn(false);
+		assert !cl.config.learn;
+		cl.setLearn(true);
+		assert cl.config.learn;
 		
 		cl.bits = null;
 		cl.processIO(io);

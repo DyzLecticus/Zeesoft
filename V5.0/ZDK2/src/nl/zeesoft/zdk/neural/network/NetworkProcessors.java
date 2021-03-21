@@ -18,7 +18,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	protected SortedMap<String,NetworkProcessor>		processors			= new TreeMap<String,NetworkProcessor>();
 	protected SortedMap<Integer,List<NetworkProcessor>>	layerProcessors		= new TreeMap<Integer,List<NetworkProcessor>>();
 	
-	public NetworkProcessors(Executor executor) {
+	protected NetworkProcessors(Executor executor) {
 		this.executor = executor;
 	}
 	
@@ -58,6 +58,13 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 	
+	protected void setLearn(int layer, String name, boolean learn) {
+		List<NetworkProcessor> nps = getProcessors(layer, name);
+		for (NetworkProcessor np: nps) {
+			np.processor.setLearn(learn);
+		}
+	}
+	
 	protected List<String> getProcessorNames() {
 		return new ArrayList<String>(processors.keySet());
 	}
@@ -79,7 +86,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 	
-	public SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
+	protected SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
 	}
 

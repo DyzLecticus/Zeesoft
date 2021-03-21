@@ -8,6 +8,10 @@ import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 
 public abstract class Processor implements ConfigurableIO {
+	public void setLearn(boolean learn) {
+		
+	}
+	
 	public void reset() {
 		
 	}

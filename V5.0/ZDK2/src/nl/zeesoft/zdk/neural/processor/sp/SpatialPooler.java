@@ -32,8 +32,17 @@ public class SpatialPooler extends Processor {
 	}
 	
 	@Override
+	public void setLearn(boolean learn) {
+		if (config!=null) {
+			config.learn = learn;
+		}
+	}
+	
+	@Override
 	public void reset() {
-		connections.reset(this);
+		if (connections!=null) {
+			connections.reset(this);
+		}
 	}
 	
 	@Override

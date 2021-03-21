@@ -20,7 +20,7 @@ public class Network {
 	protected Executor									executor			= new Executor();
 	
 	protected List<String>								inputNames			= null;
-	protected NetworkProcessors							processors			= null;
+	protected NetworkProcessors							processors			= new NetworkProcessors(executor);
 	
 	protected NetworkIO									previousIO			= null;
 	
@@ -34,7 +34,6 @@ public class Network {
 	
 	public boolean initialize(NetworkConfig config, int timeoutMs) {
 		inputNames = new ArrayList<String>(config.inputNames);
-		processors = new NetworkProcessors(executor);
 		return processors.initialize(this, config.processorConfigs, timeoutMs);
 	}
 	
@@ -58,6 +57,14 @@ public class Network {
 			r = (executor.execute(this, fll, timeoutMs) != null);
 		}
 		return r;
+	}
+	
+	public void setLearn(boolean learn) {
+		setLearn(ALL_LAYERS, ALL_PROCESSORS, learn);
+	}
+	
+	public void setLearn(int layer, String name, boolean learn) {
+		processors.setLearn(layer, name, learn);
 	}
 	
 	public void processIO(NetworkIO io) {

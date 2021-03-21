@@ -29,8 +29,17 @@ public class TemporalMemory extends Processor {
 	}
 	
 	@Override
+	public void setLearn(boolean learn) {
+		if (config!=null) {
+			config.learn = learn;
+		}
+	}
+	
+	@Override
 	public void reset() {
-		cells.reset(this);
+		if (cells!=null) {
+			cells.reset(this);
+		}
 	}
 	
 	@Override

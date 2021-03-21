@@ -44,6 +44,8 @@ public class TestTemporalMemory {
 		
 		TemporalMemory tm = new TemporalMemory();
 		assert tm.toString().length() == 15;
+		tm.reset();
+		tm.setLearn(false);
 		
 		ProcessorIO io = new ProcessorIO();
 		tm.processIO(io);
@@ -52,6 +54,10 @@ public class TestTemporalMemory {
 
 		tm.initialize(config);
 		assert tm.cells.size.volume() == 400;
+		tm.setLearn(false);
+		assert !tm.config.learn;
+		tm.setLearn(true);
+		assert tm.config.learn;
 
 		tm.cells.size = null;
 		io = new ProcessorIO(new Sdr(100));

@@ -25,9 +25,18 @@ public class Classifier extends Processor {
 	}
 	
 	@Override
+	public void setLearn(boolean learn) {
+		if (config!=null) {
+			config.learn = learn;
+		}
+	}
+
+	@Override
 	public void reset() {
 		activationHistory.sdrs.clear();
-		bits.reset();
+		if (bits!=null) {
+			bits.reset();
+		}
 	}
 	
 	@Override

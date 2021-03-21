@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
+import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 import nl.zeesoft.zdk.test.AllTests;
 
 public class TestNetwork {
@@ -46,6 +47,13 @@ public class TestNetwork {
 		assert network.getProcessors("Pizza").size() == 0;
 		assert network.getProcessors("TestEncoder").size() == 1;
 		assert network.getProcessors(1,"TestEncoder").size() == 0;
+		
+		SpatialPooler sp = (SpatialPooler) network.getProcessors("TestSpatialPooler").get(0).processor;
+		assert sp.config.learn;
+		network.setLearn(false);
+		assert !sp.config.learn;
+		network.setLearn(true);
+		assert sp.config.learn;
 		
 		io = new NetworkIO("TestInput",0);
 		network.processIO(io);
