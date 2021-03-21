@@ -63,9 +63,11 @@ public class Executor {
 				waitMs++;
 			}
 		}
-		lock.lock();
-		r = new ArrayList<Object>(returnValues);
-		lock.unlock();
+		if (!isWorking()) {
+			lock.lock();
+			r = new ArrayList<Object>(returnValues);
+			lock.unlock();
+		}
 		return r;
 	}
 	
@@ -114,7 +116,6 @@ public class Executor {
 			doneIndexes.clear();
 			if (workingStep>stepFunctions.lastKey()) {
 				stepFunctions = null;
-				setSleepMs(100);
 			}
 		}
 		lock.unlock();
@@ -166,6 +167,7 @@ public class Executor {
 				}
 			}
 		};
+		r.setMinSleepMs(100);
 		return r;
 	}
 }

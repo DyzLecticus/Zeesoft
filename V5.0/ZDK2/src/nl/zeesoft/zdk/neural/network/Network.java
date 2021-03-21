@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
@@ -16,48 +17,56 @@ public class Network {
 	public static final int								ALL_LAYERS			= -1;
 	public static final String							ALL_PROCESSORS		= "*";
 	
+	protected Executor									executor			= new Executor();
+	
 	protected List<String>								inputNames			= null;
-	protected NetworkProcessors							processors			= new NetworkProcessors();
+	protected NetworkProcessors							processors			= null;
 	
 	protected NetworkIO									previousIO			= null;
 	
-	public void initialize(NetworkConfig config) {
+	public void setNumberOfWorkers(int num) {
+		executor.setNumberOfWorkers(num);
+	}
+	
+	public boolean initialize(NetworkConfig config) {
+		return initialize(config, 10000);
+	}
+	
+	public boolean initialize(NetworkConfig config, int timeoutMs) {
 		inputNames = new ArrayList<String>(config.inputNames);
-		processors.initialize(this, config.processorConfigs);
+		processors = new NetworkProcessors(executor);
+		return processors.initialize(this, config.processorConfigs, timeoutMs);
 	}
 	
 	public boolean isInitialized() {
 		return inputNames!=null;
 	}
 	
-	public int getNumberOfLayers() {
-		return processors.getNumberOfLayers();
+	public boolean reset() {
+		return reset(10000);
 	}
 	
-	public int getNumberOfProcessors() {
-		return processors.getNumberOfProcessors();
+	public boolean reset(int timeoutMs) {
+		return reset(ALL_LAYERS, ALL_PROCESSORS, timeoutMs);
 	}
 	
-	public int getWidth() {
-		return processors.getWidth();
-	}
-	
-	public void reset() {
-		reset(ALL_LAYERS, ALL_PROCESSORS);
-	}
-	
-	public void reset(int layer, String name) {
-		previousIO = null;
+	public boolean reset(int layer, String name, int timeoutMs) {
+		boolean r = false;
 		if (isInitialized()) {
+			previousIO = null;
 			FunctionListList fll = processors.getResetFunctionForProcessors(layer, name);
-			fll.execute(this);
+			r = (executor.execute(this, fll, timeoutMs) != null);
 		}
+		return r;
 	}
 	
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
+			int timeoutMs = io.getTimeoutMs();
 			FunctionListList fll = getProcessFunctionForNetworkIO(io);
-			fll.execute(this);
+			if (executor.execute(this, fll, timeoutMs) == null) {
+				io.addError("Processing network IO timed out after " + timeoutMs + " ms");
+			}
 			previousIO = io;
 		}
 	}
@@ -74,6 +83,18 @@ public class Network {
 		return processors.getProcessorNames();
 	}
 	
+	public int getNumberOfLayers() {
+		return processors.getNumberOfLayers();
+	}
+	
+	public int getNumberOfProcessors() {
+		return processors.getNumberOfProcessors();
+	}
+	
+	public int getWidth() {
+		return processors.getWidth();
+	}
+	
 	public List<NetworkProcessor> getProcessors(int layer) {
 		return getProcessors(layer, ALL_PROCESSORS);
 	}
@@ -88,18 +109,18 @@ public class Network {
 	
 	protected boolean isInitialized(NetworkIO io) {
 		if (!isInitialized()) {
-			io.errors.add(this.getClass().getSimpleName() + " is not initialized");
+			io.addError(this.getClass().getSimpleName() + " is not initialized");
 		}
-		return io.errors.size() == 0;
+		return io.getErrors().size() == 0;
 	}
 	
 	protected boolean isValidIO(NetworkIO io) {
 		for (String name: inputNames) {
-			if (!io.inputs.containsKey(name) || io.inputs.get(name)==null) {
-				io.errors.add("Missing network input value for " + name);
+			if (io.getInput(name)==null) {
+				io.addError("Missing network input value for " + name);
 			}
 		}
-		return io.errors.size() == 0;
+		return io.getErrors().size() == 0;
 	}
 
 	protected FunctionListList getProcessFunctionForNetworkIO(NetworkIO io) {
@@ -140,7 +161,7 @@ public class Network {
 		boolean complete = processors.addInputsForProcessor(inputs, io, previousIO, toProcessor);
 		for (LinkConfig link: toProcessor.inputLinks) {
 			if (inputNames.contains(link.fromName)) {
-				Object value = io.inputs.get(link.fromName);
+				Object value = io.getInput(link.fromName);
 				if (value instanceof Sdr) {
 					inputs[link.toInput] = (Sdr)value;
 				} else {

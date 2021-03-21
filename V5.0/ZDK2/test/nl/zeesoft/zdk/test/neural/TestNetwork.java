@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
+import nl.zeesoft.zdk.test.AllTests;
 
 public class TestNetwork {
 	public static void main(String[] args) {
@@ -25,8 +26,7 @@ public class TestNetwork {
 		
 		Network network = new Network();
 		assert !network.isInitialized();
-		
-		network.reset();
+		assert !network.reset();
 		
 		NetworkIO io = new NetworkIO();
 		network.processIO(io);
@@ -77,7 +77,7 @@ public class TestNetwork {
 		assert errors.size() == 6;
 		assert errors.get(1).toString().equals("ScalarEncoder requires an input value");
 		
-		network.reset();
+		assert network.reset();
 		
 		io = new NetworkIO("TestInput",0);
 		io.addInput("TestInput2", new Sdr(100));
@@ -96,5 +96,21 @@ public class TestNetwork {
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
 		cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
 		assert cl.valueCounts.size() == 0;
+
+		network.setNumberOfWorkers(2);
+		io = new NetworkIO("TestInput",1);
+		io.addInput("TestInput2", new Sdr(100));
+		io.setTimeoutMs(0);
+		network.processIO(io);
+		assert io.getErrors().size() == 1;
+		assert io.getErrors().get(0).equals("Processing network IO timed out after 0 ms");
+
+		AllTests.sleep(50);
+		assert !network.reset(0);
+
+		AllTests.sleep(50);
+		assert !network.initialize(config,0);
+		
+		network.setNumberOfWorkers(0);
 	}
 }

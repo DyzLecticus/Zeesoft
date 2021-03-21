@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
@@ -12,23 +13,31 @@ import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkProcessors extends AbstractNetworkProcessor {
+	protected Executor									executor			= null;
+	
 	protected SortedMap<String,NetworkProcessor>		processors			= new TreeMap<String,NetworkProcessor>();
 	protected SortedMap<Integer,List<NetworkProcessor>>	layerProcessors		= new TreeMap<Integer,List<NetworkProcessor>>();
 	
-	protected void initialize(Object caller, List<ProcessorConfig> processorConfigs) {
+	public NetworkProcessors(Executor executor) {
+		this.executor = executor;
+	}
+	
+	protected boolean initialize(Object caller, List<ProcessorConfig> processorConfigs, int timeoutMs) {
 		FunctionListList fll = getInitializeProcessorFunctionListList(processorConfigs);
-		@SuppressWarnings("unchecked")
-		List<Object> nps = (List<Object>) fll.execute(caller);
-		for (Object obj: nps) {
-			NetworkProcessor np = (NetworkProcessor) obj;
-			processors.put(np.name, np);
-			List<NetworkProcessor> lps = layerProcessors.get(np.layer);
-			if (lps==null) {
-				lps = new ArrayList<NetworkProcessor>();
-				layerProcessors.put(np.layer, lps);
+		List<Object> nps = executor.execute(caller, fll, timeoutMs);
+		if (nps!=null) {
+			for (Object obj: nps) {
+				NetworkProcessor np = (NetworkProcessor) obj;
+				processors.put(np.name, np);
+				List<NetworkProcessor> lps = layerProcessors.get(np.layer);
+				if (lps==null) {
+					lps = new ArrayList<NetworkProcessor>();
+					layerProcessors.put(np.layer, lps);
+				}
+				lps.add(np);
 			}
-			lps.add(np);
 		}
+		return nps!=null;
 	}
 	
 	protected int getNumberOfLayers() {

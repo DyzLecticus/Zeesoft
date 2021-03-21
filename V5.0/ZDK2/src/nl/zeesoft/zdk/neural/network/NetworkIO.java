@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 public class NetworkIO {
 	protected Lock								lock			= new Lock(this);
 	
+	protected int								timeoutMs		= 1000;
 	protected SortedMap<String,Object>			inputs			= new TreeMap<String,Object>();
 	protected SortedMap<String,ProcessorIO>		processorIO		= new TreeMap<String,ProcessorIO>();
 	protected List<String>						errors			= new ArrayList<String>();
@@ -27,6 +28,13 @@ public class NetworkIO {
 		lock.lock();
 		inputs.put(name, value);
 		lock.unlock();
+	}
+	
+	public Object getInput(String name) {
+		lock.lock();
+		Object r = inputs.get(name);
+		lock.unlock();
+		return r;
 	}
 	
 	public ProcessorIO getProcessorIO(String name) {
@@ -46,6 +54,25 @@ public class NetworkIO {
 		}
 		lock.unlock();
 		return r;
+	}
+	
+	public int getTimeoutMs() {
+		lock.lock();
+		int r = timeoutMs;
+		lock.unlock();
+		return r;
+	}
+
+	public void setTimeoutMs(int timeoutMs) {
+		lock.lock();
+		this.timeoutMs = timeoutMs;
+		lock.unlock();
+	}
+	
+	protected void addError(String msg) {
+		lock.lock();
+		errors.add(msg);
+		lock.unlock();
 	}
 	
 	protected void addProcessorIO(String name, ProcessorIO io) {

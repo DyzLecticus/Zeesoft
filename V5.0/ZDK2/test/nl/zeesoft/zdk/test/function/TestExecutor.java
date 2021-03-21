@@ -17,25 +17,34 @@ public class TestExecutor {
 		Logger.setLoggerDebug(true);
 
 		FunctionListList fll = new FunctionListList();
-		fll.addFunctionList(getTestFunctionList());
-		fll.addFunctionList(getTestFunctionList());
+		fll.addFunctionList(getTestFunctionList(true));
+		fll.addFunctionList(getTestFunctionList(false));
 		
 		Executor executor = new Executor();
 		
 		List<Object> returnValues = executor.execute(self, fll, 100);
 		assert returnValues.size() == 6;
+		assert (boolean)returnValues.get(0);
+		assert (boolean)returnValues.get(1);
+		assert (boolean)returnValues.get(2);
 		assert !executor.isWorking();
 
 		executor.setNumberOfWorkers(2);
 		assert executor.getNumberOfWorkers() == 2;
 		returnValues = executor.execute(self, fll, 100);
 		assert returnValues.size() == 6;
+		assert (boolean)returnValues.get(0);
+		assert (boolean)returnValues.get(1);
+		assert (boolean)returnValues.get(2);
 
 		returnValues = executor.execute(self, new FunctionListList(), 100);
 		assert returnValues.size() == 6;
+		assert (boolean)returnValues.get(0);
+		assert (boolean)returnValues.get(1);
+		assert (boolean)returnValues.get(2);
 
 		returnValues = executor.execute(self, fll, 0);
-		assert returnValues.size() == 0;
+		assert returnValues == null;
 		assert executor.isWorking();
 		while (executor.isWorking()) {
 			AllTests.sleep(10);
@@ -44,33 +53,45 @@ public class TestExecutor {
 		returnValues = executor.execute(self, fll, 1);
 		executor.execute(self, fll, 1);
 		assert executor.isWorking();
-		assert returnValues.size() < 6;
+		assert returnValues == null;
 
 		executor.setNumberOfWorkers(0);
 		assert executor.getNumberOfWorkers() == 0;
 	}
 	
-	protected static FunctionList getTestFunctionList() {
+	protected static FunctionList getTestFunctionList(boolean returnValue) {
 		FunctionList fl = new FunctionList();
 		fl.addFunction(new Function() {
 			@Override
 			protected Object exec() {
-				Util.sleep(20);
-				return true;
+				if (returnValue) {
+					Util.sleep(20);
+				} else {
+					Util.sleep(1);
+				}
+				return returnValue;
 			}
 		});
 		fl.addFunction(new Function() {
 			@Override
 			protected Object exec() {
-				Util.sleep(20);
-				return true;
+				if (returnValue) {
+					Util.sleep(20);
+				} else {
+					Util.sleep(1);
+				}
+				return returnValue;
 			}
 		});
 		fl.addFunction(new Function() {
 			@Override
 			protected Object exec() {
-				Util.sleep(10);
-				return true;
+				if (returnValue) {
+					Util.sleep(20);
+				} else {
+					Util.sleep(1);
+				}
+				return returnValue;
 			}
 		});
 		return fl;
