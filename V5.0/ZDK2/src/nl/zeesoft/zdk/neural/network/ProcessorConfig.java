@@ -9,10 +9,6 @@ public abstract class ProcessorConfig extends AbstractNetworkProcessor implement
 		this.name = name;
 	}
 	
-	protected NetworkProcessor getNewNetworkProcessor() {
-		return new NetworkProcessor(layer, name, getNewInstance(), inputLinks);
-	}
-	
 	protected abstract Processor getNewInstance();
 	
 	protected void addLink(String fromName, int fromOutput, int toInput) {

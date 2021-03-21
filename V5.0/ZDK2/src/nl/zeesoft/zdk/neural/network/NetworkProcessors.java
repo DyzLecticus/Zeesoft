@@ -15,14 +15,17 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	protected SortedMap<String,NetworkProcessor>		processors			= new TreeMap<String,NetworkProcessor>();
 	protected SortedMap<Integer,List<NetworkProcessor>>	layerProcessors		= new TreeMap<Integer,List<NetworkProcessor>>();
 	
-	protected void initialize(List<ProcessorConfig> processorConfigs) {
-		for (ProcessorConfig pc: processorConfigs) {
-			NetworkProcessor np = pc.getNewNetworkProcessor();
-			processors.put(pc.name, np);
-			List<NetworkProcessor> lps = layerProcessors.get(pc.layer);
+	protected void initialize(Object caller, List<ProcessorConfig> processorConfigs) {
+		FunctionListList fll = getInitializeProcessorFunctionListList(processorConfigs);
+		@SuppressWarnings("unchecked")
+		List<Object> nps = (List<Object>) fll.execute(caller);
+		for (Object obj: nps) {
+			NetworkProcessor np = (NetworkProcessor) obj;
+			processors.put(np.name, np);
+			List<NetworkProcessor> lps = layerProcessors.get(np.layer);
 			if (lps==null) {
 				lps = new ArrayList<NetworkProcessor>();
-				layerProcessors.put(pc.layer, lps);
+				layerProcessors.put(np.layer, lps);
 			}
 			lps.add(np);
 		}
@@ -71,6 +74,16 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
 	}
 
+	protected FunctionListList getInitializeProcessorFunctionListList(List<ProcessorConfig> processorConfigs) {
+		FunctionListList r = new FunctionListList();
+		FunctionList list = new FunctionList();
+		for (ProcessorConfig pc: processorConfigs) {
+			list.addFunction(getInitializeProcessorFunction(pc));
+		}
+		r.addFunctionList(list);
+		return r;
+	}
+
 	protected FunctionListList getResetFunctionForProcessors(int layer, String name) {
 		return getNewProcessorFunctionListList(getProcessorResetFunctions(layer,name));
 	}
@@ -85,6 +98,17 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 
+	protected Function getInitializeProcessorFunction(ProcessorConfig pc) {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				return new NetworkProcessor((ProcessorConfig)param1);
+			}
+		};
+		r.param1 = pc;
+		return r;
+	}
+
 	protected SortedMap<String,Function> getProcessorResetFunctions(int layer, String name) {
 		SortedMap<String,Function> r = new TreeMap<String,Function>();
 		List<NetworkProcessor> nps = getProcessors(layer, name);
@@ -92,11 +116,11 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 			Function function = new Function() {
 				@Override
 				protected Object exec() {
-					np.processor.reset();
+					((NetworkProcessor)param1).processor.reset();
 					return true;
 				}
 			};
-			function.param2 = np;
+			function.param1 = np;
 			r.put(np.name, function);
 		}
 		return r;

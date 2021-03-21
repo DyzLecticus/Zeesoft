@@ -23,7 +23,7 @@ public class Network {
 	
 	public void initialize(NetworkConfig config) {
 		inputNames = new ArrayList<String>(config.inputNames);
-		processors.initialize(config.processorConfigs);
+		processors.initialize(this, config.processorConfigs);
 	}
 	
 	public boolean isInitialized() {
