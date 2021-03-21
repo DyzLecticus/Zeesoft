@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.function.TestFunctionListList;
@@ -64,6 +65,8 @@ public class AllTests {
 		TestFunctionList.main(args);
 		Console.log("Test FunctionListList ...");
 		TestFunctionListList.main(args);
+		Console.log("Test Executor ...");
+		TestExecutor.main(args);
 		
 		Console.log("Test Position ...");
 		TestPosition.main(args);

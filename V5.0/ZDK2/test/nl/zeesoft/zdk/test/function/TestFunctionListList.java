@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.function;
 
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.function.Function;
@@ -44,5 +45,11 @@ public class TestFunctionListList {
 		assert returnValues2.get(0) instanceof Integer;
 		assert (int)returnValues2.get(0)==2;
 		assert returnValues2.get(1)==null;
+		
+		SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
+		assert stepFunctions.size() == 2;
+		assert stepFunctions.get(0).size() == 1;
+		assert stepFunctions.get(1).size() == 1;
+		
 	}
 }

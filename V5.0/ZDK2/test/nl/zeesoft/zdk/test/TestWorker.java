@@ -31,5 +31,29 @@ public class TestWorker {
 		}
 		assert !worker.stop();
 		assert increment > 1;
+		
+		while (worker.isWorking()) {
+			AllTests.sleep(1);
+		}
+		increment = 0;
+		worker.setSleepMs(0);
+		worker.setMinSleepMs(10);
+		worker.start();
+		AllTests.sleep(20);
+		worker.stop();
+		assert worker.getSleepMs() == 10;
+		assert increment > 1;
+		
+		while (worker.isWorking()) {
+			AllTests.sleep(1);
+		}
+		increment = 0;
+		worker.setSleepMs(0);
+		worker.setMinSleepMs(0);
+		worker.start();
+		AllTests.sleep(2);
+		worker.stop();
+		assert worker.getSleepMs() == 0;
+		assert increment > 1;
 	}
 }

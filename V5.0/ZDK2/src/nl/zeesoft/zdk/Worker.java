@@ -1,12 +1,15 @@
 package nl.zeesoft.zdk;
 
 public class Worker implements Runnable {
-	protected Lock						lock		= new Lock(this);
+	protected Lock		lock			= new Lock(this);
 	
-	protected Thread					thread		= null;
-	protected boolean					working		= false;
+	protected Thread	thread			= null;
+	protected boolean	working			= false;
 	
-	protected int						sleepMs		= 100;
+	protected int		sleepMs			= 100;
+	
+	protected int		minSleepMs		= 100;
+	protected long		noSleepStart	= 0;
 	
 	public void setSleepMs(int sleepMs) {
 		lock.lock();
@@ -17,6 +20,19 @@ public class Worker implements Runnable {
 	public int getSleepMs() {
 		lock.lock();
 		int r = sleepMs;
+		lock.unlock();
+		return r;
+	}
+	
+	public void setMinSleepMs(int minSleepMs) {
+		lock.lock();
+		this.minSleepMs = minSleepMs;
+		lock.unlock();
+	}
+	
+	public int getMinSleepMs() {
+		lock.lock();
+		int r = minSleepMs;
 		lock.unlock();
 		return r;
 	}
@@ -42,14 +58,26 @@ public class Worker implements Runnable {
 		while (!threadIsNull()) {
 			exec();
 			int sleep = getSleepMs();
-			int slept = 0;
-			while (slept < sleep) {
-				Util.sleep(1);
-				if (threadIsNull()) {
-					break;
+			int minSleep = getMinSleepMs();
+			if (sleep>0) {
+				int slept = 0;
+				while (slept < sleep) {
+					Util.sleep(1);
+					if (threadIsNull()) {
+						break;
+					}
+					slept++;
+					sleep = getSleepMs();
 				}
-				slept++;
-				sleep = getSleepMs();
+			} else if (minSleep>0){
+				if (noSleepStart == 0) {
+					noSleepStart = System.currentTimeMillis();
+				} else {
+					long diff = System.currentTimeMillis() - noSleepStart;
+					if (diff>minSleep) {
+						setSleepMs(minSleep);
+					}
+				}
 			}
 		}
 		lock.lock();
