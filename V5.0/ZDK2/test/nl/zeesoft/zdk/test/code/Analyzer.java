@@ -29,7 +29,8 @@ public class Analyzer {
 		if (total > 0) {
 			int avg = total / files.size(); 
 			Util.appendLine(r, "");
-			Util.appendLine(r, "Total lines of code: " + total);
+			Util.appendLine(r, "Files: " + files.size());
+			Util.appendLine(r, "Lines of code: " + total);
 			Util.appendLine(r, "Average per file: " + avg);
 
 			boolean first = true;
