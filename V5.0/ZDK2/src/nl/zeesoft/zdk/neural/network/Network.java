@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class Network {
@@ -80,6 +81,14 @@ public class Network {
 	
 	public NetworkIO getPreviousIO() {
 		return previousIO;
+	}
+	
+	public CellStats getCellStats() {
+		return getCellStats(ALL_LAYERS, ALL_PROCESSORS);
+	}
+	
+	public CellStats getCellStats(int layer, String name) {
+		return processors.getCellStats(this, layer, name);
 	}
 	
 	public List<String> getInputNames() {

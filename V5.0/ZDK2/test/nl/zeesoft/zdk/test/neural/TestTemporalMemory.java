@@ -61,7 +61,7 @@ public class TestTemporalMemory {
 		assert io.error.equals("TemporalMemory cells are not initialized");
 		tm.cells.size = config.size;
 
-		TmCells cells = tm.cells;
+		TmCells cells = (TmCells) tm.getCells();
 		tm.cells = null;
 		io = new ProcessorIO(new Sdr(100));
 		tm.processIO(io);

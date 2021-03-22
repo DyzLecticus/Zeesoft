@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.neural.model.Cells;
+import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class TemporalMemory extends LearningProcessor {
+public class TemporalMemory extends LearningProcessor implements CellsProcessor {
 	public static final int		ACTIVE_COLUMNS_INPUT		= 0;
 	public static final int		ACTIVE_APICAL_INPUT			= 1;
 	
@@ -56,6 +58,11 @@ public class TemporalMemory extends LearningProcessor {
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);
 		addOutput(io, cells.winnerCellPositions);
+	}
+
+	@Override
+	public Cells getCells() {
+		return cells;
 	}
 	
 	@Override

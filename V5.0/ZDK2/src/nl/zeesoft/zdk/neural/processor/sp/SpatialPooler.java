@@ -4,11 +4,13 @@ import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.SdrHistory;
+import nl.zeesoft.zdk.neural.model.Cells;
+import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class SpatialPooler extends LearningProcessor {
+public class SpatialPooler extends LearningProcessor implements CellsProcessor {
 	public static final int		ENCODED_SENSOR_INPUT	= 0;
 	
 	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
@@ -43,6 +45,15 @@ public class SpatialPooler extends LearningProcessor {
 		InputOutputConfig r = super.getInputOutputConfig();
 		if (config!=null) {
 			r = config.getInputOutputConfig();
+		}
+		return r;
+	}
+
+	@Override
+	public Cells getCells() {
+		Cells r = null;
+		if (connections!=null) {
+			r = connections.toCells(this);
 		}
 		return r;
 	}

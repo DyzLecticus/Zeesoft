@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -28,6 +29,11 @@ public class TestNetwork {
 		Network network = new Network();
 		assert !network.isInitialized();
 		assert !network.reset();
+		CellStats stats = network.getCellStats();
+		assert stats.cells == 0;
+		assert stats.proximalSegments == 0;
+		assert stats.distalSegments == 0;
+		assert stats.apicalSegments == 0;
 		
 		NetworkIO io = new NetworkIO();
 		network.processIO(io);
@@ -112,6 +118,15 @@ public class TestNetwork {
 		network.processIO(io);
 		assert io.getErrors().size() == 1;
 		assert io.getErrors().get(0).equals("Processing network IO timed out after 0 ms");
+		
+		stats = network.getCellStats();
+		assert stats.cells == 39168;
+		assert stats.proximalSegments == 2304;
+		assert stats.proximalSynapses > 10000;
+		assert stats.activeProximalSynapses > 10000;
+		assert stats.distalSegments > 50;
+		assert stats.proximalSynapses > 1000;
+		assert stats.activeDistalSynapses == 0;
 
 		AllTests.sleep(50);
 		assert !network.reset(0);

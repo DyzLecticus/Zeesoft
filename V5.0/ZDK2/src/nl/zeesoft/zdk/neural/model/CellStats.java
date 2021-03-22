@@ -24,11 +24,11 @@ public class CellStats {
 	}
 	
 	public CellStats(SpatialPooler sp) {
-		addModelCells(this,sp.connections.toCells(this));
+		addModelCells(this,sp.getCells());
 	}
 	
 	public CellStats(TemporalMemory tm) {
-		addModelCells(this,tm.cells);
+		addModelCells(this,tm.getCells());
 	}
 	
 	public void addStats(CellStats s) {

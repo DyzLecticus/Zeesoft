@@ -10,6 +10,9 @@ import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.model.CellStats;
+import nl.zeesoft.zdk.neural.model.Cells;
+import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
@@ -66,6 +69,20 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 				((LearningProcessor) np.processor).setLearn(learn);
 			}
 		}
+	}
+	
+	protected CellStats getCellStats(Object caller, int layer, String name) {
+		CellStats r = new CellStats();
+		List<NetworkProcessor> nps = getProcessors(layer, name);
+		for (NetworkProcessor np: nps) {
+			if (np.processor instanceof CellsProcessor) {
+				Cells cells = ((CellsProcessor) np.processor).getCells();
+				if (cells!=null) {
+					r.addModelCells(caller, cells);
+				}
+			}
+		}
+		return r;
 	}
 	
 	protected List<String> getProcessorNames() {
