@@ -77,9 +77,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		for (NetworkProcessor np: nps) {
 			if (np.processor instanceof CellsProcessor) {
 				Cells cells = ((CellsProcessor) np.processor).getCells();
-				if (cells!=null) {
-					r.addModelCells(caller, cells);
-				}
+				r.addModelCells(caller, cells);
 			}
 		}
 		return r;

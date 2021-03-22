@@ -53,6 +53,12 @@ public class TestNetwork {
 		assert network.getProcessors("Pizza").size() == 0;
 		assert network.getProcessors("TestEncoder").size() == 1;
 		assert network.getProcessors(1,"TestEncoder").size() == 0;
+
+		stats = network.getCellStats();
+		assert stats.cells == 39168;
+		assert stats.proximalSegments == 0;
+		assert stats.distalSegments == 0;
+		assert stats.apicalSegments == 0;
 		
 		SpatialPooler sp = (SpatialPooler) network.getProcessors("TestSpatialPooler").get(0).processor;
 		assert sp.isLearn();
