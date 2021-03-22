@@ -6,12 +6,9 @@ import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class TmConfig extends CellConfig implements ConfigurableIO {
-	public boolean	learn	= true;
-	
 	public TmConfig copy() {
 		TmConfig r = new TmConfig();
 		r.copyFrom(this);
-		r.learn = learn;
 		return r;
 	}
 	

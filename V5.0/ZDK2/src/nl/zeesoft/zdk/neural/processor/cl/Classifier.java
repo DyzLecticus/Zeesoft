@@ -3,10 +3,10 @@ package nl.zeesoft.zdk.neural.processor.cl;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrHistory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class Classifier extends Processor {
+public class Classifier extends LearningProcessor {
 	public static final int		ASSOCIATE_SDR_INPUT		= 0;
 	
 	public static final int		ASSOCIATED_SDR_OUTPUT	= 0;
@@ -22,13 +22,6 @@ public class Classifier extends Processor {
 		activationHistory.capacity = config.predictStep + 1;
 		
 		bits = new ClBits(this, this.config, activationHistory);
-	}
-	
-	@Override
-	public void setLearn(boolean learn) {
-		if (config!=null) {
-			config.learn = learn;
-		}
 	}
 
 	@Override
@@ -53,7 +46,7 @@ public class Classifier extends Processor {
 		Sdr input = io.inputs.get(ASSOCIATE_SDR_INPUT).copy();
 		input.subsample(config.maxOnBits);
 		activationHistory.push(input);
-		if (config.learn) {
+		if (learn) {
 			bits.associateBits(io.inputValue);
 		}
 		io.outputValue = bits.generatePrediction(input);

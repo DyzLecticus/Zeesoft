@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkProcessors extends AbstractNetworkProcessor {
@@ -61,7 +62,9 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	protected void setLearn(int layer, String name, boolean learn) {
 		List<NetworkProcessor> nps = getProcessors(layer, name);
 		for (NetworkProcessor np: nps) {
-			np.processor.setLearn(learn);
+			if (np.processor instanceof LearningProcessor) {
+				((LearningProcessor) np.processor).setLearn(learn);
+			}
 		}
 	}
 	
@@ -132,7 +135,10 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 			Function function = new Function() {
 				@Override
 				protected Object exec() {
-					((NetworkProcessor)param1).processor.reset();
+					NetworkProcessor np = (NetworkProcessor) param1;
+					if (np.processor instanceof LearningProcessor) {
+						((LearningProcessor) np.processor).reset();
+					}
 					return true;
 				}
 			};

@@ -49,11 +49,11 @@ public class TestNetwork {
 		assert network.getProcessors(1,"TestEncoder").size() == 0;
 		
 		SpatialPooler sp = (SpatialPooler) network.getProcessors("TestSpatialPooler").get(0).processor;
-		assert sp.config.learn;
+		assert sp.isLearn();
 		network.setLearn(false);
-		assert !sp.config.learn;
+		assert !sp.isLearn();
 		network.setLearn(true);
-		assert sp.config.learn;
+		assert sp.isLearn();
 		
 		io = new NetworkIO("TestInput",0);
 		network.processIO(io);

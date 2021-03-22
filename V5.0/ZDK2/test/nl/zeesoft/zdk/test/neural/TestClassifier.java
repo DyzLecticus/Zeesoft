@@ -26,7 +26,6 @@ public class TestClassifier {
 		
 		Classifier cl = new Classifier();
 		assert cl.getInputOutputConfig()!=null;
-		cl.setLearn(false);
 		
 		ProcessorIO io = new ProcessorIO();
 		cl.processIO(io);
@@ -37,10 +36,6 @@ public class TestClassifier {
 		assert cl.activationHistory.length == 400;
 		assert cl.activationHistory.capacity == config.predictStep + 1;
 		assert cl.toString().length() == 53;
-		cl.setLearn(false);
-		assert !cl.config.learn;
-		cl.setLearn(true);
-		assert cl.config.learn;
 		
 		cl.bits = null;
 		cl.processIO(io);
@@ -116,13 +111,13 @@ public class TestClassifier {
 		assert (int)classification.getMostCountedValues().get(0) == 2;
 		assert classification.getStandardDeviation() == 6.363961F;
 		
-		cl.config.learn = false;
+		cl.setLearn(false);
 		io1.outputs.clear();
 		cl.processIO(io1);
 		classification = ((Classification)io1.outputValue);
 		assert classification.getStandardDeviation() == 6.363961F;
 
-		cl.config.learn = true;
+		cl.setLearn(true);
 		for (int i = 0; i < 10; i++) {
 			io1.outputs.clear();
 			cl.processIO(io1);

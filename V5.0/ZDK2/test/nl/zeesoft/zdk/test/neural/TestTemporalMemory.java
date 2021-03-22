@@ -45,7 +45,6 @@ public class TestTemporalMemory {
 		TemporalMemory tm = new TemporalMemory();
 		assert tm.toString().length() == 15;
 		tm.reset();
-		tm.setLearn(false);
 		
 		ProcessorIO io = new ProcessorIO();
 		tm.processIO(io);
@@ -54,10 +53,6 @@ public class TestTemporalMemory {
 
 		tm.initialize(config);
 		assert tm.cells.size.volume() == 400;
-		tm.setLearn(false);
-		assert !tm.config.learn;
-		tm.setLearn(true);
-		assert tm.config.learn;
 
 		tm.cells.size = null;
 		io = new ProcessorIO(new Sdr(100));
@@ -133,7 +128,7 @@ public class TestTemporalMemory {
 		int distal = stats.distalSynapses;
 		int apical = stats.apicalSynapses;
 		
-		tm.config.learn = false;
+		tm.setLearn(false);
 		io1.outputs.clear();
 		tm.processIO(io1);
 		checkIO(io1,8,2,0,2,false);

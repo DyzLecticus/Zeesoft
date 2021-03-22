@@ -5,10 +5,10 @@ import java.util.List;
 
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class TemporalMemory extends Processor {
+public class TemporalMemory extends LearningProcessor {
 	public static final int		ACTIVE_COLUMNS_INPUT		= 0;
 	public static final int		ACTIVE_APICAL_INPUT			= 1;
 	
@@ -26,13 +26,6 @@ public class TemporalMemory extends Processor {
 
 		cells = new TmCells(this, this.config);
 		columns = new TmColumns(this, this.config, cells);
-	}
-	
-	@Override
-	public void setLearn(boolean learn) {
-		if (config!=null) {
-			config.learn = learn;
-		}
 	}
 	
 	@Override
@@ -55,7 +48,7 @@ public class TemporalMemory extends Processor {
 	protected void processValidIO(ProcessorIO io) {
 		cells.cycleState(getNewActiveApicalCellPositions(io));
 		columns.activate(this, getNewActiveColumnPositions(io));
-		if (config.learn) {
+		if (learn) {
 			columns.adapt(this);
 		}
 		cells.predictActiveCells(this);

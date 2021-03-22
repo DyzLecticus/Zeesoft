@@ -5,10 +5,15 @@ import java.util.ArrayList;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class MockProcessor extends Processor {
+public class MockProcessor extends LearningProcessor {
+	@Override
+	public void reset() {
+		
+	}
+	
 	@Override
 	protected void processValidIO(ProcessorIO io) {
 		addOutput(io, new ArrayList<Position>());

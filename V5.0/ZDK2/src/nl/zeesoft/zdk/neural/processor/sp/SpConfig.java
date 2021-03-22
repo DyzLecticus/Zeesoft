@@ -9,8 +9,6 @@ public class SpConfig implements ConfigurableIO {
 	public Size		outputSize					= new Size(48,48);
 	public int		outputOnBits				= 46;
 
-	public boolean	learn						= true;
-
 	public float	permanenceThreshold			= 0.1F;
 	public float	permanenceIncrement			= 0.05F;
 	public float	permanenceDecrement			= 0.008F;
@@ -27,7 +25,6 @@ public class SpConfig implements ConfigurableIO {
 		r.inputSize = inputSize.copy();
 		r.outputSize = outputSize.copy();
 		r.outputOnBits = outputOnBits;
-		r.learn = learn;
 		r.permanenceThreshold = permanenceThreshold;
 		r.permanenceIncrement = permanenceIncrement;
 		r.permanenceDecrement = permanenceDecrement;

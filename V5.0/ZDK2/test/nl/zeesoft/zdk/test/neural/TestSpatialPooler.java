@@ -27,7 +27,9 @@ public class TestSpatialPooler {
 		assert ioConfig.outputs.get(0).name.equals("OutputName");
 		processor.processIO(io);
 		processor.reset();
+		assert processor.isLearn();
 		processor.setLearn(false);
+		assert !processor.isLearn();
 		assert io.outputs.size() == 1;
 		assert processor.toString().length() == 55;
 		
@@ -47,7 +49,6 @@ public class TestSpatialPooler {
 		SpatialPooler sp = new SpatialPooler();
 		assert sp.toString().length() == 14;
 		sp.reset();
-		sp.setLearn(false);
 		
 		io = new ProcessorIO();
 		sp.processIO(io);
@@ -55,10 +56,6 @@ public class TestSpatialPooler {
 		assert io.error.equals("SpatialPooler is not initialized");
 
 		sp.initialize(config);
-		sp.setLearn(false);
-		assert !sp.config.learn;
-		sp.setLearn(true);
-		assert sp.config.learn;
 		assert sp.activationHistory.length == 100;
 		assert sp.activationHistory.capacity == 1000;
 		
@@ -158,7 +155,7 @@ public class TestSpatialPooler {
 		
 		connectionsBefore = sp.connections.copy(self);
 		Matrix activationsBefore = sp.activations.copy(self);
-		sp.config.learn = false;
+		sp.setLearn(false);
 		io = new ProcessorIO(input);
 		sp.processIO(io);
 		assert sp.connections.equals(connectionsBefore);

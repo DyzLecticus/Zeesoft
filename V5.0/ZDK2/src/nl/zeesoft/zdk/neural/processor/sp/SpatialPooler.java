@@ -5,10 +5,10 @@ import java.util.List;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.SdrHistory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
-import nl.zeesoft.zdk.neural.processor.Processor;
+import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class SpatialPooler extends Processor {
+public class SpatialPooler extends LearningProcessor {
 	public static final int		ENCODED_SENSOR_INPUT	= 0;
 	
 	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
@@ -29,13 +29,6 @@ public class SpatialPooler extends Processor {
 		connections = new SpConnections(this, this.config);
 		boostFactors = new SpBoostFactors(this, this.config, activationHistory);
 		activations = new SpActivations(this, this.config, connections, boostFactors);
-	}
-	
-	@Override
-	public void setLearn(boolean learn) {
-		if (config!=null) {
-			config.learn = learn;
-		}
 	}
 	
 	@Override
@@ -60,7 +53,7 @@ public class SpatialPooler extends Processor {
 		activations.activate(this, activeInputPositions);
 		List<Position> winners = activations.getWinners(this, config.outputOnBits);
 		addOutput(io, winners);
-		if (config.learn) {
+		if (learn) {
 			connections.adjustPermanences(this, activeInputPositions, winners);
 		}
 		activationHistory.push(io.outputs.get(0).copy());
