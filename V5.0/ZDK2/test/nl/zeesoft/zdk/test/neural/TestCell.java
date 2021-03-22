@@ -145,10 +145,10 @@ public class TestCell {
 		config.matchingThreshold = 1;
 		cell.classifySegmentActivity();
 		assert cell.activeDistalSegments.size() == 2;
-		assert cell.matchingDistalSegments.size() == 2;
+		assert cell.matchingDistalSegments.size() == 1;
 		assert cell.matchingDistalSegment != null;
 		assert cell.activeApicalSegments.size() == 2;
-		assert cell.matchingApicalSegments.size() == 2;
+		assert cell.matchingApicalSegments.size() == 1;
 		assert cell.matchingApicalSegment != null;
 
 		List<Position> subset = new ArrayList<Position>(active);
@@ -157,10 +157,10 @@ public class TestCell {
 		cell.calculateSegmentActivity(subset, subset);
 		cell.classifySegmentActivity();
 		assert cell.activeDistalSegments.size() == 0;
-		assert cell.matchingDistalSegments.size() == 6;
+		assert cell.matchingDistalSegments.size() == 3;
 		assert cell.matchingDistalSegment != null;
 		assert cell.activeApicalSegments.size() == 0;
-		assert cell.matchingApicalSegments.size() == 6;
+		assert cell.matchingApicalSegments.size() == 3;
 		assert cell.matchingApicalSegment != null;
 		
 		cell.activeDistalSegments.add(cell.matchingDistalSegments.remove(0));
@@ -185,10 +185,10 @@ public class TestCell {
 		cell.calculateSegmentActivity(active, active);
 		cell.classifySegmentActivity();
 		assert cell.activeDistalSegments.size() == 2;
-		assert cell.matchingDistalSegments.size() == 2;
+		assert cell.matchingDistalSegments.size() == 1;
 		assert cell.matchingDistalSegment != null;
 		assert cell.activeApicalSegments.size() == 2;
-		assert cell.matchingApicalSegments.size() == 2;
+		assert cell.matchingApicalSegments.size() == 1;
 		assert cell.matchingApicalSegment != null;
 		assert cell.isPredictive(new ArrayList<Position>());
 		assert cell.isPredictive(active);

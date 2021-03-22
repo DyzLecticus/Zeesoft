@@ -117,8 +117,8 @@ public class TestCells {
 		assert synapse1.permanence == 0.21F;
 		cells.punishPredictedColumn(cell.position, Segment.DISTAL, winners1, 0.1F);
 		cells.punishPredictedColumn(cell.position, Segment.APICAL, apical1, 0.1F);
-		assert synapse1.permanence == 0.00999999F;
-		assert synapse2.permanence == 0.00999999F;
+		assert synapse1.permanence == 0.10999999F;
+		assert synapse2.permanence == 0.10999999F;
 		
 		Segment segment = new Segment();
 		Synapse synapse = new Synapse();
@@ -153,10 +153,10 @@ public class TestCells {
 		assert stats.activeProximalSynapses == 1;
 		assert stats.distalSegments == 4;
 		assert stats.distalSynapses == 8;
-		assert stats.activeDistalSynapses == 7;
+		assert stats.activeDistalSynapses == 8;
 		assert stats.apicalSegments == 4;
 		assert stats.apicalSynapses == 11;
-		assert stats.activeApicalSynapses == 8;
+		assert stats.activeApicalSynapses == 11;
 		
 		stats.addStats(stats);
 		assert stats.cells == 128;
@@ -165,10 +165,10 @@ public class TestCells {
 		assert stats.activeProximalSynapses == 2;
 		assert stats.distalSegments == 8;
 		assert stats.distalSynapses == 16;
-		assert stats.activeDistalSynapses == 14;
+		assert stats.activeDistalSynapses == 16;
 		assert stats.apicalSegments == 8;
 		assert stats.apicalSynapses == 22;
-		assert stats.activeApicalSynapses == 16;
+		assert stats.activeApicalSynapses == 22;
 		
 		assert stats.toString().length() == 209;
 		stats = new CellStats();

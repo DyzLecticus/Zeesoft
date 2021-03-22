@@ -148,7 +148,6 @@ public class Cell {
 		if (r!=null) {
 			List<Segment> list = new ArrayList<Segment>(matching);
 			for (Segment segment: list) {
-				matching.add(segment);
 				segments.remove(segment);
 				segments.add(0,segment);
 			}
