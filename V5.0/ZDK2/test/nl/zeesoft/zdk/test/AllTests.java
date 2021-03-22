@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.test.code.Analyzer;
 import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
@@ -36,6 +37,11 @@ public class AllTests {
 		long totalMs = (System.currentTimeMillis() - started);
 		Console.log("Total time: " + totalMs + " ms");
 		Console.log("Sleep time: " + sleepMs + " ms");
+		
+		Analyzer analyzer = new Analyzer();
+		analyzer.analyze();
+		Console.log("");
+		Console.log(analyzer);
 	}
 	
 	public static synchronized void sleep(int millis) {

@@ -172,19 +172,9 @@ public class Network {
 	}
 	
 	protected boolean processNetworkIOForProcessor(NetworkIO io, NetworkProcessor toProcessor) {
-		Object inputValue = null;
 		Sdr[] inputs = new Sdr[toProcessor.inputLinks.size()];
 		boolean complete = processors.addInputsForProcessor(inputs, io, previousIO, toProcessor);
-		for (LinkConfig link: toProcessor.inputLinks) {
-			if (inputNames.contains(link.fromName)) {
-				Object value = io.getInput(link.fromName);
-				if (value instanceof Sdr) {
-					inputs[link.toInput] = (Sdr)value;
-				} else {
-					inputValue = io.inputs.get(link.fromName);
-				}
-			}
-		}
+		Object inputValue = addInputsForProcessor(inputs, io, toProcessor);
 		ProcessorIO pio = new ProcessorIO();
 		if (complete) {
 			for (int i = 0; i < inputs.length; i++) {
@@ -195,5 +185,20 @@ public class Network {
 		toProcessor.processor.processIO(pio);
 		io.addProcessorIO(toProcessor.name,pio);
 		return pio.error.length() == 0;
+	}
+	
+	protected Object addInputsForProcessor(Sdr[] inputs, NetworkIO io, NetworkProcessor toProcessor) {
+		Object r = null;
+		for (LinkConfig link: toProcessor.inputLinks) {
+			if (inputNames.contains(link.fromName)) {
+				Object value = io.getInput(link.fromName);
+				if (value instanceof Sdr) {
+					inputs[link.toInput] = (Sdr)value;
+				} else {
+					r = io.inputs.get(link.fromName);
+				}
+			}
+		}
+		return r;
 	}
 }

@@ -95,8 +95,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		List<NetworkProcessor> r = new ArrayList<NetworkProcessor>();
 		for (NetworkProcessor np: processors.values()) {
 			if ((layer<=Network.ALL_LAYERS || np.layer == layer) &&
-				(name.equals(Network.ALL_PROCESSORS) 
-						|| np.name.equals(name))
+				(name.equals(Network.ALL_PROCESSORS) || np.name.equals(name))
 				) {
 				r.add(np);
 			}
@@ -163,7 +162,9 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 	
-	protected boolean addInputsForProcessor(Sdr[] inputs, NetworkIO io, NetworkIO previousIO, NetworkProcessor toProcessor) {
+	protected boolean addInputsForProcessor(
+		Sdr[] inputs, NetworkIO io, NetworkIO previousIO, NetworkProcessor toProcessor
+		) {
 		boolean complete = true;
 		for (LinkConfig link: toProcessor.inputLinks) {
 			NetworkProcessor fromProcessor = processors.get(link.fromName);
