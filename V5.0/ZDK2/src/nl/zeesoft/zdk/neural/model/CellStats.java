@@ -57,7 +57,7 @@ public class CellStats {
 	
 	public void addCell(Cell cell, float permanenceThreshold) {
 		cells++;
-		for (Segment seg: cell.proximalSegments)  {
+		for (Segment seg: cell.proximalSegments.segments)  {
 			proximalSegments++;
 			for (Synapse syn: seg.synapses) {
 				if (syn.permanence>0) {
@@ -68,7 +68,7 @@ public class CellStats {
 				}
 			}
 		}
-		for (Segment seg: cell.distalSegments)  {
+		for (Segment seg: cell.distalSegments.segments)  {
 			distalSegments++;
 			for (Synapse syn: seg.synapses) {
 				if (syn.permanence>0) {
@@ -79,7 +79,7 @@ public class CellStats {
 				}
 			}
 		}
-		for (Segment seg: cell.apicalSegments)  {
+		for (Segment seg: cell.apicalSegments.segments)  {
 			apicalSegments++;
 			for (Synapse syn: seg.synapses) {
 				if (syn.permanence>0) {

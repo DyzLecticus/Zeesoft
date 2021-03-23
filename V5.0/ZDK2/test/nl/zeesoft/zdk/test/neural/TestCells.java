@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellConfig;
+import nl.zeesoft.zdk.neural.model.CellSegments;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.model.Segment;
@@ -109,14 +110,14 @@ public class TestCells {
 		segmentsCells = cellsBySegments.get(cellsBySegments.lastKey());
 		assert segmentsCells.size() == 2;
 		
-		Synapse synapse1 = cell.getMatchingSegments(Segment.DISTAL).get(0).synapses.get(0);
-		Synapse synapse2 = cell.getMatchingSegments(Segment.APICAL).get(0).synapses.get(0);
+		Synapse synapse1 = cell.distalSegments.matchingSegments.get(0).synapses.get(0);
+		Synapse synapse2 = cell.apicalSegments.matchingSegments.get(0).synapses.get(0);
 		assert synapse1.permanence == 0.21F;
 		assert synapse2.permanence == 0.21F;
-		cells.punishPredictedColumn(cell.position, Segment.DISTAL, winners1, 0F);
+		cells.punishPredictedColumn(cell.position, CellSegments.DISTAL, winners1, 0F);
 		assert synapse1.permanence == 0.21F;
-		cells.punishPredictedColumn(cell.position, Segment.DISTAL, winners1, 0.1F);
-		cells.punishPredictedColumn(cell.position, Segment.APICAL, apical1, 0.1F);
+		cells.punishPredictedColumn(cell.position, CellSegments.DISTAL, winners1, 0.1F);
+		cells.punishPredictedColumn(cell.position, CellSegments.APICAL, apical1, 0.1F);
 		assert synapse1.permanence == 0.10999999F;
 		assert synapse2.permanence == 0.10999999F;
 		

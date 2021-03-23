@@ -154,9 +154,9 @@ public class TestTemporalMemory {
 			@Override
 			protected Object exec() {
 				Cell cell = (Cell) param2;
-				segments.addAll(cell.distalSegments);
-				cell.matchingDistalSegments.clear();
-				cell.matchingDistalSegments.addAll(cell.distalSegments);
+				segments.addAll(cell.distalSegments.segments);
+				cell.distalSegments.matchingSegments.clear();
+				cell.distalSegments.matchingSegments.addAll(cell.distalSegments.segments);
 				return param2;
 			}
 		};

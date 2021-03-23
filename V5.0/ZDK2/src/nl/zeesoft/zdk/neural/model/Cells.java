@@ -34,7 +34,7 @@ public class Cells extends Matrix {
 		if (segmentDecrement > 0F) {
 			for (int z = 0; z < config.size.z; z++) {
 				Cell cell = getCell(new Position(columnPosition.x, columnPosition.y, z));
-				List<Segment> segments = cell.getMatchingSegments(type);
+				List<Segment> segments = cell.getSegments(type).matchingSegments;
 				for (Segment segment: segments) {
 					segment.adaptSynapses(prevActivePositions, segmentDecrement * -1F, 0F);
 				}
@@ -47,11 +47,11 @@ public class Cells extends Matrix {
 		for (Position pos: columnPositions) {
 			Cell cell = getCell(pos);
 			int potential = 0;
-			if (cell.matchingDistalSegment!=null) {
-				potential = cell.matchingDistalSegment.potentialSynapses.size();
+			if (cell.distalSegments.matchingSegment!=null) {
+				potential = cell.distalSegments.matchingSegment.potentialSynapses.size();
 			}
-			if (cell.matchingApicalSegment!=null) {
-				potential = potential + cell.matchingApicalSegment.potentialSynapses.size();
+			if (cell.apicalSegments.matchingSegment!=null) {
+				potential = potential + cell.apicalSegments.matchingSegment.potentialSynapses.size();
 			}
 			if (potential>0) {
 				List<Cell> cells = r.get(potential);
@@ -84,10 +84,7 @@ public class Cells extends Matrix {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
-				Cell cell = new Cell();
-				cell.position = (Position) param1;
-				cell.config = config;
-				return cell;
+				return new Cell((Position) param1, config);
 			}
 		};
 		return r;

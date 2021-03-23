@@ -31,7 +31,7 @@ public class Analyzer {
 			Util.appendLine(r, "");
 			Util.appendLine(r, "Files: " + files.size());
 			Util.appendLine(r, "Lines of code: " + total);
-			Util.appendLine(r, "Average per file: " + avg);
+			Util.appendLine(r, "Average lines per file: " + avg);
 
 			boolean first = true;
 			for (AnalyzerFile file: files) {

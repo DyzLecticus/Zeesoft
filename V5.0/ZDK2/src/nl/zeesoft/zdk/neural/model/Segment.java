@@ -9,11 +9,6 @@ import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Position;
 
 public class Segment {
-	public static String	PROXIMAL			= "PROXIMAL";
-	public static String	DISTAL				= "DISTAL";
-	public static String	APICAL				= "APICAL";
-	
-	public String			type				= "";	
 	public List<Synapse>	synapses			= new ArrayList<Synapse>();
 	
 	public List<Synapse>	activeSynapses		= new ArrayList<Synapse>();

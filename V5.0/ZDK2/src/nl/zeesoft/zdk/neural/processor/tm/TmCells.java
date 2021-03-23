@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.CellSegments;
 import nl.zeesoft.zdk.neural.model.Cells;
-import nl.zeesoft.zdk.neural.model.Segment;
 
 public class TmCells extends Cells {
 	public List<Position>	activeCellPositions				= new ArrayList<Position>();
@@ -95,7 +95,7 @@ public class TmCells extends Cells {
 				Cell cell = getCell(new Position(column.x, column.y, z));
 				if (bursting) {
 					if (winnerCellPositions.contains(cell.position)) {
-						if (cell.matchingDistalSegment!=null) {
+						if (cell.distalSegments.matchingSegment!=null) {
 							cell.adaptMatchingSegments(
 								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
 							);
@@ -115,8 +115,8 @@ public class TmCells extends Cells {
 	}
 	
 	protected void punishPredictedColumn(Position column) {
-		punishPredictedColumn(column, Segment.DISTAL, prevActiveCellPositions, config.distalSegmentDecrement);
-		punishPredictedColumn(column, Segment.APICAL, prevActiveApicalCellPositions, config.apicalSegmentDecrement);
+		punishPredictedColumn(column, CellSegments.DISTAL, prevActiveCellPositions, config.distalSegmentDecrement);
+		punishPredictedColumn(column, CellSegments.APICAL, prevActiveApicalCellPositions, config.apicalSegmentDecrement);
 	}
 	
 	protected void activatePredictedCell(Position position) {
