@@ -24,7 +24,7 @@ public class TestWorker {
 		assert worker.start();
 		assert worker.isWorking();
 		assert !worker.start();
-		AllTests.sleep(10);
+		AllTests.sleep(20);
 		assert worker.stop();
 		while (worker.isWorking()) {
 			AllTests.sleep(1);

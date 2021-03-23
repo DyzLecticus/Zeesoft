@@ -55,7 +55,7 @@ public class NetworkIOProcessor {
 	protected boolean processNetworkIOForProcessor(NetworkIO io, NetworkProcessor toProcessor, NetworkIO previousIO) {
 		Sdr[] inputs = new Sdr[toProcessor.inputLinks.size()];
 		boolean complete = addInputsForProcessor(inputs, io, previousIO, toProcessor);
-		Object inputValue = addInputsForProcessor(inputs, io, toProcessor);
+		Object inputValue = getInputForProcessor(inputs, io, toProcessor);
 		ProcessorIO pio = new ProcessorIO();
 		if (complete) {
 			for (int i = 0; i < inputs.length; i++) {
@@ -96,7 +96,7 @@ public class NetworkIOProcessor {
 		return complete;
 	}
 
-	protected Object addInputsForProcessor(Sdr[] inputs, NetworkIO io, NetworkProcessor toProcessor) {
+	protected Object getInputForProcessor(Sdr[] inputs, NetworkIO io, NetworkProcessor toProcessor) {
 		Object r = null;
 		for (LinkConfig link: toProcessor.inputLinks) {
 			if (inputNames.contains(link.fromName)) {

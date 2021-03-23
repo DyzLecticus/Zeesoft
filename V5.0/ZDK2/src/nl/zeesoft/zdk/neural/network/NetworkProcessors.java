@@ -119,20 +119,6 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 
-	protected FunctionListList getResetFunctionForProcessors(int layer, String name) {
-		return getNewProcessorFunctionListList(getProcessorResetFunctions(layer,name));
-	}
-
-	protected FunctionListList getNewProcessorFunctionListList(SortedMap<String,Function> processorFunctions) {
-		FunctionListList r = new FunctionListList();
-		FunctionList list = new FunctionList();
-		for (NetworkProcessor np: processors.values()) {
-			list.addFunction(processorFunctions.get(np.name));
-		}
-		r.addFunctionList(list);
-		return r;
-	}
-
 	protected Function getInitializeProcessorFunction(ProcessorConfig pc) {
 		Function r = new Function() {
 			@Override
@@ -141,26 +127,6 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 			}
 		};
 		r.param1 = pc;
-		return r;
-	}
-
-	protected SortedMap<String,Function> getProcessorResetFunctions(int layer, String name) {
-		SortedMap<String,Function> r = new TreeMap<String,Function>();
-		List<NetworkProcessor> nps = getProcessors(layer, name);
-		for (NetworkProcessor np: nps) {
-			Function function = new Function() {
-				@Override
-				protected Object exec() {
-					NetworkProcessor np = (NetworkProcessor) param1;
-					if (np.processor instanceof LearningProcessor) {
-						((LearningProcessor) np.processor).reset();
-					}
-					return true;
-				}
-			};
-			function.param1 = np;
-			r.put(np.name, function);
-		}
 		return r;
 	}
 }

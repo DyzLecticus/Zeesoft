@@ -8,16 +8,17 @@ import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.model.CellStats;
 
 public class Network {
-	public static final int								ALL_LAYERS			= -1;
-	public static final String							ALL_PROCESSORS		= "*";
+	public static final int				ALL_LAYERS			= -1;
+	public static final String			ALL_PROCESSORS		= "*";
 	
-	protected Executor									executor			= new Executor();
+	protected Executor					executor			= new Executor();
 	
-	protected List<String>								inputNames			= null;
-	protected NetworkProcessors							processors			= new NetworkProcessors(executor);
-	protected NetworkIOProcessor						ioProcessor			= null;
+	protected List<String>				inputNames			= null;
+	protected NetworkProcessors			processors			= new NetworkProcessors(executor);
+	protected NetworkProcessorResetter	resetter			= new NetworkProcessorResetter(processors);
+	protected NetworkIOProcessor		ioProcessor			= null;
 	
-	protected NetworkIO									previousIO			= null;
+	protected NetworkIO					previousIO			= null;
 	
 	public void setNumberOfWorkers(int num) {
 		executor.setNumberOfWorkers(num);
@@ -49,7 +50,7 @@ public class Network {
 		boolean r = false;
 		if (isInitialized()) {
 			previousIO = null;
-			FunctionListList fll = processors.getResetFunctionForProcessors(layer, name);
+			FunctionListList fll = resetter.getResetFunctionForProcessors(layer, name);
 			r = (executor.execute(this, fll, timeoutMs) != null);
 		}
 		return r;

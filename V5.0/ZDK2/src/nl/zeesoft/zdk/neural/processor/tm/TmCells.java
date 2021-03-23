@@ -56,7 +56,7 @@ public class TmCells extends Cells {
 	
 	public void adaptColumn(Position column, boolean bursting) {
 		if (column.columnContains(activeCellPositions)) {
-			adaptPredictedColumn(column,bursting);
+			rewardPredictedColumn(column, bursting);
 		} else if (column.columnContains(predictiveCellPositions)) {
 			punishPredictedColumn(column);
 		}
@@ -89,7 +89,7 @@ public class TmCells extends Cells {
 		return function;
 	}
 	
-	protected void adaptPredictedColumn(Position column, boolean bursting) {
+	protected void rewardPredictedColumn(Position column, boolean bursting) {
 		if (prevWinnerCellPositions.size()>0) {
 			for (int z = 0; z < config.size.z; z++) {
 				Cell cell = getCell(new Position(column.x, column.y, z));

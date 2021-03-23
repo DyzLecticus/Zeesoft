@@ -27,17 +27,7 @@ public class Matrix {
 				matrix.size!=null &&
 				size.equals(matrix.size)
 				) {
-				r = true;
-				for (int x = 0; x < size.x; x++) {
-					for (int y = 0; y < size.y; y++) {
-						for (int z = 0; z < size.z; z++) {
-							if (!Util.equals(data[x][y][z], matrix.data[x][y][z])) {
-								r = false;
-								break;
-							}
-						}
-					}
-				}
+				r = dataEquals(matrix);
 			}
 		}
 		return r;
@@ -123,5 +113,20 @@ public class Matrix {
 			};
 			applyFunction(caller,function);
 		}
+	}
+	
+	protected boolean dataEquals(Matrix matrix) {
+		boolean r = true;
+		for (int x = 0; x < size.x; x++) {
+			for (int y = 0; y < size.y; y++) {
+				for (int z = 0; z < size.z; z++) {
+					if (!Util.equals(data[x][y][z], matrix.data[x][y][z])) {
+						r = false;
+						break;
+					}
+				}
+			}
+		}
+		return r;
 	}
 }
