@@ -9,12 +9,10 @@ import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
-import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
-import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkProcessors extends AbstractNetworkProcessor {
 	protected Executor									executor			= null;
@@ -103,6 +101,10 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		return r;
 	}
 	
+	protected NetworkProcessor getProcessor(String name) {
+		return processors.get(name);
+	}
+	
 	protected SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
 	}
@@ -160,33 +162,5 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 			r.put(np.name, function);
 		}
 		return r;
-	}
-	
-	protected boolean addInputsForProcessor(
-		Sdr[] inputs, NetworkIO io, NetworkIO previousIO, NetworkProcessor toProcessor
-		) {
-		boolean complete = true;
-		for (LinkConfig link: toProcessor.inputLinks) {
-			NetworkProcessor fromProcessor = processors.get(link.fromName);
-			if (fromProcessor!=null) {
-				NetworkIO sourceIO = io;
-				ProcessorIO sourcePIO = null;
-				if (fromProcessor.layer>=toProcessor.layer) {
-					sourceIO = previousIO;
-				}
-				if (sourceIO!=null) {
-					sourcePIO = sourceIO.getProcessorIO(link.fromName);
-				}
-				if (sourcePIO!=null) {
-					if (link.fromOutput < sourcePIO.outputs.size()) {
-						Sdr sdr = sourcePIO.outputs.get(link.fromOutput);
-						inputs[link.toInput] = sdr;
-					} else {
-						complete = false;
-					}
-				}
-			}
-		}
-		return complete;
 	}
 }

@@ -2,17 +2,10 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.function.Executor;
-import nl.zeesoft.zdk.function.Function;
-import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
-import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
-import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class Network {
 	public static final int								ALL_LAYERS			= -1;
@@ -22,6 +15,7 @@ public class Network {
 	
 	protected List<String>								inputNames			= null;
 	protected NetworkProcessors							processors			= new NetworkProcessors(executor);
+	protected NetworkIOProcessor						ioProcessor			= null;
 	
 	protected NetworkIO									previousIO			= null;
 	
@@ -35,6 +29,7 @@ public class Network {
 	
 	public boolean initialize(NetworkConfig config, int timeoutMs) {
 		inputNames = new ArrayList<String>(config.inputNames);
+		ioProcessor = new NetworkIOProcessor(inputNames, processors);
 		return processors.initialize(this, config.processorConfigs, timeoutMs);
 	}
 	
@@ -71,7 +66,7 @@ public class Network {
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
 			int timeoutMs = io.getTimeoutMs();
-			FunctionListList fll = getProcessFunctionForNetworkIO(io);
+			FunctionListList fll = ioProcessor.getProcessFunctionForNetworkIO(io, previousIO);
 			if (executor.execute(this, fll, timeoutMs) == null) {
 				io.addError("Processing network IO timed out after " + timeoutMs + " ms");
 			}
@@ -137,68 +132,5 @@ public class Network {
 			}
 		}
 		return io.getErrors().size() == 0;
-	}
-
-	protected FunctionListList getProcessFunctionForNetworkIO(NetworkIO io) {
-		return getNewLayerProcessorFunctionListList(getProcessorFunctionsForNetworkIO(io));
-	}
-
-	protected FunctionListList getNewLayerProcessorFunctionListList(SortedMap<String,Function> processorFunctions) {
-		FunctionListList r = new FunctionListList();
-		for (Entry<Integer,List<NetworkProcessor>> entry: processors.getLayerProcessors().entrySet()) {
-			FunctionList list = new FunctionList();
-			for (NetworkProcessor np: entry.getValue()) {
-				list.addFunction(processorFunctions.get(np.name));
-			}
-			r.addFunctionList(list);
-		}
-		return r;
-	}
-
-	protected SortedMap<String,Function> getProcessorFunctionsForNetworkIO(NetworkIO io) {
-		SortedMap<String,Function> r = new TreeMap<String,Function>();
-		for (NetworkProcessor np: processors.getProcessors()) {
-			Function function = new Function() {
-				@Override
-				protected Object exec() {
-					return processNetworkIOForProcessor((NetworkIO) param1, (NetworkProcessor) param2);
-				}
-			};
-			function.param1 = io;
-			function.param2 = np;
-			r.put(np.name, function);
-		}
-		return r;
-	}
-	
-	protected boolean processNetworkIOForProcessor(NetworkIO io, NetworkProcessor toProcessor) {
-		Sdr[] inputs = new Sdr[toProcessor.inputLinks.size()];
-		boolean complete = processors.addInputsForProcessor(inputs, io, previousIO, toProcessor);
-		Object inputValue = addInputsForProcessor(inputs, io, toProcessor);
-		ProcessorIO pio = new ProcessorIO();
-		if (complete) {
-			for (int i = 0; i < inputs.length; i++) {
-				pio.inputs.add(inputs[i]);
-			}
-		}
-		pio.inputValue = inputValue;
-		toProcessor.processor.processIO(pio);
-		io.addProcessorIO(toProcessor.name,pio);
-		return pio.error.length() == 0;
-	}
-	
-	protected Object addInputsForProcessor(Sdr[] inputs, NetworkIO io, NetworkProcessor toProcessor) {
-		Object r = null;
-		for (LinkConfig link: toProcessor.inputLinks) {
-			if (inputNames.contains(link.fromName)) {
-				Object value = io.getInput(link.fromName);
-				if (value instanceof Sdr) {
-					inputs[link.toInput] = (Sdr)value;
-				} else {
-					r = io.inputs.get(link.fromName);
-				}
-			}
-		}
-		return r;
 	}
 }
