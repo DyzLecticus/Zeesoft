@@ -46,4 +46,25 @@ public class Util {
 		}
 		return r;
 	}
+	
+	public static float getStandardDeviation(List<Float> values) {
+		float r = 0.0F;
+		if (values.size()>1) {
+			float sum = 0.0F;
+			float dev = 0.0F;
+			int size = values.size();
+	
+			for(Float value: values) {
+				sum += value;
+			}
+	
+			float mean = sum / size;
+	
+			for(Float value: values) {
+				dev += Math.pow(value - mean, 2);
+			}
+			r = (float) Math.sqrt(dev/(size - 1));
+		}
+		return r;
+	}
 }

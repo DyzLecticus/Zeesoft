@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
+import java.util.HashMap;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
@@ -23,9 +25,18 @@ public class TestClassifier {
 		assert ioConfig.outputs.size() == 1;
 		assert ioConfig.outputs.get(Classifier.ASSOCIATED_SDR_OUTPUT).name.equals("AssociatedSDR");
 		assert ioConfig.toString().length() == 42;
-		
+
+		Classification classification = new Classification();
+		assert classification.getMostCountedValues().size() == 0;
+		classification.valueCounts = new HashMap<Object,Integer>();
+		classification.valueCounts.put(1, 10);
+		assert classification.getMostCountedValues().size() == 1;
+		classification.valueCounts.put(0, 20);
+		assert classification.getMostCountedValues().size() == 1;
+
 		Classifier cl = new Classifier();
 		assert cl.getInputOutputConfig()!=null;
+		cl.reset();
 		
 		ProcessorIO io = new ProcessorIO();
 		cl.processIO(io);
@@ -72,7 +83,7 @@ public class TestClassifier {
 		assert cl.activationHistory.sdrs.size() == 2;
 		assert cl.bits.bits.size() == 0;
 		assert io1.outputValue instanceof Classification;
-		Classification classification = ((Classification)io1.outputValue);
+		classification = ((Classification)io1.outputValue);
 		assert classification.name.equals(config.valueName);
 		assert classification.step == config.predictStep;
 		assert classification.valueCounts.size() == 0;

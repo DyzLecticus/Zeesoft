@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import nl.zeesoft.zdk.Util;
+
 public class Classification {
 	public String					name				= "";
 	public int						step				= 0;
@@ -28,22 +30,11 @@ public class Classification {
 	}
 	
 	public float getStandardDeviation() {
-		float r = 0.0F;
-		if (valueCounts.size()>1) {
-			float sum = 0.0F;
-			float dev = 0.0F;
-			int size = valueCounts.size();
-	
-			for(Integer count: valueCounts.values()) {
-				sum += (float)count;
-			}
-	
-			float mean = sum / size;
-	
-			for(Integer count: valueCounts.values()) {
-				dev += Math.pow((float)count - mean, 2);
-			}
-			r = (float) Math.sqrt(dev/(size - 1));
+		List<Float> values = new ArrayList<Float>();
+		for (Integer count: valueCounts.values()) {
+			values.add((float) count);
 		}
-		return r;
-	}}
+		return Util.getStandardDeviation(values);
+	}
+}
+

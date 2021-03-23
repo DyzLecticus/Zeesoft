@@ -46,6 +46,15 @@ public class TestUtil implements Runnable {
 		runner.interrupt();
 		AllTests.sleep(1);
 		assert caughtException != null;
+		
+		List<Float> values = new ArrayList<Float>();
+		assert Util.getStandardDeviation(values) == 0F;
+		values.add(1F);
+		assert Util.getStandardDeviation(values) == 0F;
+		values.add(1F);
+		assert Util.getStandardDeviation(values) == 0F;
+		values.add(2F);
+		assert Util.getStandardDeviation(values) == 0.57735026F;
 	}
 
 	@Override
