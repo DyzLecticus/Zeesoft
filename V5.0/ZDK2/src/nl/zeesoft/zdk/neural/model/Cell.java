@@ -15,9 +15,9 @@ public class Cell {
 	public Cell(Position position, CellConfig config) {
 		this.position = position;
 		this.config = config;
-		proximalSegments = new CellSegments(position, config, CellSegments.PROXIMAL);
-		distalSegments = new CellSegments(position, config, CellSegments.DISTAL);
-		apicalSegments = new CellSegments(position, config, CellSegments.APICAL);
+		proximalSegments = new CellSegments(position, config);
+		distalSegments = new CellSegments(position, config);
+		apicalSegments = new CellSegments(position, config);
 	}
 	
 	public void clear() {

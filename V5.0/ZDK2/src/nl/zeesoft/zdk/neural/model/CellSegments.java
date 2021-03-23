@@ -13,17 +13,15 @@ public class CellSegments {
 	
 	public Position			position			= null;
 	public CellConfig		config				= null;
-	public String			type				= DISTAL;
 	
 	public List<Segment>	segments			= new ArrayList<Segment>();
 	public List<Segment>	activeSegments		= new ArrayList<Segment>();
 	public List<Segment>	matchingSegments	= new ArrayList<Segment>();
 	public Segment			matchingSegment		= null;
 		
-	public CellSegments(Position position, CellConfig config, String type) {
+	public CellSegments(Position position, CellConfig config) {
 		this.position = position;
 		this.config = config;
-		this.type = type;
 	}
 	
 	public void clear() {
@@ -119,7 +117,7 @@ public class CellSegments {
 			if (growNum>0 && 
 				(config.segmentCreationSubsample==1F || Rand.getRandomFloat(0F, 1F) <= config.segmentCreationSubsample)
 				) {
-				r = createSegment(type);
+				r = createSegment();
 				r.growSynapses(position, growNum, growPositions, config.initialPermanence, config.maxSynapsesPerSegment);
 			}
 		}
@@ -146,7 +144,7 @@ public class CellSegments {
 		}
 	}
 	
-	protected Segment createSegment(String type) {
+	protected Segment createSegment() {
 		Segment r = new Segment();
 		segments.add(0,r);
 		while (segments.size()>config.maxSegmentsPerCell) {
