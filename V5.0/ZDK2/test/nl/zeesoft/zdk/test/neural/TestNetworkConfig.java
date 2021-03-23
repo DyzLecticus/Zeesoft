@@ -54,7 +54,7 @@ public class TestNetworkConfig {
 		
 		StringBuilder err = config.test();
 		assert err.toString().equals(
-			"A network must have at least one inputs\n" + 
+			"A network must have at least one input\n" + 
 			"A network must have at least one processor"
 		);
 		

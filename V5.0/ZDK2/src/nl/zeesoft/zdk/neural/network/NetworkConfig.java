@@ -3,50 +3,19 @@ package nl.zeesoft.zdk.neural.network;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.network.config.TemporalMemoryConfig;
-import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class NetworkConfig {
+	protected NetworkConfigTester		tester				= new NetworkConfigTester();
 	protected List<String>				inputNames			= new ArrayList<String>();
 	protected List<ProcessorConfig>		processorConfigs	= new ArrayList<ProcessorConfig>();
 	
 	public StringBuilder test() {
-		StringBuilder r = new StringBuilder();
-		List<String> unused = new ArrayList<String>(inputNames);
-		if (inputNames.size()==0) {
-			Util.appendLine(r, "A network must have at least one inputs");
-		}
-		if (processorConfigs.size()==0) {
-			Util.appendLine(r, "A network must have at least one processor");
-		}
-		for (ProcessorConfig toConfig: processorConfigs) {
-			InputOutputConfig toIOConfig = toConfig.getInputOutputConfig();
-			if (toConfig.inputLinks.size()==0) {
-				Util.appendLine(r, toConfig.name + ": Processor has no input link(s)");
-			} else {
-				for (LinkConfig link: toConfig.inputLinks) {
-					ProcessorConfig fromConfig = getProcessorConfig(link.fromName);
-					if (fromConfig!=null) {
-						InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
-						String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
-						if (err.length()>0) {
-							Util.appendLine(r, err);
-						}
-					} else {
-						unused.remove(link.fromName);
-					}
-				}
-			}
-		}
-		for (String name: unused) {
-			Util.appendLine(r, name + ": Input is not used");
-		}
-		return r;
+		return tester.test(this);
 	}
 	
 	public void addInput(String name) {
