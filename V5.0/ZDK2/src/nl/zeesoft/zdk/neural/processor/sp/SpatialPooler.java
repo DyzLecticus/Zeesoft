@@ -53,7 +53,8 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor {
 	public Cells getCells() {
 		Cells r = null;
 		if (connections!=null) {
-			r = connections.toCells(this);
+			SpCells cells = new SpCells(config, connections);
+			r = cells.toCells(this);
 		}
 		return r;
 	}
