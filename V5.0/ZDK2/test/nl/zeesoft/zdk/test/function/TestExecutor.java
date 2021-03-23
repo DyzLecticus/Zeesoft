@@ -38,10 +38,7 @@ public class TestExecutor {
 		assert (boolean)returnValues.get(2);
 
 		returnValues = executor.execute(self, new FunctionListList(), 100);
-		assert returnValues.size() == 6;
-		assert (boolean)returnValues.get(0);
-		assert (boolean)returnValues.get(1);
-		assert (boolean)returnValues.get(2);
+		assert returnValues.size() == 0;
 
 		returnValues = executor.execute(self, fll, 0);
 		assert returnValues == null;
