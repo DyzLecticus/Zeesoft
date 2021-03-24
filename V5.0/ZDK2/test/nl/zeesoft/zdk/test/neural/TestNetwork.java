@@ -132,7 +132,7 @@ public class TestNetwork {
 		assert stats.proximalStats.synapses > 10000;
 		assert stats.proximalStats.activeSynapses > 10000;
 		assert stats.distalStats.segments > 25;
-		assert stats.distalStats.synapses > 1000;
+		assert stats.distalStats.synapses > 500;
 		assert stats.distalStats.activeSynapses == 0;
 
 		ZdkTests.sleep(50);

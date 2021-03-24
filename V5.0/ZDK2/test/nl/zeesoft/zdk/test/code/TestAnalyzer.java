@@ -31,9 +31,16 @@ public class TestAnalyzer {
 		assert analyzer.toString().length() == 179;
 		
 		assert analyzer.getErrors().size() == 0;
+
 		analyzer.maxLinesPerFile = 10;
 		analyzer.maxLinesPerMethod = 2;
 		assert analyzer.getErrors().size() == 2;
+		assert analyzer.toString().length() == 339;
+		
+		analyzer.maxLinesPerFile = 1;
+		analyzer.maxLinesPerMethod = 1;
+		assert analyzer.getErrors().size() == 7;
+		assert analyzer.toString().length() == 669;
 	}
 	
 	public static StringBuilder getMockCode(int num) {
