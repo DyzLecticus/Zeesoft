@@ -7,10 +7,11 @@ import java.util.List;
 import nl.zeesoft.zdk.Util;
 
 public class Analyzer {
-	public String				sourceDir	= "src/";
-	public int					maxLines	= 200;
+	public String				sourceDir			= "src/";
+	public int					maxLinesPerFile		= 200;
+	public int					maxLinesPerMethod	= 30;
 	
-	public List<AnalyzerFile>	files		= new ArrayList<AnalyzerFile>();
+	public List<AnalyzerFile>	files				= new ArrayList<AnalyzerFile>();
 	
 	public void analyze() {
 		File src = new File(sourceDir);
@@ -24,8 +25,13 @@ public class Analyzer {
 		File src = new File(sourceDir);
 		if (src.exists() && src.canRead()) {
 			for (AnalyzerFile file: files) {
-				if (file.lines > 200) {
+				if (file.lines > maxLinesPerFile) {
 					r.add("File has too many lines of code; " + file);
+				}
+				for (AnalyzerFileMethod method: file.methods) {
+					if (method.lines > maxLinesPerMethod) {
+						r.add("Method has too many lines of code; " + method);
+					}
 				}
 			}
 		}
@@ -43,12 +49,19 @@ public class Analyzer {
 			values.add((float)file.lines);
 		}
 		if (total > 0) {
-			int avg = total / files.size();
+			float avg = (float)total / (float)files.size();
 			float stdDev = Util.getStandardDeviation(values);
-			r.append(addHeader(total, avg, stdDev));
+			
+			r.append(getHeader(total, avg, stdDev));
+			
+			int max = (int)(avg + (stdDev * 2F));
+			if (max > maxLinesPerFile) {
+				max = maxLinesPerFile;
+			}
+			
 			boolean first = true;
 			for (AnalyzerFile file: files) {
-				if (file.lines > avg + (stdDev * 2)) {
+				if (file.lines > max) {
 					if (first) {
 						Util.appendLine(r, "Largest files;");
 						first = false;
@@ -56,6 +69,8 @@ public class Analyzer {
 					Util.appendLine(r, "- " + file.toString());
 				}
 			}
+			Util.appendLine(r,"");
+			Util.appendLine(r,getMethodAnalysis().toString());
 		}
 		return r.toString();
 	}
@@ -73,12 +88,49 @@ public class Analyzer {
 		}
 	}
 	
-	protected StringBuilder addHeader(int total, int avg, float stdDev) {
+	protected StringBuilder getHeader(int total, float avg, float stdDev) {
 		StringBuilder r = new StringBuilder();
 		Util.appendLine(r, "Files: " + files.size());
 		Util.appendLine(r, "Lines of code: " + total);
-		Util.appendLine(r, "Average lines per file: " + avg);
-		Util.appendLine(r, "Standard deviation: " + stdDev);
+		Util.appendLine(r, "Average lines per file: " + avg + " (standard deviation: " + stdDev + ")");
+		return r;
+	}
+	
+	protected StringBuilder getMethodAnalysis() {
+		StringBuilder r = new StringBuilder();
+		int total = 0;
+		List<Float> values = new ArrayList<Float>();
+		for (AnalyzerFile file: files) {
+			for (AnalyzerFileMethod method: file.methods) {
+				total += method.lines;
+				values.add((float)method.lines);
+			}
+		}
+		if (total>0) {
+			float avg = (float)total / (float)values.size();
+			float stdDev = Util.getStandardDeviation(values);
+			
+			Util.appendLine(r, "Methods: " + values.size());
+			Util.appendLine(r, "Average lines per method: " + avg + " (standard deviation: " + stdDev + ")");
+			
+			int max = (int) (avg + (stdDev * 3F));
+			if (max > maxLinesPerMethod) {
+				max = maxLinesPerMethod;
+			}
+			
+			boolean first = true;
+			for (AnalyzerFile file: files) {
+				for (AnalyzerFileMethod method: file.methods) {
+					if (method.lines > max) {
+						if (first) {
+							Util.appendLine(r, "Largest methods;");
+							first = false;
+						}
+						Util.appendLine(r, "- " + method.toString());
+					}
+				}
+			}
+		}
 		return r;
 	}
 }

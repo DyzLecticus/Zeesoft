@@ -38,25 +38,14 @@ public class Executor {
 		if (getNumberOfWorkers()==0) {
 			r = executeInCurrentThread(caller, fll);
 		} else {
-			boolean wait = false;
-			lock.lock();
-			if (task==null || task.isDone()) {
-				task = new ExecutorTask(caller, fll.getStepFunctions());
-				workers.setSleepMs(0);
-				wait = true;
-			}
-			lock.unlock();
+			boolean wait = setTask(caller, fll);
 			if (wait) {
 				int waitMs = 0;
 				while (isWorking() && waitMs<timeoutMs) {
 					Util.sleep(1);
 					waitMs++;
 				}
-				lock.lock();
-				if (task.isDone()) {
-					r = task.getReturnValues();
-				}
-				lock.unlock();
+				r = getReturnValuesIfDone();
 			}
 		}
 		return r;
@@ -69,9 +58,31 @@ public class Executor {
 		return r;
 	}
 	
+	protected boolean setTask(Object caller, FunctionListList fll) {
+		boolean r = false;
+		lock.lock();
+		if (task==null || task.isDone()) {
+			task = new ExecutorTask(caller, fll.getStepFunctions());
+			workers.setSleepMs(0);
+			r = true;
+		}
+		lock.unlock();
+		return r;
+	}
+	
 	protected ExecutorTask getTask() {
 		lock.lock();
 		ExecutorTask r = task;
+		lock.unlock();
+		return r;
+	}
+	
+	protected List<Object> getReturnValuesIfDone() {
+		List<Object> r = null;
+		lock.lock();
+		if (task.isDone()) {
+			r = task.getReturnValues();
+		}
 		lock.unlock();
 		return r;
 	}

@@ -55,20 +55,13 @@ public class Worker implements Runnable {
 	
 	@Override
 	public final void run() {
+		long noSleepStart = 0;
 		while (!threadIsNull()) {
 			exec();
 			int sleep = getSleepMs();
 			int minSleep = getMinSleepMs();
 			if (sleep>0) {
-				int slept = 0;
-				while (slept < sleep) {
-					Util.sleep(1);
-					if (threadIsNull()) {
-						break;
-					}
-					slept++;
-					sleep = getSleepMs();
-				}
+				sleep(sleep);
 			} else if (minSleep>0){
 				if (noSleepStart == 0) {
 					noSleepStart = System.currentTimeMillis();
@@ -76,13 +69,12 @@ public class Worker implements Runnable {
 					long diff = System.currentTimeMillis() - noSleepStart;
 					if (diff>minSleep) {
 						setSleepMs(minSleep);
+						noSleepStart = 0;
 					}
 				}
 			}
 		}
-		lock.lock();
-		working = false;
-		lock.unlock();
+		stoppedWorking();
 	}
 	
 	private boolean startWorking() {
@@ -108,12 +100,30 @@ public class Worker implements Runnable {
 		lock.unlock();
 		return r;
 	}
+	
+	private void stoppedWorking() {
+		lock.lock();
+		working = false;
+		lock.unlock();
+	}
 
 	private boolean workerIsWorking() {
 		lock.lock();
 		boolean r = working;
 		lock.unlock();
 		return r;
+	}
+	
+	private void sleep(int sleep) {
+		int slept = 0;
+		while (slept < sleep) {
+			Util.sleep(1);
+			if (threadIsNull()) {
+				break;
+			}
+			slept++;
+			sleep = getSleepMs();
+		}
 	}
 	
 	private boolean threadIsNull() {		

@@ -38,16 +38,7 @@ public class ClBits {
 				}
 			}
 			if (divide) {
-				List<Integer> remove = new ArrayList<Integer>();
-				for (ClBit bit: bits.values()) {
-					bit.divideValueCountsBy(2);
-					if (bit.valueCounts.size()==0) {
-						remove.add(bit.index);
-					}
-				}
-				for (Integer index: remove) {
-					bits.remove(index);
-				}
+				divideBits();
 			}
 		}
 		return divide;
@@ -55,25 +46,43 @@ public class ClBits {
 
 	public Classification generatePrediction(Sdr input) {
 		Classification r = new Classification();
-		HashMap<Object,Integer> valueCounts = new HashMap<Object,Integer>();
+		HashMap<Object,Integer> valueCounts = getValueCounts(input);
+		r.name = config.valueName;
+		r.step = config.predictStep;
+		r.valueCounts = valueCounts;
+		return r;
+	}
+	
+	protected void divideBits() {
+		List<Integer> remove = new ArrayList<Integer>();
+		for (ClBit bit: bits.values()) {
+			bit.divideValueCountsBy(2);
+			if (bit.valueCounts.size()==0) {
+				remove.add(bit.index);
+			}
+		}
+		for (Integer index: remove) {
+			bits.remove(index);
+		}
+	}
+	
+	protected HashMap<Object,Integer> getValueCounts(Sdr input) {
+		HashMap<Object,Integer> r = new HashMap<Object,Integer>();
 		if (bits.size()>0) {
 			for (Integer onBit: input.onBits) {
 				ClBit bit = bits.get(onBit);
 				if (bit!=null) {
 					for (Object value: bit.valueCounts.keySet()) {
-						Integer count = valueCounts.get(value);
+						Integer count = r.get(value);
 						if (count==null) {
 							count = new Integer(0);
 						}
 						count += bit.valueCounts.get(value);
-						valueCounts.put(value,count);
+						r.put(value,count);
 					}
 				}
 			}
 		}
-		r.name = config.valueName;
-		r.step = config.predictStep;
-		r.valueCounts = valueCounts;
 		return r;
 	}
 }

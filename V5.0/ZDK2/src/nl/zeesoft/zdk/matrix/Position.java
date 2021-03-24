@@ -71,18 +71,8 @@ public class Position {
 	 */
 	public float getDistance(Position other) {
 		float r = 0;
-		float len1 = 0;
-		if (other.x > x) {
-			len1 = other.x - x;
-		} else {
-			len1 = x - other.x;
-		}
-		float len2 = 0;
-		if (other.y > y) {
-			len2 = other.y - y;
-		} else {
-			len2 = y - other.y;
-		}
+		float len1 = getAbsoluteDistance(other.x, x);
+		float len2 = getAbsoluteDistance(other.y, y);
 		if (len1==0) {
 			r = len2;
 		} else if (len2==0) {
@@ -92,11 +82,7 @@ public class Position {
 		}
 		if (other.z!=z) {
 			len1 = r;
-			if (other.z > z) {
-				len2 = other.z - z;
-			} else {
-				len2 = z - other.z;
-			}
+			len2 = getAbsoluteDistance(other.z, z);
 			if (len1==0) {
 				r = len2;
 			} else {
@@ -113,6 +99,16 @@ public class Position {
 			if (!r.contains(add)) {
 				r.add(add);
 			}
+		}
+		return r;
+	}
+	
+	public static int getAbsoluteDistance(int a, int b) {
+		int r = 0;
+		if (a > b) {
+			r = a - b;
+		} else {
+			r = b - a;
 		}
 		return r;
 	}

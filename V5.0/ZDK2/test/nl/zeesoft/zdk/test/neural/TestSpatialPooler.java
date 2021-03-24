@@ -96,7 +96,7 @@ public class TestSpatialPooler {
 		sp.config.potentialRadius = 16;
 		CellStats stats = new CellStats(sp);
 		assert stats.cells == 100;
-		assert stats.proximalSegments == 0;
+		assert stats.proximalStats.segments == 0;
 		
 		sp.reset();
 		assert (float)permanences.data[0][0][0] >= -1;
@@ -165,9 +165,9 @@ public class TestSpatialPooler {
 		
 		stats = new CellStats(sp);
 		assert stats.cells == 100;
-		assert stats.proximalSegments == 100;
-		assert stats.proximalSynapses > 1000;
-		assert stats.activeProximalSynapses > 1000;
+		assert stats.proximalStats.segments == 100;
+		assert stats.proximalStats.synapses > 1000;
+		assert stats.proximalStats.activeSynapses > 1000;
 		
 		sp.connections.data[0][0][0] = null;
 		io = new ProcessorIO(input);

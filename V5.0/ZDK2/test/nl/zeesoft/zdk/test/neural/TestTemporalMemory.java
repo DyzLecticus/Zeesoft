@@ -102,40 +102,40 @@ public class TestTemporalMemory {
 		tm.processIO(io1);
 		checkIO(io1,8,2,0,2,false);
 		CellStats stats = new CellStats(tm);
-		assert stats.distalSegments == 0;
-		assert stats.apicalSegments == 0;
+		assert stats.distalStats.segments == 0;
+		assert stats.apicalStats.segments == 0;
 		
 		tm.processIO(io2);
 		checkIO(io2,8,2,0,2,false);
 		stats = new CellStats(tm);
-		assert stats.distalSegments == 2;
-		assert stats.apicalSegments == 2;
+		assert stats.distalStats.segments == 2;
+		assert stats.apicalStats.segments == 2;
 
 		io1.outputs.clear();
 		tm.processIO(io1);
 		checkIO(io1,8,2,0,2,false);
 		io1.outputs.clear();
 		stats = new CellStats(tm);
-		assert stats.distalSegments == 4;
-		assert stats.apicalSegments == 4;
+		assert stats.distalStats.segments == 4;
+		assert stats.apicalStats.segments == 4;
 		
 		io2.outputs.clear();
 		tm.processIO(io2);
 		checkIO(io2,8,2,0,2,false);
 		stats = new CellStats(tm);
-		assert stats.distalSegments == 4;
-		assert stats.apicalSegments == 4;
-		int distal = stats.distalSynapses;
-		int apical = stats.apicalSynapses;
+		assert stats.distalStats.segments == 4;
+		assert stats.apicalStats.segments == 4;
+		int distal = stats.distalStats.synapses;
+		int apical = stats.apicalStats.synapses;
 		
 		tm.setLearn(false);
 		io1.outputs.clear();
 		tm.processIO(io1);
 		checkIO(io1,8,2,0,2,false);
-		assert stats.distalSegments == 4;
-		assert stats.apicalSegments == 4;
-		assert stats.distalSynapses == distal;
-		assert stats.apicalSynapses == apical;
+		assert stats.distalStats.segments == 4;
+		assert stats.apicalStats.segments == 4;
+		assert stats.distalStats.synapses == distal;
+		assert stats.apicalStats.synapses == apical;
 		
 		tm.cells.predictiveCellPositions.add(cell.position);
 		boolean burst = tm.cells.activateColumn(new Position(0,0));

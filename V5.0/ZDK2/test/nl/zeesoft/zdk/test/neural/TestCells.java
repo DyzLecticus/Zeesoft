@@ -135,44 +135,45 @@ public class TestCells {
 		CellStats stats = new CellStats();
 		stats.addModelCells(self, cells);
 		assert stats.cells == 64;
-		assert stats.proximalSegments == 1;
-		assert stats.proximalSynapses == 1;
-		assert stats.activeProximalSynapses == 0;
-		assert stats.distalSegments == 4;
-		assert stats.distalSynapses == 8;
-		assert stats.activeDistalSynapses == 0;
-		assert stats.apicalSegments == 4;
-		assert stats.apicalSynapses == 11;
-		assert stats.activeApicalSynapses == 0;
+		assert stats.proximalStats.segments == 1;
+		assert stats.proximalStats.synapses == 1;
+		assert stats.proximalStats.activeSynapses == 0;
+		assert stats.distalStats.segments == 4;
+		assert stats.distalStats.synapses == 8;
+		assert stats.distalStats.activeSynapses == 0;
+		assert stats.apicalStats.segments == 4;
+		assert stats.apicalStats.synapses == 11;
+		assert stats.apicalStats.activeSynapses == 0;
 		
 		stats = new CellStats();
 		cells.config.permanenceThreshold = 0.1F;
 		stats.addModelCells(self, cells);
 		assert stats.cells == 64;
-		assert stats.proximalSegments == 1;
-		assert stats.proximalSynapses == 1;
-		assert stats.activeProximalSynapses == 1;
-		assert stats.distalSegments == 4;
-		assert stats.distalSynapses == 8;
-		assert stats.activeDistalSynapses == 8;
-		assert stats.apicalSegments == 4;
-		assert stats.apicalSynapses == 11;
-		assert stats.activeApicalSynapses == 11;
+		assert stats.proximalStats.segments == 1;
+		assert stats.proximalStats.synapses == 1;
+		assert stats.proximalStats.activeSynapses == 1;
+		assert stats.distalStats.segments == 4;
+		assert stats.distalStats.synapses == 8;
+		assert stats.distalStats.activeSynapses == 8;
+		assert stats.apicalStats.segments == 4;
+		assert stats.apicalStats.synapses == 11;
+		assert stats.apicalStats.activeSynapses == 11;
 		
 		stats.addStats(stats);
 		assert stats.cells == 128;
-		assert stats.proximalSegments == 2;
-		assert stats.proximalSynapses == 2;
-		assert stats.activeProximalSynapses == 2;
-		assert stats.distalSegments == 8;
-		assert stats.distalSynapses == 16;
-		assert stats.activeDistalSynapses == 16;
-		assert stats.apicalSegments == 8;
-		assert stats.apicalSynapses == 22;
-		assert stats.activeApicalSynapses == 22;
+		assert stats.proximalStats.segments == 2;
+		assert stats.proximalStats.synapses == 2;
+		assert stats.proximalStats.activeSynapses == 2;
+		assert stats.distalStats.segments == 8;
+		assert stats.distalStats.synapses == 16;
+		assert stats.distalStats.activeSynapses == 16;
+		assert stats.apicalStats.segments == 8;
+		assert stats.apicalStats.synapses == 22;
+		assert stats.apicalStats.activeSynapses == 22;
 		
-		assert stats.toString().length() == 209;
+		
+		assert stats.toString().length() == 182;
 		stats = new CellStats();
-		assert stats.toString().length() == 23;
+		assert stats.toString().length() == 10;
 	}
 }

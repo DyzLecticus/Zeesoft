@@ -31,9 +31,9 @@ public class TestNetwork {
 		assert !network.reset();
 		CellStats stats = network.getCellStats();
 		assert stats.cells == 0;
-		assert stats.proximalSegments == 0;
-		assert stats.distalSegments == 0;
-		assert stats.apicalSegments == 0;
+		assert stats.proximalStats.segments == 0;
+		assert stats.distalStats.segments == 0;
+		assert stats.apicalStats.segments == 0;
 		
 		NetworkIO io = new NetworkIO();
 		network.processIO(io);
@@ -57,9 +57,9 @@ public class TestNetwork {
 
 		stats = network.getCellStats();
 		assert stats.cells == 39168;
-		assert stats.proximalSegments == 0;
-		assert stats.distalSegments == 0;
-		assert stats.apicalSegments == 0;
+		assert stats.proximalStats.segments == 0;
+		assert stats.distalStats.segments == 0;
+		assert stats.apicalStats.segments == 0;
 		
 		SpatialPooler sp = (SpatialPooler) network.getProcessors("TestSpatialPooler").get(0).processor;
 		assert sp.isLearn();
@@ -128,12 +128,12 @@ public class TestNetwork {
 		
 		stats = network.getCellStats();
 		assert stats.cells == 39168;
-		assert stats.proximalSegments == 2304;
-		assert stats.proximalSynapses > 10000;
-		assert stats.activeProximalSynapses > 10000;
-		assert stats.distalSegments > 50;
-		assert stats.proximalSynapses > 1000;
-		assert stats.activeDistalSynapses == 0;
+		assert stats.proximalStats.segments == 2304;
+		assert stats.proximalStats.synapses > 10000;
+		assert stats.proximalStats.activeSynapses > 10000;
+		assert stats.distalStats.segments > 50;
+		assert stats.distalStats.synapses > 1000;
+		assert stats.distalStats.activeSynapses == 0;
 
 		AllTests.sleep(50);
 		assert !network.reset(0);
