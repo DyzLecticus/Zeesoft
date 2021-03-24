@@ -22,27 +22,37 @@ public class NetworkConfigTester {
 		return r;
 	}
 	
-	protected static List<String> testProcessorConfigs(NetworkConfig config, StringBuilder errors) {
+	protected List<String> testProcessorConfigs(NetworkConfig config, StringBuilder errors) {
 		List<String> r = new ArrayList<String>(config.inputNames);
 		for (ProcessorConfig toConfig: config.processorConfigs) {
 			InputOutputConfig toIOConfig = toConfig.getInputOutputConfig();
 			if (toConfig.inputLinks.size()==0) {
 				Util.appendLine(errors, toConfig.name + ": Processor has no input link(s)");
 			} else {
-				for (LinkConfig link: toConfig.inputLinks) {
-					ProcessorConfig fromConfig = config.getProcessorConfig(link.fromName);
-					if (fromConfig!=null) {
-						InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
-						String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
-						if (err.length()>0) {
-							Util.appendLine(errors, err);
-						}
-					} else {
-						r.remove(link.fromName);
-					}
-				}
+				testProcessorLinkConfigs(config, toConfig, toIOConfig, errors, r);
 			}
 		}
 		return r;
+	}
+	
+	protected void testProcessorLinkConfigs(
+		NetworkConfig config,
+		ProcessorConfig toConfig,
+		InputOutputConfig toIOConfig,
+		StringBuilder errors,
+		List<String> unused
+		) {
+		for (LinkConfig link: toConfig.inputLinks) {
+			ProcessorConfig fromConfig = config.getProcessorConfig(link.fromName);
+			if (fromConfig!=null) {
+				InputOutputConfig fromIOConfig = fromConfig.getInputOutputConfig();
+				String err = link.checkLinkIO(fromIOConfig, toConfig.name, toIOConfig);
+				if (err.length()>0) {
+					Util.appendLine(errors, err);
+				}
+			} else {
+				unused.remove(link.fromName);
+			}
+		}
 	}
 }

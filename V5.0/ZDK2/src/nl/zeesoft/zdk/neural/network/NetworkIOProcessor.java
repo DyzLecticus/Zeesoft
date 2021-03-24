@@ -75,14 +75,9 @@ public class NetworkIOProcessor {
 		for (LinkConfig link: toProcessor.inputLinks) {
 			NetworkProcessor fromProcessor = processors.getProcessor(link.fromName);
 			if (fromProcessor!=null) {
-				NetworkIO sourceIO = io;
-				ProcessorIO sourcePIO = null;
-				if (fromProcessor.layer>=toProcessor.layer) {
-					sourceIO = previousIO;
-				}
-				if (sourceIO!=null) {
-					sourcePIO = sourceIO.getProcessorIO(link.fromName);
-				}
+				ProcessorIO sourcePIO = getSourceProcesorIO(
+					io, previousIO, fromProcessor.layer, toProcessor.layer, link.fromName
+				);
 				if (sourcePIO!=null) {
 					if (link.fromOutput < sourcePIO.outputs.size()) {
 						Sdr sdr = sourcePIO.outputs.get(link.fromOutput);
@@ -96,6 +91,20 @@ public class NetworkIOProcessor {
 		return complete;
 	}
 
+	protected ProcessorIO getSourceProcesorIO(
+		NetworkIO io, NetworkIO previousIO, int fromLayer, int toLayer, String fromName
+		) {
+		ProcessorIO r = null;
+		NetworkIO sourceIO = io;
+		if (fromLayer>=toLayer) {
+			sourceIO = previousIO;
+		}
+		if (sourceIO!=null) {
+			r = sourceIO.getProcessorIO(fromName);
+		}
+		return r;
+	}
+	
 	protected Object getInputForProcessor(Sdr[] inputs, NetworkIO io, NetworkProcessor toProcessor) {
 		Object r = null;
 		for (LinkConfig link: toProcessor.inputLinks) {

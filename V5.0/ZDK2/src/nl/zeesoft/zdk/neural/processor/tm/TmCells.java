@@ -94,22 +94,26 @@ public class TmCells extends Cells {
 			for (int z = 0; z < config.size.z; z++) {
 				Cell cell = getCell(new Position(column.x, column.y, z));
 				if (bursting) {
-					if (winnerCellPositions.contains(cell.position)) {
-						if (cell.distalSegments.matchingSegment!=null) {
-							cell.adaptMatchingSegments(
-								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
-							);
-						} else {
-							cell.createSegments(
-								prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
-							);
-						}
-					}
+					rewardPredictedBurstingColumn(cell);
 				} else {
 					cell.adaptActiveSegments(
 						prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
 					);
 				}
+			}
+		}
+	}
+	
+	protected void rewardPredictedBurstingColumn(Cell cell) {
+		if (winnerCellPositions.contains(cell.position)) {
+			if (cell.distalSegments.matchingSegment!=null) {
+				cell.adaptMatchingSegments(
+					prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
+				);
+			} else {
+				cell.createSegments(
+					prevActiveCellPositions, prevWinnerCellPositions, prevActiveApicalCellPositions
+				);
 			}
 		}
 	}
