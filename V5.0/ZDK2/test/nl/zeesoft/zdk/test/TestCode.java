@@ -4,7 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.test.code.Analyzer;
+import nl.zeesoft.zdk.code.Analyzer;
 
 public class TestCode {
 	public static void main(String[] args) {

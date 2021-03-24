@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
-import nl.zeesoft.zdk.test.AllTests;
+import nl.zeesoft.zdk.test.ZdkTests;
 
 public class TestExecutor {
 	private static TestExecutor self = new TestExecutor();
@@ -44,7 +44,7 @@ public class TestExecutor {
 		assert returnValues == null;
 		assert executor.isWorking();
 		while (executor.isWorking()) {
-			AllTests.sleep(10);
+			ZdkTests.sleep(10);
 		}
 		
 		returnValues = executor.execute(self, fll, 1);

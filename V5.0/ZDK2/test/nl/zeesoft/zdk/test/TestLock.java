@@ -22,11 +22,11 @@ public class TestLock implements Runnable {
 		lock.lock();
 		Thread runner = new Thread(self);
 		runner.start();
-		AllTests.sleep(5);
+		ZdkTests.sleep(5);
 		runner.interrupt();
-		AllTests.sleep(5);
+		ZdkTests.sleep(5);
 		lock.unlock();
-		AllTests.sleep(5);
+		ZdkTests.sleep(5);
 		lock.lock();
 		assert locked = true;
 		lock.unlock();

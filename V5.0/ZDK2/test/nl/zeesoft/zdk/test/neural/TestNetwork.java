@@ -10,7 +10,7 @@ import nl.zeesoft.zdk.neural.network.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
-import nl.zeesoft.zdk.test.AllTests;
+import nl.zeesoft.zdk.test.ZdkTests;
 
 public class TestNetwork {
 	public static void main(String[] args) {
@@ -135,10 +135,10 @@ public class TestNetwork {
 		assert stats.distalStats.synapses > 1000;
 		assert stats.distalStats.activeSynapses == 0;
 
-		AllTests.sleep(50);
+		ZdkTests.sleep(50);
 		assert !network.reset(0);
 
-		AllTests.sleep(50);
+		ZdkTests.sleep(50);
 		assert !network.initialize(config,0);
 		
 		network.setNumberOfWorkers(0);

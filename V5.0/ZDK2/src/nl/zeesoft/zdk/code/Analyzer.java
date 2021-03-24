@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.code;
+package nl.zeesoft.zdk.code;
 
 import java.io.File;
 import java.util.ArrayList;

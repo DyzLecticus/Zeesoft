@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.code;
+package nl.zeesoft.zdk.code;
 
 public class FileMethod {
 	public String			path	= "";

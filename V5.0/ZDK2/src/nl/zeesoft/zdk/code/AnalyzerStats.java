@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.code;
+package nl.zeesoft.zdk.code;
 
 import java.util.List;
 
@@ -10,14 +10,14 @@ public class AnalyzerStats {
 	public float	avg			= 0;
 	public float	stdDev		= 0;
 
-	protected void analyze(int total, int totalValue, List<Float> values) {
+	public void analyze(int total, int totalValue, List<Float> values) {
 		this.total = total;
 		this.totalValue = totalValue;
 		avg = (float)totalValue / (float)values.size();
 		stdDev = Util.getStandardDeviation(values);
 	}
 	
-	protected int getListMax(float factor, int absMax) {
+	public int getListMax(float factor, int absMax) {
 		int r = (int)(avg + (stdDev * factor));
 		if (r > absMax) {
 			r = absMax;
@@ -25,7 +25,7 @@ public class AnalyzerStats {
 		return r;
 	}
 	
-	protected StringBuilder getAnalysisHeader(String items, String totalVal, String average) {
+	public StringBuilder getAnalysisHeader(String items, String totalVal, String average) {
 		StringBuilder r = new StringBuilder();
 		if (total>0) {
 			Util.appendLine(r, items + ": " + total);

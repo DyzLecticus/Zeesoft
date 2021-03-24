@@ -37,14 +37,14 @@ public class TestUtil implements Runnable {
 		assert utils.size() == 2;
 		
 		Exception ex = Util.sleep(1);
-		AllTests.sleep(10);
+		ZdkTests.sleep(10);
 		assert ex == null;
 		
 		Thread runner = new Thread(new TestUtil());
 		runner.start();
-		AllTests.sleep(1);
+		ZdkTests.sleep(1);
 		runner.interrupt();
-		AllTests.sleep(1);
+		ZdkTests.sleep(1);
 		assert caughtException != null;
 		
 		List<Float> values = new ArrayList<Float>();
