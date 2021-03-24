@@ -131,7 +131,7 @@ public class TestNetwork {
 		assert stats.proximalStats.segments == 2304;
 		assert stats.proximalStats.synapses > 10000;
 		assert stats.proximalStats.activeSynapses > 10000;
-		assert stats.distalStats.segments > 50;
+		assert stats.distalStats.segments > 25;
 		assert stats.distalStats.synapses > 1000;
 		assert stats.distalStats.activeSynapses == 0;
 

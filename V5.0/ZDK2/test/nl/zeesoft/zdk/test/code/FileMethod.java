@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.test.code;
 
-public class AnalyzerFileMethod {
+public class FileMethod {
 	public String			path	= "";
 	public String			prefix	= "";
 	public StringBuilder	content	= new StringBuilder();
