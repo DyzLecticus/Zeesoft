@@ -53,6 +53,7 @@ public class TestNetwork {
 		assert network.getProcessors("Pizza").size() == 0;
 		assert network.getProcessors("TestEncoder").size() == 1;
 		assert network.getProcessors(1,"TestEncoder").size() == 0;
+		assert network.getProcessors("Merger").size() == 2;
 
 		stats = network.getCellStats();
 		assert stats.cells == 39168;

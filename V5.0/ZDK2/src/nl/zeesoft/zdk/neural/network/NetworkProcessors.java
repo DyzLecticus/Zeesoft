@@ -93,7 +93,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		List<NetworkProcessor> r = new ArrayList<NetworkProcessor>();
 		for (NetworkProcessor np: processors.values()) {
 			if ((layer<=Network.ALL_LAYERS || np.layer == layer) &&
-				(name.equals(Network.ALL_PROCESSORS) || np.name.equals(name))
+				(name.equals(Network.ALL_PROCESSORS) || np.name.indexOf(name)>=0)
 				) {
 				r.add(np);
 			}
