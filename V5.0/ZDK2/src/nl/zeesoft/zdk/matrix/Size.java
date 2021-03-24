@@ -32,6 +32,22 @@ public class Size {
 		this.z = z;
 	}
 	
+	public Size(int length) {
+		if (length>1) {
+			x = (int)Math.sqrt(length);
+			y = x;
+			if (x * y < length) {
+				x++;
+			}
+			if (x * y < length) {
+				y++;
+			}
+		} else {
+			x = 1;
+			y = 1;
+		}
+	}
+	
 	@Override
 	public boolean equals(Object other) {
 		boolean r = false;

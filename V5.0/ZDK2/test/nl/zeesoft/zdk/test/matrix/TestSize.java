@@ -108,5 +108,18 @@ public class TestSize {
 		size2 = new Size(150,150,150);
 		assert size.projectPositionOn(new Position(2,2,2), size2).equals(new Position(75,75,75));
 		assert size.projectPositionOn(new Position(4,4,4), size2).equals(new Position(149,149,149));
+		
+		size = new Size(0);
+		assert size.equals(new Size(1,1));
+		size = new Size(1);
+		assert size.equals(new Size(1,1));
+		size = new Size(2);
+		assert size.equals(new Size(2,1));
+		size = new Size(3);
+		assert size.equals(new Size(2,2));
+		size = new Size(4);
+		assert size.equals(new Size(2,2));
+		assert size.copy().equals(new Size(2,2));
+		assert size.volume() == 4;
 	}
 }
