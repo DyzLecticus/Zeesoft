@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.code;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,6 +23,20 @@ public class AnalyzerFile {
 		MethodParser parser = new MethodParser(path, code);
 		this.methods = parser.methods;
 	}
+	
+	public List<String> getErrors(int maxLinesPerFile, int maxLinesPerMethod) {
+		List<String> r = new ArrayList<String>();
+		if (lines > maxLinesPerFile) {
+			r.add("File has too many lines of code; " + toString());
+		}
+		for (FileMethod method: methods) {
+			if (method.lines > maxLinesPerMethod) {
+				r.add("Method has too many lines of code; " + method);
+			}
+		}
+		return r;
+	}
+
 	
 	@Override
 	public String toString() {
