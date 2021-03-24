@@ -1,13 +1,11 @@
 package nl.zeesoft.zdk.code;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Util;
 
 public class Analyzer {
-	public String				sourceDir				= "src/";
 	public int					maxLinesPerFile			= 200;
 	public int					maxLinesPerMethod		= 30;
 	
@@ -16,22 +14,21 @@ public class Analyzer {
 	public AnalyzerStats		fileStats				= new AnalyzerStats();
 	public AnalyzerStats		methodStats				= new AnalyzerStats();
 	
-	public void analyze() {
-		File src = new File(sourceDir);
-		if (src.exists() && src.canRead()) {
-			readFiles(src, ".java");
+	public Analyzer(List<CodeFile> codeFiles) {
+		for (CodeFile file: codeFiles) {
+			files.add(new AnalyzerFile(file));
 		}
+	}
+	
+	public void analyze() {
 		analyzeFiles();
 		analyzeMethods();
 	}
 	
 	public List<String> getErrors() {
 		List<String> r = new ArrayList<String>();
-		File src = new File(sourceDir);
-		if (src.exists() && src.canRead()) {
-			for (AnalyzerFile file: files) {
-				r.addAll(file.getErrors(maxLinesPerFile, maxLinesPerMethod));
-			}
+		for (AnalyzerFile file: files) {
+			r.addAll(file.getErrors(maxLinesPerFile, maxLinesPerMethod));
 		}
 		return r;
 	}
@@ -70,19 +67,6 @@ public class Analyzer {
 			}
 		}
 		methodStats.analyze(totalMethods, total, values);
-	}
-	
-	protected void readFiles(File parent, String endsWith) {
-		for (File file: parent.listFiles()) {
-			if (file.canRead() && file.getName().endsWith(endsWith)) {
-				files.add(new AnalyzerFile(file));
-			}
-		}
-		for (File file: parent.listFiles()) {
-			if (file.canRead() && file.isDirectory()) {
-				readFiles(file, endsWith);
-			}
-		}
 	}
 	
 	protected StringBuilder getFileAnalysis() {
