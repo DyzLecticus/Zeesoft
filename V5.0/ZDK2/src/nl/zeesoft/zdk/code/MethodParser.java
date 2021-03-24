@@ -24,12 +24,12 @@ public class MethodParser {
 			String c = code.substring(i,i+1);
 			handleStateCharacter(c, pc);
 			if (braceLevel==2 && method.prefix.length()==0) {
-				parseMethodPrefix(code, i, method);
+				method.prefix = parseMethodPrefix(code, i);
 			}
 			if (braceLevel>=2) {
 				method.content.append(c);
 			}
-			if (braceLevel==1 && c.equals("}") && method.prefix.length()>0) {
+			if (braceLevel==1 && c.equals("}") && !inSingleQuote && !inDoubleQuote) {
 				method.lines = method.content.toString().split("\\n").length;
 				methods.add(method);
 				method = new FileMethod();
@@ -55,16 +55,18 @@ public class MethodParser {
 		}
 	}
 	
-	protected void parseMethodPrefix(StringBuilder code, int pos, FileMethod method) {
+	public static String parseMethodPrefix(StringBuilder code, int pos) {
+		String prefix = "";
 		for (int t = (pos - 10); t >= 0; t--) {
 			String start = code.substring(t,t+10);
 			if (start.startsWith("private ") ||
 				start.startsWith("protected ") ||
 				start.startsWith("public ")
 				) {
-				method.prefix = code.substring(t, pos).replaceAll("\\n", " ").trim();
+				prefix = code.substring(t, pos).replaceAll("\\n", " ").trim();
 				break;
 			}
 		}
+		return prefix;
 	}
 }

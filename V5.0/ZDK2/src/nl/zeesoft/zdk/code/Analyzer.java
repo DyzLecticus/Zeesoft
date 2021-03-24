@@ -9,6 +9,9 @@ public class Analyzer {
 	public int					maxLinesPerFile			= 200;
 	public int					maxLinesPerMethod		= 30;
 	
+	public float				listFileFactor			= 2F;
+	public float				listMethodFactor		= 3F;
+	
 	public List<AnalyzerFile>	files					= new ArrayList<AnalyzerFile>();
 	
 	public AnalyzerStats		fileStats				= new AnalyzerStats();
@@ -73,7 +76,7 @@ public class Analyzer {
 		StringBuilder r = new StringBuilder();
 		if (files.size() > 0) {
 			r.append(fileStats.getAnalysisHeader("Files", "Lines of code", "Average lines per file"));
-			int max = fileStats.getListMax(2F, maxLinesPerFile);
+			int max = fileStats.getListMax(listFileFactor, maxLinesPerFile);
 			boolean first = true;
 			for (AnalyzerFile file: files) {
 				if (file.lines > max) {
@@ -92,7 +95,7 @@ public class Analyzer {
 		StringBuilder r = new StringBuilder();
 		if (methodStats.total>0) {
 			r.append(methodStats.getAnalysisHeader("Methods", "Lines of code", "Average lines per method"));
-			int max = methodStats.getListMax(3F, maxLinesPerMethod);
+			int max = methodStats.getListMax(listMethodFactor, maxLinesPerMethod);
 			boolean first = true;
 			for (AnalyzerFile file: files) {
 				for (FileMethod method: file.methods) {

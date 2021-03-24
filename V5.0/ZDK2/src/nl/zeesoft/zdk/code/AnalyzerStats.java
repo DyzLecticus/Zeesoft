@@ -27,11 +27,9 @@ public class AnalyzerStats {
 	
 	public StringBuilder getAnalysisHeader(String items, String totalVal, String average) {
 		StringBuilder r = new StringBuilder();
-		if (total>0) {
-			Util.appendLine(r, items + ": " + total);
-			Util.appendLine(r, totalVal + ": " + totalValue);
-			Util.appendLine(r, average + ": " + avg + " (standard deviation: " + stdDev + ")");
-		}
+		Util.appendLine(r, items + ": " + total);
+		Util.appendLine(r, totalVal + ": " + totalValue);
+		Util.appendLine(r, average + ": " + avg + " (standard deviation: " + stdDev + ")");
 		return r;
 	}
 }

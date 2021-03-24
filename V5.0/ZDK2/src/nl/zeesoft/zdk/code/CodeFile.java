@@ -39,8 +39,7 @@ public class CodeFile {
 			line.length()>0 && 
 			!line.startsWith("//") && 
 			!line.startsWith("*") && 
-			!line.startsWith("/*") &&
-			!line.equals("*/")
+			!line.startsWith("/*")
 			;
 	}
 }
