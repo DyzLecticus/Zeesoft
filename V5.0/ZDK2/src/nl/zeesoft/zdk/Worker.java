@@ -7,9 +7,7 @@ public class Worker implements Runnable {
 	protected boolean	working			= false;
 	
 	protected int		sleepMs			= 100;
-	
 	protected int		minSleepMs		= 100;
-	protected long		noSleepStart	= 0;
 	
 	public void setSleepMs(int sleepMs) {
 		lock.lock();
