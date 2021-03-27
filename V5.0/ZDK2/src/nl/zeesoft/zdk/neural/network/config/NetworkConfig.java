@@ -1,13 +1,13 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.config;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
-import nl.zeesoft.zdk.neural.network.config.MergerConfig;
-import nl.zeesoft.zdk.neural.network.config.ScalarEncoderConfig;
-import nl.zeesoft.zdk.neural.network.config.SpatialPoolerConfig;
-import nl.zeesoft.zdk.neural.network.config.TemporalMemoryConfig;
+import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
+import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
+import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
+import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.network.config.type.TemporalMemoryConfig;
 
 public class NetworkConfig {
 	protected NetworkConfigTester		tester				= new NetworkConfigTester();
@@ -94,12 +94,12 @@ public class NetworkConfig {
 		return r;
 	}
 	
-	public int getNumberOfInputs() {
-		return inputNames.size();
+	public List<String> getInputNames() {
+		return new ArrayList<String>(inputNames);
 	}
 	
-	public int getNumberOfProcessors() {
-		return processorConfigs.size();
+	public List<ProcessorConfig> getProcessorConfigs() {
+		return new ArrayList<ProcessorConfig>(processorConfigs);
 	}
 	
 	public ProcessorConfig getProcessorConfig(String name) {
@@ -108,6 +108,16 @@ public class NetworkConfig {
 			if (pc.name.equals(name)) {
 				r = pc;
 				break;
+			}
+		}
+		return r;
+	}
+	
+	public List<ProcessorConfig> getProcessorConfigs(String nameContains) {
+		List<ProcessorConfig> r = new ArrayList<ProcessorConfig>();
+		for (ProcessorConfig pc: processorConfigs) {
+			if (pc.name.indexOf(nameContains)>=0) {
+				r.add(pc);
 			}
 		}
 		return r;

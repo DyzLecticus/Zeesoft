@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class NetworkConfigTester {
-	protected StringBuilder test(NetworkConfig config) {
+	public StringBuilder test(NetworkConfig config) {
 		StringBuilder r = new StringBuilder();
 		if (config.inputNames.size()==0) {
 			Util.appendLine(r, "A network must have at least one input");

@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.network.config.LinkConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkIOProcessor {

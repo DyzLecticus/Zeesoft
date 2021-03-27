@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
+import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 

@@ -1,22 +1,22 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.neural.network.LinkConfig;
-import nl.zeesoft.zdk.neural.network.NetworkConfig;
-import nl.zeesoft.zdk.neural.network.ProcessorConfig;
-import nl.zeesoft.zdk.neural.network.config.ClassifierConfig;
-import nl.zeesoft.zdk.neural.network.config.MergerConfig;
-import nl.zeesoft.zdk.neural.network.config.ScalarEncoderConfig;
-import nl.zeesoft.zdk.neural.network.config.SpatialPoolerConfig;
-import nl.zeesoft.zdk.neural.network.config.TemporalMemoryConfig;
+import nl.zeesoft.zdk.neural.network.config.LinkConfig;
+import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
+import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
+import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
+import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
+import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
+import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.network.config.type.TemporalMemoryConfig;
 
 public class TestNetworkConfig {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
 		NetworkConfig config = getNewNetworkConfig();
-		assert config.getNumberOfInputs() == 1;
-		assert config.getNumberOfProcessors() == 5;
+		assert config.getInputNames().size() == 1;
+		assert config.getProcessorConfigs().size() == 5;
 		
 		ProcessorConfig pc = config.getProcessorConfig("TestSpatialPooler");
 		pc.inputLinks.get(0).toInput = 2;
@@ -59,59 +59,60 @@ public class TestNetworkConfig {
 		);
 		
 		config.addInput("TestInput");
-		assert config.getNumberOfInputs() == 1;
+		assert config.getInputNames().size() == 1;
+		assert config.getInputNames().contains("TestInput");
 		
 		ScalarEncoderConfig sec = config.addScalarEncoder("TestEncoder");
 		assert sec != null;
 		assert sec.layer == 0;
-		assert config.getNumberOfProcessors() == 1;
+		assert config.getProcessorConfigs().size() == 1;
 		config.addLink("TestInput", "TestEncoder");
 		assert sec.inputLinks.size() == 1;
 		
 		config.addInput("TestEncoder");
-		assert config.getNumberOfInputs() == 1;
+		assert config.getInputNames().size() == 1;
 		config.addScalarEncoder("TestInput");
-		assert config.getNumberOfProcessors() == 1;
+		assert config.getProcessorConfigs().size() == 1;
 		
 		SpatialPoolerConfig spc = config.addSpatialPooler("TestSpatialPooler");
 		assert spc != null;
 		assert spc.layer == 1;
-		assert config.getNumberOfProcessors() == 2;
+		assert config.getProcessorConfigs().size() == 2;
 		config.addLink("TestEncoder", "TestSpatialPooler");
 		assert spc.inputLinks.size() == 1;
 		
 		TemporalMemoryConfig tmc = config.addTemporalMemory("TestTemporalMemory");
 		assert tmc != null;
 		assert tmc.layer == 2;
-		assert config.getNumberOfProcessors() == 3;
+		assert config.getProcessorConfigs().size() == 3;
 		config.addLink("TestSpatialPooler", "TestTemporalMemory");
 		assert tmc.inputLinks.size() == 1;
 		
 		ClassifierConfig clc = config.addClassifier("TestClassifier");
 		assert clc != null;
 		assert clc.layer == 3;
-		assert config.getNumberOfProcessors() == 4;
+		assert config.getProcessorConfigs().size() == 4;
 		config.addLink("TestTemporalMemory", "TestClassifier");
 		assert clc.inputLinks.size() == 1;
 		
 		MergerConfig mrc = config.addMerger("TestMerger");
 		assert mrc != null;
 		assert mrc.layer == 4;
-		assert config.getNumberOfProcessors() == 5;
+		assert config.getProcessorConfigs().size() == 5;
 		config.addLink("TestClassifier", "TestMerger");
 		assert mrc.inputLinks.size() == 1;
 		
 		config.addInput("");
-		assert config.getNumberOfInputs() == 1;
+		assert config.getInputNames().size() == 1;
 		
 		config.addInput("TestInput");
-		assert config.getNumberOfInputs() == 1;
+		assert config.getInputNames().size() == 1;
 		
 		config.addClassifier("");
-		assert config.getNumberOfProcessors() == 5;
+		assert config.getProcessorConfigs().size() == 5;
 		
 		config.addClassifier("TestClassifier");
-		assert config.getNumberOfProcessors() == 5;
+		assert config.getProcessorConfigs().size() == 5;
 		
 		String error = config.addLink("","TestMerger");
 		assert mrc.inputLinks.size() == 1;

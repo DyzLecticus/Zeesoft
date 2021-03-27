@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
@@ -13,7 +13,7 @@ public class LinkConfig {
 		this.toInput = toInput;
 	}
 	
-	protected LinkConfig copy() {
+	public LinkConfig copy() {
 		return new LinkConfig(fromName, fromOutput, toInput);
 	}
 	

@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.neural.network;
 
+import nl.zeesoft.zdk.neural.network.config.LinkConfig;
+import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
 
 public class NetworkProcessor extends AbstractNetworkProcessor {

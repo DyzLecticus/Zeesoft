@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.model.CellStats;
+import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
 public class Network {
 	public static final int				ALL_LAYERS			= -1;
@@ -29,9 +30,9 @@ public class Network {
 	}
 	
 	public boolean initialize(NetworkConfig config, int timeoutMs) {
-		inputNames = new ArrayList<String>(config.inputNames);
+		inputNames = new ArrayList<String>(config.getInputNames());
 		ioProcessor = new NetworkIOProcessor(inputNames, processors);
-		return processors.initialize(this, config.processorConfigs, timeoutMs);
+		return processors.initialize(this, config.getProcessorConfigs(), timeoutMs);
 	}
 	
 	public boolean isInitialized() {

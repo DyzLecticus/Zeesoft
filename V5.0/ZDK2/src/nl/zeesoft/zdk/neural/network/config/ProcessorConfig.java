@@ -1,5 +1,6 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.config;
 
+import nl.zeesoft.zdk.neural.network.AbstractNetworkProcessor;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.Processor;
 
@@ -9,7 +10,7 @@ public abstract class ProcessorConfig extends AbstractNetworkProcessor implement
 		this.name = name;
 	}
 	
-	protected abstract Processor getNewInstance();
+	public abstract Processor getNewInstance();
 	
 	protected void addLink(String fromName, int fromOutput, int toInput) {
 		if (getLinkForInput(toInput)==null) {
