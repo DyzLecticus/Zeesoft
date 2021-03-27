@@ -56,10 +56,14 @@ public class TestNetworkConfigFactory {
 		assert ioCfg.inputs.get(1).maxVolume == 1024;
 		assert ioCfg.outputs.get(0).size.equals(new Size(16,16,4));
 		
+		assert config.getProcessorConfig("TemporalMemory1").inputLinks.size() == 1;
+		factory.addTemporalMemoryMerger(config,"o");
+		assert config.getProcessorConfig("Merger").inputLinks.size() == 2;
+		assert config.getProcessorConfig("TemporalMemory1").inputLinks.size() == 2;
+		
 		config = factory.getApicalFeedbackConfig("Input1", "Input2");
 		assert config.test().length() == 0;
 		assert config.getInputNames().size() == 2;
 		assert config.getProcessorConfigs().size() == 9;
-		
 	}
 }

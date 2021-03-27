@@ -132,6 +132,9 @@ public class TestNetworkConfig {
 		assert mrc.inputLinks.size() == 2;
 		mrc.inputLinks.remove(1);
 		
+		assert config.getProcessorConfigs("ory").size() == 1;
+		assert config.getProcessorConfigs("er").size() == 4;
+		
 		err = config.test();
 		assert err.length() == 0;
 		

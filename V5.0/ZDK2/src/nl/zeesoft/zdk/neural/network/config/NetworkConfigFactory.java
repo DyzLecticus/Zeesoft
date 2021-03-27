@@ -44,10 +44,12 @@ public class NetworkConfigFactory {
 	public void addTemporalMemoryMerger(NetworkConfig config, String tmNameContains) { 
 		MergerConfig mrc = config.addMerger("Merger");
 		mrc.config.size = size.copy();
+		int i = 0;
 		for (ProcessorConfig tmc: config.getProcessorConfigs(tmNameContains)) {
 			if (tmc instanceof TemporalMemoryConfig) {
-				config.addLink(tmc.name, "Merger");
+				config.addLink(tmc.name, 0, "Merger", i);
 				config.addLink("Merger", 0, tmc.name, 1);
+				i++;
 			}
 		}
 	}
