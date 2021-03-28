@@ -6,7 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 
-public class TestUtil implements Runnable {
+public class TestUtil {
 	private static InterruptedException caughtException = null;
 	
 	public static void main(String[] args) {
@@ -40,9 +40,30 @@ public class TestUtil implements Runnable {
 		ZdkTests.sleep(10);
 		assert ex == null;
 		
-		Thread runner = new Thread(new TestUtil());
+		Thread runner = new Thread() {
+			@Override
+			public void run() {
+				caughtException = Util.sleep(100);
+			}
+		};
 		runner.start();
 		ZdkTests.sleep(1);
+		runner.interrupt();
+		ZdkTests.sleep(1);
+		assert caughtException != null;
+
+		ex = Util.sleepNs(1);
+		ZdkTests.sleep(1);
+		assert ex == null;
+		
+		caughtException = null;
+		runner = new Thread() {
+			@Override
+			public void run() {
+				caughtException = Util.sleepNs(100000);
+			}
+		};
+		runner.start();
 		runner.interrupt();
 		ZdkTests.sleep(1);
 		assert caughtException != null;
@@ -55,10 +76,5 @@ public class TestUtil implements Runnable {
 		assert Util.getStandardDeviation(values) == 0F;
 		values.add(2F);
 		assert Util.getStandardDeviation(values) == 0.57735026F;
-	}
-
-	@Override
-	public void run() {
-		caughtException = Util.sleep(100);
 	}
 }

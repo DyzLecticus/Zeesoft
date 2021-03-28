@@ -14,6 +14,19 @@ public class NetworkConfigFactory {
 	public int			onBits				= 46;
 	public int			activationThreshold	= 13;
 	public int			matchingThreshold	= 10;
+	public int			maxApicalOnBits		= 256;
+
+	public void setSmallScale() {
+		encoder = new ScConfig();
+		encoder.encodeLength = 100;
+		encoder.maxValue = 20;
+		encoder.onBits = 8;
+		size = new Size(16,16,4);
+		onBits = 5;
+		activationThreshold = 4;
+		matchingThreshold = 2;
+		maxApicalOnBits = 64;
+	}
 	
 	public NetworkConfig getSimpleConfig(String ...inputNames) {
 		NetworkConfig r = new NetworkConfig();
@@ -44,6 +57,7 @@ public class NetworkConfigFactory {
 	public void addTemporalMemoryMerger(NetworkConfig config, String tmNameContains) { 
 		MergerConfig mrc = config.addMerger("Merger");
 		mrc.config.size = size.copy();
+		mrc.config.maxOnBits = maxApicalOnBits;
 		int i = 0;
 		for (ProcessorConfig tmc: config.getProcessorConfigs(tmNameContains)) {
 			if (tmc instanceof TemporalMemoryConfig) {

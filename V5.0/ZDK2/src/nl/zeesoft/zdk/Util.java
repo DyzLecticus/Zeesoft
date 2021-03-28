@@ -47,6 +47,16 @@ public class Util {
 		return r;
 	}
 	
+	public static InterruptedException sleepNs(int ns) {
+		InterruptedException r = null;
+		try {
+			Thread.sleep(0, ns);
+		} catch (InterruptedException e) {
+			r = e;
+		}
+		return r;
+	}
+	
 	public static float getStandardDeviation(List<Float> values) {
 		float r = 0.0F;
 		if (values.size()>1) {

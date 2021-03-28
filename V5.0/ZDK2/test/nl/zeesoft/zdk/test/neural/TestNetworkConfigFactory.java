@@ -33,15 +33,9 @@ public class TestNetworkConfigFactory {
 		assert config.getProcessorConfig("TemporalMemory2") != null;
 		assert config.getProcessorConfig("Classifier2") != null;
 		
-		factory.encoder.encodeLength = 100;
-		factory.encoder.maxValue = 20;
-		factory.encoder.onBits = 8;
+		factory.setSmallScale();
 		ScalarSdrEncoderTester tester = new ScalarSdrEncoderTester();
 		assert tester.testMinimalOverlap(factory.encoder).length()==0;
-		factory.size = new Size(16,16,4);
-		factory.onBits = 5;
-		factory.activationThreshold = 4;
-		factory.matchingThreshold = 2;
 		
 		config = factory.getSimpleConfig("Input1", "Input2");
 		assert config.test().length() == 0;

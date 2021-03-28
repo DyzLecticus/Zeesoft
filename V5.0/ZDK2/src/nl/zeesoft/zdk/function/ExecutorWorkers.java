@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.function;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.Worker;
 
 public class ExecutorWorkers {
@@ -46,6 +47,8 @@ public class ExecutorWorkers {
 						Object returnValue = function.execute(caller);
 						task.executedFunction(function, returnValue);
 					}
+				} else {
+					Util.sleepNs(10000);
 				}
 			}
 		};

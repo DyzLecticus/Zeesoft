@@ -40,10 +40,10 @@ public class Executor {
 		} else {
 			boolean wait = setTask(caller, fll);
 			if (wait) {
-				int waitMs = 0;
-				while (isWorking() && waitMs<timeoutMs) {
-					Util.sleep(1);
-					waitMs++;
+				int waitNs = 0;
+				while (isWorking() && (waitNs / 1000000)<timeoutMs) {
+					Util.sleepNs(100000);
+					waitNs += 100000;
 				}
 				r = getReturnValuesIfDone();
 			}
