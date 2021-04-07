@@ -34,6 +34,10 @@ public class NetworkIO {
 		return inputs.get(name);
 	}
 	
+	public List<String> getProcessorNames() {
+		return new ArrayList<String>(processorIO.keySet());
+	}
+	
 	public ProcessorIO getProcessorIO(String name) {
 		return processorIO.get(name);
 	}

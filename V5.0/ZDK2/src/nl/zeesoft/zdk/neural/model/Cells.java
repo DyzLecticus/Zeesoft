@@ -46,13 +46,7 @@ public class Cells extends Matrix {
 		SortedMap<Integer,List<Cell>> r = new TreeMap<Integer,List<Cell>>();
 		for (Position pos: columnPositions) {
 			Cell cell = getCell(pos);
-			int potential = 0;
-			if (cell.distalSegments.matchingSegment!=null) {
-				potential = cell.distalSegments.matchingSegment.potentialSynapses.size();
-			}
-			if (cell.apicalSegments.matchingSegment!=null) {
-				potential = potential + cell.apicalSegments.matchingSegment.potentialSynapses.size();
-			}
+			int potential = cell.getPotential();
 			if (potential>0) {
 				List<Cell> cells = r.get(potential);
 				if (cells==null) {

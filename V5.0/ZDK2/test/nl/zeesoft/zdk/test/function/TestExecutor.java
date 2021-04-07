@@ -24,7 +24,7 @@ public class TestExecutor {
 		Executor executor = new Executor();
 		
 		List<Object> returnValues = executor.execute(self, fll, 100);
-		assert returnValues.size() == 6;
+		assert returnValues.size() == 5;
 		assert (boolean)returnValues.get(0);
 		assert (boolean)returnValues.get(1);
 		assert (boolean)returnValues.get(2);
@@ -37,7 +37,7 @@ public class TestExecutor {
 		executor.setWorkers(2);
 		assert executor.getWorkers() == 2;
 		returnValues = executor.execute(self, fll, 100);
-		assert returnValues.size() == 6;
+		assert returnValues.size() == 5;
 		assert (boolean)returnValues.get(0);
 		assert (boolean)returnValues.get(1);
 		assert (boolean)returnValues.get(2);
@@ -96,7 +96,11 @@ public class TestExecutor {
 				} else {
 					Util.sleep(2);
 				}
-				return returnValue;
+				if (returnValue) {
+					return returnValue;
+				} else {
+					return null;
+				}
 			}
 		});
 		return fl;

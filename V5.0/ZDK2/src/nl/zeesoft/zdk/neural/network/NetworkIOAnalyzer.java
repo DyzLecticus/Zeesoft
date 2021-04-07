@@ -2,16 +2,29 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.HistoricalFloat;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.cl.Classification;
+
 public class NetworkIOAnalyzer {
-	protected List<NetworkIO>	networkIO = new ArrayList<NetworkIO>();
+	protected List<NetworkIO>						networkIO 	= new ArrayList<NetworkIO>();
+	protected SortedMap<String,HistoricalFloat>		accuracies	= new TreeMap<String,HistoricalFloat>();
 	
 	public void add(NetworkIO io) {
+		int index = networkIO.size();
 		networkIO.add(io);
+		for (String name: io.getProcessorNames()) {
+			ProcessorIO pio = io.getProcessorIO(name);
+			if (pio.outputValue instanceof Classification) {
+				checkPrediction(index, name, (Classification) pio.outputValue);
+			}
+		}
 	}
 	
-	public NetworkIOStats getAverage() {
+	public NetworkIOStats getAverageStats() {
 		NetworkIOStats r = new NetworkIOStats();
 		r.nsPerLayer = new TreeMap<Integer,Long>();
 		int total = 0;
@@ -22,14 +35,53 @@ public class NetworkIOAnalyzer {
 				addStats(r, stats);
 			}
 		}
-		if (total>0) {
-			r.totalNs = r.totalNs / total;
-			for (Integer layer: r.nsPerLayer.keySet()) {
-				Long ns = r.nsPerLayer.get(layer);
-				r.nsPerLayer.put(layer, (ns / total));
+		divideStats(r, total);
+		return r;
+	}
+	
+	public SortedMap<String,HistoricalFloat> getAccuracies() {
+		return accuracies;
+	}
+	
+	protected void checkPrediction(int index, String name, Classification cls) {
+		Classification prediction = getPrediction(index - cls.step, name);
+		if (prediction!=null) {
+			float accuracy = 0F;
+			if (valueWasPredicted(prediction, cls.value)) {
+				accuracy = 1F;
+			}
+			logAccuracy(name, accuracy);
+		}
+	}
+	
+	protected Classification getPrediction(int pIndex, String name) {
+		Classification r = null;
+		if (pIndex>=0) {
+			NetworkIO prevIO = networkIO.get(pIndex); 
+			ProcessorIO ppio = prevIO.getProcessorIO(name);
+			if (ppio!=null && ppio.outputValue instanceof Classification) {
+				r = (Classification) ppio.outputValue;
 			}
 		}
 		return r;
+	}
+	
+	protected boolean valueWasPredicted(Classification prediction, Object value) {
+		boolean r = false;
+		List<Object> mostCountedValues = prediction.getMostCountedValues();
+		if (mostCountedValues.size()==1 && mostCountedValues.get(0).equals(value)) {
+			r = true;
+		}
+		return r;
+	}
+	
+	protected void logAccuracy(String name, float accuracy) {
+		HistoricalFloat hist = accuracies.get(name);
+		if (hist==null) {
+			hist = new HistoricalFloat();
+			accuracies.put(name, hist);
+		}
+		hist.push(accuracy);
 	}
 	
 	protected void addStats(NetworkIOStats base, NetworkIOStats add) {
@@ -42,6 +94,16 @@ public class NetworkIOAnalyzer {
 			}
 			ns += add.nsPerLayer.get(layer);
 			base.nsPerLayer.put(layer, ns);
+		}
+	}
+	
+	protected void divideStats(NetworkIOStats stats, int total) {
+		if (total>0) {
+			stats.totalNs = stats.totalNs / total;
+			for (Integer layer: stats.nsPerLayer.keySet()) {
+				Long ns = stats.nsPerLayer.get(layer);
+				stats.nsPerLayer.put(layer, (ns / total));
+			}
 		}
 	}
 }

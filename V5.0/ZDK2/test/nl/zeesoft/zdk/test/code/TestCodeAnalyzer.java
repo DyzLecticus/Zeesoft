@@ -5,11 +5,11 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
-import nl.zeesoft.zdk.code.Analyzer;
+import nl.zeesoft.zdk.code.CodeAnalyzer;
 import nl.zeesoft.zdk.code.CodeFile;
 import nl.zeesoft.zdk.code.MethodParser;
 
-public class TestAnalyzer {
+public class TestCodeAnalyzer {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -18,7 +18,7 @@ public class TestAnalyzer {
 		List<CodeFile> codeFiles = new ArrayList<CodeFile>();
 		codeFiles.add(new CodeFile("nl/zeesoft/zdk/Number1.java", getMockCode(0)));
 		codeFiles.add(new CodeFile("nl/zeesoft/zdk/Number2.java", getMockCode(1)));
-		Analyzer analyzer = new Analyzer(codeFiles);
+		CodeAnalyzer analyzer = new CodeAnalyzer(codeFiles);
 		analyzer.analyze();
 		
 		assert analyzer.fileStats.total == 2;
@@ -46,12 +46,12 @@ public class TestAnalyzer {
 		assert analyzer.toString().length() == 677;
 		
 		codeFiles.clear();
-		analyzer = new Analyzer(codeFiles);
+		analyzer = new CodeAnalyzer(codeFiles);
 		analyzer.analyze();
 		assert analyzer.toString().length() == 0;
 		
 		codeFiles.add(new CodeFile("nl/zeesoft/zdk/Number1.java", getMockCode(2)));
-		analyzer = new Analyzer(codeFiles);
+		analyzer = new CodeAnalyzer(codeFiles);
 		analyzer.analyze();
 		assert analyzer.toString().length() == 79;
 	}

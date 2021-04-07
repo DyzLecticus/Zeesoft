@@ -102,4 +102,15 @@ public class Cell {
 			apicalSegments.createSegment(prevActiveApicalCellPositions, config.apicalPotentialRadius);
 		}
 	}
+	
+	public int getPotential() {
+		int potential = 0;
+		if (distalSegments.matchingSegment!=null) {
+			potential = distalSegments.matchingSegment.potentialSynapses.size();
+		}
+		if (apicalSegments.matchingSegment!=null) {
+			potential = potential + apicalSegments.matchingSegment.potentialSynapses.size();
+		}
+		return potential;
+	}
 }

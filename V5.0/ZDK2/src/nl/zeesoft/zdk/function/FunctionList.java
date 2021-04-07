@@ -10,10 +10,10 @@ public class FunctionList extends Function {
 	protected Object exec() {
 		List<Object> returnValues = new ArrayList<Object>();
 		for (Function function: functions) {
-			if (exceptionHandler!=null) {
-				function.exceptionHandler = exceptionHandler;
+			Object returnValue = executeFunction(function);
+			if (returnValue!=null) {
+				returnValues.add(returnValue);
 			}
-			returnValues.add(function.execute(caller));
 		}
 		return returnValues;
 	}
@@ -22,5 +22,12 @@ public class FunctionList extends Function {
 		if (function!=null) {
 			functions.add(function);
 		}
+	}
+	
+	protected Object executeFunction(Function function) {
+		if (exceptionHandler!=null) {
+			function.exceptionHandler = exceptionHandler;
+		}
+		return function.execute(caller);
 	}
 }

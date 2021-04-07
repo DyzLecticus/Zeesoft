@@ -49,7 +49,7 @@ public class Classifier extends LearningProcessor {
 		if (learn) {
 			bits.associateBits(io.inputValue);
 		}
-		io.outputValue = bits.generatePrediction(input);
+		io.outputValue = bits.generatePrediction(input, io.inputValue);
 		io.outputs.add(input.copy());
 	}
 	

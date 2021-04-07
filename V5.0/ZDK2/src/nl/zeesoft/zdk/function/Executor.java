@@ -56,18 +56,7 @@ public class Executor {
 			r = executeInCurrentThread(caller, fll);
 			nsPerStep = new TreeMap<Integer,Long>(fll.nsPerStep);
 		} else {
-			SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
-			if (stepFunctions.size()>0) {
-				setTask(caller, stepFunctions);
-				int waitNs = 0;
-				while (isWorking() && (waitNs / 1000000)<timeoutMs) {
-					Util.sleepNs(10000);
-					waitNs += 10000;
-				}
-				if ((waitNs / 1000000)<timeoutMs) {
-					r = getReturnValues();
-				}
-			}
+			r = executeUsingWorkers(caller, fll, timeoutMs);
 		}
 		return r;
 	}
@@ -86,6 +75,28 @@ public class Executor {
 		return r;
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected List<Object> executeInCurrentThread(Object caller, FunctionListList fll) {
+		return (List<Object>) fll.execute(caller);
+	}
+	
+	protected List<Object> executeUsingWorkers(Object caller, FunctionListList fll, long timeoutMs) {
+		List<Object> r = null;
+		SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
+		if (stepFunctions.size()>0) {
+			setTask(caller, stepFunctions);
+			int waitNs = 0;
+			while (isWorking() && (waitNs / 1000000)<timeoutMs) {
+				Util.sleepNs(10000);
+				waitNs += 10000;
+			}
+			if ((waitNs / 1000000)<timeoutMs) {
+				r = getReturnValues();
+			}
+		}
+		return r;
+	}
+
 	protected void setTask(Object caller, SortedMap<Integer,List<Function>> stepFunctions) {
 		lock.lock();
 		task = new ExecutorTask(caller, stepFunctions);
@@ -109,11 +120,6 @@ public class Executor {
 		if (functions!=null) {
 			addFunctionsToExecutor(functions);
 		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected List<Object> executeInCurrentThread(Object caller, FunctionListList fll) {
-		return (List<Object>) fll.execute(caller);
 	}
 	
 	protected void addFunctionsToExecutor(List<ExecutorFunction> functions) {

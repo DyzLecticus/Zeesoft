@@ -26,14 +26,7 @@ public class ClBits {
 		if (value!=null && activationHistory.sdrs.size() > config.predictStep) {
 			Sdr associateSDR = activationHistory.sdrs.get(config.predictStep);
 			for (Integer onBit: associateSDR.onBits) {
-				ClBit bit = bits.get(onBit);
-				if (bit==null) {
-					bit = new ClBit();
-					bit.config = config;
-					bit.index = onBit;
-					bits.put(onBit,bit);
-				}
-				if (bit.associate(value)) {
+				if (associateOnBit(onBit, value)) {
 					divide = true;
 				}
 			}
@@ -44,12 +37,28 @@ public class ClBits {
 		return divide;
 	}
 
-	public Classification generatePrediction(Sdr input) {
+	public Classification generatePrediction(Sdr input, Object value) {
 		Classification r = new Classification();
 		HashMap<Object,Integer> valueCounts = getValueCounts(input);
 		r.name = config.valueName;
 		r.step = config.predictStep;
 		r.valueCounts = valueCounts;
+		r.value = value;
+		return r;
+	}
+	
+	protected boolean associateOnBit(Integer onBit, Object value) {
+		boolean r = false;
+		ClBit bit = bits.get(onBit);
+		if (bit==null) {
+			bit = new ClBit();
+			bit.config = config;
+			bit.index = onBit;
+			bits.put(onBit,bit);
+		}
+		if (bit.associate(value)) {
+			r = true;
+		}
 		return r;
 	}
 	

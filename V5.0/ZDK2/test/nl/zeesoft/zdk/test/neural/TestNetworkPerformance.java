@@ -50,12 +50,12 @@ public class TestNetworkPerformance {
 		
 		Console.log("Single thread: " + singleThreadMs + " ms");
 		Console.log("Average per network IO; ");
-		Console.log(indent(analyzerSeq.getAverage().toString(),"- "));
+		Console.log(indent(analyzerSeq.getAverageStats().toString(),"- "));
 		
 		Console.log("");
 		Console.log("Multi thread: " + multiThreadMs + " ms");
 		Console.log("Average per network IO; ");
-		Console.log(indent(analyzerPar.getAverage().toString(),"- "));
+		Console.log(indent(analyzerPar.getAverageStats().toString(),"- "));
 		
 		Console.log("");
 		Console.log("Factor: " + factor);

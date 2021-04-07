@@ -11,6 +11,7 @@ public class Classification {
 	public String					name				= "";
 	public int						step				= 0;
 	public HashMap<Object,Integer>	valueCounts			= null;
+	public Object					value				= null;
 	
 	public List<Object> getMostCountedValues() {
 		List<Object> mostCountedValues = new ArrayList<Object>();

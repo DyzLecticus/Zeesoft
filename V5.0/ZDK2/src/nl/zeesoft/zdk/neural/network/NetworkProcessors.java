@@ -29,15 +29,10 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		FunctionListList fll = getInitializeProcessorFunctionListList(processorConfigs);
 		List<Object> nps = executor.execute(caller, fll, timeoutMs);
 		if (nps!=null) {
+			processors.clear();
+			layerProcessors.clear();
 			for (Object obj: nps) {
-				NetworkProcessor np = (NetworkProcessor) obj;
-				processors.put(np.name, np);
-				List<NetworkProcessor> lps = layerProcessors.get(np.layer);
-				if (lps==null) {
-					lps = new ArrayList<NetworkProcessor>();
-					layerProcessors.put(np.layer, lps);
-				}
-				lps.add(np);
+				addNetworkProcessor((NetworkProcessor) obj);
 			}
 		}
 		return nps!=null;
@@ -129,5 +124,15 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		};
 		r.param1 = pc;
 		return r;
+	}
+	
+	protected void addNetworkProcessor(NetworkProcessor np) {
+		processors.put(np.name, np);
+		List<NetworkProcessor> lps = layerProcessors.get(np.layer);
+		if (lps==null) {
+			lps = new ArrayList<NetworkProcessor>();
+			layerProcessors.put(np.layer, lps);
+		}
+		lps.add(np);
 	}
 }

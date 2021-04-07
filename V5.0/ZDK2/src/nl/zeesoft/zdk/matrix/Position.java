@@ -81,13 +81,7 @@ public class Position {
 			r = Util.getHypotenuse(len1, len2);
 		}
 		if (other.z!=z) {
-			len1 = r;
-			len2 = getAbsoluteDistance(other.z, z);
-			if (len1==0) {
-				r = len2;
-			} else {
-				r = Util.getHypotenuse(len1, len2);
-			}
+			r = addDepthDistance(r, other);
 		}
 		return r;
 	}
@@ -109,6 +103,18 @@ public class Position {
 			r = a - b;
 		} else {
 			r = b - a;
+		}
+		return r;
+	}
+	
+	protected float addDepthDistance(float xyDist, Position other) {
+		float r = 0;
+		float len1 = xyDist;
+		float len2 = getAbsoluteDistance(other.z, z);
+		if (len1==0) {
+			r = len2;
+		} else {
+			r = Util.getHypotenuse(len1, len2);
 		}
 		return r;
 	}

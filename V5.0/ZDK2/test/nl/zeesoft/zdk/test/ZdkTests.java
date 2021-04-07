@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.test.code.TestAnalyzer;
+import nl.zeesoft.zdk.test.code.TestCodeAnalyzer;
 import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
@@ -54,6 +54,8 @@ public class ZdkTests {
 	}
 	
 	protected static void runAllTests(String[] args) {
+		Console.log("Test HistoricalFloat ...");
+		TestHistoricalFloat.main(args);
 		Console.log("Test Lock ...");
 		TestLock.main(args);
 		Console.log("Test Logger ...");
@@ -62,11 +64,9 @@ public class ZdkTests {
 		TestRand.main(args);
 		Console.log("Test Util ...");
 		TestUtil.main(args);
-		Console.log("Test Worker ...");
-		TestWorker.main(args);
 
 		Console.log("Test Analyzer ...");
-		TestAnalyzer.main(args);
+		TestCodeAnalyzer.main(args);
 
 		Console.log("Test Function ...");
 		TestFunction.main(args);

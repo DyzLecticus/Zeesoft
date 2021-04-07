@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import java.util.List;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
@@ -104,7 +105,7 @@ public class TestNetwork {
 		assert network.reset();
 		
 		NetworkIOAnalyzer analyzer = new NetworkIOAnalyzer();
-		assert analyzer.getAverage().totalNs == 0;
+		assert analyzer.getAverageStats().totalNs == 0;
 		
 		io = new NetworkIO("TestInput",0);
 		io.addInput("TestInput2", new Sdr(100));
@@ -128,7 +129,7 @@ public class TestNetwork {
 		assert io.getProcessorIO("TestClassifier").outputValue != null;
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
 		cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
-		assert cl.valueCounts.size() == 0;
+		assert cl.valueCounts.size() == 1;
 		
 		ioStats = io.getStats();
 		totalNs += ioStats.totalNs;
@@ -141,7 +142,8 @@ public class TestNetwork {
 		network.processIO(io);
 		assert io.getErrors().size() == 1;
 		assert io.getErrors().get(0).equals("Processing network IO timed out after 0 ms");
-		
+		ZdkTests.sleep(10);
+
 		stats = network.getCellStats();
 		assert stats.cells == 39168;
 		assert stats.proximalStats.segments == 2304;
@@ -151,15 +153,9 @@ public class TestNetwork {
 		assert stats.distalStats.synapses > 500;
 		assert stats.distalStats.activeSynapses == 0;
 
-		ZdkTests.sleep(50);
-		assert !network.reset(0);
-
-		ZdkTests.sleep(50);
-		assert !network.initialize(config,0);
-		
 		totalNs = totalNs / 2;
 		analyzer.add(new NetworkIO());
-		ioStats = analyzer.getAverage();
+		ioStats = analyzer.getAverageStats();
 		assert ioStats.totalNs == totalNs;
 		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();
 		long layerNs = 0;
@@ -176,6 +172,34 @@ public class TestNetwork {
 		ioStats.nsPerLayer.put(0, 1000000L);
 		assert ioStats.toString().equals("Total: 1.0 ms\nLayer 1: 1.0 ms");
 		
+		HistoricalFloat hist = analyzer.getAccuracies().get("TestClassifier");
+		assert hist.floats.size() == 1;
+		assert hist.getAverage() == 0F;
+		
+		assert !network.reset(0);
+		ZdkTests.sleep(100);
+		assert !network.initialize(config,0);
+		ZdkTests.sleep(100);
+
 		network.setNumberOfWorkers(0);
+				
+		analyzer = new NetworkIOAnalyzer();
+		analyzer.add(new NetworkIO());
+		network = new Network();
+		assert network.initialize(TestNetworkConfig.getNewNetworkConfig());
+		assert network.reset();
+		for (int i = 0; i < 16; i++) {
+			io = new NetworkIO("TestInput",i % 2);
+			network.processIO(io);
+			if (i==1) {
+				io.getProcessorIO("TestClassifier").outputValue = null;
+			}
+			analyzer.add(io);
+		}
+		hist = analyzer.getAccuracies().get("TestClassifier");
+		if (hist!=null) {
+			assert hist.floats.size() == 13;
+			assert hist.getAverage() > 0.5F;
+		}
 	}
 }

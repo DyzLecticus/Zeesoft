@@ -19,7 +19,7 @@ public class TestFunctionList {
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues1 = (List<Object>) list.execute(self);
 		assert returnValues1!=null;
-		assert returnValues1.size()==1;
+		assert returnValues1.size()==0;
 		list.functions.clear();
 		
 		// Test custom exception handler
@@ -34,10 +34,9 @@ public class TestFunctionList {
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues2 = (List<Object>) list.execute(self);
 		assert returnValues2!=null;
-		assert returnValues2.size()==2;
+		assert returnValues2.size()==1;
 		assert returnValues2.get(0)!=null;
 		assert returnValues2.get(0) instanceof Integer;
 		assert (int)returnValues2.get(0)==2;
-		assert returnValues2.get(1)==null;
 	}
 }

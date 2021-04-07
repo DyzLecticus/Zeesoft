@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Util;
 
-public class Analyzer {
+public class CodeAnalyzer {
 	public int					maxLinesPerFile			= 200;
 	public int					maxLinesPerMethod		= 30;
 	
@@ -17,7 +17,7 @@ public class Analyzer {
 	public AnalyzerStats		fileStats				= new AnalyzerStats();
 	public AnalyzerStats		methodStats				= new AnalyzerStats();
 	
-	public Analyzer(List<CodeFile> codeFiles) {
+	public CodeAnalyzer(List<CodeFile> codeFiles) {
 		for (CodeFile file: codeFiles) {
 			files.add(new AnalyzerFile(file));
 		}

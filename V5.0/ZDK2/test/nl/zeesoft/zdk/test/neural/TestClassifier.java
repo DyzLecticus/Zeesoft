@@ -87,15 +87,17 @@ public class TestClassifier {
 		assert classification.name.equals(config.valueName);
 		assert classification.step == config.predictStep;
 		assert classification.valueCounts.size() == 0;
+		assert classification.value.equals(1);
 		
 		cl.processIO(io2);
 		assert cl.activationHistory.sdrs.size() == 2;
 		assert cl.bits.bits.size() == 4;
 		assert io2.outputValue instanceof Classification;
-		classification = ((Classification)io1.outputValue);
+		classification = ((Classification)io2.outputValue);
 		assert classification.name.equals(config.valueName);
 		assert classification.step == config.predictStep;
-		assert classification.valueCounts.size() == 0;
+		assert classification.valueCounts.size() == 1;
+		assert classification.value.equals(2);
 		
 		io1.outputs.clear();
 		cl.processIO(io1);
@@ -107,6 +109,7 @@ public class TestClassifier {
 		assert classification.getMostCountedValues().size() == 1;
 		assert (int)classification.getMostCountedValues().get(0) == 2;
 		assert classification.getStandardDeviation() == 10.606602F;
+		assert classification.value.equals(1);
 
 		io2.outputs.clear();
 		cl.processIO(io2);
@@ -121,7 +124,8 @@ public class TestClassifier {
 		assert classification.getMostCountedValues().size() == 1;
 		assert (int)classification.getMostCountedValues().get(0) == 2;
 		assert classification.getStandardDeviation() == 6.363961F;
-		
+		assert classification.value.equals(1);
+
 		cl.setLearn(false);
 		io1.outputs.clear();
 		cl.processIO(io1);

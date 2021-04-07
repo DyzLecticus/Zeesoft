@@ -115,6 +115,7 @@ public class TestCell {
 		cell.createSegments(null, winners1, apical1);
 		cell.createSegments(null, winners1, apical1);
 		cell.createSegments(null, winners2, apical2);
+		assert cell.getPotential() == 0;
 		
 		List<Position> active = new ArrayList<Position>();
 		active.add(winners1.get(0));
@@ -151,6 +152,7 @@ public class TestCell {
 		assert cell.apicalSegments.activeSegments.size() == 2;
 		assert cell.apicalSegments.matchingSegments.size() == 1;
 		assert cell.apicalSegments.matchingSegment != null;
+		assert cell.getPotential() == 2;
 
 		List<Position> subset = new ArrayList<Position>(active);
 		subset.remove(1);
@@ -163,6 +165,7 @@ public class TestCell {
 		assert cell.apicalSegments.activeSegments.size() == 0;
 		assert cell.apicalSegments.matchingSegments.size() == 3;
 		assert cell.apicalSegments.matchingSegment != null;
+		assert cell.getPotential() == 2;
 		
 		cell.distalSegments.add(cell.distalSegments.matchingSegments.remove(0));
 		cell.apicalSegments.add(cell.apicalSegments.matchingSegments.remove(0));

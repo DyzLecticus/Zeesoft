@@ -63,6 +63,7 @@ public class TestNetworkConfig {
 		assert config.getInputNames().contains("TestInput");
 		
 		ScalarEncoderConfig sec = config.addScalarEncoder("TestEncoder");
+		sec.encoder.maxValue = 20;
 		assert sec != null;
 		assert sec.layer == 0;
 		assert config.getProcessorConfigs().size() == 1;
@@ -93,7 +94,8 @@ public class TestNetworkConfig {
 		assert clc.layer == 3;
 		assert config.getProcessorConfigs().size() == 4;
 		config.addLink("TestTemporalMemory", "TestClassifier");
-		assert clc.inputLinks.size() == 1;
+		config.addLink("TestInput", 0, "TestClassifier", 1);
+		assert clc.inputLinks.size() == 2;
 		
 		MergerConfig mrc = config.addMerger("TestMerger");
 		assert mrc != null;

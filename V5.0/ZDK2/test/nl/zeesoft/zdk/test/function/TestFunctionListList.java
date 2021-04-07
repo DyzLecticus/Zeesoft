@@ -24,7 +24,7 @@ public class TestFunctionListList {
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues1 = (List<Object>) fll.execute(self);
 		assert returnValues1!=null;
-		assert returnValues1.size()==1;
+		assert returnValues1.size()==0;
 		fll.functionLists.clear();
 		assert fll.nsPerStep.size()==1;
 		assert fll.nsPerStep.get(0)>1;
@@ -43,11 +43,10 @@ public class TestFunctionListList {
 		fll.addFunctionList(null);
 		fll.addFunctionList(new FunctionList());
 		assert returnValues2!=null;
-		assert returnValues2.size()==2;
+		assert returnValues2.size()==1;
 		assert returnValues2.get(0)!=null;
 		assert returnValues2.get(0) instanceof Integer;
 		assert (int)returnValues2.get(0)==2;
-		assert returnValues2.get(1)==null;
 		
 		SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
 		assert stepFunctions.size() == 2;
