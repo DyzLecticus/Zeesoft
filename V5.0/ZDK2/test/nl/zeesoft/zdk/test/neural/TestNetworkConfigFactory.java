@@ -32,23 +32,31 @@ public class TestNetworkConfigFactory {
 		assert config.getProcessorConfig("SpatialPooler2") != null;
 		assert config.getProcessorConfig("TemporalMemory2") != null;
 		assert config.getProcessorConfig("Classifier2") != null;
-		
-		factory.setSmallScale();
+
 		ScalarSdrEncoderTester tester = new ScalarSdrEncoderTester();
-		assert tester.testMinimalOverlap(factory.encoder).length()==0;
 		
-		config = factory.getSimpleConfig("Input1", "Input2");
+		factory.setMediumScale();
+		assert tester.testMinimalOverlap(factory.encoder).length()==0;
+		testSimpleConfig(factory, 144, 4608, new Size(24,24,8));
+
+		factory.setSmallScale();
+		assert tester.testMinimalOverlap(factory.encoder).length()==0;
+		testSimpleConfig(factory, 100, 1024, new Size(16,16,4));
+	}
+	
+	public static void testSimpleConfig(NetworkConfigFactory factory, int maxSpVolume, int maxTmVolume, Size size) {
+		NetworkConfig config = factory.getSimpleConfig("Input1", "Input2");
 		assert config.test().length() == 0;
 		assert config.getInputNames().size() == 2;
 		assert config.getProcessorConfigs().size() == 8;
 		
 		InputOutputConfig ioCfg = config.getProcessorConfig("SpatialPooler1").getInputOutputConfig();
-		assert ioCfg.inputs.get(0).maxVolume == 100;
-		assert ioCfg.outputs.get(0).size.equals(new Size(16,16));
+		assert ioCfg.inputs.get(0).maxVolume == maxSpVolume;
+		assert ioCfg.outputs.get(0).size.equals(new Size(size.x,size.y));
 		
 		ioCfg = config.getProcessorConfig("TemporalMemory1").getInputOutputConfig();
-		assert ioCfg.inputs.get(1).maxVolume == 1024;
-		assert ioCfg.outputs.get(0).size.equals(new Size(16,16,4));
+		assert ioCfg.inputs.get(1).maxVolume == maxTmVolume;
+		assert ioCfg.outputs.get(0).size.equals(new Size(size.x,size.y,size.z));
 		
 		assert config.getProcessorConfig("TemporalMemory1").inputLinks.size() == 1;
 		factory.addTemporalMemoryMerger(config,"o");

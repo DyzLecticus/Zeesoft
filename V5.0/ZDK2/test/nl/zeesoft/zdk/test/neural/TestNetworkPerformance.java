@@ -5,6 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
@@ -12,27 +13,34 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 public class TestNetworkPerformance {
-	public static int	TEST_CYCLES		= 200;
+	public static int	TEST_CYCLES		= 50;
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
-		
+
 		NetworkConfigFactory factory = new NetworkConfigFactory();
-		factory.setSmallScale();
+		factory.setMediumScale();
 		
 		NetworkConfig config = factory.getSimpleConfig("Input1", "Input2", "Input3", "Input4");
 		
-		Network network = new Network();
-		assert network.initialize(config);
-		assert network.reset();
-		long singleThreadMs = testNetworkPerformance(network);
+		long singleThreadMs = 0;
+		long multiThreadMs = 0; 
 		
-		network = new Network();
-		assert network.initialize(config);
-		assert network.reset();
-		network.setNumberOfWorkers(4);
-		long multiThreadMs = testNetworkPerformance(network);
-		network.setNumberOfWorkers(0);
+		for (int i = 0; i < 3; i++) {
+			Network network = new Network();
+			Rand.reset(0);
+			assert network.initialize(config);
+			assert network.reset();
+			singleThreadMs += testNetworkPerformance(network);
+			
+			network = new Network();
+			Rand.reset(0);
+			assert network.initialize(config);
+			assert network.reset();
+			network.setNumberOfWorkers(4);
+			multiThreadMs += testNetworkPerformance(network);
+			network.setNumberOfWorkers(0);
+		}
 		
 		Console.log(singleThreadMs + " / "  + multiThreadMs);
 	}
@@ -65,7 +73,13 @@ public class TestNetworkPerformance {
 		long started = System.currentTimeMillis();
 		for (NetworkIO io: testSet) {
 			network.processIO(io);
-			assert io.getErrors().size() == 0;
+			List<String> errors = io.getErrors();
+			if (errors.size()>0) {
+				for (String error: errors) {
+					Console.log(error);
+				}
+				assert false;
+			}
 		}
 		long totalMs = System.currentTimeMillis() - started;
 		

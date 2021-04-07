@@ -29,8 +29,8 @@ public class TestExecutor {
 		assert (boolean)returnValues.get(2);
 		assert !executor.isWorking();
 
-		executor.setNumberOfWorkers(2);
-		assert executor.getNumberOfWorkers() == 2;
+		executor.setWorkers(2);
+		assert executor.getWorkers() == 2;
 		returnValues = executor.execute(self, fll, 100);
 		assert returnValues.size() == 6;
 		assert (boolean)returnValues.get(0);
@@ -38,22 +38,19 @@ public class TestExecutor {
 		assert (boolean)returnValues.get(2);
 
 		returnValues = executor.execute(self, new FunctionListList(), 100);
-		assert returnValues.size() == 0;
+		assert returnValues == null;
 
 		returnValues = executor.execute(self, fll, 0);
 		assert returnValues == null;
+		assert executor.isWorking();
+		executor.execute(self, fll, 0);
 		assert executor.isWorking();
 		while (executor.isWorking()) {
 			ZdkTests.sleep(10);
 		}
 		
-		returnValues = executor.execute(self, fll, 1);
-		executor.execute(self, fll, 1);
-		assert executor.isWorking();
-		assert returnValues == null;
-
-		executor.setNumberOfWorkers(0);
-		assert executor.getNumberOfWorkers() == 0;
+		executor.setWorkers(0);
+		assert executor.getWorkers() == 0;
 	}
 	
 	protected static FunctionList getTestFunctionList(boolean returnValue) {

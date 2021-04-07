@@ -1,51 +1,69 @@
 package nl.zeesoft.zdk.function;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import nl.zeesoft.zdk.Lock;
 import nl.zeesoft.zdk.Util;
 
 public class Executor {
-	protected Lock									lock			= new Lock(this);
-	protected ExecutorWorkers						workers			= new ExecutorWorkers();
+	protected Lock						lock			= new Lock(this);
+	protected int						workers			= 0;
+	protected ThreadPoolExecutor		executor		= null;
 	
-	protected ExecutorTask							task 			= null;
-
+	protected ExecutorTask				task			= null;
+	
 	public Executor() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				setNumberOfWorkers(0);
+				setWorkers(0);
 			}
 		});  
 	}
 	
-	public void setNumberOfWorkers(int num) {
+	public void setWorkers(int workers) {
 		lock.lock();
-		workers.setNumberOfWorkers(num, this);
+		if (this.workers!=workers)  {
+			if (executor!=null) {
+				executor.shutdown();
+			}
+			if (workers==0) {
+				executor = null;
+			} else {
+				executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(workers);
+			}
+			this.workers = workers;
+		}
 		lock.unlock();
 	}
 	
-	public int getNumberOfWorkers() {
+	public int getWorkers() {
 		lock.lock();
-		int r = workers.size();
+		int r = workers;
 		lock.unlock();
 		return r;
 	}
 	
-	public List<Object> execute(Object caller, FunctionListList fll, int timeoutMs) {
+	public List<Object> execute(Object caller, FunctionListList fll, long timeoutMs) {
 		List<Object> r = null;
-		if (getNumberOfWorkers()==0) {
+		if (getWorkers()==0) {
 			r = executeInCurrentThread(caller, fll);
 		} else {
-			boolean wait = setTask(caller, fll);
-			if (wait) {
+			SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
+			if (stepFunctions.size()>0) {
+				setTask(caller, stepFunctions);
 				int waitNs = 0;
 				while (isWorking() && (waitNs / 1000000)<timeoutMs) {
-					Util.sleepNs(100000);
-					waitNs += 100000;
+					Util.sleepNs(10000);
+					waitNs += 10000;
 				}
-				r = getReturnValuesIfDone();
+				if ((waitNs / 1000000)<timeoutMs) {
+					r = getReturnValues();
+				}
 			}
 		}
 		return r;
@@ -53,42 +71,43 @@ public class Executor {
 	
 	public boolean isWorking() {
 		lock.lock();
-		boolean r = (task != null && !task.isDone());
+		boolean r = (task!=null && !task.done.get());
 		lock.unlock();
 		return r;
 	}
 	
-	protected boolean setTask(Object caller, FunctionListList fll) {
-		boolean r = false;
+	protected void setTask(Object caller, SortedMap<Integer,List<Function>> stepFunctions) {
 		lock.lock();
-		if (task==null || task.isDone()) {
-			task = new ExecutorTask(caller, fll.getStepFunctions());
-			workers.setSleepMs(0);
-			r = true;
+		task = new ExecutorTask(caller, stepFunctions);
+		addFunctionsToExecutor(task.getWorkingStepFunctions(this));
+		lock.unlock();
+	}
+	
+	protected List<Object> getReturnValues() {
+		lock.lock();
+		List<Object> r = new ArrayList<Object>();
+		for (Object object: task.returnValues) {
+			r.add(object);
 		}
 		lock.unlock();
 		return r;
 	}
 	
-	protected ExecutorTask getTask() {
-		lock.lock();
-		ExecutorTask r = task;
-		lock.unlock();
-		return r;
-	}
-	
-	protected List<Object> getReturnValuesIfDone() {
-		List<Object> r = null;
-		lock.lock();
-		if (task.isDone()) {
-			r = task.getReturnValues();
+	protected void executedFunction(ExecutorFunction function, Object returnValue) {
+		boolean reload = task.executedFunction(returnValue);
+		if (reload) {
+			addFunctionsToExecutor(task.getWorkingStepFunctions(this));
 		}
-		lock.unlock();
-		return r;
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected List<Object> executeInCurrentThread(Object caller, FunctionListList fll) {
 		return (List<Object>) fll.execute(caller);
+	}
+	
+	protected void addFunctionsToExecutor(List<ExecutorFunction> functions) {
+		for (ExecutorFunction function: functions) {
+			executor.execute(function);
+		}
 	}
 }

@@ -27,6 +27,18 @@ public class NetworkConfigFactory {
 		matchingThreshold = 2;
 		maxApicalOnBits = 64;
 	}
+
+	public void setMediumScale() {
+		encoder = new ScConfig();
+		encoder.encodeLength = 144;
+		encoder.maxValue = 32;
+		encoder.onBits = 8;
+		size = new Size(24,24,8);
+		onBits = 11;
+		activationThreshold = 8;
+		matchingThreshold = 6;
+		maxApicalOnBits = 128;
+	}
 	
 	public NetworkConfig getSimpleConfig(String ...inputNames) {
 		NetworkConfig r = new NetworkConfig();

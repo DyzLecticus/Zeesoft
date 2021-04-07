@@ -51,5 +51,9 @@ public class TestFunctionListList {
 		assert stepFunctions.get(0).size() == 1;
 		assert stepFunctions.get(1).size() == 1;
 		
+		fll.functionLists.get(1).functions.remove(0);
+		stepFunctions = fll.getStepFunctions();
+		assert stepFunctions.size() == 1;
+		assert stepFunctions.get(0).size() == 1;
 	}
 }

@@ -3,80 +3,60 @@ package nl.zeesoft.zdk.function;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import nl.zeesoft.zdk.Lock;
 
 public class ExecutorTask {
-	protected Lock									lock			= new Lock(this);
-	protected Object								caller			= null;
-	protected SortedMap<Integer,List<Function>>		stepFunctions	= null;
-	protected int									workingStep		= 0;
-	protected List<Integer>							workingIndexes	= new ArrayList<Integer>();
-	protected List<Integer>							doneIndexes		= new ArrayList<Integer>();
-	protected List<Object>							returnValues	= new ArrayList<Object>();
+	protected Lock									lock				= new Lock(this);
 	
-	public ExecutorTask(Object caller, SortedMap<Integer,List<Function>> stepFunctions) {
+	protected Object								caller				= null;
+	protected SortedMap<Integer,List<Function>>		stepFunctions		= null;
+	
+	protected int									todo				= 0;
+	protected int									workingStep			= 0;
+	protected int									workingFunctions	= 0;
+	protected AtomicBoolean							done				= new AtomicBoolean(false);
+	
+	protected ConcurrentLinkedDeque<Object>			returnValues		= new ConcurrentLinkedDeque<Object>();
+	
+	protected ExecutorTask(Object caller, SortedMap<Integer,List<Function>> stepFunctions) {
 		this.caller = caller;
 		this.stepFunctions = stepFunctions;
+		for (List<Function> functions: stepFunctions.values()) {
+			todo += functions.size();
+		}
 	}
 	
-	protected Function getNextFunction() {
-		Function r = null;
+	protected List<ExecutorFunction> getWorkingStepFunctions(Executor executor) {
+		List<ExecutorFunction> r = new ArrayList<ExecutorFunction>();
 		lock.lock();
-		if (stepFunctions!=null && workingStep>=stepFunctions.size()) {
-			stepFunctions = null;
-		}
-		if (stepFunctions!=null) {
-			List<Function> workingFunctions = stepFunctions.get(workingStep);
-			Integer index = 0;
-			for (Function workingFunction: workingFunctions) {
-				if (!doneIndexes.contains(index) && !workingIndexes.contains(index)) {
-					workingIndexes.add(index);
-					r = workingFunction;
-					break;
-				}
-				index++;
-			}
+		List<Function> functions = stepFunctions.get(workingStep);
+		for (Function function: functions) {
+			r.add(new ExecutorFunction(caller, function, executor));
+			workingFunctions++;
 		}
 		lock.unlock();
 		return r;
 	}
 	
-	protected Object getCaller() {
+	protected boolean executedFunction(Object returnValue) {
+		boolean r = false;
+		if (returnValue!=null) {
+			returnValues.add(returnValue);
+		}
 		lock.lock();
-		Object r = caller;
-		lock.unlock();
-		return r;
-	}
-	
-	protected boolean isDone() {
-		lock.lock();
-		boolean r = stepFunctions == null; 
-		lock.unlock();
-		return r;
-	}
-	
-	protected List<Object> getReturnValues() {
-		lock.lock();
-		List<Object> r = new ArrayList<Object>(returnValues);
-		lock.unlock();
-		return r;
-	}
-	
-	protected void executedFunction(Function function, Object returnValue) {
-		lock.lock();
-		returnValues.add(returnValue);
-		List<Function> workingFunctions = stepFunctions.get(workingStep);
-		Integer index = workingFunctions.indexOf(function);
-		workingIndexes.remove(index);
-		doneIndexes.add(index);
-		if (doneIndexes.size()==workingFunctions.size()) {
+		todo--;
+		if (todo==0) {
+			done.set(true);
+		}
+		workingFunctions--;
+		if (workingFunctions==0 && todo>0) {
 			workingStep++;
-			doneIndexes.clear();
-			if (workingStep>stepFunctions.lastKey()) {
-				stepFunctions = null;
-			}
+			r = true;
 		}
 		lock.unlock();
+		return r;
 	}
 }

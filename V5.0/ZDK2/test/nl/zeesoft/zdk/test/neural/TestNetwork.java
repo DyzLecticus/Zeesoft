@@ -84,11 +84,11 @@ public class TestNetwork {
 		network.processIO(io);
 		List<String> errors = io.getErrors();
 		assert errors.size() == 5;
-		assert errors.get(0).equals("Classifier requires at least one input SDR");
-		assert errors.get(1).equals("Merger requires at least one input SDR");
+		assert errors.get(0).equals("Merger requires at least one input SDR");
+		assert errors.get(1).equals("Classifier requires at least one input SDR");
 		assert errors.get(2).equals("Merger requires at least one input SDR");
-		assert errors.get(3).equals("SpatialPooler connections are not initialized");
-		assert errors.get(4).equals("TemporalMemory requires at least one input SDR");
+		assert errors.get(3).equals("TemporalMemory requires at least one input SDR");
+		assert errors.get(4).equals("SpatialPooler connections are not initialized");
 		assert network.getPreviousIO() == io;
 		
 		io = new NetworkIO("TestInput",new Sdr(100));
@@ -96,7 +96,7 @@ public class TestNetwork {
 		network.processIO(io);
 		errors = io.getErrors();
 		assert errors.size() == 6;
-		assert errors.get(1).toString().equals("ScalarEncoder requires an input value");
+		assert errors.get(3).toString().equals("ScalarEncoder requires an input value");
 		
 		assert network.reset();
 		

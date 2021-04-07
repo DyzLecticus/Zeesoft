@@ -22,7 +22,7 @@ public class Network {
 	protected NetworkIO					previousIO			= null;
 	
 	public void setNumberOfWorkers(int num) {
-		executor.setNumberOfWorkers(num);
+		executor.setWorkers(num);
 	}
 	
 	public boolean initialize(NetworkConfig config) {

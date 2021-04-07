@@ -45,7 +45,7 @@ public class Classifier extends LearningProcessor {
 	protected void processValidIO(ProcessorIO io) {
 		Sdr input = io.inputs.get(ASSOCIATE_SDR_INPUT).copy();
 		input.subsample(config.maxOnBits);
-		activationHistory.push(input);
+		activationHistory.push(input.copy());
 		if (learn) {
 			bits.associateBits(io.inputValue);
 		}

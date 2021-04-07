@@ -40,8 +40,10 @@ public class FunctionListList extends Function {
 		SortedMap<Integer,List<Function>> r = new TreeMap<Integer,List<Function>>();
 		int step = 0;
 		for (FunctionList fl: functionLists) {
-			r.put(step, fl.functions);
-			step++;
+			if (fl.functions.size()>0) {
+				r.put(step, new ArrayList<Function>(fl.functions));
+				step++;
+			}
 		}
 		return r;
 	}

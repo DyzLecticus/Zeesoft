@@ -1,9 +1,9 @@
 package nl.zeesoft.zdk.neural.network;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;

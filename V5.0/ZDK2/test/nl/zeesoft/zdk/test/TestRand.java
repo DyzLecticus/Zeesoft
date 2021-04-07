@@ -49,5 +49,11 @@ public class TestRand {
 		assert rands.size() == 10;
 		Rand.subsampleList(rands, -1);
 		assert rands.size() == 0;
+		
+		Rand.reset(0);
+		int r1 = Rand.getRandomInt(0, 1000000);
+		Rand.reset(0);
+		int r2 = Rand.getRandomInt(0, 1000000);
+		assert r1 == r2;
 	}
 }

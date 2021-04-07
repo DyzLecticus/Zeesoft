@@ -7,6 +7,10 @@ import java.util.Random;
 public class Rand {
 	private static Random 	random		= new Random();
 	
+	public static void reset(long seed) {
+		random = new Random(seed);
+	}
+	
 	public static float getRandomFloat(float min, float max) {
 		float r = min;
 		if (min<max) {
