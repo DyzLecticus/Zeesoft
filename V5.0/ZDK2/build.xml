@@ -33,7 +33,7 @@
 		<manifest file="${dist}/mymanifest">
 			<attribute name="Built-By" value="${version} ${creator}"/>
 			<attribute name="Class-path" value="${classpath}"/>
-			<attribute name="Main-Class" value="nl.zeesoft.zdk.test.AllTests"/>
+			<attribute name="Main-Class" value="nl.zeesoft.zdk.test.ZdkTests"/>
 		</manifest>
 		
 		<!-- Build jar file -->
