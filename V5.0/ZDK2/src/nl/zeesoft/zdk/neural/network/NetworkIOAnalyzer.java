@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class NetworkIOAnalyzer {
-	public List<NetworkIO>	networkIO = new ArrayList<NetworkIO>();
+	protected List<NetworkIO>	networkIO = new ArrayList<NetworkIO>();
+	
+	public void add(NetworkIO io) {
+		networkIO.add(io);
+	}
 	
 	public NetworkIOStats getAverage() {
 		NetworkIOStats r = new NetworkIOStats();

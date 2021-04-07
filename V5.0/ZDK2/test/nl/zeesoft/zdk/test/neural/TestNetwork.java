@@ -119,7 +119,7 @@ public class TestNetwork {
 		assert ioStats.totalNs > 0;
 		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();
 		long totalNs = ioStats.totalNs;
-		analyzer.networkIO.add(io);
+		analyzer.add(io);
 
 		io = new NetworkIO("TestInput",1);
 		io.addInput("TestInput2", new Sdr(100));
@@ -132,7 +132,7 @@ public class TestNetwork {
 		
 		ioStats = io.getStats();
 		totalNs += ioStats.totalNs;
-		analyzer.networkIO.add(io);
+		analyzer.add(io);
 
 		network.setNumberOfWorkers(2);
 		io = new NetworkIO("TestInput",1);
@@ -158,7 +158,7 @@ public class TestNetwork {
 		assert !network.initialize(config,0);
 		
 		totalNs = totalNs / 2;
-		analyzer.networkIO.add(new NetworkIO());
+		analyzer.add(new NetworkIO());
 		ioStats = analyzer.getAverage();
 		assert ioStats.totalNs == totalNs;
 		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();

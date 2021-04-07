@@ -61,8 +61,8 @@ public class Executor {
 				setTask(caller, stepFunctions);
 				int waitNs = 0;
 				while (isWorking() && (waitNs / 1000000)<timeoutMs) {
-					Util.sleepNs(1000);
-					waitNs += 1000;
+					Util.sleepNs(10000);
+					waitNs += 10000;
 				}
 				if ((waitNs / 1000000)<timeoutMs) {
 					r = getReturnValues();

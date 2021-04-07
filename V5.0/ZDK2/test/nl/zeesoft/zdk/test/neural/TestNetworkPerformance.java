@@ -50,12 +50,12 @@ public class TestNetworkPerformance {
 		
 		Console.log("Single thread: " + singleThreadMs + " ms");
 		Console.log("Average per network IO; ");
-		Console.log(analyzerSeq.getAverage());
+		Console.log(indent(analyzerSeq.getAverage().toString(),"- "));
 		
 		Console.log("");
 		Console.log("Multi thread: " + multiThreadMs + " ms");
 		Console.log("Average per network IO; ");
-		Console.log(analyzerPar.getAverage());
+		Console.log(indent(analyzerPar.getAverage().toString(),"- "));
 		
 		Console.log("");
 		Console.log("Factor: " + factor);
@@ -98,7 +98,7 @@ public class TestNetworkPerformance {
 				}
 				assert false;
 			}
-			analyzer.networkIO.add(io);
+			analyzer.add(io);
 		}
 		long totalMs = System.currentTimeMillis() - started;
 		
@@ -131,5 +131,9 @@ public class TestNetworkPerformance {
 		assert input4Prediction.getMostCountedValues().get(0) == lastIO.getInput("Input4");
 		
 		return totalMs;
+	}
+	
+	private static String indent(String source,String indent) {
+		return indent + source.replace("\n", "\n" + indent);
 	}
 }
