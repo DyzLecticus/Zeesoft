@@ -7,6 +7,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Position;
@@ -38,12 +39,7 @@ public class SpActivations extends Matrix {
 				r.add(0,add);
 			}
 		}
-		if (limit>0 && r.size() > limit) {
-			int remove = r.size() - limit;
-			for (int n = 0; n < remove; n++) {
-				r.remove(limit);
-			}
-		}
+		Util.applySizeLimitToList(r, limit);
 		return r;
 	}
 

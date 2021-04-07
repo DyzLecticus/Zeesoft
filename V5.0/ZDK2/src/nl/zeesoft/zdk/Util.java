@@ -37,6 +37,18 @@ public class Util {
 		}
 	}
 	
+	@SuppressWarnings({ "rawtypes" })
+	public static void applySizeLimitToList(List list, int limit) {
+		if (limit<=0) {
+			list.clear();
+		} else if (list.size() > limit) {
+			int remove = list.size() - limit;
+			for (int n = 0; n < remove; n++) {
+				list.remove(limit);
+			}
+		}
+	}
+	
 	public static InterruptedException sleep(int ms) {
 		InterruptedException r = null;
 		try {

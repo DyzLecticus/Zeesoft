@@ -36,6 +36,16 @@ public class TestUtil {
 		Util.removeNullValuesFromList(utils);
 		assert utils.size() == 2;
 		
+		Util.applySizeLimitToList(utils, 0);
+		assert utils.size() == 0;
+		utils.add(new Util());
+		utils.add(new Util());
+		Util.applySizeLimitToList(utils, 1);
+		assert utils.size() == 1;
+		Util.applySizeLimitToList(utils, 1);
+		assert utils.size() == 1;
+		
+
 		Exception ex = Util.sleep(1);
 		ZdkTests.sleep(10);
 		assert ex == null;
