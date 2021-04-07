@@ -48,6 +48,7 @@ public class TestSpatialPooler {
 		
 		SpatialPooler sp = new SpatialPooler();
 		assert sp.toString().length() == 14;
+		assert sp.getCells() == null;
 		sp.reset();
 		
 		io = new ProcessorIO();
