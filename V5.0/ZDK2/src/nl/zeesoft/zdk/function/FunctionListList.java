@@ -6,11 +6,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class FunctionListList extends Function {
-	public List<FunctionList>	functionLists	= new ArrayList<FunctionList>();
+	public List<FunctionList>		functionLists	= new ArrayList<FunctionList>();
+	public SortedMap<Integer,Long>	nsPerStep		= new TreeMap<Integer,Long>();
 	
 	@Override
 	protected Object exec() {
+		nsPerStep.clear();
+		long start = System.nanoTime();
 		List<Object> returnValues = new ArrayList<Object>();
+		int step = 0;
 		for (FunctionList fl: functionLists) {
 			if (exceptionHandler!=null) {
 				fl.exceptionHandler = exceptionHandler;
@@ -18,6 +22,9 @@ public class FunctionListList extends Function {
 			@SuppressWarnings("unchecked")
 			List<Object> listReturnValues = (List<Object>) fl.execute(caller);
 			returnValues.addAll(listReturnValues);
+			nsPerStep.put(step, System.nanoTime() - start);
+			start = System.nanoTime();
+			step++;
 		}
 		return returnValues;
 	}

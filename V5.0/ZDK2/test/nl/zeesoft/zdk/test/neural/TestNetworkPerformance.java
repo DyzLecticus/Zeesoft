@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
@@ -26,23 +27,40 @@ public class TestNetworkPerformance {
 		long singleThreadMs = 0;
 		long multiThreadMs = 0; 
 		
+		NetworkIOAnalyzer analyzerSeq = new NetworkIOAnalyzer();
+		NetworkIOAnalyzer analyzerPar = new NetworkIOAnalyzer();
+		
 		for (int i = 0; i < 3; i++) {
 			Network network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
 			assert network.reset();
-			singleThreadMs += testNetworkPerformance(network);
+			singleThreadMs += testNetworkPerformance(network, analyzerSeq);
 			
 			network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
 			assert network.reset();
 			network.setNumberOfWorkers(4);
-			multiThreadMs += testNetworkPerformance(network);
+			multiThreadMs += testNetworkPerformance(network, analyzerPar);
 			network.setNumberOfWorkers(0);
 		}
+
+		float factor = (float)multiThreadMs / (float)singleThreadMs;
 		
-		Console.log(singleThreadMs + " / "  + multiThreadMs);
+		Console.log("Single thread: " + singleThreadMs + " ms");
+		Console.log("Average per network IO; ");
+		Console.log(analyzerSeq.getAverage());
+		
+		Console.log("");
+		Console.log("Multi thread: " + multiThreadMs + " ms");
+		Console.log("Average per network IO; ");
+		Console.log(analyzerPar.getAverage());
+		
+		Console.log("");
+		Console.log("Factor: " + factor);
+		
+		assert factor < 0.75F;
 	}
 	
 	public static List<NetworkIO> getTestSet(int cycles) {
@@ -66,7 +84,7 @@ public class TestNetworkPerformance {
 		return r;
 	}
 
-	public static long testNetworkPerformance(Network network) {
+	public static long testNetworkPerformance(Network network, NetworkIOAnalyzer analyzer) {
 		List<NetworkIO> testSet = getTestSet(TEST_CYCLES);
 		assert testSet.size() == TEST_CYCLES * getInputPattern().size();
 		
@@ -80,6 +98,7 @@ public class TestNetworkPerformance {
 				}
 				assert false;
 			}
+			analyzer.networkIO.add(io);
 		}
 		long totalMs = System.currentTimeMillis() - started;
 		

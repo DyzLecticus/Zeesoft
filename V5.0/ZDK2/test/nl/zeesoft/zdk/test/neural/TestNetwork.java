@@ -1,12 +1,15 @@
 package nl.zeesoft.zdk.test.neural;
 
 import java.util.List;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
+import nl.zeesoft.zdk.neural.network.NetworkIOStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
@@ -100,6 +103,9 @@ public class TestNetwork {
 		
 		assert network.reset();
 		
+		NetworkIOAnalyzer analyzer = new NetworkIOAnalyzer();
+		assert analyzer.getAverage().totalNs == 0;
+		
 		io = new NetworkIO("TestInput",0);
 		io.addInput("TestInput2", new Sdr(100));
 		network.processIO(io);
@@ -109,6 +115,12 @@ public class TestNetwork {
 		Classification cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
 		assert cl.valueCounts.size() == 0;
 
+		NetworkIOStats ioStats = io.getStats();
+		assert ioStats.totalNs > 0;
+		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();
+		long totalNs = ioStats.totalNs;
+		analyzer.networkIO.add(io);
+
 		io = new NetworkIO("TestInput",1);
 		io.addInput("TestInput2", new Sdr(100));
 		network.processIO(io);
@@ -117,6 +129,10 @@ public class TestNetwork {
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
 		cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
 		assert cl.valueCounts.size() == 0;
+		
+		ioStats = io.getStats();
+		totalNs += ioStats.totalNs;
+		analyzer.networkIO.add(io);
 
 		network.setNumberOfWorkers(2);
 		io = new NetworkIO("TestInput",1);
@@ -140,6 +156,25 @@ public class TestNetwork {
 
 		ZdkTests.sleep(50);
 		assert !network.initialize(config,0);
+		
+		totalNs = totalNs / 2;
+		analyzer.networkIO.add(new NetworkIO());
+		ioStats = analyzer.getAverage();
+		assert ioStats.totalNs == totalNs;
+		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();
+		long layerNs = 0;
+		for (Long ns: ioStats.nsPerLayer.values()) {
+			layerNs += ns;
+		}
+		assert layerNs > (totalNs / 2);
+		assert layerNs <= totalNs;
+		
+		ioStats = new NetworkIOStats();
+		ioStats.totalNs = 1000000;
+		assert ioStats.toString().equals("Total: 1.0 ms");
+		ioStats.nsPerLayer = new TreeMap<Integer,Long>();
+		ioStats.nsPerLayer.put(0, 1000000L);
+		assert ioStats.toString().equals("Total: 1.0 ms\nLayer 1: 1.0 ms");
 		
 		network.setNumberOfWorkers(0);
 	}

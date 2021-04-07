@@ -20,11 +20,14 @@ public class TestFunctionListList {
 		fll.addFunction(new Function());
 		assert fll.functionLists.size() == 1;
 		assert fll.functionLists.get(0).functions.size() == 1;
+		assert fll.nsPerStep.size()==0;
 		@SuppressWarnings("unchecked")
 		List<Object> returnValues1 = (List<Object>) fll.execute(self);
 		assert returnValues1!=null;
 		assert returnValues1.size()==1;
 		fll.functionLists.clear();
+		assert fll.nsPerStep.size()==1;
+		assert fll.nsPerStep.get(0)>1;
 		
 		// Test custom exception handler
 		fll.exceptionHandler = TestFunction.MOCK_EXCEPTION_HANDLER;

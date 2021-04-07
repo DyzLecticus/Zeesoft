@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.function;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,6 +19,9 @@ public class ExecutorTask {
 	protected int									workingStep			= 0;
 	protected int									workingFunctions	= 0;
 	protected AtomicBoolean							done				= new AtomicBoolean(false);
+
+	protected long									start				= System.nanoTime();
+	protected SortedMap<Integer,Long>				nsPerStep			= new TreeMap<Integer,Long>();
 	
 	protected ConcurrentLinkedDeque<Object>			returnValues		= new ConcurrentLinkedDeque<Object>();
 	
@@ -29,34 +33,42 @@ public class ExecutorTask {
 		}
 	}
 	
-	protected List<ExecutorFunction> getWorkingStepFunctions(Executor executor) {
-		List<ExecutorFunction> r = new ArrayList<ExecutorFunction>();
-		lock.lock();
-		List<Function> functions = stepFunctions.get(workingStep);
-		for (Function function: functions) {
-			r.add(new ExecutorFunction(caller, function, executor));
-			workingFunctions++;
-		}
-		lock.unlock();
-		return r;
-	}
-	
-	protected boolean executedFunction(Object returnValue) {
-		boolean r = false;
+	protected List<ExecutorFunction> executedFunction(Object returnValue, Executor executor) {
+		List<ExecutorFunction> r = null;
 		if (returnValue!=null) {
 			returnValues.add(returnValue);
 		}
 		lock.lock();
 		todo--;
+		r = decrementWorkingFunctions(executor);
 		if (todo==0) {
 			done.set(true);
 		}
-		workingFunctions--;
-		if (workingFunctions==0 && todo>0) {
-			workingStep++;
-			r = true;
-		}
 		lock.unlock();
+		return r;
+	}
+	
+	protected List<ExecutorFunction> decrementWorkingFunctions(Executor executor) {
+		List<ExecutorFunction> r = null;
+		workingFunctions--;
+		if (workingFunctions==0) {
+			nsPerStep.put(workingStep, System.nanoTime() - start);
+			start = System.nanoTime();
+			if (todo>0) {
+				workingStep++;
+				r = getWorkingStepFunctions(executor);
+			}
+		}
+		return r;
+	}
+	
+	protected List<ExecutorFunction> getWorkingStepFunctions(Executor executor) {
+		List<ExecutorFunction> r = new ArrayList<ExecutorFunction>();
+		List<Function> functions = stepFunctions.get(workingStep);
+		for (Function function: functions) {
+			r.add(new ExecutorFunction(caller, function, executor));
+			workingFunctions++;
+		}
 		return r;
 	}
 }

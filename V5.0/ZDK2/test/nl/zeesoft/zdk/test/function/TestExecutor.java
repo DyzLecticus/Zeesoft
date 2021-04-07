@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.function;
 
 import java.util.List;
+import java.util.SortedMap;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
@@ -29,6 +30,10 @@ public class TestExecutor {
 		assert (boolean)returnValues.get(2);
 		assert !executor.isWorking();
 
+		SortedMap<Integer,Long> nsPerStepSeq = executor.getNsPerStep();
+		assert nsPerStepSeq.size() == 2;
+		assert nsPerStepSeq.get(0) > nsPerStepSeq.get(1);
+
 		executor.setWorkers(2);
 		assert executor.getWorkers() == 2;
 		returnValues = executor.execute(self, fll, 100);
@@ -37,6 +42,12 @@ public class TestExecutor {
 		assert (boolean)returnValues.get(1);
 		assert (boolean)returnValues.get(2);
 
+		SortedMap<Integer,Long> nsPerStepPar = executor.getNsPerStep();
+		assert nsPerStepPar.size() == 2;
+		assert nsPerStepPar.get(0) > nsPerStepPar.get(1);
+		assert nsPerStepPar.get(0) < nsPerStepSeq.get(0);
+		assert nsPerStepPar.get(1) < nsPerStepSeq.get(1);
+		
 		returnValues = executor.execute(self, new FunctionListList(), 100);
 		assert returnValues == null;
 
@@ -61,7 +72,7 @@ public class TestExecutor {
 				if (returnValue) {
 					Util.sleep(20);
 				} else {
-					Util.sleep(1);
+					Util.sleep(2);
 				}
 				return returnValue;
 			}
@@ -72,7 +83,7 @@ public class TestExecutor {
 				if (returnValue) {
 					Util.sleep(20);
 				} else {
-					Util.sleep(1);
+					Util.sleep(2);
 				}
 				return returnValue;
 			}
@@ -83,7 +94,7 @@ public class TestExecutor {
 				if (returnValue) {
 					Util.sleep(20);
 				} else {
-					Util.sleep(1);
+					Util.sleep(2);
 				}
 				return returnValue;
 			}

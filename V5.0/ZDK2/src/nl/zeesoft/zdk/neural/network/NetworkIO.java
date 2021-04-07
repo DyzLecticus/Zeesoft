@@ -16,6 +16,7 @@ public class NetworkIO {
 	
 	protected ConcurrentMap<String,ProcessorIO>	processorIO		= new ConcurrentHashMap<String,ProcessorIO>();
 	protected CopyOnWriteArrayList<String>		errors			= new CopyOnWriteArrayList<String>();
+	protected NetworkIOStats					stats			= null;
 	
 	public NetworkIO() {
 		
@@ -55,6 +56,17 @@ public class NetworkIO {
 		this.timeoutMs = timeoutMs;
 	}
 	
+	public NetworkIOStats getStats() {
+		return stats;
+	}
+	
+	protected void setStats(long start, SortedMap<Integer,Long> nsPerLayer) {
+		NetworkIOStats stats = new NetworkIOStats();
+		stats.totalNs = System.nanoTime() - start;
+		stats.nsPerLayer = nsPerLayer;
+		this.stats = stats;
+	}
+
 	protected void addError(String msg) {
 		errors.add(msg);
 	}

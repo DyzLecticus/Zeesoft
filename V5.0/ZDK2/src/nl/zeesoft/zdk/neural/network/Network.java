@@ -68,10 +68,12 @@ public class Network {
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
 			int timeoutMs = io.getTimeoutMs();
+			long start = System.nanoTime();
 			FunctionListList fll = ioProcessor.getProcessFunctionForNetworkIO(io, previousIO);
 			if (executor.execute(this, fll, timeoutMs) == null) {
 				io.addError("Processing network IO timed out after " + timeoutMs + " ms");
 			}
+			io.setStats(start, executor.getNsPerStep());
 			previousIO = io;
 		}
 	}

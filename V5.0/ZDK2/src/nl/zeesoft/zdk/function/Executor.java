@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.function;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -10,11 +11,12 @@ import nl.zeesoft.zdk.Lock;
 import nl.zeesoft.zdk.Util;
 
 public class Executor {
-	protected Lock						lock			= new Lock(this);
-	protected int						workers			= 0;
-	protected ThreadPoolExecutor		executor		= null;
+	protected Lock							lock			= new Lock(this);
+	protected int							workers			= 0;
+	protected ThreadPoolExecutor			executor		= null;
 	
-	protected ExecutorTask				task			= null;
+	protected SortedMap<Integer,Long>		nsPerStep		= null;
+	protected ExecutorTask					task			= null;
 	
 	public Executor() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -52,14 +54,15 @@ public class Executor {
 		List<Object> r = null;
 		if (getWorkers()==0) {
 			r = executeInCurrentThread(caller, fll);
+			nsPerStep = new TreeMap<Integer,Long>(fll.nsPerStep);
 		} else {
 			SortedMap<Integer,List<Function>> stepFunctions = fll.getStepFunctions();
 			if (stepFunctions.size()>0) {
 				setTask(caller, stepFunctions);
 				int waitNs = 0;
 				while (isWorking() && (waitNs / 1000000)<timeoutMs) {
-					Util.sleepNs(10000);
-					waitNs += 10000;
+					Util.sleepNs(1000);
+					waitNs += 1000;
 				}
 				if ((waitNs / 1000000)<timeoutMs) {
 					r = getReturnValues();
@@ -72,6 +75,13 @@ public class Executor {
 	public boolean isWorking() {
 		lock.lock();
 		boolean r = (task!=null && !task.done.get());
+		lock.unlock();
+		return r;
+	}
+	
+	public SortedMap<Integer,Long> getNsPerStep() {
+		lock.lock();
+		SortedMap<Integer,Long> r = nsPerStep;
 		lock.unlock();
 		return r;
 	}
@@ -89,14 +99,15 @@ public class Executor {
 		for (Object object: task.returnValues) {
 			r.add(object);
 		}
+		nsPerStep = new TreeMap<Integer,Long>(task.nsPerStep);
 		lock.unlock();
 		return r;
 	}
 	
 	protected void executedFunction(ExecutorFunction function, Object returnValue) {
-		boolean reload = task.executedFunction(returnValue);
-		if (reload) {
-			addFunctionsToExecutor(task.getWorkingStepFunctions(this));
+		List<ExecutorFunction> functions = task.executedFunction(returnValue, this);
+		if (functions!=null) {
+			addFunctionsToExecutor(functions);
 		}
 	}
 	
