@@ -172,7 +172,7 @@ public class TestNetwork {
 		ioStats.nsPerLayer.put(0, 1000000L);
 		assert ioStats.toString().equals("Total: 1.0 ms\nLayer 1: 1.0 ms");
 		
-		HistoricalFloat hist = analyzer.getAccuracies().get("TestClassifier");
+		HistoricalFloat hist = analyzer.getAccuracy().getAccuracies().get("TestClassifier");
 		assert hist.floats.size() == 1;
 		assert hist.getAverage() == 0F;
 		
@@ -196,10 +196,17 @@ public class TestNetwork {
 			}
 			analyzer.add(io);
 		}
-		hist = analyzer.getAccuracies().get("TestClassifier");
-		if (hist!=null) {
-			assert hist.floats.size() == 13;
-			assert hist.getAverage() > 0.5F;
-		}
+		hist = analyzer.getAccuracy().getAccuracies().get("TestClassifier");
+		assert hist != null;
+		assert hist.floats.size() == 13;
+		assert hist.getAverage() > 0.5F;
+		assert analyzer.getAccuracy().getAverage() == hist.getAverage();
+		assert analyzer.getAccuracy().toString().length() > 40;
+		analyzer.setAccuracyCapacity(10);
+		assert hist.floats.size() == 10;
+		analyzer.clearAccuracy();
+		assert analyzer.getAccuracy().getAverage() == 0F;
+		assert analyzer.getAccuracy().getAccuracies().get("TestClassifier") == null;
+		assert analyzer.getAccuracy().toString().length() == 12;
 	}
 }

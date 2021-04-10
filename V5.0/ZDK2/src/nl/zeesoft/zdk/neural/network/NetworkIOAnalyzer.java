@@ -10,8 +10,17 @@ import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 public class NetworkIOAnalyzer {
-	protected List<NetworkIO>						networkIO 	= new ArrayList<NetworkIO>();
-	protected SortedMap<String,HistoricalFloat>		accuracies	= new TreeMap<String,HistoricalFloat>();
+	protected List<NetworkIO>						networkIO 			= new ArrayList<NetworkIO>();
+	protected SortedMap<String,HistoricalFloat>		accuracies			= new TreeMap<String,HistoricalFloat>();
+	protected int									accuracyCapacity	= 100;
+	
+	public void setAccuracyCapacity(int accuracyCapacity) {
+		this.accuracyCapacity = accuracyCapacity;
+		for (HistoricalFloat accuracy: accuracies.values()) {
+			accuracy.capacity = accuracyCapacity;
+			accuracy.applyCapacity();
+		}
+	}
 	
 	public void add(NetworkIO io) {
 		int index = networkIO.size();
@@ -39,8 +48,12 @@ public class NetworkIOAnalyzer {
 		return r;
 	}
 	
-	public SortedMap<String,HistoricalFloat> getAccuracies() {
-		return accuracies;
+	public void clearAccuracy() {
+		accuracies.clear();
+	}
+	
+	public NetworkIOAccuracy getAccuracy() {
+		return new NetworkIOAccuracy(this);
 	}
 	
 	protected void checkPrediction(int index, String name, Classification cls) {
@@ -79,6 +92,7 @@ public class NetworkIOAnalyzer {
 		HistoricalFloat hist = accuracies.get(name);
 		if (hist==null) {
 			hist = new HistoricalFloat();
+			hist.capacity = accuracyCapacity;
 			accuracies.put(name, hist);
 		}
 		hist.push(accuracy);

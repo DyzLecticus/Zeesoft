@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Console;
+import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.NetworkIOAccuracy;
 import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
-import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 public class TestNetworkPerformance {
 	public static int	TEST_CYCLES		= 50;
@@ -31,12 +32,14 @@ public class TestNetworkPerformance {
 		NetworkIOAnalyzer analyzerPar = new NetworkIOAnalyzer();
 		
 		for (int i = 0; i < 3; i++) {
+			analyzerSeq.clearAccuracy();
 			Network network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
 			assert network.reset();
 			singleThreadMs += testNetworkPerformance(network, analyzerSeq);
 			
+			analyzerPar.clearAccuracy();
 			network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
@@ -47,20 +50,22 @@ public class TestNetworkPerformance {
 		}
 
 		float factor = (float)multiThreadMs / (float)singleThreadMs;
+		Console.log("Factor: " + factor);
+		assert factor < 0.75F;
 		
+		Console.log("");	
 		Console.log("Single thread: " + singleThreadMs + " ms");
 		Console.log("Average per network IO; ");
 		Console.log(indent(analyzerSeq.getAverageStats().toString(),"- "));
+		Console.log("Accuracy; ");
+		Console.log(indent(analyzerSeq.getAccuracy().toString(),"- "));
 		
 		Console.log("");
 		Console.log("Multi thread: " + multiThreadMs + " ms");
 		Console.log("Average per network IO; ");
 		Console.log(indent(analyzerPar.getAverageStats().toString(),"- "));
-		
-		Console.log("");
-		Console.log("Factor: " + factor);
-		
-		assert factor < 0.75F;
+		Console.log("Accuracy; ");
+		Console.log(indent(analyzerPar.getAccuracy().toString(),"- "));
 	}
 	
 	public static List<NetworkIO> getTestSet(int cycles) {
@@ -102,33 +107,11 @@ public class TestNetworkPerformance {
 		}
 		long totalMs = System.currentTimeMillis() - started;
 		
-		NetworkIO predictionIO = testSet.get(testSet.size() - 2);
-		assert predictionIO.getProcessorIO("Classifier1").outputValue != null;
-		assert predictionIO.getProcessorIO("Classifier2").outputValue != null;
-		assert predictionIO.getProcessorIO("Classifier3").outputValue != null;
-		assert predictionIO.getProcessorIO("Classifier4").outputValue != null;
-		Classification input1Prediction = (Classification) predictionIO.getProcessorIO("Classifier1").outputValue;
-		Classification input2Prediction = (Classification) predictionIO.getProcessorIO("Classifier2").outputValue;
-		Classification input3Prediction = (Classification) predictionIO.getProcessorIO("Classifier3").outputValue;
-		Classification input4Prediction = (Classification) predictionIO.getProcessorIO("Classifier4").outputValue;
-
-		assert input1Prediction.getMostCountedValues().size() == 1;
-		assert input2Prediction.getMostCountedValues().size() == 1;
-		assert input3Prediction.getMostCountedValues().size() == 1;
-		assert input4Prediction.getMostCountedValues().size() == 1;
-		
-		/*
-		Console.log(input1Prediction.getStandardDeviation());
-		Console.log(input2Prediction.getStandardDeviation());
-		Console.log(input3Prediction.getStandardDeviation());
-		Console.log(input4Prediction.getStandardDeviation());
-		*/
-		
-		NetworkIO lastIO = testSet.get(testSet.size() - 1);
-		assert input1Prediction.getMostCountedValues().get(0) == lastIO.getInput("Input1");
-		assert input2Prediction.getMostCountedValues().get(0) == lastIO.getInput("Input2");
-		assert input3Prediction.getMostCountedValues().get(0) == lastIO.getInput("Input3");
-		assert input4Prediction.getMostCountedValues().get(0) == lastIO.getInput("Input4");
+		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
+		assert accuracy.getAverage() >= 0.975F;
+		for (HistoricalFloat acc: accuracy.getAccuracies().values()) {
+			assert acc.getAverage() >= 0.95F;
+		}
 		
 		return totalMs;
 	}
