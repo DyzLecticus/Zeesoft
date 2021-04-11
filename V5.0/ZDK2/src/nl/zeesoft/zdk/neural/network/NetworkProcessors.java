@@ -6,13 +6,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.function.Executor;
-import nl.zeesoft.zdk.function.Function;
-import nl.zeesoft.zdk.function.FunctionList;
-import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
+import nl.zeesoft.zdk.neural.processor.ExecutorProcessor;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 
 public class NetworkProcessors extends AbstractNetworkProcessor {
@@ -26,16 +24,9 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	}
 	
 	protected boolean initialize(Object caller, List<ProcessorConfig> processorConfigs, int timeoutMs) {
-		FunctionListList fll = getInitializeProcessorFunctionListList(processorConfigs);
-		List<Object> nps = executor.execute(caller, fll, timeoutMs);
-		if (nps!=null) {
-			processors.clear();
-			layerProcessors.clear();
-			for (Object obj: nps) {
-				addNetworkProcessor((NetworkProcessor) obj);
-			}
-		}
-		return nps!=null;
+		NetworkProcessorInitializer initializer = 
+			new NetworkProcessorInitializer(executor, processors, layerProcessors);
+		return initializer.initialize(caller, processorConfigs, timeoutMs);
 	}
 	
 	protected int getNumberOfLayers() {
@@ -61,6 +52,15 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 		for (NetworkProcessor np: nps) {
 			if (np.processor instanceof LearningProcessor) {
 				((LearningProcessor) np.processor).setLearn(learn);
+			}
+		}
+	}
+	
+	protected void setNumberOfWorkers(int layer, String name, int workers) {
+		List<NetworkProcessor> nps = getProcessors(layer, name);
+		for (NetworkProcessor np: nps) {
+			if (np.processor instanceof ExecutorProcessor) {
+				((ExecutorProcessor) np.processor).setNumberOfWorkers(workers);
 			}
 		}
 	}
@@ -103,27 +103,6 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	
 	protected SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
-	}
-
-	protected FunctionListList getInitializeProcessorFunctionListList(List<ProcessorConfig> processorConfigs) {
-		FunctionListList r = new FunctionListList();
-		FunctionList list = new FunctionList();
-		for (ProcessorConfig pc: processorConfigs) {
-			list.addFunction(getInitializeProcessorFunction(pc));
-		}
-		r.addFunctionList(list);
-		return r;
-	}
-
-	protected Function getInitializeProcessorFunction(ProcessorConfig pc) {
-		Function r = new Function() {
-			@Override
-			protected Object exec() {
-				return new NetworkProcessor((ProcessorConfig)param1);
-			}
-		};
-		r.param1 = pc;
-		return r;
 	}
 	
 	protected void addNetworkProcessor(NetworkProcessor np) {

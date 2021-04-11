@@ -136,6 +136,8 @@ public class TestNetwork {
 		analyzer.add(io);
 
 		network.setNumberOfWorkers(2);
+		network.setNumberOfWorkersForProcessors(2);
+		
 		io = new NetworkIO("TestInput",1);
 		io.addInput("TestInput2", new Sdr(100));
 		io.setTimeoutMs(0);
@@ -182,6 +184,7 @@ public class TestNetwork {
 		ZdkTests.sleep(100);
 
 		network.setNumberOfWorkers(0);
+		network.setNumberOfWorkersForProcessors(0);
 				
 		analyzer = new NetworkIOAnalyzer();
 		analyzer.add(new NetworkIO());
@@ -201,7 +204,7 @@ public class TestNetwork {
 		assert hist.floats.size() == 13;
 		assert hist.getAverage() > 0.5F;
 		assert analyzer.getAccuracy().getAverage() == hist.getAverage();
-		assert analyzer.getAccuracy().toString().length() > 40;
+		assert analyzer.getAccuracy().toString().length() >= 32;
 		analyzer.setAccuracyCapacity(10);
 		assert hist.floats.size() == 10;
 		analyzer.clearAccuracy();

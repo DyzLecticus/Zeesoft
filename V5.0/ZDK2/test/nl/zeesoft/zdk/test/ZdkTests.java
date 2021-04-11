@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.function.TestFunctionListList;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
+import nl.zeesoft.zdk.test.matrix.TestMatrixExecutor;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestCell;
@@ -83,6 +84,8 @@ public class ZdkTests {
 		TestSize.main(args);
 		Console.log("Test Matrix ...");
 		TestMatrix.main(args);
+		Console.log("Test MatrixExecutor...");
+		TestMatrixExecutor.main(args);
 		
 		Console.log("Test Sdr ...");
 		TestSdr.main(args);

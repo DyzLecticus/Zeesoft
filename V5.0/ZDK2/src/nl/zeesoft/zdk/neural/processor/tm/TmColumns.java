@@ -2,27 +2,44 @@ package nl.zeesoft.zdk.neural.processor.tm;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
+import nl.zeesoft.zdk.matrix.MatrixExecutor;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class TmColumns extends Matrix {
-	public TmConfig	config	= null;
-	public TmCells	cells	= null;
+	public TmConfig	config		= null;
+	public TmCells	cells		= null;
 	
-	public TmColumns(Object caller, TmConfig config, TmCells cells) {
+	public Executor	executor	= null;
+	
+	public TmColumns(Object caller, TmConfig config, TmCells cells, Executor executor) {
 		this.config = config;
 		this.cells = cells;
+		this.executor = executor;
 		initialize(new Size(config.size.x,config.size.y));
 	}
 	
 	public void activate(Object caller, List<Position> activeColumnPositions) {
-		applyFunction(caller, getActivateFunction(activeColumnPositions));
+		MatrixExecutor exec = new MatrixExecutor(this, executor) {
+			@Override
+			protected Function getFunctionForWorker() {
+				return getActivateFunction(activeColumnPositions);
+			}
+		};
+		exec.execute(caller, 1000);
 	}
 	
 	public void adapt(Object caller) {
-		applyFunction(caller, getAdaptFunction());
+		MatrixExecutor exec = new MatrixExecutor(this, executor) {
+			@Override
+			protected Function getFunctionForWorker() {
+				return getAdaptFunction();
+			}
+		};
+		exec.execute(caller, 1000);
 	}
 	
 	protected Function getActivateFunction(List<Position> activeColumnPositions) {

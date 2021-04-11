@@ -26,6 +26,8 @@ public class TestTemporalMemoryBurst {
 
 		tm.initialize(config);
 		
+		tm.setNumberOfWorkers(10);
+		
 		List<Sdr> inputs = getInputSdrs();
 		List<Sdr> outputs = new ArrayList<Sdr>();
 		
@@ -39,6 +41,8 @@ public class TestTemporalMemoryBurst {
 			}
 		}
 		assert outputs.size() == iterations * 4;
+		
+		tm.setNumberOfWorkers(0);
 		
 		int i = 0;
 		float avg = 0;

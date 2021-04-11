@@ -65,6 +65,14 @@ public class Network {
 		processors.setLearn(layer, name, learn);
 	}
 	
+	public void setNumberOfWorkersForProcessors(int workers) {
+		setNumberOfWorkersForProcessor(ALL_LAYERS, ALL_PROCESSORS, workers);
+	}
+	
+	public void setNumberOfWorkersForProcessor(int layer, String name, int workers) {
+		processors.setNumberOfWorkers(layer, name, workers);
+	}
+	
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
 			int timeoutMs = io.getTimeoutMs();

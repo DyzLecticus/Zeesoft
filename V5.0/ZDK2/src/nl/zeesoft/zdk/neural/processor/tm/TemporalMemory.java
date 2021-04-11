@@ -3,14 +3,16 @@ package nl.zeesoft.zdk.neural.processor.tm;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
+import nl.zeesoft.zdk.neural.processor.ExecutorProcessor;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class TemporalMemory extends LearningProcessor implements CellsProcessor {
+public class TemporalMemory extends LearningProcessor implements CellsProcessor, ExecutorProcessor {
 	public static final int		ACTIVE_COLUMNS_INPUT		= 0;
 	public static final int		ACTIVE_APICAL_INPUT			= 1;
 	
@@ -22,12 +24,19 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor 
 	public TmConfig				config						= null;
 	public TmColumns			columns						= null;
 	public TmCells				cells						= null;
+	
+	public Executor				executor					= new Executor();
+
+	@Override
+	public void setNumberOfWorkers(int workers) {
+		executor.setWorkers(workers);
+	}
 
 	public void initialize(TmConfig config) {
 		this.config = config.copy();
 
 		cells = new TmCells(this, this.config);
-		columns = new TmColumns(this, this.config, cells);
+		columns = new TmColumns(this, this.config, cells, executor);
 	}
 	
 	@Override

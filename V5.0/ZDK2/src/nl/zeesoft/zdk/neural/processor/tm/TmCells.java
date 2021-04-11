@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural.processor.tm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.function.Function;
@@ -12,14 +13,14 @@ import nl.zeesoft.zdk.neural.model.CellSegments;
 import nl.zeesoft.zdk.neural.model.Cells;
 
 public class TmCells extends Cells {
-	public List<Position>	activeCellPositions				= new ArrayList<Position>();
-	public List<Position>	winnerCellPositions				= new ArrayList<Position>();
-	public List<Position>	prevActiveCellPositions			= new ArrayList<Position>();
-	public List<Position>	prevWinnerCellPositions			= new ArrayList<Position>();
-	public List<Position>	predictiveCellPositions			= new ArrayList<Position>();
+	public CopyOnWriteArrayList<Position>	activeCellPositions				= new CopyOnWriteArrayList<Position>();
+	public CopyOnWriteArrayList<Position>	winnerCellPositions				= new CopyOnWriteArrayList<Position>();
+	public List<Position>					prevActiveCellPositions			= new ArrayList<Position>();
+	public List<Position>					prevWinnerCellPositions			= new ArrayList<Position>();
+	public List<Position>					predictiveCellPositions			= new ArrayList<Position>();
 	
-	public List<Position>	activeApicalCellPositions		= new ArrayList<Position>();
-	public List<Position>	prevActiveApicalCellPositions	= new ArrayList<Position>();
+	public List<Position>					activeApicalCellPositions		= new ArrayList<Position>();
+	public List<Position>					prevActiveApicalCellPositions	= new ArrayList<Position>();
 
 	public TmCells(Object caller, TmConfig config) {
 		super(caller, config);
