@@ -4,6 +4,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.MatrixExecutor;
@@ -42,7 +43,8 @@ public class TestMatrixExecutor {
 				};
 			}
 		};
-		List<Object> returnValues = exec.execute(self, 1000);
+		ExecutorTask task = exec.execute(self, 1000);
+		List<Object> returnValues = task.getReturnValues();
 		assert returnValues.size() == 2;
 		assert (int)matrix.data[0][0][0] == 1;
 		assert (int)matrix.data[1][0][0] == 1;

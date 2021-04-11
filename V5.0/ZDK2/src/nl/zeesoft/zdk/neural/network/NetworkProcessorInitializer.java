@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
@@ -27,15 +28,15 @@ public class NetworkProcessorInitializer extends AbstractNetworkProcessor {
 	
 	protected boolean initialize(Object caller, List<ProcessorConfig> processorConfigs, int timeoutMs) {
 		FunctionListList fll = getInitializeProcessorFunctionListList(processorConfigs);
-		List<Object> nps = executor.execute(caller, fll, timeoutMs);
-		if (nps!=null) {
+		ExecutorTask task = executor.execute(caller, fll, timeoutMs);
+		if (task!=null) {
 			processors.clear();
 			layerProcessors.clear();
-			for (Object obj: nps) {
+			for (Object obj: task.getReturnValues()) {
 				addNetworkProcessor((NetworkProcessor) obj);
 			}
 		}
-		return nps!=null;
+		return task!=null;
 	}
 	
 	protected FunctionListList getInitializeProcessorFunctionListList(List<ProcessorConfig> processorConfigs) {

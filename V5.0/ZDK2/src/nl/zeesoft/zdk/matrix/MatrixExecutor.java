@@ -1,8 +1,7 @@
 package nl.zeesoft.zdk.matrix;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
@@ -20,8 +19,8 @@ public class MatrixExecutor {
 		this.executor = executor;
 	}
 	
-	public List<Object> execute(Object caller, int timeoutMs) {
-		List<Object> r = null;
+	public ExecutorTask execute(Object caller, int timeoutMs) {
+		ExecutorTask r = null;
 		if (matrix!=null && matrix.size!=null) {
 			if (executor == null || executor.getWorkers()==0) {
 				matrix.applyFunction(caller, getFunctionForWorker());
@@ -37,7 +36,7 @@ public class MatrixExecutor {
 		return new Function();
 	}
 	
-	protected List<Object> applyFunction(Object caller, int timeoutMs) {
+	protected ExecutorTask applyFunction(Object caller, int timeoutMs) {
 		FunctionList fl = new FunctionList();
 		for (int worker = 0; worker < executor.getWorkers(); worker++) {
 			fl.addFunction(getWorkerFunction(worker, getFunctionForWorker()));

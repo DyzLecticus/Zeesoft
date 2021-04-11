@@ -6,6 +6,7 @@ import java.util.SortedMap;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.function.FunctionList;
 import nl.zeesoft.zdk.function.FunctionListList;
@@ -23,36 +24,38 @@ public class TestExecutor {
 		
 		Executor executor = new Executor();
 		
-		List<Object> returnValues = executor.execute(self, fll, 100);
+		ExecutorTask task = executor.execute(self, fll, 100);
+		List<Object> returnValues = task.getReturnValues();
 		assert returnValues.size() == 5;
 		assert (boolean)returnValues.get(0);
 		assert (boolean)returnValues.get(1);
 		assert (boolean)returnValues.get(2);
 		assert !executor.isWorking();
 
-		SortedMap<Integer,Long> nsPerStepSeq = executor.getNsPerStep();
+		SortedMap<Integer,Long> nsPerStepSeq = task.getNsPerStep();
 		assert nsPerStepSeq.size() == 2;
 		assert nsPerStepSeq.get(0) > nsPerStepSeq.get(1);
 
 		executor.setWorkers(2);
 		assert executor.getWorkers() == 2;
-		returnValues = executor.execute(self, fll, 100);
+		task = executor.execute(self, fll, 100);
+		returnValues = task.getReturnValues();
 		assert returnValues.size() == 5;
 		assert (boolean)returnValues.get(0);
 		assert (boolean)returnValues.get(1);
 		assert (boolean)returnValues.get(2);
 
-		SortedMap<Integer,Long> nsPerStepPar = executor.getNsPerStep();
+		SortedMap<Integer,Long> nsPerStepPar = task.getNsPerStep();
 		assert nsPerStepPar.size() == 2;
 		assert nsPerStepPar.get(0) > nsPerStepPar.get(1);
 		assert nsPerStepPar.get(0) < nsPerStepSeq.get(0);
 		assert nsPerStepPar.get(1) < nsPerStepSeq.get(1);
 		
-		returnValues = executor.execute(self, new FunctionListList(), 100);
-		assert returnValues == null;
+		task = executor.execute(self, new FunctionListList(), 100);
+		assert task == null;
 
-		returnValues = executor.execute(self, fll, 0);
-		assert returnValues == null;
+		task = executor.execute(self, fll, 0);
+		assert task == null;
 		assert executor.isWorking();
 		executor.execute(self, fll, 0);
 		assert executor.isWorking();

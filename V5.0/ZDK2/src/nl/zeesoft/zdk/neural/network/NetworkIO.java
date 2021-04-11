@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkIO {	
@@ -64,10 +65,14 @@ public class NetworkIO {
 		return stats;
 	}
 	
-	protected void setStats(long start, SortedMap<Integer,Long> nsPerLayer) {
+	protected void setStats(long start, ExecutorTask task) {
 		NetworkIOStats stats = new NetworkIOStats();
 		stats.totalNs = System.nanoTime() - start;
-		stats.nsPerLayer = nsPerLayer;
+		if (task==null) {
+			stats.nsPerLayer = new TreeMap<Integer,Long>();
+		} else {
+			stats.nsPerLayer = task.getNsPerStep();
+		}
 		this.stats = stats;
 	}
 

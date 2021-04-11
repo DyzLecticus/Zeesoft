@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.FunctionListList;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
@@ -78,10 +79,11 @@ public class Network {
 			int timeoutMs = io.getTimeoutMs();
 			long start = System.nanoTime();
 			FunctionListList fll = ioProcessor.getProcessFunctionForNetworkIO(io, previousIO);
-			if (executor.execute(this, fll, timeoutMs) == null) {
+			ExecutorTask task = executor.execute(this, fll, timeoutMs);
+			if (task==null) {
 				io.addError("Processing network IO timed out after " + timeoutMs + " ms");
 			}
-			io.setStats(start, executor.getNsPerStep());
+			io.setStats(start, task);
 			previousIO = io;
 		}
 	}

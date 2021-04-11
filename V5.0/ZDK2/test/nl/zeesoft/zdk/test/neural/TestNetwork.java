@@ -194,6 +194,11 @@ public class TestNetwork {
 		for (int i = 0; i < 16; i++) {
 			io = new NetworkIO("TestInput",i % 2);
 			network.processIO(io);
+			if (i==5) {
+				Classification cls = (Classification) io.getProcessorIO("TestClassifier").outputValue;
+				cls.valueCounts.clear();
+				cls.valueCounts.put(99, 1);
+			}
 			if (i==1) {
 				io.getProcessorIO("TestClassifier").outputValue = null;
 			}

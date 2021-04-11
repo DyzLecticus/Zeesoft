@@ -4,26 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import nl.zeesoft.zdk.Lock;
+import java.util.concurrent.ConcurrentMap;
 
 public class ExecutorTask {
-	protected Lock									lock				= new Lock(this);
-	
 	protected Object								caller				= null;
 	protected SortedMap<Integer,List<Function>>		stepFunctions		= null;
 	
 	protected int									todo				= 0;
 	protected int									workingStep			= 0;
 	protected int									workingFunctions	= 0;
-	protected AtomicBoolean							done				= new AtomicBoolean(false);
-
-	protected long									start				= System.nanoTime();
-	protected SortedMap<Integer,Long>				nsPerStep			= new TreeMap<Integer,Long>();
+	
+	protected volatile long							start				= System.nanoTime();
+	protected volatile boolean						done				= false;
 	
 	protected ConcurrentLinkedDeque<Object>			returnValues		= new ConcurrentLinkedDeque<Object>();
+	protected ConcurrentMap<Integer,Long>			nsPerStep			= new ConcurrentHashMap<Integer,Long>();
+	
+	protected ExecutorTask() {
+		
+	}
 	
 	protected ExecutorTask(Object caller, SortedMap<Integer,List<Function>> stepFunctions) {
 		this.caller = caller;
@@ -33,18 +34,27 @@ public class ExecutorTask {
 		}
 	}
 	
+	public List<Object> getReturnValues() {
+		return new ArrayList<Object>(returnValues);
+	}
+	
+	public SortedMap<Integer,Long> getNsPerStep() {
+		return new TreeMap<Integer,Long>(nsPerStep);
+	}
+	
 	protected List<ExecutorFunction> executedFunction(Object returnValue, Executor executor) {
-		List<ExecutorFunction> r = null;
 		if (returnValue!=null) {
 			returnValues.add(returnValue);
 		}
-		lock.lock();
+		return executedFunction(executor);
+	}
+	
+	protected synchronized List<ExecutorFunction> executedFunction(Executor executor) {
 		todo--;
-		r = decrementWorkingFunctions(executor);
+		List<ExecutorFunction> r = decrementWorkingFunctions(executor);
 		if (todo==0) {
-			done.set(true);
+			done = true;
 		}
-		lock.unlock();
 		return r;
 	}
 	
