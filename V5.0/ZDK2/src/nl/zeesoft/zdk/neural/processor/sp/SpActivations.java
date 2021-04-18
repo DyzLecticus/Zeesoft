@@ -8,24 +8,41 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
+import nl.zeesoft.zdk.matrix.MatrixExecutor;
 import nl.zeesoft.zdk.matrix.Position;
 
 public class SpActivations extends Matrix {
 	public SpConfig			config			= null;
 	public SpConnections	connections		= null;
 	public SpBoostFactors	boostFactors	= null;
+	public Executor			executor		= null;
+
 	
-	public SpActivations(Object caller, SpConfig config, SpConnections connections, SpBoostFactors	boostFactors) {
+	public SpActivations(
+		Object caller,
+		SpConfig config,
+		SpConnections connections,
+		SpBoostFactors boostFactors,
+		Executor executor
+		) {
 		this.config = config;
 		this.connections = connections;
 		this.boostFactors = boostFactors;
+		this.executor = executor;
 		initialize(config.outputSize);
 	}
 	
 	public void activate(Object caller, List<Position> activeInputPositions) {
-		applyFunction(caller,getActivateFunction(activeInputPositions));
+		MatrixExecutor exec = new MatrixExecutor(this, executor) {
+			@Override
+			protected Function getFunctionForWorker() {
+				return getActivateFunction(activeInputPositions);
+			}
+		};
+		exec.execute(caller, 1000);
 	}
 
 	public List<Position> getWinners(Object caller, int limit) {

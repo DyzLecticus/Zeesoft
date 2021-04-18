@@ -1,17 +1,21 @@
 package nl.zeesoft.zdk.neural.processor.sp;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
+import nl.zeesoft.zdk.matrix.MatrixExecutor;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.SdrHistory;
 
 public class SpBoostFactors extends Matrix {
 	public SpConfig		config				= null;
 	public SdrHistory	activationHistory	= null;
+	public Executor		executor			= null;
 	
-	public SpBoostFactors(Object caller, SpConfig config, SdrHistory activationHistory) {
+	public SpBoostFactors(Object caller, SpConfig config, SdrHistory activationHistory, Executor executor) {
 		this.config = config;
 		this.activationHistory = activationHistory;
+		this.executor = executor;
 		initialize(config.outputSize);
 		setValue(caller, 1F);
 	}
@@ -19,11 +23,17 @@ public class SpBoostFactors extends Matrix {
 	public void update(Object caller, int processed) {
 		if (processed % config.boostFactorPeriod == 0) {
 			float averageGlobalActivation = activationHistory.getTotalAverage();
-			applyFunction(caller, getUpdateBoostFactorsRunnerList(averageGlobalActivation));
+			MatrixExecutor exec = new MatrixExecutor(this, executor) {
+				@Override
+				protected Function getFunctionForWorker() {
+					return getUpdateBoostFactorsFunction(averageGlobalActivation);
+				}
+			};
+			exec.execute(caller, 1000);
 		}
 	}
 	
-	protected Function getUpdateBoostFactorsRunnerList(float averageGlobalActivation) {
+	protected Function getUpdateBoostFactorsFunction(float averageGlobalActivation) {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {

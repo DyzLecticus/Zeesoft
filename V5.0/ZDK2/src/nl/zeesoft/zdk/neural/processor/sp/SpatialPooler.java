@@ -2,15 +2,17 @@ package nl.zeesoft.zdk.neural.processor.sp;
 
 import java.util.List;
 
+import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.SdrHistory;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
+import nl.zeesoft.zdk.neural.processor.ExecutorProcessor;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class SpatialPooler extends LearningProcessor implements CellsProcessor {
+public class SpatialPooler extends LearningProcessor implements CellsProcessor, ExecutorProcessor {
 	public static final int		ENCODED_SENSOR_INPUT	= 0;
 	
 	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
@@ -21,6 +23,13 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor {
 	public SpBoostFactors		boostFactors			= null;
 	public SpActivations		activations				= null;
 	public int					processed				= 0;
+	
+	public Executor				executor				= new Executor();
+
+	@Override
+	public void setNumberOfWorkers(int workers) {
+		executor.setWorkers(workers);
+	}
 
 	public void initialize(SpConfig config) {
 		this.config = config.copy();
@@ -29,8 +38,8 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor {
 		activationHistory.capacity = config.activationHistorySize;
 		
 		connections = new SpConnections(this, this.config);
-		boostFactors = new SpBoostFactors(this, this.config, activationHistory);
-		activations = new SpActivations(this, this.config, connections, boostFactors);
+		boostFactors = new SpBoostFactors(this, this.config, activationHistory, executor);
+		activations = new SpActivations(this, this.config, connections, boostFactors, executor);
 	}
 	
 	@Override

@@ -104,14 +104,4 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	protected SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
 	}
-	
-	protected void addNetworkProcessor(NetworkProcessor np) {
-		processors.put(np.name, np);
-		List<NetworkProcessor> lps = layerProcessors.get(np.layer);
-		if (lps==null) {
-			lps = new ArrayList<NetworkProcessor>();
-			layerProcessors.put(np.layer, lps);
-		}
-		lps.add(np);
-	}
 }

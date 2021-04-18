@@ -27,6 +27,8 @@ public class TestSpatialPoolerOverlap {
 		sp.initialize(config);
 		sp.reset();
 		
+		sp.setNumberOfWorkers(2);
+		
 		List<Sdr> inputs = getInputSdrs();
 		List<Sdr> outputs = new ArrayList<Sdr>();
 		
@@ -40,6 +42,8 @@ public class TestSpatialPoolerOverlap {
 			}
 		}
 		assert outputs.size() == iterations * 4;
+		
+		sp.setNumberOfWorkers(0);
 		
 		float overlap = 0;
 		float similarOverlap = 0;
