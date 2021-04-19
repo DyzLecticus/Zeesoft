@@ -18,6 +18,7 @@ import nl.zeesoft.zdk.test.neural.TestMerger;
 import nl.zeesoft.zdk.test.neural.TestNetwork;
 import nl.zeesoft.zdk.test.neural.TestNetworkConfig;
 import nl.zeesoft.zdk.test.neural.TestNetworkConfigFactory;
+import nl.zeesoft.zdk.test.neural.TestNetworkTrainer;
 import nl.zeesoft.zdk.test.neural.TestScalarEncoder;
 import nl.zeesoft.zdk.test.neural.TestSdr;
 import nl.zeesoft.zdk.test.neural.TestSdrHistory;
@@ -111,5 +112,6 @@ public class ZdkTests {
 		TestNetworkConfig.main(args);
 		TestNetworkConfigFactory.main(args);
 		TestNetwork.main(args);
+		TestNetworkTrainer.main(args);
 	}
 }
