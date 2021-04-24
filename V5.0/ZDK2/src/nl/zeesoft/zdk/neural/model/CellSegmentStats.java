@@ -35,20 +35,16 @@ public class CellSegmentStats {
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		if (segments>0) {
-			r.append("- ");
-			r.append(type);
-			r.append(" segments: ");
-			r.append(segments);
-			r.append("\n");
-			r.append("- ");
-			r.append(type);
-			r.append(" synapses: ");
-			r.append(synapses);
-			r.append(" (active: ");
-			r.append(activeSynapses);
-			r.append(")");
-		}
+		r.append(type);
+		r.append(" segments: ");
+		r.append(segments);
+		r.append("\n");
+		r.append(type);
+		r.append(" synapses: ");
+		r.append(synapses);
+		r.append(" (active: ");
+		r.append(activeSynapses);
+		r.append(")");
 		return r.toString();
 	}
 }

@@ -170,10 +170,9 @@ public class TestCells {
 		assert stats.apicalStats.segments == 8;
 		assert stats.apicalStats.synapses == 22;
 		assert stats.apicalStats.activeSynapses == 22;
+		assert stats.toString().length() == 168;
 		
-		
-		assert stats.toString().length() == 182;
 		stats = new CellStats();
-		assert stats.toString().length() == 10;
+		assert stats.toString().length() == 8;
 	}
 }

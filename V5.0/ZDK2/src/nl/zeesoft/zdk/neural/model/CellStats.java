@@ -1,8 +1,7 @@
 package nl.zeesoft.zdk.neural.model;
 
 import nl.zeesoft.zdk.function.Function;
-import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
-import nl.zeesoft.zdk.neural.processor.tm.TemporalMemory;
+import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 
 public class CellStats {
 	public int					cells			= 0;
@@ -15,12 +14,8 @@ public class CellStats {
 		
 	}
 	
-	public CellStats(SpatialPooler sp) {
-		addModelCells(this,sp.getCells());
-	}
-	
-	public CellStats(TemporalMemory tm) {
-		addModelCells(this,tm.getCells());
+	public CellStats(CellsProcessor cp) {
+		addModelCells(this,cp.getCells());
 	}
 	
 	public void addStats(CellStats s) {
@@ -51,7 +46,7 @@ public class CellStats {
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		r.append("- Cells: ");
+		r.append("Cells: ");
 		r.append(cells);
 		if (proximalStats.segments>0) {
 			r.append("\n");

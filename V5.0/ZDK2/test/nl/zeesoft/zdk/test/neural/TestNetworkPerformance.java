@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.neural;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Console;
@@ -15,8 +14,6 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 
 public class TestNetworkPerformance {
-	public static int	TEST_CYCLES		= 50;
-	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -67,31 +64,9 @@ public class TestNetworkPerformance {
 		Console.log("Accuracy; ");
 		Console.log(indent(analyzerPar.getAccuracy().toString(),"- "));
 	}
-	
-	public static List<NetworkIO> getTestSet(int cycles) {
-		List<NetworkIO> r = new ArrayList<NetworkIO>();
-		for (int i = 0; i < cycles; i++) {
-			r.addAll(getInputPattern());
-		}
-		return r;
-	}
-	
-	public static List<NetworkIO> getInputPattern() {
-		List<NetworkIO> r = new ArrayList<NetworkIO>();
-		for (int i = 0; i < 12; i++) {
-			NetworkIO io = new NetworkIO();
-			io.addInput("Input1", i);
-			io.addInput("Input2", i % 2);
-			io.addInput("Input3", i % 3);
-			io.addInput("Input4", i % 4);
-			r.add(io);
-		}
-		return r;
-	}
 
 	public static long testNetworkPerformance(Network network, NetworkIOAnalyzer analyzer) {
-		List<NetworkIO> testSet = getTestSet(TEST_CYCLES);
-		assert testSet.size() == TEST_CYCLES * getInputPattern().size();
+		List<NetworkIO> testSet = TestNetworkTrainer.getTrainingSet();
 		
 		long started = System.currentTimeMillis();
 		for (NetworkIO io: testSet) {

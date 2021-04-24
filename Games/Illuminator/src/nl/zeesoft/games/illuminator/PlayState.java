@@ -377,8 +377,8 @@ public class PlayState extends AbstractAppState implements PhysicsCollisionListe
             explosion.setLocalTranslation(location);
             explosion.start();
             deathExplosions.add(explosion);
-            opponent.detachFromRootNode(rootNode,bulletAppState);
-
+            removeOpponent(opponent);
+        
             if (player.getHealth()<100) {
                 ZIntegerGenerator generator = new ZIntegerGenerator(0,3);
                 if (generator.getNewInteger()==0) {
