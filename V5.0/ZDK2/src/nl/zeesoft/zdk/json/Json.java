@@ -10,15 +10,23 @@ public class Json {
 	public JsonExceptionHandler		exceptionHandler	= null;
 	public JElem					root				= null;
 	
-	public StringBuilder toStr() {
+	public StringBuilder toStringBuilder() {
 		StringBuilder r = new StringBuilder();
 		if (root!=null) {
-			r = root.toStr();
+			r = root.toStringBuilder();
+		}
+		return r;
+	}
+	
+	public StringBuilder toStringBuilderReadFormat() {
+		StringBuilder r = new StringBuilder();
+		if (root!=null) {
+			r = root.toStringBuilderReadFormat();
 		}
 		return r;
 	}
 
-	public void fromStr(StringBuilder str) {
+	public void fromStringBuilder(StringBuilder str) {
 		Map<String,Object> elems = getElements(str);
         root = new JElem();
         root.fromElements(elems);
@@ -30,9 +38,8 @@ public class Json {
         ScriptEngine engine = sem.getEngineByName("javascript");
         str.insert(0, "Java.asJSONCompatible(");
         str.append(")");
-        Object result;
 		try {
-			result = engine.eval(str.toString());
+			Object result = engine.eval(str.toString());
 	        @SuppressWarnings("unchecked")
 			Map<String,Object> elems = (Map<String,Object>) result;
 	        r = elems;
@@ -44,5 +51,28 @@ public class Json {
 			}
 		}
 		return r; 
+	}
+	
+	protected static void addStart(StringBuilder str, boolean isArray) {
+		if (isArray) {
+			str.append("[");
+		} else {
+			str.append("{");
+		}
+	}
+	
+	protected static void addLineFeedIndent(StringBuilder str, int level) {
+		str.append("\n");
+		for (int i = 0; i < level; i++) {
+			str.append("  ");
+		}
+	}
+
+	protected static void addEnd(StringBuilder str, boolean isArray) {
+		if (isArray) {
+			str.append("]");
+		} else {
+			str.append("}");
+		}
 	}
 }
