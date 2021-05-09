@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.neural.network.config.LinkConfig;
 
-public class AbstractNetworkProcessor {
+public abstract class AbstractNetworkProcessor {
 	public int				layer		= 0;
 	public String			name		= "";
 	public List<LinkConfig>	inputLinks	= new ArrayList<LinkConfig>();

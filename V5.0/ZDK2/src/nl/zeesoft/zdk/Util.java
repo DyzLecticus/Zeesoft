@@ -75,13 +75,10 @@ public class Util {
 			float sum = 0.0F;
 			float dev = 0.0F;
 			int size = values.size();
-	
 			for(Float value: values) {
 				sum += value;
 			}
-	
 			float mean = sum / size;
-	
 			for(Float value: values) {
 				dev += Math.pow(value - mean, 2);
 			}

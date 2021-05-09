@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.function.TestFunctionListList;
+import nl.zeesoft.zdk.test.json.TestJson;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
 import nl.zeesoft.zdk.test.matrix.TestMatrixExecutor;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
@@ -78,6 +79,9 @@ public class ZdkTests {
 		TestFunctionListList.main(args);
 		Console.log("Test Executor ...");
 		TestExecutor.main(args);
+		
+		Console.log("Test Json ...");
+		TestJson.main(args);
 		
 		Console.log("Test Position ...");
 		TestPosition.main(args);
