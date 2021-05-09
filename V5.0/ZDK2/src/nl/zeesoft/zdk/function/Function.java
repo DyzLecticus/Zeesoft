@@ -15,13 +15,17 @@ public class Function {
 		try {
 			r = exec();
 		} catch (Exception ex) {
-			if (exceptionHandler!=null) {
-				exceptionHandler.handleException(caller, ex);
-			} else {
-				FunctionExceptionHandler.handleExceptionDefault(caller, ex);
-			}
+			handleException(ex);
 		}
 		return r;
+	}
+	
+	protected void handleException(Exception ex) {
+		if (exceptionHandler!=null) {
+			exceptionHandler.handleException(caller, ex);
+		} else {
+			FunctionExceptionHandler.handleExceptionDefault(caller, ex);
+		}
 	}
 	
 	protected Object exec() {

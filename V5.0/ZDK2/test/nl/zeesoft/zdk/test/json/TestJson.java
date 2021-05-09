@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.json;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.StrUtil;
 import nl.zeesoft.zdk.json.JElem;
@@ -27,7 +28,9 @@ public class TestJson {
 		str.append(",\"array\": [ \"Array element 1\", \"Array element 2\" ]");
 		str.append(" } ");
 		
+		long start = System.currentTimeMillis();
 		json.fromStringBuilder(str);
+		Console.log("Ms: " + (System.currentTimeMillis() - start));
 		
 		assert json.root.children.size() == 7;
 		assert json.toStringBuilder().toString().equals("{\"string\":\"String data\",\"int\":2,\"double\":0.1,\"boolean1\":true,\"boolean2\":false,\"object\":{\"objectString\":\"Object string data\"},\"array\":[\"Array element 1\",\"Array element 2\"]}");

@@ -7,8 +7,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class Json {
-	public JsonExceptionHandler		exceptionHandler	= null;
-	public JElem					root				= null;
+	private static ScriptEngineManager	scriptEngineMangager	= new ScriptEngineManager();
+	private static ScriptEngine			javaScriptEngine		= scriptEngineMangager.getEngineByName("javascript");
+	
+	public JsonExceptionHandler			exceptionHandler		= null;
+	public JElem						root					= null;
 	
 	public StringBuilder toStringBuilder() {
 		StringBuilder r = new StringBuilder();
@@ -34,23 +37,25 @@ public class Json {
 	
 	protected Map<String,Object> getElements(StringBuilder str) {
 		Map<String,Object> r = null;
-        ScriptEngineManager sem = new ScriptEngineManager();
-        ScriptEngine engine = sem.getEngineByName("javascript");
         str.insert(0, "Java.asJSONCompatible(");
         str.append(")");
 		try {
-			Object result = engine.eval(str.toString());
+			Object result = javaScriptEngine.eval(str.toString());
 	        @SuppressWarnings("unchecked")
 			Map<String,Object> elems = (Map<String,Object>) result;
 	        r = elems;
 		} catch (ScriptException ex) {
-			if (exceptionHandler!=null) {
-				exceptionHandler.handleException(this, ex);
-			} else {
-				JsonExceptionHandler.handleExceptionDefault(this, ex);
-			}
+			handleException(ex);
 		}
 		return r; 
+	}
+	
+	protected void handleException(Exception ex) {
+		if (exceptionHandler!=null) {
+			exceptionHandler.handleException(this, ex);
+		} else {
+			JsonExceptionHandler.handleExceptionDefault(this, ex);
+		}
 	}
 	
 	protected static void addStart(StringBuilder str, boolean isArray) {
