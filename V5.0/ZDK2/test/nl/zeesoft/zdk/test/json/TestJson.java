@@ -10,8 +10,8 @@ public class TestJson {
 		Logger.setLoggerDebug(true);
 		
 		Json json = new Json();
-		assert json.toStringBuilder().toString().equals("");
-		assert json.toStringBuilderReadFormat().toString().equals("");
+		assert json.toStringBuilder().toString().equals("{}");
+		assert json.toStringBuilderReadFormat().toString().equals("{}");
 		
 		StringBuilder str = new StringBuilder();
 		str.append(" { ");
@@ -51,8 +51,16 @@ public class TestJson {
 		assert json.toStringBuilder().toString().equals("{\"test:edgeCase\":\"12345678901234567890123\"}");
 
 		str = new StringBuilder("/ \"test\": 123 \\");
-		json.fromStringBuilder(str);
+		json = new Json(str);
 		assert json.root.children.size() == 1;
 		assert json.toStringBuilder().toString().equals("{\"/ \"test\":{}}");
+		
+		str = new StringBuilder("{ \"objectArray\": [ {\"name\": \"object1\"}, {\"name\": \"object2\"} ] }");
+		json.fromStringBuilder(str);
+		assert json.root.children.size() == 1;
+		assert json.root.children.get(0).isArray;
+		assert json.root.children.get(0).children.size() == 2;
+		assert json.root.children.get(0).children.get(0).children.get(0).value.toString().equals("object1");
+		assert json.root.children.get(0).children.get(1).children.get(0).value.toString().equals("object2");
 	}
 }

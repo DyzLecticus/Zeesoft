@@ -4,22 +4,22 @@ import nl.zeesoft.zdk.StrUtil;
 import nl.zeesoft.zdk.Util;
 
 public class Json {
-	public JElem	root	= null;
+	public JElem	root	= new JElem();
+	
+	public Json() {
+		
+	}
+	
+	public Json(StringBuilder str) {
+		fromStringBuilder(str);
+	}
 	
 	public StringBuilder toStringBuilder() {
-		StringBuilder r = new StringBuilder();
-		if (root!=null) {
-			r = root.toStringBuilder();
-		}
-		return r;
+		return root.toStringBuilder();
 	}
 	
 	public StringBuilder toStringBuilderReadFormat() {
-		StringBuilder r = new StringBuilder();
-		if (root!=null) {
-			r = root.toStringBuilderReadFormat();
-		}
-		return r;
+		return root.toStringBuilderReadFormat();
 	}
 
 	public void fromStringBuilder(StringBuilder str) {

@@ -20,15 +20,24 @@ public class JsonParser {
 		parent.isArray = clean(str);
 		List<StringBuilder> elems = parseElements(str);
 		for (StringBuilder elem: elems) {
-			JElem child = new JElem();
-			StringBuilder key = parseKey(elem);
-			if (parent.isArray) {
-				child.value = Json.getObjectValue(key);
-			} else {
-				setKeyValue(child, key, parseValue(elem, key));
-			}
-			parent.children.add(child);
+			addChild(parent, elem);
 		}
+	}
+	
+	protected void addChild(JElem parent, StringBuilder elem) {
+		JElem child = new JElem();
+		StringBuilder key = parseKey(elem);
+		if (parent.isArray) {
+			if (StrUtil.startsWith(key, "{")) {
+				JsonParser parser = new JsonParser();
+				parser.parse(child, elem);
+			} else {
+				child.value = Json.getObjectValue(key);
+			}
+		} else {
+			setKeyValue(child, key, parseValue(elem, key));
+		}
+		parent.children.add(child);
 	}
 	
 	protected void setKeyValue(JElem child, StringBuilder key, StringBuilder val) {
@@ -96,12 +105,10 @@ public class JsonParser {
 	
 	protected boolean handleNextElement(String c, StringBuilder elem, List<StringBuilder> elems) {
 		boolean r = false;
-		if (!inQuote && !inArray && level==0) {
-			if (c.equals(",")) {
-				StrUtil.trim(elem);
-				elems.add(elem);
-				r = true;
-			}				
+		if (!inQuote && !inArray && level==0 && c.equals(",")) {
+			StrUtil.trim(elem);
+			elems.add(elem);
+			r = true;
 		}
 		return r;
 	}
