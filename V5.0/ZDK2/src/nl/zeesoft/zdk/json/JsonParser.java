@@ -1,8 +1,5 @@
 package nl.zeesoft.zdk.json;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.StrUtil;
 
 public class JsonParser {
@@ -18,26 +15,7 @@ public class JsonParser {
 
 	protected void parse(JElem parent, StringBuilder str) {
 		parent.isArray = clean(str);
-		List<StringBuilder> elems = parseElements(str);
-		for (StringBuilder elem: elems) {
-			addChild(parent, elem);
-		}
-	}
-	
-	protected void addChild(JElem parent, StringBuilder elem) {
-		JElem child = new JElem();
-		StringBuilder key = parseKey(elem);
-		if (parent.isArray) {
-			if (StrUtil.startsWith(key, "{")) {
-				JsonParser parser = new JsonParser();
-				parser.parse(child, elem);
-			} else {
-				child.value = Json.getObjectValue(key);
-			}
-		} else {
-			setKeyValue(child, key, parseValue(elem, key));
-		}
-		parent.children.add(child);
+		parseElements(parent, str);
 	}
 	
 	protected void setKeyValue(JElem child, StringBuilder key, StringBuilder val) {
@@ -52,23 +30,38 @@ public class JsonParser {
 		}
 	}
 
-	protected List<StringBuilder> parseElements(StringBuilder str) {
-		List<StringBuilder> r = new ArrayList<StringBuilder>();
+	protected void parseElements(JElem parent, StringBuilder str) {
 		StringBuilder elem = new StringBuilder();
 		for (int i = 0; i < str.length(); i++) {
 			String c = str.substring(i,i+1);
 			handleSpecialCharacter(c);
-			if (!handleNextElement(c, elem, r)) {
-				elem.append(c);
-			} else {
+			if (!inQuote && !inArray && level==0 && c.equals(",")) {
+				addChild(parent, elem);
 				elem = new StringBuilder();
+			} else {
+				elem.append(c);
 			}
 		}
 		if (elem.length()>0) {
-			StrUtil.trim(elem);
-			r.add(elem);
+			addChild(parent, elem);
 		}
-		return r;
+	}
+	
+	protected void addChild(JElem parent, StringBuilder elem) {
+		StrUtil.trim(elem);
+		JElem child = new JElem();
+		StringBuilder key = parseKey(elem);
+		if (parent.isArray) {
+			if (StrUtil.startsWith(key, "{")) {
+				JsonParser parser = new JsonParser();
+				parser.parse(child, elem);
+			} else {
+				child.value = Json.getObjectValue(key);
+			}
+		} else {
+			setKeyValue(child, key, parseValue(elem, key));
+		}
+		parent.children.add(child);
 	}
 	
 	protected boolean clean(StringBuilder str) {
@@ -101,16 +94,6 @@ public class JsonParser {
 				inArray = false;
 			}
 		}
-	}
-	
-	protected boolean handleNextElement(String c, StringBuilder elem, List<StringBuilder> elems) {
-		boolean r = false;
-		if (!inQuote && !inArray && level==0 && c.equals(",")) {
-			StrUtil.trim(elem);
-			elems.add(elem);
-			r = true;
-		}
-		return r;
 	}
 	
 	protected StringBuilder parseKey(StringBuilder elem) {
