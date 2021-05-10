@@ -14,20 +14,8 @@ public class JsonParser {
 	}
 
 	protected void parse(JElem parent, StringBuilder str) {
-		parent.isArray = clean(str);
+		parent.isArray = unwrapReturnIsArray(str);
 		parseElements(parent, str);
-	}
-	
-	protected void setKeyValue(JElem child, StringBuilder key, StringBuilder val) {
-		StrUtil.trim(key,":");
-		StrUtil.trim(key,"\"");
-		child.key = key.toString();
-		if (StrUtil.startsWith(val, "{") || StrUtil.startsWith(val, "[")) {
-			JsonParser parser = new JsonParser();
-			parser.parse(child, val);
-		} else {
-			child.value = Json.getObjectValue(val);
-		}
 	}
 
 	protected void parseElements(JElem parent, StringBuilder str) {
@@ -64,7 +52,19 @@ public class JsonParser {
 		parent.children.add(child);
 	}
 	
-	protected boolean clean(StringBuilder str) {
+	protected void setKeyValue(JElem child, StringBuilder key, StringBuilder val) {
+		StrUtil.trim(key,":");
+		StrUtil.trim(key,"\"");
+		child.key = key.toString();
+		if (StrUtil.startsWith(val, "{") || StrUtil.startsWith(val, "[")) {
+			JsonParser parser = new JsonParser();
+			parser.parse(child, val);
+		} else {
+			child.value = Json.getObjectValue(val);
+		}
+	}
+	
+	protected boolean unwrapReturnIsArray(StringBuilder str) {
 		boolean r = false;
 		StrUtil.trim(str);
 		if (StrUtil.startsWith(str, "[")) {
