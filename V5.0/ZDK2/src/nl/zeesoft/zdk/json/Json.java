@@ -1,17 +1,10 @@
 package nl.zeesoft.zdk.json;
 
-import java.util.Map;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import nl.zeesoft.zdk.StrUtil;
+import nl.zeesoft.zdk.Util;
 
 public class Json {
-	private static ScriptEngineManager	scriptEngineMangager	= new ScriptEngineManager();
-	private static ScriptEngine			javaScriptEngine		= scriptEngineMangager.getEngineByName("javascript");
-	
-	public JsonExceptionHandler			exceptionHandler		= null;
-	public JElem						root					= null;
+	public JElem	root	= null;
 	
 	public StringBuilder toStringBuilder() {
 		StringBuilder r = new StringBuilder();
@@ -30,32 +23,29 @@ public class Json {
 	}
 
 	public void fromStringBuilder(StringBuilder str) {
-		Map<String,Object> elems = getElements(str);
-        root = new JElem();
-        root.fromElements(elems);
+		JsonParser parser = new JsonParser();
+		root = parser.parse(str);
 	}
 	
-	protected Map<String,Object> getElements(StringBuilder str) {
-		Map<String,Object> r = null;
-        str.insert(0, "Java.asJSONCompatible(");
-        str.append(")");
-		try {
-			Object result = javaScriptEngine.eval(str.toString());
-	        @SuppressWarnings("unchecked")
-			Map<String,Object> elems = (Map<String,Object>) result;
-	        r = elems;
-		} catch (ScriptException ex) {
-			handleException(ex);
-		}
-		return r; 
-	}
-	
-	protected void handleException(Exception ex) {
-		if (exceptionHandler!=null) {
-			exceptionHandler.handleException(this, ex);
+	protected static Object getObjectValue(StringBuilder val) {
+		Object r = null;
+		if (StrUtil.startsWith(val, "\"")) {
+			StrUtil.trim(val, "\"");
+			r = val;
+		} else if (StrUtil.equalsIgnoreCase(val, "true")) {
+			r = true;
+		} else if (StrUtil.equalsIgnoreCase(val, "false")) {
+			r = false;
+		} else if (val.length()<20) {
+			String str = val.toString();
+			r = Util.parseInt(str);
+			if (r==null) {
+				r = Util.parseDouble(str);
+			}
 		} else {
-			JsonExceptionHandler.handleExceptionDefault(this, ex);
+			r = val;
 		}
+		return r;
 	}
 	
 	protected static void addStart(StringBuilder str, boolean isArray) {

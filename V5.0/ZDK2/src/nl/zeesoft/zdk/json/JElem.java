@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.json;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class JElem {
 	public List<JElem>	children		= new ArrayList<JElem>();
@@ -16,7 +15,7 @@ public class JElem {
 	
 	public JElem(String key, Object value) {
 		this.key = key;
-		setValue(value);
+		this.value = value;
 	}
 	
 	public StringBuilder toStringBuilder() {
@@ -65,11 +64,11 @@ public class JElem {
 	}
 	
 	protected void appendValue(StringBuilder str) {
-		if (value instanceof String) {
+		if (value instanceof String || value instanceof StringBuilder) {
 			str.append("\"");
 		}
 		str.append(value);
-		if (value instanceof String) {
+		if (value instanceof String || value instanceof StringBuilder) {
 			str.append("\"");
 		}
 	}
@@ -91,38 +90,5 @@ public class JElem {
 			Json.addLineFeedIndent(str, level - 1);
 		}
 		Json.addEnd(str, isArray);
-	}
-	
-	protected void fromElements(Map<String,Object> elems) {
-		children.clear();
-		if (elems!=null) {
-	        for (String key: elems.keySet()) {
-	        	children.add(new JElem(key, elems.get(key)));
-	        }
-		}
-	}
-	
-	protected void setValue(Object value) {
-    	if (value instanceof Map) {
-    		@SuppressWarnings("unchecked")
-    		Map<String,Object> subElems = (Map<String,Object>)value;
-    		fromElements(subElems);
-    	} else if (value instanceof List) {
-    		isArray = true;
-    		@SuppressWarnings("unchecked")
-    		List<Object> values = (List<Object>)value;
-    		fromList(values);
-    	} else {
-    		this.value = value;
-    	}
-	}
-	
-	protected void fromList(List<Object> values) {
-		children.clear();
-        for (Object value: values) {
-        	JElem child = new JElem();
-    		child.setValue(value);
-        	children.add(child);
-        }
 	}
 }

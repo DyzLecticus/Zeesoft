@@ -86,4 +86,34 @@ public class Util {
 		}
 		return r;
 	}
+	
+	public static Integer parseInt(String str) {
+		Integer r = null;
+		try {
+			r = Integer.parseInt(str);
+		} catch(NumberFormatException ex) {
+			// ignore
+		}
+		return r;
+	}
+	
+	public static Float parseFloat(String str) {
+		Float r = null;
+		try {
+			r = Float.parseFloat(str);
+		} catch(NumberFormatException ex) {
+			// ignore
+		}
+		return r;
+	}
+	
+	public static Double parseDouble(String str) {
+		Double r = null;
+		try {
+			r = Double.parseDouble(str);
+		} catch(NumberFormatException ex) {
+			// ignore
+		}
+		return r;
+	}
 }

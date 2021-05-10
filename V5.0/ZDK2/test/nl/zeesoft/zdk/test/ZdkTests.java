@@ -67,6 +67,8 @@ public class ZdkTests {
 		TestRand.main(args);
 		Console.log("Test Util ...");
 		TestUtil.main(args);
+		Console.log("Test StrUtil ...");
+		TestStrUtil.main(args);
 
 		Console.log("Test Analyzer ...");
 		TestCodeAnalyzer.main(args);
