@@ -28,7 +28,7 @@ public class JElem {
 	
 	public JElem put(String key, Object value) {
     	JElem r = null;
-    	if (key!=null && key.length()>0) {
+    	if ((key!=null && key.length()>0) || (isArray && value!=null)) {
     		r = new JElem(key, value);
         	children.add(r);
     	}
@@ -36,8 +36,13 @@ public class JElem {
 	}
 	
 	public JElem putArray(String key, List<Object> values) {
-    	JElem r = put(key, values);
+    	JElem r = put(key, null);
     	r.isArray = true;
+    	if (values!=null) {
+	    	for (Object obj: values) {
+	    		r.put(null, obj);
+	    	}
+    	}
     	return r;
 	}
 	
