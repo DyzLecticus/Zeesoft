@@ -12,6 +12,7 @@ public class TestJson {
 		Json json = new Json();
 		assert json.toStringBuilder().toString().equals("{}");
 		assert json.toStringBuilderReadFormat().toString().equals("{}");
+		assert json.root.get("pizza") == null;
 		
 		StringBuilder str = new StringBuilder();
 		str.append(" { ");
@@ -43,7 +44,7 @@ public class TestJson {
 		assert StrUtil.split(str, "\n").size() == 16;
 		json.fromStringBuilder(str);
 		assert json.root.children.size() == 9;
-		assert json.root.children.get(6).children.size() == 2;
+		assert json.root.get(6).children.size() == 2;
 		
 		str = new StringBuilder("{ \"test:edgeCase\": 12345678901234567890123 }");
 		json.fromStringBuilder(str);
@@ -55,12 +56,13 @@ public class TestJson {
 		assert json.root.children.size() == 1;
 		assert json.toStringBuilder().toString().equals("{\"/ \"test\":{}}");
 		
-		str = new StringBuilder("{ \"objectArray\": [ {\"name\": \"object1\"}, {\"name\": \"object2\"} ] }");
+		str = new StringBuilder("{ \"objectArray\": [ {\"name\": \"object1\"}, {\"name\": \"object2\", \"number\": 123} ] }");
 		json.fromStringBuilder(str);
 		assert json.root.children.size() == 1;
-		assert json.root.children.get(0).isArray;
-		assert json.root.children.get(0).children.size() == 2;
-		assert json.root.children.get(0).children.get(0).children.get(0).value.toString().equals("object1");
-		assert json.root.children.get(0).children.get(1).children.get(0).value.toString().equals("object2");
+		assert json.root.get(0).isArray;
+		assert json.root.get(0).children.size() == 2;
+		assert json.root.get(0).get(0).get("name").value.toString().equals("object1");
+		assert json.root.get(0).get(1).get("name").value.toString().equals("object2");
+		assert (int)json.root.get(0).get(1).get("number").value == 123;
 	}
 }

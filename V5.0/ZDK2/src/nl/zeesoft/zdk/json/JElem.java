@@ -41,6 +41,21 @@ public class JElem {
     	return r;
 	}
 	
+	public JElem get(int index) {
+		return children.get(index);
+	}
+	
+	public JElem get(String key) {
+		JElem r = null;
+		for (JElem child: children) {
+			if (child.key.equals(key)) {
+				r = child;
+				break;
+			}
+		}
+		return r;
+	}
+	
 	protected StringBuilder toStringBuilder(boolean readFormat, int level) {
 		StringBuilder r = new StringBuilder();
 		appendKey(r, readFormat);
