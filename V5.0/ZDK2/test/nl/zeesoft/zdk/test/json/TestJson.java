@@ -33,7 +33,8 @@ public class TestJson {
 		assert json.toStringBuilder().toString().equals("{\"string\":\"String data\",\"int\":2,\"double\":0.1,\"boolean1\":true,\"boolean2\":false,\"object\":{\"objectString\":\"Object string data :,]}\"},\"array\":[\"Array element 1\",\"Array element 2\"]}");
 		
 		JElem child = json.root.put(null, "Pizza");
-		assert child == null;
+		assert child != null;
+		json.root.children.remove(child);
 		child = json.root.put("", "Pizza");
 		assert child == null;
 		child = json.root.put("testPut", "Pizza");
@@ -46,8 +47,9 @@ public class TestJson {
 		child = json.root.putArray("testPutArray", arrayValues);
 		assert child.value == null;
 		assert json.root.children.size() == 9;
-		json.root.get(8).put(null, null);
-		assert json.root.get(8).children.size() == 2;
+		child = json.root.get(8).put(null, null);
+		assert json.root.get(8).children.size() == 3;
+		json.root.get(8).children.remove(child);
 		
 		str = json.toStringBuilderReadFormat();
 		assert StrUtil.split(str, "\n").size() == 19;
