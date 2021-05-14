@@ -61,6 +61,14 @@ public class JElem {
 		return r;
 	}
 	
+	public JElem remove(String key) {
+		JElem r = get(key);
+		if (r!=null) {
+			children.remove(r);
+		}
+		return r;
+	}
+	
 	protected StringBuilder toStringBuilder(boolean readFormat, int level) {
 		StringBuilder r = new StringBuilder();
 		appendKey(r, readFormat);
