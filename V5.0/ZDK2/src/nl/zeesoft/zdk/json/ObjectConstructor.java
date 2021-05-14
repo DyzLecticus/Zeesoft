@@ -25,31 +25,40 @@ public class ObjectConstructor {
 	private static void fromFields(Object r, JElem parent) {
 		List<Field> fields = Reflector.getFields(r);
 		for (Field field: fields) {
-			JElem child = parent.get(field.getName());
-			if (child!=null) {
-				if (!child.isArray) {
-					Reflector.setFieldValue(r, field, child.value);
-				} else {
-					fromArray(r, field, child);
-				}
-			}
+			addChild(r, field, parent.get(field.getName()));
 		}
 	}
 
+	private static void addChild(Object r, Field field, JElem child) {
+		if (child!=null) {
+			if (!child.isArray) {
+				Reflector.setFieldValue(r, field, child.value);
+			} else {
+				fromArray(r, field, child);
+			}
+		}
+	}
+	
 	private static void fromArray(Object r, Field field, JElem child) {
 		List<Object> cObjects = new ArrayList<Object>();
 		Object value = null;
 		for (JElem arrayElem: child.children) {
-			if (arrayElem.value == null) {
-				cObjects.add(fromJson(arrayElem));
-				value = cObjects;
-			} else {
-				cObjects.add(arrayElem.value);
-			}
+			value = addArrayElement(cObjects, arrayElem);
 		}
 		if (value==null) {
 			value = Instantiator.getNewArrayInstance(field.getType().toString(), cObjects);
 		}
 		Reflector.setFieldValue(r, field, value);
+	}
+	
+	private static Object addArrayElement(List<Object> objects, JElem arrayElem) {
+		Object r = null;
+		if (arrayElem.value == null) {
+			objects.add(fromJson(arrayElem));
+			r = objects;
+		} else {
+			objects.add(arrayElem.value);
+		}
+		return r;
 	}
 }

@@ -21,7 +21,10 @@ public class TestJson {
 		assert json.toStringBuilder().toString().equals("{}");
 		assert json.toStringBuilderReadFormat().toString().equals("{}");
 		assert json.root.get("pizza") == null;
-		
+
+		json.fromStringBuilder(new StringBuilder("{}"));
+		assert json.root.children.size() == 0;
+
 		StringBuilder str = new StringBuilder();
 		str.append(" { ");
 		str.append("\"string\": \"String data\"");

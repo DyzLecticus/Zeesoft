@@ -19,9 +19,7 @@ public class FunctionListList extends Function {
 			if (exceptionHandler!=null) {
 				fl.exceptionHandler = exceptionHandler;
 			}
-			@SuppressWarnings("unchecked")
-			List<Object> listReturnValues = (List<Object>) fl.execute(caller);
-			returnValues.addAll(listReturnValues);
+			executeFunctionList(fl, returnValues);
 			nsPerStep.put(step, System.nanoTime() - start);
 			start = System.nanoTime();
 			step++;
@@ -53,5 +51,11 @@ public class FunctionListList extends Function {
 			}
 		}
 		return r;
+	}
+	
+	protected void executeFunctionList(FunctionList fl, List<Object> returnValues) {
+		@SuppressWarnings("unchecked")
+		List<Object> listReturnValues = (List<Object>) fl.execute(caller);
+		returnValues.addAll(listReturnValues);
 	}
 }

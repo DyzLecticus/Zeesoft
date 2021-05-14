@@ -29,11 +29,7 @@ public class Executor {
 			if (executor!=null) {
 				executor.shutdown();
 			}
-			if (workers==0) {
-				executor = null;
-			} else {
-				executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(workers);
-			}
+			setExecutor(workers);
 			this.workers = workers;
 		}
 		lock.unlock();
@@ -114,6 +110,14 @@ public class Executor {
 	protected void addFunctionsToExecutor(List<ExecutorFunction> functions) {
 		for (ExecutorFunction function: functions) {
 			executor.execute(function);
+		}
+	}
+	
+	protected void setExecutor(int workers) {
+		if (workers==0) {
+			executor = null;
+		} else {
+			executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(workers);
 		}
 	}
 }

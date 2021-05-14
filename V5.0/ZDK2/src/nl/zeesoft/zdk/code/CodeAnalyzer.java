@@ -39,11 +39,11 @@ public class CodeAnalyzer {
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		Util.appendLine(r, getFileAnalysis().toString());
+		Util.appendLine(r, getFileAnalysis());
 		StringBuilder ma = getMethodAnalysis();
 		if (ma.length()>0) {
 			r.append("\n");
-			Util.appendLine(r, ma.toString());
+			Util.appendLine(r, ma);
 		}
 		return r.toString();
 	}
@@ -77,18 +77,22 @@ public class CodeAnalyzer {
 		if (files.size() > 0) {
 			r.append(fileStats.getAnalysisHeader("Files", "Lines of code", "Average lines per file"));
 			int max = fileStats.getListMax(listFileFactor, maxLinesPerFile);
-			boolean first = true;
-			for (AnalyzerFile file: files) {
-				if (file.lines > max) {
-					if (first) {
-						Util.appendLine(r, "Largest files;");
-						first = false;
-					}
-					Util.appendLine(r, "- " + file.toString());
-				}
-			}
+			appendFileAnalysis(r, max);
 		}
 		return r;
+	}
+	
+	protected void appendFileAnalysis(StringBuilder r, int max) {
+		boolean first = true;
+		for (AnalyzerFile file: files) {
+			if (file.lines > max) {
+				if (first) {
+					Util.appendLine(r, "Largest files;");
+					first = false;
+				}
+				Util.appendLine(r, "- " + file.toString());
+			}
+		}
 	}
 	
 	protected StringBuilder getMethodAnalysis() {

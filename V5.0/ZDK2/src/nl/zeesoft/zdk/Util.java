@@ -19,6 +19,10 @@ public class Util {
 	}
 	
 	public static void appendLine(StringBuilder sb, String line) {
+		appendLine(sb, new StringBuilder(line));
+	}
+	
+	public static void appendLine(StringBuilder sb, StringBuilder line) {
 		if (sb.length()>0) {
 			sb.append("\n");
 		}
@@ -73,13 +77,13 @@ public class Util {
 		float r = 0.0F;
 		if (values.size()>1) {
 			float sum = 0.0F;
-			float dev = 0.0F;
 			int size = values.size();
-			for(Float value: values) {
+			for (Float value: values) {
 				sum += value;
 			}
+			float dev = 0.0F;
 			float mean = sum / size;
-			for(Float value: values) {
+			for (Float value: values) {
 				dev += Math.pow(value - mean, 2);
 			}
 			r = (float) Math.sqrt(dev/(size - 1));

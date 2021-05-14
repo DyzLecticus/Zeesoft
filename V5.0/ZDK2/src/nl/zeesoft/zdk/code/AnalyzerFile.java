@@ -17,6 +17,12 @@ public class AnalyzerFile extends CodeFile {
 		if (lines > maxLinesPerFile) {
 			r.add("File has too many lines of code; " + toString());
 		}
+		r.addAll(getMethodErrors(maxLinesPerMethod));
+		return r;
+	}
+	
+	public List<String> getMethodErrors(int maxLinesPerMethod) {
+		List<String> r = new ArrayList<String>();
 		for (FileMethod method: methods) {
 			if (method.lines > maxLinesPerMethod) {
 				r.add("Method has too many lines of code; " + method);
@@ -24,7 +30,7 @@ public class AnalyzerFile extends CodeFile {
 		}
 		return r;
 	}
-	
+
 	@Override
 	public String toString() {
 		return path + "; lines: " + lines + ", methods: " + methods.size();
