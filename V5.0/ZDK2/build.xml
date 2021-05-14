@@ -9,7 +9,7 @@
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
 
-	<property name="classpath" value="nl/zeesoft/zdk nl/zeesoft/zdk/function nl/zeesoft/zdk/test"/>
+	<property name="classpath" value="nl/zeesoft/zdk nl/zeesoft/zdk/code nl/zeesoft/zdk/function nl/zeesoft/zdk/json nl/zeesoft/zdk/matrix nl/zeesoft/zdk/neural nl/zeesoft/zdk/test"/>
 
 	<target name="compile">
 		<mkdir dir="${build}"/>
