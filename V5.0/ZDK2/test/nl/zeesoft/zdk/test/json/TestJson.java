@@ -150,6 +150,8 @@ public class TestJson {
 		json.root.put("pizza", 42);
 		json.root.remove("total");
 		assert json.root.children.size() == 4;
+		StringBuilder jsonSB = json.toStringBuilderReadFormat();
+		json.fromStringBuilder(jsonSB);
 		hist = (HistoricalFloat) ObjectConstructor.fromJson(json);
 		assert hist.capacity == 2;
 		assert hist.floats.size() == 2;
