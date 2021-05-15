@@ -21,6 +21,7 @@ public class TestJson {
 		assert json.toStringBuilder().toString().equals("{}");
 		assert json.toStringBuilderReadFormat().toString().equals("{}");
 		assert json.root.get("pizza") == null;
+		assert json.root.remove("pizza") == null;
 
 		json.fromStringBuilder(new StringBuilder("{}"));
 		assert json.root.children.size() == 0;
@@ -34,11 +35,14 @@ public class TestJson {
 		str.append(",\"boolean2\": false");
 		str.append(",\"object\": { \"objectString\": \"Object string data :,]}\" }");
 		str.append(",\"array\": [ \"Array element 1\", \"Array element 2\" ]");
+		str.append(",\"objectArray\": [\n  { \"name\": \"Object1\", \"type\": 0 },\n  { \"name\": \"Object2\", \"type\": 0 }\n]");
 		str.append(" } ");
 		
 		json.fromStringBuilder(str);
-		assert json.root.children.size() == 7;
-		assert json.toStringBuilder().toString().equals("{\"string\":\"String data\",\"int\":2,\"double\":0.1,\"boolean1\":true,\"boolean2\":false,\"object\":{\"objectString\":\"Object string data :,]}\"},\"array\":[\"Array element 1\",\"Array element 2\"]}");
+		assert json.root.children.size() == 8;
+		assert json.toStringBuilder().toString().equals(
+			"{\"string\":\"String data\",\"int\":2,\"double\":0.1,\"boolean1\":true,\"boolean2\":false,\"object\":{\"objectString\":\"Object string data :,]}\"},\"array\":[\"Array element 1\",\"Array element 2\"],\"objectArray\":[{\"name\":\"Object1\",\"type\":0},{\"name\":\"Object2\",\"type\":0}]}"
+		);
 		
 		JElem child = json.root.put(null, "Pizza");
 		assert child != null;
@@ -54,15 +58,15 @@ public class TestJson {
 		arrayValues.add(456);
 		child = json.root.putArray("testPutArray", arrayValues);
 		assert child.value == null;
-		assert json.root.children.size() == 9;
-		child = json.root.get(8).put(null, null);
-		assert json.root.get(8).children.size() == 3;
-		json.root.get(8).children.remove(child);
+		assert json.root.children.size() == 10;
+		child = json.root.get(9).put(null, null);
+		assert json.root.get(9).children.size() == 3;
+		json.root.get(9).children.remove(child);
 		
 		str = json.toStringBuilderReadFormat();
-		assert StrUtil.split(str, "\n").size() == 19;
+		assert StrUtil.split(str, "\n").size() == 29;
 		json.fromStringBuilder(str);
-		assert json.root.children.size() == 9;
+		assert json.root.children.size() == 10;
 		assert json.root.get(6).children.size() == 2;
 		
 		str = new StringBuilder("{ \"test:edgeCase\": 12345678901234567890123 }");
@@ -124,8 +128,23 @@ public class TestJson {
 			}
 		}
 		
+		MockObject mo = new MockObject();
+		mo.change();
+		Json json3 = JsonConstructor.fromObject(mo);
+		StringBuilder json3SB = json3.toStringBuilderReadFormat();
+		
 		// Test Object constructor
 		assert new ObjectConstructor() != null;
+		assert ObjectConstructor.convertValueToClass(null,null) == null;
+		assert ObjectConstructor.convertValueToClass(null,String.class) == null;
+		assert ObjectConstructor.convertValueToClass("",null).equals("");
+		assert ObjectConstructor.convertValueToClass("",Long.class).equals("");
+		assert ObjectConstructor.convertValueToClass("",Float.class).equals("");
+		assert ObjectConstructor.convertValueToClass("",Double.class).equals("");
+		assert ObjectConstructor.convertValueToClass("",Byte.class).equals("");
+		assert ObjectConstructor.convertValueToClass("",Short.class).equals("");
+		assert (float)ObjectConstructor.convertValueToClass(1,Float.class) == 1F;
+		assert (double)ObjectConstructor.convertValueToClass(1,Double.class) == 1D;
 		
 		json.root.put("pizza", 42);
 		json.root.remove("total");
@@ -144,6 +163,12 @@ public class TestJson {
 		assert mao.blns[0] == false;
 		assert mao.bts[0] == 3;
 		assert mao.srts[0] == 3;
+		
+		json3.fromStringBuilder(json3SB);
+		mo = (MockObject) ObjectConstructor.fromJson(json3);
+		json3 = JsonConstructor.fromObject(mo);
+		StringBuilder json3SB2 = json3.toStringBuilderReadFormat();
+		assert StrUtil.equals(json3SB, json3SB2);
 		
 		json = new Json();
 		json.root.put(JsonConstructor.CLASS_NAME, System.class.getName());

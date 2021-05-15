@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.json;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ArrUtil;
 import nl.zeesoft.zdk.Reflector;
@@ -29,8 +30,14 @@ public class JsonConstructor {
 				json.root.putArray(entry.getKey(), ArrUtil.unpackArray(entry.getValue()));
 			} else if (entry.getValue() instanceof List) {
 				addList(json, entry.getKey(), entry.getValue());
-			} else {
+			} else if (isPrimitiveType(entry.getValue())) {
 				json.root.put(entry.getKey(), entry.getValue());
+			} else {
+				JElem elem = json.root.put(entry.getKey(),null);
+				if (entry.getValue()!=null) {
+					Json object = fromObject(entry.getValue());
+					elem.children = object.root.children;
+				}
 			}
 		}
 	}
@@ -40,8 +47,37 @@ public class JsonConstructor {
 		@SuppressWarnings("unchecked")
 		List<Object> objects = (List<Object>) value;
 		for (Object object: objects) {
-			Json child = fromObject(object);
-			array.children.add(child.root);
+			array.children.add(getListItem(object));
 		}
+	}
+	
+	private static JElem getListItem(Object object) {
+		Json child = null;
+		if (isPrimitiveType(object)) {
+			SortedMap<String,Object> keyValues = new TreeMap<String,Object>();
+			keyValues.put(CLASS_NAME, object.getClass().getName());
+			keyValues.put("value", object);
+			child = fromKeyValues(keyValues);
+		} else {
+			child = fromObject(object);
+		}
+		return child.root;
+	}
+	
+	private static boolean isPrimitiveType(Object value) {
+		boolean r = false;
+		if (value instanceof String ||
+			value instanceof StringBuilder ||
+			value instanceof Integer ||
+			value instanceof Long ||
+			value instanceof Float ||
+			value instanceof Double ||
+			value instanceof Boolean ||
+			value instanceof Byte ||
+			value instanceof Short
+			) {
+			r = true;
+		}
+		return r;
 	}
 }

@@ -5,15 +5,37 @@ import java.util.List;
 
 public class Instantiator {
 	public static Class<?> getClassForName(String className) {
-		Class<?> r = null;
-		try {
-			r = Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			// Ignore
+		Class<?> r = getPrimitiveClassForName(className);
+		if (r==null) {
+			try {
+				r = Class.forName(className);
+			} catch (ClassNotFoundException e) {
+				// Ignore
+			}
 		}
 		return r;
 	}
-	
+
+	public static Class<?> getPrimitiveClassForName(String className) {
+		Class<?> r = null;
+		if (className.equals("int")) {
+			r = Integer.class;
+		} else if (className.equals("long")) {
+			r = Long.class;
+		} else if (className.equals("float")) {
+			r = Float.class;
+		} else if (className.equals("double")) {
+			r = Double.class;
+		} else if (className.equals("boolean")) {
+			r = Boolean.class;
+		} else if (className.equals("byte")) {
+			r = Byte.class;
+		} else if (className.equals("short")) {
+			r = Short.class;
+		}
+		return r;
+	}
+
 	public static Object getNewClassInstance(Class<?> cls) {
 		Object r = getNewPrimitiveClassInstance(cls);
 		if (r==null) {
@@ -66,8 +88,15 @@ public class Instantiator {
 		return r;
 	}
 	
+	public static String getTypeSafe(String type) {
+		if (type.contains(" ")) {
+			type = type.split(" ")[1];
+		}
+		return type;
+	}
+	
 	public static Object getNewArrayInstance(String type, List<Object> values) {
-		Object r = Instantiator.getNewArrayInstance(type, values.size());
+		Object r = getNewArrayInstance(type, values.size());
 		if (r!=null) {
 			for (int i = 0; i < values.size(); i++) {
 				Array.set(r, i, values.get(i));
@@ -105,12 +134,5 @@ public class Instantiator {
 			r = Array.newInstance(short.class, length);
 		}
 		return r;
-	}
-	
-	private static String getTypeSafe(String type) {
-		if (type.contains(" ")) {
-			type = type.split(" ")[1];
-		}
-		return type;
 	}
 }

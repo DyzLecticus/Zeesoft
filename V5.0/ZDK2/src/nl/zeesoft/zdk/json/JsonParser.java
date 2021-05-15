@@ -3,9 +3,9 @@ package nl.zeesoft.zdk.json;
 import nl.zeesoft.zdk.StrUtil;
 
 public class JsonParser {
-	private int			level		= 0;
 	private boolean		inQuote		= false;
-	private boolean		inArray		= false;
+	private int			objectLevel	= 0;
+	private int			arrayLevel	= 0;
 
 	public JElem parse(StringBuilder str) {
 		JElem r = new JElem();
@@ -23,7 +23,7 @@ public class JsonParser {
 		for (int i = 0; i < str.length(); i++) {
 			String c = str.substring(i,i+1);
 			handleSpecialCharacter(c);
-			if (!inQuote && !inArray && level==0 && c.equals(",")) {
+			if (!inQuote && objectLevel==0 && arrayLevel==0 && c.equals(",")) {
 				addChild(parent, elem);
 				elem = new StringBuilder();
 			} else {
@@ -84,14 +84,14 @@ public class JsonParser {
 		}
 		if (!inQuote) {
 			if (c.equals("{")) {
-				level++;
+				objectLevel++;
 			} else if (c.equals("}")) {
-				level--;
+				objectLevel--;
 			}
 			if (c.equals("[")) {
-				inArray = true;
+				arrayLevel++;
 			} else if (c.equals("]")) {
-				inArray = false;
+				arrayLevel--;
 			}
 		}
 	}

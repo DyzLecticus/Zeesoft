@@ -11,6 +11,28 @@ public class ObjectConstructor {
 	public static Object fromJson(Json json) {
 		return fromJson(json.root);
 	}
+	
+	public static Object convertValueToClass(Object value, Class<?> cls) {
+		Object r = value;
+		if (value!=null && cls!=null && value.getClass()!=cls) {
+			if (cls == String.class) {
+				r = value.toString();
+			} else if (cls == Long.class && value.getClass() == Integer.class) {
+				r = ((Integer)value).longValue();
+			} else if (cls == Float.class && value.getClass() == Double.class) {
+				r = new Float((Double)value);
+			} else if (cls == Float.class && value.getClass() == Integer.class) {
+				r = ((Integer)value).floatValue();
+			} else if (cls == Double.class && value.getClass() == Integer.class) {
+				r = ((Integer)value).doubleValue();
+			} else if (cls == Byte.class && value.getClass() == Integer.class) {
+				r = ((Integer)value).byteValue();
+			} else if (cls == Short.class && value.getClass() == Integer.class) {
+				r = ((Integer)value).shortValue();
+			}
+		}
+		return r;
+	}
 
 	protected static Object fromJson(JElem parent) {
 		Object r = null;
@@ -32,7 +54,11 @@ public class ObjectConstructor {
 	private static void addChild(Object r, Field field, JElem child) {
 		if (child!=null) {
 			if (!child.isArray) {
-				Reflector.setFieldValue(r, field, child.value);
+				Object value = child.value;
+				if (child.children.size()>0) {
+					value = fromJson(child);
+				}
+				Reflector.setFieldValue(r, field, convertValueForField(value, field));
 			} else {
 				fromArray(r, field, child);
 			}
@@ -48,6 +74,9 @@ public class ObjectConstructor {
 		if (value==null) {
 			value = Instantiator.getNewArrayInstance(field.getType().toString(), cObjects);
 		}
+		if (value==null) {
+			value = cObjects;
+		}
 		Reflector.setFieldValue(r, field, value);
 	}
 	
@@ -60,5 +89,10 @@ public class ObjectConstructor {
 			objects.add(arrayElem.value);
 		}
 		return r;
+	}
+	
+	private static Object convertValueForField(Object value, Field field) {
+		String type = Instantiator.getTypeSafe(field.getType().toString());
+		return convertValueToClass(value, Instantiator.getClassForName(type));
 	}
 }

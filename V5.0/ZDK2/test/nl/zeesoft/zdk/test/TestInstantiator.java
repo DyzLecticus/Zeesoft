@@ -10,11 +10,19 @@ import nl.zeesoft.zdk.code.CodeFile;
 public class TestInstantiator {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
-		
+
 		assert Instantiator.getNewClassInstance(System.class) == null;
 		assert Instantiator.getNewClassInstance(CodeFile.class.getName()) == null;
 		assert Instantiator.getNewClassInstance(Instantiator.class.getName()) != null;
 		assert Instantiator.getNewClassInstance("Pizza") == null;
+
+		assert Instantiator.getNewClassInstance("int") != null;
+		assert Instantiator.getNewClassInstance("long") != null;
+		assert Instantiator.getNewClassInstance("float") != null;
+		assert Instantiator.getNewClassInstance("double") != null;
+		assert Instantiator.getNewClassInstance("boolean") != null;
+		assert Instantiator.getNewClassInstance("byte") != null;
+		assert Instantiator.getNewClassInstance("short") != null;
 
 		assert Instantiator.getNewClassInstance(String.class).equals("");
 		assert (int)Instantiator.getNewClassInstance(Integer.class) == 0;

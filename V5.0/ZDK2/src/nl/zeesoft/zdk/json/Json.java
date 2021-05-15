@@ -24,7 +24,7 @@ public class Json {
 
 	public void fromStringBuilder(StringBuilder str) {
 		JsonParser parser = new JsonParser();
-		root = parser.parse(str);
+		root = parser.parse(new StringBuilder(str));
 	}
 	
 	protected static Object getObjectValue(StringBuilder val) {
