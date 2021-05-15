@@ -80,19 +80,12 @@ public class Instantiator {
 	}
 	
 	public static Object getNewArrayInstance(String type, int length) {
-		type = getTypeSafe(type);
+		type = Reflector.getTypeSafe(type);
 		Object r = getNewObjectArrayInstance(type, length);
 		if (r==null) {
 			r = getNewPrimitiveArrayInstance(type, length);
 		}
 		return r;
-	}
-	
-	public static String getTypeSafe(String type) {
-		if (type.contains(" ")) {
-			type = type.split(" ")[1];
-		}
-		return type;
 	}
 	
 	public static Object getNewArrayInstance(String type, List<Object> values) {
@@ -108,7 +101,7 @@ public class Instantiator {
 	private static Object getNewObjectArrayInstance(String type, int length) {
 		Object r = null;
 		if (type.startsWith("[L")) {
-			Class<?> cls = getClassForName(type.substring(2, type.length() - 1));
+			Class<?> cls = getClassForName(Reflector.getArrayTypeSafe(type));
 			if (cls!=null) {
 				r = Array.newInstance(cls, length);
 			}
@@ -118,20 +111,9 @@ public class Instantiator {
 	
 	private static Object getNewPrimitiveArrayInstance(String type, int length) {
 		Object r = null;
-		if (type.equals("[I")) {
-			r = Array.newInstance(int.class, length);
-		} else if (type.equals("[J")) {
-			r = Array.newInstance(long.class, length);
-		} else if (type.equals("[F")) {
-			r = Array.newInstance(float.class, length);
-		} else if (type.equals("[D")) {
-			r = Array.newInstance(double.class, length);
-		} else if (type.equals("[Z")) {
-			r = Array.newInstance(boolean.class, length);
-		} else if (type.equals("[B")) {
-			r = Array.newInstance(byte.class, length);
-		} else if (type.equals("[S")) {
-			r = Array.newInstance(short.class, length);
+		Class<?> cls = Reflector.getPrimitiveArrayType(type);
+		if (cls!=null) {
+			r = Array.newInstance(cls, length);
 		}
 		return r;
 	}

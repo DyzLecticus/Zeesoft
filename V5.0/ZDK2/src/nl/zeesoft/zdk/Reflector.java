@@ -63,4 +63,46 @@ public class Reflector {
 			Logger.error(field, "Caught illegal access exception", e);
 		}
 	}
+	
+	public static String getTypeSafe(String type) {
+		if (type.contains(" ")) {
+			type = type.split(" ")[1];
+		}
+		return type;
+	}
+	
+	public static String getArrayTypeSafe(String type) {
+		if (type.startsWith("[L")) {
+			type = type.substring(2, type.length() - 1);
+		}
+		return type;
+	}
+	
+	public static String getPrimitiveArrayTypeSafe(String type) {
+		Class<?> cls = getPrimitiveArrayType(type);
+		if (cls!=null) {
+			type = cls.getName();
+		}
+		return type;
+	}
+	
+	protected static Class<?> getPrimitiveArrayType(String type) {
+		Class<?> r = null;
+		if (type.equals("[I")) {
+			r = int.class;
+		} else if (type.equals("[J")) {
+			r = long.class;
+		} else if (type.equals("[F")) {
+			r = float.class;
+		} else if (type.equals("[D")) {
+			r = double.class;
+		} else if (type.equals("[Z")) {
+			r = boolean.class;
+		} else if (type.equals("[B")) {
+			r = byte.class;
+		} else if (type.equals("[S")) {
+			r = short.class;
+		}
+		return r;
+	}
 }

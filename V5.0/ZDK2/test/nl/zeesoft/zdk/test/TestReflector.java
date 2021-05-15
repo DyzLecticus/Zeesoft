@@ -46,5 +46,18 @@ public class TestReflector {
 		assert keyValues.get("floats") instanceof ArrayList;
 		assert (int)keyValues.get("number") == 321;
 		assert (float)keyValues.get("total") == 1.0F;
+		
+		assert Reflector.getTypeSafe("class java.lang.String").equals("java.lang.String");
+		assert Reflector.getTypeSafe("java.lang.String").equals("java.lang.String");
+		assert Reflector.getArrayTypeSafe("pizza").equals("pizza");
+		assert Reflector.getArrayTypeSafe("[Ljava.lang.String;").equals("java.lang.String");
+		assert Reflector.getPrimitiveArrayTypeSafe("pizza").equals("pizza");
+		assert Reflector.getPrimitiveArrayTypeSafe("[I").equals("int");
+		assert Reflector.getPrimitiveArrayTypeSafe("[J").equals("long");
+		assert Reflector.getPrimitiveArrayTypeSafe("[F").equals("float");
+		assert Reflector.getPrimitiveArrayTypeSafe("[D").equals("double");
+		assert Reflector.getPrimitiveArrayTypeSafe("[Z").equals("boolean");
+		assert Reflector.getPrimitiveArrayTypeSafe("[B").equals("byte");
+		assert Reflector.getPrimitiveArrayTypeSafe("[S").equals("short");
 	}
 }

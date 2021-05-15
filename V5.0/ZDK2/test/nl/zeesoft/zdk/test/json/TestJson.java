@@ -121,6 +121,7 @@ public class TestJson {
 		MockArrayObject mao = new MockArrayObject();
 		mao.change();
 		Json json2 = JsonConstructor.fromObject(mao);
+		StringBuilder json2SB = json2.toStringBuilderReadFormat();
 		assert json2.root.children.size() == 9;
 		for (JElem childElem: json2.root.children) {
 			if (!childElem.key.equals(JsonConstructor.CLASS_NAME)) {
@@ -154,6 +155,7 @@ public class TestJson {
 		assert hist.floats.size() == 2;
 		assert hist.total == 0.0F;
 		
+		json2.fromStringBuilder(json2SB);
 		mao = (MockArrayObject) ObjectConstructor.fromJson(json2);
 		assert mao.strs[0].equals("Q");
 		assert mao.ints[0] == 3;

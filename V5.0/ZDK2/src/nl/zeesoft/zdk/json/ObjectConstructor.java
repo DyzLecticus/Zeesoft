@@ -69,7 +69,7 @@ public class ObjectConstructor {
 		List<Object> cObjects = new ArrayList<Object>();
 		Object value = null;
 		for (JElem arrayElem: child.children) {
-			value = addArrayElement(cObjects, arrayElem);
+			value = addArrayElement(field, cObjects, arrayElem);
 		}
 		if (value==null) {
 			value = Instantiator.getNewArrayInstance(field.getType().toString(), cObjects);
@@ -80,19 +80,21 @@ public class ObjectConstructor {
 		Reflector.setFieldValue(r, field, value);
 	}
 	
-	private static Object addArrayElement(List<Object> objects, JElem arrayElem) {
+	private static Object addArrayElement(Field field, List<Object> objects, JElem arrayElem) {
 		Object r = null;
 		if (arrayElem.value == null) {
 			objects.add(fromJson(arrayElem));
 			r = objects;
 		} else {
-			objects.add(arrayElem.value);
+			objects.add(convertValueForField(arrayElem.value, field));
 		}
 		return r;
 	}
 	
 	private static Object convertValueForField(Object value, Field field) {
-		String type = Instantiator.getTypeSafe(field.getType().toString());
+		String type = Reflector.getTypeSafe(field.getType().toString());
+		type = Reflector.getArrayTypeSafe(type);
+		type = Reflector.getPrimitiveArrayTypeSafe(type);
 		return convertValueToClass(value, Instantiator.getClassForName(type));
 	}
 }
