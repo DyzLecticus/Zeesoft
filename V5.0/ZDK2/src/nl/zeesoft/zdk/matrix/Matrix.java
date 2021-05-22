@@ -114,7 +114,7 @@ public class Matrix {
 			applyFunction(caller,function);
 		}
 	}
-	
+
 	protected boolean dataEquals(Matrix matrix) {
 		boolean r = true;
 		for (int x = 0; x < size.x; x++) {

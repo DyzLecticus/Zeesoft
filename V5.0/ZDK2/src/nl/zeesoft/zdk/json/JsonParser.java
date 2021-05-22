@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.json;
 
-import nl.zeesoft.zdk.StrUtil;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class JsonParser {
 	private boolean		inQuote		= false;

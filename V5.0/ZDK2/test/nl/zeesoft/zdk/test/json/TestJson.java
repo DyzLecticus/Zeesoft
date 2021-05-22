@@ -7,11 +7,11 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.StrUtil;
 import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestJson {
 	public static void main(String[] args) {

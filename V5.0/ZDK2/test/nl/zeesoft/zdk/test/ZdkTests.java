@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.test.function.TestFunctionListList;
 import nl.zeesoft.zdk.test.json.TestJson;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
 import nl.zeesoft.zdk.test.matrix.TestMatrixExecutor;
+import nl.zeesoft.zdk.test.matrix.TestMatrixStringConvertor;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestCell;
@@ -59,6 +60,7 @@ public class ZdkTests {
 	protected static void runAllTests(String[] args) {
 		Console.log("Test HistoricalFloat ...");
 		TestHistoricalFloat.main(args);
+		TestHistoricalFloatStringConvertor.main(args);
 		Console.log("Test Lock ...");
 		TestLock.main(args);
 		Console.log("Test Logger ...");
@@ -97,6 +99,7 @@ public class ZdkTests {
 		TestSize.main(args);
 		Console.log("Test Matrix ...");
 		TestMatrix.main(args);
+		TestMatrixStringConvertor.main(args);
 		Console.log("Test MatrixExecutor...");
 		TestMatrixExecutor.main(args);
 		

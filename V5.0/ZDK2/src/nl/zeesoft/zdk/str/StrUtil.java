@@ -1,9 +1,11 @@
-package nl.zeesoft.zdk;
+package nl.zeesoft.zdk.str;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StrUtil {
+	public static StringBuilder		NULL	= new StringBuilder("null");
+	
 	public static boolean equals(StringBuilder str, String other) {
 		return equals(str, new StringBuilder(other));
 	}

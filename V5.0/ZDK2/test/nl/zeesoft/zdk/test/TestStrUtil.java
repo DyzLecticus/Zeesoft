@@ -3,7 +3,9 @@ package nl.zeesoft.zdk.test;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.StrUtil;
+import nl.zeesoft.zdk.str.ObjectStringConvertor;
+import nl.zeesoft.zdk.str.ObjectStringConvertors;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestStrUtil {
 	public static void main(String[] args) {
@@ -39,5 +41,26 @@ public class TestStrUtil {
 		assert StrUtil.split(new StringBuilder(), "").size() == 1;
 		str = new StringBuilder("Test1,Test2,");
 		assert StrUtil.split(str,",").size() == 3;
+		
+		assert new ObjectStringConvertors() != null;
+		testValueConvertor("Pizza", String.class, "Pizza");
+		testValueConvertor("1", Integer.class, 1);
+		testValueConvertor("2", Long.class, 2L);
+		testValueConvertor("0.1", Float.class, 0.1F);
+		testValueConvertor("0.2", Double.class, 0.2D);
+		testValueConvertor("true", Boolean.class, true);
+		testValueConvertor("3", Byte.class, new Integer(3).byteValue());
+		testValueConvertor("4", Short.class, new Integer(4).shortValue());
+		str = new StringBuilder("Stuff"); 
+		Object value = ObjectStringConvertor.convertStringBuilderToPrimitive(str, StringBuilder.class);
+		assert StrUtil.equals(str, (StringBuilder)value);
+		assert ObjectStringConvertor.convertStringBuilderToPrimitive(str, StringBuffer.class) == str;
+		assert ObjectStringConvertor.convertStringBuilderToPrimitive(str, null) == str;
+		assert ObjectStringConvertor.convertStringBuilderToPrimitive(null, null) == null;
+	}
+	
+	public static void testValueConvertor(String value, Class<?> cls, Object exp) {
+		Object val = ObjectStringConvertor.convertStringBuilderToPrimitive(new StringBuilder(value), cls);
+		assert val.equals(exp);
 	}
 }

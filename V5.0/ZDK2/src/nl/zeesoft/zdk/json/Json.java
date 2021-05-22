@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.json;
 
-import nl.zeesoft.zdk.StrUtil;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class Json {
 	public JElem	root	= new JElem();

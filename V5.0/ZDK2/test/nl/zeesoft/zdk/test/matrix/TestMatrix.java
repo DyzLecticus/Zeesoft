@@ -20,6 +20,7 @@ public class TestMatrix {
 		Position position2 = new Position(1,2,3);
 		
 		Matrix matrix = new Matrix();
+		assert matrix.equals(matrix);
 		
 		// Test not initialized
 		assert matrix.volume() == 0;
@@ -27,6 +28,7 @@ public class TestMatrix {
 		
 		// Test happy flow
 		matrix.initialize(size);
+		assert matrix.equals(matrix);
 		assert matrix.volume() == 24;
 		matrix.setValue(self,0);
 		assert matrix.getValue(position1) != null;

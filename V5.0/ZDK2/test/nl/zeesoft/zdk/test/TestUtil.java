@@ -88,6 +88,8 @@ public class TestUtil {
 		
 		assert Util.parseInt("Qwer") == null;
 		assert Util.parseInt("5") == 5;
+		assert Util.parseLong("Qwer") == null;
+		assert Util.parseLong("7") == 7L;
 		assert Util.parseFloat("Qwer") == null;
 		assert Util.parseFloat("0.1") == 0.1F;
 		assert Util.parseDouble("Qwer") == null;
