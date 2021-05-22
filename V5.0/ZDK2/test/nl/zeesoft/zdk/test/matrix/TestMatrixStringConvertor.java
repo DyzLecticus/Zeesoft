@@ -4,7 +4,9 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.MatrixStringConvertor;
 import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.matrix.PositionStringConvertor;
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.matrix.SizeStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
 
@@ -39,6 +41,12 @@ public class TestMatrixStringConvertor {
 		assert msc.fromStringBuilder(new StringBuilder("2,3,4#Pizza#")) != null;
 		m = msc.fromStringBuilder(new StringBuilder("2,3,4#java.lang.Float#0,0;1.92362"));
 		assert m.data[0][0][0] == null;
+
+		PositionStringConvertor psc = (PositionStringConvertor) ObjectStringConvertors.getConvertor(Position.class);
+		assert psc.toStringBuilder(new Matrix()).length() == 0;
+
+		SizeStringConvertor ssc = (SizeStringConvertor) ObjectStringConvertors.getConvertor(Size.class);
+		assert ssc.toStringBuilder(new Matrix()).length() == 0;
 	}
 	
 	public static void testMatrix(Matrix m) {
