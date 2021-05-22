@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.str.ObjectStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
+import nl.zeesoft.zdk.test.json.MockObject;
 
 public class TestStrUtil {
 	public static void main(String[] args) {
@@ -57,6 +58,7 @@ public class TestStrUtil {
 		assert ObjectStringConvertor.convertStringBuilderToPrimitive(str, StringBuffer.class) == str;
 		assert ObjectStringConvertor.convertStringBuilderToPrimitive(str, null) == str;
 		assert ObjectStringConvertor.convertStringBuilderToPrimitive(null, null) == null;
+		assert ObjectStringConvertors.getConvertor(MockObject.class) == null;
 	}
 	
 	public static void testValueConvertor(String value, Class<?> cls, Object exp) {
