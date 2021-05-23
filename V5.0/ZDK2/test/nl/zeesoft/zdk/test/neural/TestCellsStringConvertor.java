@@ -2,8 +2,12 @@ package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.model.Cell;
+import nl.zeesoft.zdk.neural.model.CellConfig;
 import nl.zeesoft.zdk.neural.model.CellStringConvertor;
+import nl.zeesoft.zdk.neural.model.Cells;
+import nl.zeesoft.zdk.neural.model.CellsStringConvertor;
 import nl.zeesoft.zdk.neural.model.Segment;
 import nl.zeesoft.zdk.neural.model.SegmentStringConvertor;
 import nl.zeesoft.zdk.neural.model.Synapse;
@@ -11,36 +15,36 @@ import nl.zeesoft.zdk.neural.model.SynapseStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
 
-public class TestCellStringConvertor {
+public class TestCellsStringConvertor {
+	private static TestCellsStringConvertor self = new TestCellsStringConvertor();
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		Position position = new Position(1,0,0);
-		Cell cell = new Cell(position, null);
-		cell.position = position;
+		Cell cell = new Cell(new Position(1,0,0), null);
 		
 		testCell(cell);
 		
-		Segment seg = new Segment();
-		Synapse syn1 = new Synapse();
-		syn1.connectTo = new Position(0,0,0);
-		syn1.permanence = 0.123F;
-		Synapse syn2 = new Synapse();
-		syn1.connectTo = new Position(0,0,1);
-		syn1.permanence = 0.234F;
-		
-		seg.synapses.add(syn1);
-		seg.synapses.add(syn2);
-		
-		cell.proximalSegments.segments.add(createSegment(1));
-		cell.proximalSegments.segments.add(createSegment(2));
-		cell.distalSegments.segments.add(createSegment(3));
-		cell.distalSegments.segments.add(createSegment(4));
-		cell.apicalSegments.segments.add(createSegment(5));
-		cell.apicalSegments.segments.add(createSegment(6));
+		addSegments(cell);
 
 		testCell(cell);
+		
+		CellConfig config = new CellConfig();
+		config.size = new Size(2,2,2);
+		Cells cells = new Cells(self, config);
+		addSegments(cells.getCell(new Position(0,0,0)));
+		addSegments(cells.getCell(new Position(0,1,0)));
+		
+		CellsStringConvertor conv = (CellsStringConvertor) ObjectStringConvertors.getConvertor(Cells.class);
+		
+		StringBuilder str = conv.toStringBuilder(cells);
+		Cells cells2 = conv.fromStringBuilder(str);
+		StringBuilder str2 = conv.toStringBuilder(cells2);
+		assert StrUtil.equals(str2, str);
 
+		assert conv.toStringBuilder(cell).length() == 0;
+		assert conv.fromStringBuilder(new StringBuilder()) == null;
+		
 		SynapseStringConvertor sysc = (SynapseStringConvertor) ObjectStringConvertors.getConvertor(Synapse.class);
 		assert sysc.toStringBuilder(cell).length() == 0;
 		SegmentStringConvertor sesc = (SegmentStringConvertor) ObjectStringConvertors.getConvertor(Segment.class);
@@ -51,6 +55,15 @@ public class TestCellStringConvertor {
 		assert csc.fromStringBuilder(new StringBuilder("1,2,3%%%")) != null;
 	}
 	
+	private static void addSegments(Cell cell) {
+		cell.proximalSegments.segments.add(createSegment(1));
+		cell.proximalSegments.segments.add(createSegment(2));
+		cell.distalSegments.segments.add(createSegment(3));
+		cell.distalSegments.segments.add(createSegment(4));
+		cell.apicalSegments.segments.add(createSegment(5));
+		cell.apicalSegments.segments.add(createSegment(6));
+	}
+
 	private static Segment createSegment(int base) {
 		Segment seg = new Segment();
 		Synapse syn1 = new Synapse();

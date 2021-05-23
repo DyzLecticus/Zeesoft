@@ -33,6 +33,9 @@ public class TestCells {
 		assert cell.position.equals(position);
 		assert cell.config == config;
 		
+		cells.setConfig(self, new CellConfig());
+		assert cell.config != config;
+		
 		assert cells.isInitialized();
 		cell.config = null;
 		assert !cells.isInitialized();

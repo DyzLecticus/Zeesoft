@@ -12,10 +12,20 @@ import nl.zeesoft.zdk.matrix.Position;
 public class Cells extends Matrix {
 	public CellConfig	config	= null;
 	
+	protected Cells(Object caller, Matrix matrix) {
+		initialize(matrix.size);
+		copyDataFrom(caller, matrix);
+	}
+	
 	public Cells(Object caller, CellConfig config) {
 		this.config = config;
 		initialize(config.size);
 		applyFunction(caller,getInitializeFunction());
+	}
+	
+	public void setConfig(Object caller, CellConfig config) {
+		this.config = config;
+		applyFunction(caller,getSetConfigFunction(config));
 	}
 	
 	public Cell getCell(Position position) {
@@ -27,7 +37,7 @@ public class Cells extends Matrix {
 	}
 
 	public void reset(Object caller) {
-		applyFunction(caller, getResetFunction(caller));
+		applyFunction(caller, getResetFunction());
 	}
 
 	public void punishPredictedColumn(Position columnPosition, String type, List<Position> prevActivePositions, float segmentDecrement) {
@@ -84,11 +94,26 @@ public class Cells extends Matrix {
 		return r;
 	}
 	
-	protected Function getResetFunction(Object myCaller) {
+	protected Function getResetFunction() {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
 				((Cell) param2).clear();
+				return param2;
+			}
+		};
+		return r;
+	}
+	
+	protected Function getSetConfigFunction(CellConfig config) {
+		Function r = new Function() {
+			@Override
+			protected Object exec() {
+				Cell cell = (Cell) param2;
+				cell.config = config;
+				cell.proximalSegments.config = config;
+				cell.distalSegments.config = config;
+				cell.apicalSegments.config = config;
 				return param2;
 			}
 		};
