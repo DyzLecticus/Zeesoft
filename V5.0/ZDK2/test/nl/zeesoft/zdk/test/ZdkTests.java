@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.test.matrix.TestMatrixStringConvertor;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
 import nl.zeesoft.zdk.test.neural.TestCell;
+import nl.zeesoft.zdk.test.neural.TestCellStringConvertor;
 import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
 import nl.zeesoft.zdk.test.neural.TestMerger;
@@ -113,6 +114,7 @@ public class ZdkTests {
 		TestSegment.main(args);
 		TestCell.main(args);
 		TestCells.main(args);
+		TestCellStringConvertor.main(args);
 		Console.log("Test SpatialPooler ...");
 		TestSpatialPooler.main(args);
 		TestSpatialPoolerOverlap.main(args);

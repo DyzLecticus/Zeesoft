@@ -9,11 +9,10 @@ import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class MatrixStringConvertor extends ObjectStringConvertor {
-	public SizeStringConvertor		ssc					= (SizeStringConvertor) ObjectStringConvertors.getConvertor(Size.class);
-	public PositionStringConvertor	psc					= (PositionStringConvertor) ObjectStringConvertors.getConvertor(Position.class);
+	public SizeStringConvertor		sizeConvertor		= (SizeStringConvertor) ObjectStringConvertors.getConvertor(Size.class);
+	public PositionStringConvertor	positionConvertor	= (PositionStringConvertor) ObjectStringConvertors.getConvertor(Position.class);
 	public String					dataSeparator		= "#";
 	public String					positionSeparator	= ";";
-	public String					valueSeparator		= "@";
 	
 	@Override
 	public Class<?> getObjectClass() {
@@ -26,7 +25,7 @@ public class MatrixStringConvertor extends ObjectStringConvertor {
 		if (obj instanceof Matrix) {
 			Matrix m = (Matrix) obj;
 			if (m.size!=null) {
-				r.append(ssc.toStringBuilder(m.size));
+				r.append(sizeConvertor.toStringBuilder(m.size));
 				appendData(r, m);
 			}
 		}
@@ -90,7 +89,7 @@ public class MatrixStringConvertor extends ObjectStringConvertor {
 	
 	protected void appendData(StringBuilder str, Position pos, Object value) {
 		str.append(dataSeparator);
-		str.append(psc.toStringBuilder(pos));
+		str.append(positionConvertor.toStringBuilder(pos));
 		str.append(positionSeparator);
 		str.append(getStringBuilderForObject(value));
 	}
@@ -107,7 +106,7 @@ public class MatrixStringConvertor extends ObjectStringConvertor {
 	
 	protected Matrix parseSize(StringBuilder dat) {
 		Matrix r = null;
-		Size size = ssc.fromStringBuilder(dat);
+		Size size = sizeConvertor.fromStringBuilder(dat);
 		if (size!=null) {
 			r = new Matrix();
 			r.initialize(size);
@@ -117,7 +116,7 @@ public class MatrixStringConvertor extends ObjectStringConvertor {
 	
 	protected void parseData(Matrix m, Class<?> dataType, StringBuilder dat) {
 		List<StringBuilder> posVal = StrUtil.split(dat, positionSeparator);
-		Position pos = (Position) psc.fromStringBuilder(posVal.get(0));
+		Position pos = (Position) positionConvertor.fromStringBuilder(posVal.get(0));
 		if (pos!=null && !StrUtil.equals(posVal.get(1), StrUtil.NULL)) {
 			m.setValue(pos, getObjectForStringBuilder(dataType, posVal.get(1)));
 		}

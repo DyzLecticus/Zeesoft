@@ -18,8 +18,6 @@ public class TestCell {
 		CellConfig config = new CellConfig();
 		Position position = new Position(0,0,0);
 		Cell cell = new Cell(position, config);
-		cell.position = position;
-		cell.config = config;
 		
 		List<Position> winners1 = new ArrayList<Position>();
 		winners1.add(new Position(1,0,0));
