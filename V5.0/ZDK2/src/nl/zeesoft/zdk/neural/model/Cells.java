@@ -109,11 +109,7 @@ public class Cells extends Matrix {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
-				Cell cell = (Cell) param2;
-				cell.config = config;
-				cell.proximalSegments.config = config;
-				cell.distalSegments.config = config;
-				cell.apicalSegments.config = config;
+				((Cell) param2).setConfig(config);
 				return param2;
 			}
 		};

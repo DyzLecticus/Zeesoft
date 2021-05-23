@@ -35,6 +35,7 @@ public class TestCells {
 		
 		cells.setConfig(self, new CellConfig());
 		assert cell.config != config;
+		assert cell.proximalSegments.config != config;
 		
 		assert cells.isInitialized();
 		cell.config = null;

@@ -113,4 +113,11 @@ public class Cell {
 		}
 		return potential;
 	}
+	
+	public void setConfig(CellConfig config) {
+		this.config = config;
+		proximalSegments.config = config;
+		distalSegments.config = config;
+		apicalSegments.config = config;
+	}
 }
