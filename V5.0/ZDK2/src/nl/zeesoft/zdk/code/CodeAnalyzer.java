@@ -100,19 +100,23 @@ public class CodeAnalyzer {
 		if (methodStats.total>0) {
 			r.append(methodStats.getAnalysisHeader("Methods", "Lines of code", "Average lines per method"));
 			int max = methodStats.getListMax(listMethodFactor, maxLinesPerMethod);
-			boolean first = true;
-			for (AnalyzerFile file: files) {
-				for (FileMethod method: file.methods) {
-					if (method.lines > max) {
-						if (first) {
-							Util.appendLine(r, "Largest methods;");
-							first = false;
-						}
-						Util.appendLine(r, "- " + method.toString());
+			appendLargestMethods(r, max);
+		}
+		return r;
+	}
+	
+	protected void appendLargestMethods(StringBuilder r, int max) {
+		boolean first = true;
+		for (AnalyzerFile file: files) {
+			for (FileMethod method: file.methods) {
+				if (method.lines > max) {
+					if (first) {
+						Util.appendLine(r, "Largest methods;");
+						first = false;
 					}
+					Util.appendLine(r, "- " + method.toString());
 				}
 			}
 		}
-		return r;
 	}
 }
