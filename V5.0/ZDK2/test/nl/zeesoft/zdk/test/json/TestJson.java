@@ -2,10 +2,9 @@ package nl.zeesoft.zdk.test.json;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
+import nl.zeesoft.zdk.HistoricalFloatStringConvertor;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
@@ -90,21 +89,7 @@ public class TestJson {
 		assert json.root.get(0).get(1).get("name").value.toString().equals("object2");
 		assert (int)json.root.get(0).get(1).get("number").value == 123;
 		
-		// Test JSON constructor
-		assert new JsonConstructor() != null;
-		
-		SortedMap<String,Object> keyValues = new TreeMap<String,Object>();
-		keyValues.put("testString", "TEST");
-		keyValues.put("testInt", 1);
-		double[] array = {1.0D, 0.0D};
-		keyValues.put("testArray", array);
-		json = JsonConstructor.fromKeyValues(keyValues);
-		assert json.root.children.size() == 3;
-		assert json.root.get("testArray").isArray;
-		assert json.root.get("testArray").children.size() == 2;
-		assert (int)json.root.get("testInt").value == 1;
-		assert json.root.get("testString").value.equals("TEST");
-		
+		// Test constructors
 		HistoricalFloat hist = new HistoricalFloat();
 		hist.capacity = 2;
 		hist.push(0.0F);
@@ -177,5 +162,41 @@ public class TestJson {
 		json = new Json();
 		json.root.put(JsonConstructor.CLASS_NAME, System.class.getName());
 		assert ObjectConstructor.fromJson(json) == null;
+		
+		// Test string convertors
+		String hfsc = HistoricalFloatStringConvertor.class.getSimpleName();
+		
+		json = JsonConstructor.fromObjectUseConvertors(hist);
+		assert json.root.children.size() == 2;
+		assert json.root.get(JsonConstructor.CLASS_NAME).value.toString().equals(HistoricalFloat.class.getName());
+		JElem elem = json.root.get(hfsc);
+		assert elem != null;
+		assert elem.value.toString().equals("2,0.0,1.0,0.0");
+		
+		MockStringObject mso = new MockStringObject();
+		mso.change();
+		json = JsonConstructor.fromObjectUseConvertors(mso);
+		assert json.root.get("hist").children.size() == 2;
+		assert json.root.get("hist").get(hfsc).value.toString().equals("100,3.0,1.0,1.0,0.0,1.0");
+		assert json.root.get("hists").children.size() == 2;
+		assert json.root.get("hists").get(0).get(hfsc).value.toString().equals("100,2.0,0.0,0.0,1.0,1.0");
+		assert json.root.get("hists").get(1).get(hfsc).value.toString().equals("100,1.0,1.0,0.0,0.0,0.0");
+
+		str = json.toStringBuilder();
+		json.fromStringBuilder(str);
+		mso = (MockStringObject) ObjectConstructor.fromJson(json);
+		assert mso.hist!=null;
+		assert mso.hist.total == 3.0F;
+		assert mso.hists.size() == 2;
+		assert mso.hists.get(0).total == 2.0F;
+		assert mso.hists.get(1).total == 1.0F;
+		
+		str = new StringBuilder("{ \"" + JsonConstructor.CLASS_NAME + "\": \"Pizza\" }");
+		json.fromStringBuilder(str);
+		assert ObjectConstructor.fromJson(json) == null;
+		
+		json.root.get(JsonConstructor.CLASS_NAME).value = HistoricalFloat.class.getName();
+		json.root.put(hfsc, null);
+		assert ObjectConstructor.fromJson(json) != null;
 	}
 }

@@ -7,24 +7,53 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.ArrUtil;
 import nl.zeesoft.zdk.Reflector;
+import nl.zeesoft.zdk.str.ObjectStringConvertor;
+import nl.zeesoft.zdk.str.ObjectStringConvertors;
 
 public class JsonConstructor {
-	public static String	CLASS_NAME	= "className";
+	public static String	CLASS_NAME		= "className";
+	
+	public boolean			useConvertors	= false;
+	
+	public JsonConstructor(boolean useConvertors) {
+		this.useConvertors = useConvertors;
+	}
 	
 	public static Json fromObject(Object object) {
+		return (new JsonConstructor(false)).fromObj(object);
+	}
+	
+	public static Json fromObjectUseConvertors(Object object) {
+		return (new JsonConstructor(true)).fromObj(object);
+	}
+	
+	public Json fromObj(Object object) {
 		Json r = new Json();
 		r.root.put(CLASS_NAME, object.getClass().getName());
-		addKeyValues(r, Reflector.getFieldValues(object));
+		if (useConvertors) {
+			fromObjUseConvertors(object, r);
+		} else {
+			addKeyValues(r, Reflector.getFieldValues(object));
+		}
 		return r;
 	}
 
-	public static Json fromKeyValues(SortedMap<String,Object> keyValues) {
+	public Json fromKeyVals(SortedMap<String,Object> keyValues) {
 		Json r = new Json();
 		addKeyValues(r, keyValues);
 		return r;
 	}
 	
-	private static void addKeyValues(Json json, SortedMap<String,Object> keyValues) {
+	private void fromObjUseConvertors(Object object, Json r) {
+		ObjectStringConvertor conv = ObjectStringConvertors.getConvertor(object.getClass());
+		if (conv!=null) {
+			r.root.put(conv.getClass().getSimpleName(), conv.toStringBuilder(object));
+		} else {
+			addKeyValues(r, Reflector.getFieldValues(object));
+		}
+	}
+
+	private void addKeyValues(Json json, SortedMap<String,Object> keyValues) {
 		for (Entry<String,Object> entry: keyValues.entrySet()) {
 			if (ArrUtil.isOneDimensionalArray(entry.getValue())) {
 				json.root.putArray(entry.getKey(), ArrUtil.unpackArray(entry.getValue()));
@@ -35,14 +64,13 @@ public class JsonConstructor {
 			} else {
 				JElem elem = json.root.put(entry.getKey(),null);
 				if (entry.getValue()!=null) {
-					Json object = fromObject(entry.getValue());
-					elem.children = object.root.children;
+					elem.children = getObjectAsJson(entry.getValue()).root.children;
 				}
 			}
 		}
 	}
 	
-	private static void addList(Json json, String key, Object value) {
+	private void addList(Json json, String key, Object value) {
 		JElem array = json.root.putArray(key, null);
 		@SuppressWarnings("unchecked")
 		List<Object> objects = (List<Object>) value;
@@ -51,17 +79,31 @@ public class JsonConstructor {
 		}
 	}
 	
-	private static JElem getListItem(Object object) {
+	private JElem getListItem(Object object) {
 		Json child = null;
 		if (isPrimitiveType(object)) {
-			SortedMap<String,Object> keyValues = new TreeMap<String,Object>();
-			keyValues.put(CLASS_NAME, object.getClass().getName());
-			keyValues.put("value", object);
-			child = fromKeyValues(keyValues);
+			child = getPrimitiveAsJson(object);
 		} else {
-			child = fromObject(object);
+			child = getObjectAsJson(object);
 		}
 		return child.root;
+	}
+	
+	private Json getPrimitiveAsJson(Object object) {
+		SortedMap<String,Object> keyValues = new TreeMap<String,Object>();
+		keyValues.put(CLASS_NAME, object.getClass().getName());
+		keyValues.put("value", object);
+		return (new JsonConstructor(useConvertors)).fromKeyVals(keyValues);
+	}
+	
+	private Json getObjectAsJson(Object object) {
+		Json json = null;
+		if (useConvertors) {
+			json = fromObjectUseConvertors(object);
+		} else {
+			json = fromObject(object);
+		}
+		return json;
 	}
 	
 	private static boolean isPrimitiveType(Object value) {

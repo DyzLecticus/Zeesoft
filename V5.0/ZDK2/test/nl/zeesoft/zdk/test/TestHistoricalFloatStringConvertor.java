@@ -29,7 +29,7 @@ public class TestHistoricalFloatStringConvertor {
 		assert hist.floats.get(3) == 1.0F;
 		
 		assert hfsc.toStringBuilder(hfsc).length() == 0;
-		assert hfsc.toStringBuilder(new HistoricalFloat()).length() == 0;
+		assert hfsc.toStringBuilder(new HistoricalFloat()).length() == 7;
 		assert hfsc.fromStringBuilder(new StringBuilder()) == null;
 		assert hfsc.fromStringBuilder(new StringBuilder(",")) == null;
 	}

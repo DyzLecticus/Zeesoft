@@ -18,14 +18,12 @@ public class HistoricalFloatStringConvertor extends ObjectStringConvertor {
 		StringBuilder r = new StringBuilder();
 		if (obj instanceof HistoricalFloat) {
 			HistoricalFloat hf = (HistoricalFloat) obj;
-			if (hf.floats.size()>0) {
-				r.append(hf.capacity);
+			r.append(hf.capacity);
+			r.append(dataSeparator);
+			r.append(hf.total);
+			for (Float f: hf.floats) {
 				r.append(dataSeparator);
-				r.append(hf.total);
-				for (Float f: hf.floats) {
-					r.append(dataSeparator);
-					r.append(f);
-				}
+				r.append(f);
 			}
 		}
 		return r;
