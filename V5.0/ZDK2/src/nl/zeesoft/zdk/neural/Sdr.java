@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.str.ObjectStringConvertors;
 
 public class Sdr {
 	public int				length	= 1;
@@ -41,13 +42,7 @@ public class Sdr {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(length);
-		for (Integer onBit: onBits) {
-			sb.append(",");
-			sb.append(onBit);
-		}
-		return sb.toString();
+		return ((SdrStringConvertor) ObjectStringConvertors.getConvertor(this.getClass())).toStringBuilder(this).toString();
 	}
 	
 	@Override
