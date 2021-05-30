@@ -22,6 +22,7 @@ public class TestSpatialPoolerOverlap {
 		config.inputSize = new Size(4,4);
 		config.outputSize = new Size(10,10);
 		config.outputOnBits = 2;
+		config.potentialRadius = 2;
 		SpatialPooler sp = new SpatialPooler();
 
 		sp.initialize(config);

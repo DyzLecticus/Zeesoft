@@ -10,6 +10,8 @@ import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.NetworkTrainer;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
+import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
+import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
 
 public class TestNetworkTrainer {
 	public static int	CYCLES		= 50;
@@ -21,6 +23,11 @@ public class TestNetworkTrainer {
 		factory.setMediumScale();
 		
 		NetworkConfig config = factory.getSimpleConfig("Input1", "Input2", "Input3", "Input4");
+		for (ProcessorConfig pcfg: config.getProcessorConfigs()) {
+			if (pcfg instanceof SpatialPoolerConfig) {
+				((SpatialPoolerConfig) pcfg).config.potentialRadius = 2;
+			}
+		}
 		
 		Network network = new Network();
 		Rand.reset(0);

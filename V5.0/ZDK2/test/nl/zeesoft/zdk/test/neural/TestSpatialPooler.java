@@ -36,6 +36,7 @@ public class TestSpatialPooler {
 		SpConfig config = new SpConfig();
 		config.inputSize = new Size(4,4);
 		config.outputSize = new Size(10,10);
+		config.potentialRadius = 2;
 		config.outputOnBits = 2;
 		config.boostFactorPeriod = 2;
 		
