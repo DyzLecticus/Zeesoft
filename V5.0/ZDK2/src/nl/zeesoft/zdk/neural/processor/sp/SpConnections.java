@@ -10,6 +10,11 @@ public class SpConnections extends Matrix {
 	public SpConfig					config		= null;
 	public SpConnectionResetter		resetter	= null;
 	
+	protected SpConnections(Object caller, Matrix matrix) {
+		initialize(matrix.size);
+		copyDataFrom(caller, matrix);
+	}
+	
 	public SpConnections(Object caller, SpConfig config) {
 		this.config = config;
 		resetter = new SpConnectionResetter(config);

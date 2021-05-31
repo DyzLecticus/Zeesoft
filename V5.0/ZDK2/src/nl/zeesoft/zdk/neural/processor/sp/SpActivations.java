@@ -19,7 +19,11 @@ public class SpActivations extends Matrix {
 	public SpConnections	connections		= null;
 	public SpBoostFactors	boostFactors	= null;
 	public Executor			executor		= null;
-
+	
+	protected SpActivations(Object caller, Matrix matrix) {
+		initialize(matrix.size);
+		copyDataFrom(caller, matrix);
+	}
 	
 	public SpActivations(
 		Object caller,

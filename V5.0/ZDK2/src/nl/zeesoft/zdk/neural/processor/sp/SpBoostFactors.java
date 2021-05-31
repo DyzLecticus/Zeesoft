@@ -12,6 +12,11 @@ public class SpBoostFactors extends Matrix {
 	public SdrHistory	activationHistory	= null;
 	public Executor		executor			= null;
 	
+	protected SpBoostFactors(Object caller, Matrix matrix) {
+		initialize(matrix.size);
+		copyDataFrom(caller, matrix);
+	}
+
 	public SpBoostFactors(Object caller, SpConfig config, SdrHistory activationHistory, Executor executor) {
 		this.config = config;
 		this.activationHistory = activationHistory;
