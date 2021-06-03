@@ -6,7 +6,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import nl.zeesoft.zdk.Lock;
+import nl.zeesoft.zdk.json.JsonTransient;
 
+@JsonTransient
 public class Executor {
 	protected Lock							lock			= new Lock(this);
 	protected int							workers			= 0;

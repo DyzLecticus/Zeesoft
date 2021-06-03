@@ -33,7 +33,7 @@ public class JsonConstructor {
 		if (useConvertors) {
 			fromObjUseConvertors(object, r);
 		} else {
-			addKeyValues(r, Reflector.getFieldValues(object));
+			addKeyValues(r, Reflector.getFieldValues(object, JsonTransient.class));
 		}
 		return r;
 	}
@@ -49,7 +49,7 @@ public class JsonConstructor {
 		if (conv!=null) {
 			r.root.put(conv.getClass().getSimpleName(), conv.toStringBuilder(object));
 		} else {
-			addKeyValues(r, Reflector.getFieldValues(object));
+			addKeyValues(r, Reflector.getFieldValues(object, JsonTransient.class));
 		}
 	}
 

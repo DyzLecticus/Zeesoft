@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.test.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.json.JsonTransient;
+
 public class MockObject {
 	public String				st		= "string";
 	public StringBuilder		sb		= new StringBuilder("string builder");
@@ -16,6 +18,10 @@ public class MockObject {
 	public Short				sh		= 1;
 	public MockObject			ob		= null;
 	public List<MockObject>		ls		= new ArrayList<MockObject>();
+	
+	@JsonTransient
+	public Integer 				trans	= 123;
+	public MockTransientObject	mto		= new MockTransientObject();
 	
 	public void change() {
 		change(2);

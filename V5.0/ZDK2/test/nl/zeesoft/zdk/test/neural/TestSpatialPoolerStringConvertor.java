@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
@@ -67,9 +69,11 @@ public class TestSpatialPoolerStringConvertor {
 		assert spbfsc.fromStringBuilder(new StringBuilder()) == null;
 		assert spasc.fromStringBuilder(new StringBuilder()) == null;
 
-		// TODO: Add JsonTransient annotation for class and property
-		//sp.executor = null;
-		//str = JsonConstructor.fromObjectUseConvertors(sp).toStringBuilderReadFormat();
-		//Console.log(str);
+		sp.executor = null;
+		Json json = JsonConstructor.fromObjectUseConvertors(sp);
+		assert json.root.children.size() == 8;
+		
+		// TODO: Test from JSON
+		//Console.log(json.toStringBuilderReadFormat());
 	}
 }

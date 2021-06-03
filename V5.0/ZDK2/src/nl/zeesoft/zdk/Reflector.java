@@ -9,11 +9,15 @@ import java.util.TreeMap;
 
 public class Reflector {
 	public static List<Field> getFields(Object object) {
+		return getFields(object, null);
+	}
+	
+	public static List<Field> getFields(Object object, @SuppressWarnings("rawtypes") Class notAnnotation) {
 		List<Field> r = new ArrayList<Field>();
 		Class<?> cls = object.getClass();
 		while(cls!=Object.class) {
 			for (Field field : cls.getDeclaredFields()) {
-				if (!Modifier.isStatic(field.getModifiers())) {
+				if (addToList(field, notAnnotation)) {
 					r.add(field);
 				}
 			}
@@ -37,7 +41,11 @@ public class Reflector {
 	public static SortedMap<String,Object> getFieldValues(Object object) {
 		return getFieldValues(object, getFields(object));
 	}
-	
+
+	public static SortedMap<String,Object> getFieldValues(Object object, @SuppressWarnings("rawtypes") Class notAnnotation) {
+		return getFieldValues(object, getFields(object, notAnnotation));
+	}
+
 	public static SortedMap<String,Object> getFieldValues(Object object, List<Field> fields) {
 		SortedMap<String,Object> r = new TreeMap<String,Object>();
 		for (Field field: fields) {
@@ -102,6 +110,20 @@ public class Reflector {
 			r = byte.class;
 		} else if (type.equals("[S")) {
 			r = short.class;
+		}
+		return r;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static boolean addToList(Field field, Class notAnnotation) {
+		boolean r = false;
+		if (!Modifier.isStatic(field.getModifiers())
+			&& (notAnnotation==null || (
+				field.getAnnotation(notAnnotation)==null &&
+				field.getType().getAnnotation(notAnnotation)==null
+			)
+			)) {
+			r = true;
 		}
 		return r;
 	}

@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk;
 
+import nl.zeesoft.zdk.json.JsonTransient;
+
+@JsonTransient
 public class Lock {
 	private Object	owner	= null;
 	private Boolean locked	= false;

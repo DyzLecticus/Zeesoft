@@ -9,6 +9,8 @@ import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Lock;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Reflector;
+import nl.zeesoft.zdk.json.JsonTransient;
+import nl.zeesoft.zdk.test.json.MockObject;
 
 public class TestReflector {
 	public static void main(String[] args) {
@@ -59,5 +61,10 @@ public class TestReflector {
 		assert Reflector.getPrimitiveArrayTypeSafe("[Z").equals("boolean");
 		assert Reflector.getPrimitiveArrayTypeSafe("[B").equals("byte");
 		assert Reflector.getPrimitiveArrayTypeSafe("[S").equals("short");
+		
+		MockObject mObj = new MockObject();
+		SortedMap<String,Object> fieldValues = Reflector.getFieldValues(mObj, JsonTransient.class);
+		assert fieldValues.size() == 12;
+		assert !fieldValues.keySet().contains("trans");
 	}
 }
