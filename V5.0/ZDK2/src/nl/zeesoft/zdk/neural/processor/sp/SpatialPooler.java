@@ -28,15 +28,15 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 	public Executor				executor				= new Executor();
 
 	@Override
+	public void setNumberOfWorkers(int workers) {
+		executor.setWorkers(workers);
+	}
+
+	@Override
 	public void finalizeObject() {
 		connections.config = config;
 		configureBoostFactors();
 		configureActivations();
-	}
-
-	@Override
-	public void setNumberOfWorkers(int workers) {
-		executor.setWorkers(workers);
 	}
 
 	public void initialize(SpConfig config) {

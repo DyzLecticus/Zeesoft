@@ -15,6 +15,11 @@ public class TmColumns extends Matrix {
 	
 	public Executor	executor	= null;
 	
+	protected TmColumns(Object caller, Matrix matrix) {
+		initialize(matrix.size);
+		copyDataFrom(caller, matrix);
+	}
+
 	public TmColumns(Object caller, TmConfig config, TmCells cells, Executor executor) {
 		this.config = config;
 		this.cells = cells;

@@ -82,6 +82,7 @@ public class TestSpatialPoolerJson {
 		Json json2 = JsonConstructor.fromObjectUseConvertors(sp2);
 		
 		assert StrUtil.equals(json.toStringBuilder(), json2.toStringBuilder());
+		
 		sdr = new Sdr(9);
 		sdr.setBit(0, true);
 		io = new ProcessorIO(sdr);

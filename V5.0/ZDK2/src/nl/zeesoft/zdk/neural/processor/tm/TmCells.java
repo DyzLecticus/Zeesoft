@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.function.Function;
+import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellSegments;
@@ -21,6 +22,10 @@ public class TmCells extends Cells {
 	
 	public List<Position>					activeApicalCellPositions		= new ArrayList<Position>();
 	public List<Position>					prevActiveApicalCellPositions	= new ArrayList<Position>();
+	
+	protected TmCells(Object caller, Matrix matrix) {
+		super(caller, matrix);
+	}
 
 	public TmCells(Object caller, TmConfig config) {
 		super(caller, config);

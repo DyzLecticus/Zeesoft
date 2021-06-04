@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
@@ -12,7 +13,7 @@ import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class TemporalMemory extends LearningProcessor implements CellsProcessor, ExecutorProcessor {
+public class TemporalMemory extends LearningProcessor implements CellsProcessor, ExecutorProcessor, Finalizable {
 	public static final int		ACTIVE_COLUMNS_INPUT		= 0;
 	public static final int		ACTIVE_APICAL_INPUT			= 1;
 	
@@ -30,6 +31,12 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	@Override
 	public void setNumberOfWorkers(int workers) {
 		executor.setWorkers(workers);
+	}
+
+	@Override
+	public void finalizeObject() {
+		configureColumns();
+		cells.setConfig(this, config);
 	}
 
 	public void initialize(TmConfig config) {
@@ -94,5 +101,11 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	
 	protected List<Position> getNewActiveColumnPositions(ProcessorIO io) {
 		return io.inputs.get(ACTIVE_COLUMNS_INPUT).getOnPositions(columns.size);
+	}
+	
+	protected void configureColumns() {
+		columns.config = config;
+		columns.cells = cells;
+		columns.executor = executor;
 	}
 }

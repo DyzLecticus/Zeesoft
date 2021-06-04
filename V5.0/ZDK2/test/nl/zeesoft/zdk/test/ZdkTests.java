@@ -28,10 +28,11 @@ import nl.zeesoft.zdk.test.neural.TestSdrHistory;
 import nl.zeesoft.zdk.test.neural.TestSdrStringConvertor;
 import nl.zeesoft.zdk.test.neural.TestSegment;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
-import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
 import nl.zeesoft.zdk.test.neural.TestSpatialPoolerJson;
+import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
 import nl.zeesoft.zdk.test.neural.TestTemporalMemory;
 import nl.zeesoft.zdk.test.neural.TestTemporalMemoryBurst;
+import nl.zeesoft.zdk.test.neural.TestTemporalMemoryJson;
 
 public class ZdkTests {
 	public static int sleepMs = 0;
@@ -125,6 +126,7 @@ public class ZdkTests {
 		Console.log("Test TemporalMemory ...");
 		TestTemporalMemory.main(args);
 		TestTemporalMemoryBurst.main(args);
+		TestTemporalMemoryJson.main(args);
 		Console.log("Test Classifier ...");
 		TestClassifier.main(args);
 		Console.log("Test Merger ...");
