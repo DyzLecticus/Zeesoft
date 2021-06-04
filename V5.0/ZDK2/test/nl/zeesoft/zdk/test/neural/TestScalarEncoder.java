@@ -1,6 +1,9 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.ScalarSdrEncoderTester;
 import nl.zeesoft.zdk.neural.Sdr;
@@ -8,6 +11,7 @@ import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.se.ScConfig;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestScalarEncoder {
 	public static void main(String[] args) {
@@ -129,5 +133,13 @@ public class TestScalarEncoder {
 		assert scCopy.maxValue == se.encoder.maxValue;
 		assert scCopy.resolution == se.encoder.resolution;
 		assert scCopy.periodic == se.encoder.periodic;
+		
+		Json json = JsonConstructor.fromObjectUseConvertors(se);
+		StringBuilder str = json.toStringBuilder();
+		Json json2 = new Json();
+		json2.fromStringBuilder(str);
+		ScalarEncoder se2 = (ScalarEncoder) ObjectConstructor.fromJson(json2);
+		json2 = JsonConstructor.fromObjectUseConvertors(se2);
+		assert StrUtil.equals(str, json2.toStringBuilder());
 	}
 }
