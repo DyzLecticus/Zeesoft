@@ -3,9 +3,10 @@ package nl.zeesoft.zdk.test.json;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.json.JsonTransient;
 
-public class MockObject {
+public class MockObject implements Finalizable {
 	public String				st		= "string";
 	public StringBuilder		sb		= new StringBuilder("string builder");
 	public Integer				in		= 1;
@@ -22,6 +23,8 @@ public class MockObject {
 	@JsonTransient
 	public Integer 				trans	= 123;
 	public MockTransientObject	mto		= new MockTransientObject();
+	
+	public boolean				fin		= false;
 	
 	public void change() {
 		change(2);
@@ -46,5 +49,10 @@ public class MockObject {
 		bl = num % 2 == 0;
 		bt = (byte)num;
 		sh = (short)num;
+	}
+
+	@Override
+	public void finalizeObject() {
+		fin = true;
 	}
 }

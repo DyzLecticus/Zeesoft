@@ -29,7 +29,7 @@ import nl.zeesoft.zdk.test.neural.TestSdrStringConvertor;
 import nl.zeesoft.zdk.test.neural.TestSegment;
 import nl.zeesoft.zdk.test.neural.TestSpatialPooler;
 import nl.zeesoft.zdk.test.neural.TestSpatialPoolerOverlap;
-import nl.zeesoft.zdk.test.neural.TestSpatialPoolerStringConvertor;
+import nl.zeesoft.zdk.test.neural.TestSpatialPoolerJson;
 import nl.zeesoft.zdk.test.neural.TestTemporalMemory;
 import nl.zeesoft.zdk.test.neural.TestTemporalMemoryBurst;
 
@@ -121,7 +121,7 @@ public class ZdkTests {
 		Console.log("Test SpatialPooler ...");
 		TestSpatialPooler.main(args);
 		TestSpatialPoolerOverlap.main(args);
-		TestSpatialPoolerStringConvertor.main(args);
+		TestSpatialPoolerJson.main(args);
 		Console.log("Test TemporalMemory ...");
 		TestTemporalMemory.main(args);
 		TestTemporalMemoryBurst.main(args);

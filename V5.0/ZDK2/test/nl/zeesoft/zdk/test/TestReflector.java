@@ -64,7 +64,7 @@ public class TestReflector {
 		
 		MockObject mObj = new MockObject();
 		SortedMap<String,Object> fieldValues = Reflector.getFieldValues(mObj, JsonTransient.class);
-		assert fieldValues.size() == 12;
+		assert fieldValues.size() == 13;
 		assert !fieldValues.keySet().contains("trans");
 	}
 }

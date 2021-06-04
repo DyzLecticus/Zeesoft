@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural.processor.sp;
 import java.util.List;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.SdrHistory;
 import nl.zeesoft.zdk.neural.model.Cells;
@@ -12,7 +13,7 @@ import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class SpatialPooler extends LearningProcessor implements CellsProcessor, ExecutorProcessor {
+public class SpatialPooler extends LearningProcessor implements CellsProcessor, ExecutorProcessor, Finalizable {
 	public static final int		ENCODED_SENSOR_INPUT	= 0;
 	
 	public static final int		ACTIVE_COLUMNS_OUTPUT	= 0;
@@ -25,6 +26,13 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 	public int					processed				= 0;
 	
 	public Executor				executor				= new Executor();
+
+	@Override
+	public void finalizeObject() {
+		connections.config = config;
+		configureBoostFactors();
+		configureActivations();
+	}
 
 	@Override
 	public void setNumberOfWorkers(int workers) {
@@ -90,5 +98,18 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 			io.error = this.getClass().getSimpleName() + " connections are not initialized";
 		}
 		return io.error.length() == 0;
+	}
+	
+	protected void configureBoostFactors() {
+		boostFactors.config = config;
+		boostFactors.activationHistory = activationHistory;
+		boostFactors.executor = executor;
+	}
+	
+	protected void configureActivations() {
+		activations.config = config;
+		activations.connections = connections;
+		activations.boostFactors = boostFactors;
+		activations.executor = executor;
 	}
 }

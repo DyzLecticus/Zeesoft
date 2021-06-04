@@ -116,6 +116,10 @@ public class TestJson {
 		
 		MockObject mo = new MockObject();
 		mo.change();
+		assert mo.fin == false;
+		assert mo.ob.fin == false;
+		assert mo.ls.get(0).fin == false;
+		assert mo.ls.get(1).fin == false;
 		Json json3 = JsonConstructor.fromObject(mo);
 		StringBuilder json3SB = json3.toStringBuilderReadFormat();
 		
@@ -155,6 +159,14 @@ public class TestJson {
 		
 		json3.fromStringBuilder(json3SB);
 		mo = (MockObject) ObjectConstructor.fromJson(json3);
+		assert mo.fin == true;
+		assert mo.ob.fin == true;
+		assert mo.ls.get(0).fin == true;
+		assert mo.ls.get(1).fin == true;
+		mo.fin = false;
+		mo.ob.fin = false;
+		mo.ls.get(0).fin = false;
+		mo.ls.get(1).fin = false;
 		json3 = JsonConstructor.fromObject(mo);
 		StringBuilder json3SB2 = json3.toStringBuilderReadFormat();
 		assert StrUtil.equals(json3SB, json3SB2);

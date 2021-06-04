@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test.neural;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
@@ -16,8 +17,9 @@ import nl.zeesoft.zdk.neural.processor.sp.SpConnections;
 import nl.zeesoft.zdk.neural.processor.sp.SpConnectionsStringConvertor;
 import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
+import nl.zeesoft.zdk.str.StrUtil;
 
-public class TestSpatialPoolerStringConvertor {
+public class TestSpatialPoolerJson {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
@@ -30,7 +32,11 @@ public class TestSpatialPoolerStringConvertor {
 		
 		Sdr sdr = new Sdr(9);
 		sdr.setBit(0, true);
-		sp.processIO(new ProcessorIO(sdr));
+		ProcessorIO io = new ProcessorIO(sdr);
+		sp.processIO(io);
+		assert io.error.length() == 0;
+		assert io.outputs.size() == 1;
+		assert io.outputs.get(0).onBits.size() == 16;
 		
 		SpConnectionsStringConvertor spcsc = (SpConnectionsStringConvertor) ObjectStringConvertors.getConvertor(SpConnections.class);
 		StringBuilder str = spcsc.toStringBuilder(sp.connections);
@@ -69,11 +75,19 @@ public class TestSpatialPoolerStringConvertor {
 		assert spbfsc.fromStringBuilder(new StringBuilder()) == null;
 		assert spasc.fromStringBuilder(new StringBuilder()) == null;
 
-		sp.executor = null;
 		Json json = JsonConstructor.fromObjectUseConvertors(sp);
 		assert json.root.children.size() == 8;
 		
-		// TODO: Test from JSON
-		//Console.log(json.toStringBuilderReadFormat());
+		SpatialPooler sp2 = (SpatialPooler) ObjectConstructor.fromJson(json);
+		Json json2 = JsonConstructor.fromObjectUseConvertors(sp2);
+		
+		assert StrUtil.equals(json.toStringBuilder(), json2.toStringBuilder());
+		sdr = new Sdr(9);
+		sdr.setBit(0, true);
+		io = new ProcessorIO(sdr);
+		sp2.processIO(io);
+		assert io.error.length() == 0;
+		assert io.outputs.size() == 1;
+		assert io.outputs.get(0).onBits.size() == 16;
 	}
 }

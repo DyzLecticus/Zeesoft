@@ -43,6 +43,9 @@ public class ObjectConstructor {
 		if (r==null) {
 			r = fromJson(parent, cn.value.toString());
 		}
+		if (r instanceof Finalizable) {
+			((Finalizable)r).finalizeObject();
+		}
 		return r;
 	}
 
