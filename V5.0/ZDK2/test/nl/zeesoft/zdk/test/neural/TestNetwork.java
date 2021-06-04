@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
@@ -19,7 +20,9 @@ import nl.zeesoft.zdk.test.ZdkTests;
 public class TestNetwork {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
-		
+
+		Rand.reset(0);
+
 		NetworkConfig config = TestNetworkConfig.getNewNetworkConfig();
 		
 		config.addInput("TestInput2");

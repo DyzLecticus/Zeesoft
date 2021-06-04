@@ -34,13 +34,17 @@ public class TestCellsStringConvertor {
 		Cells cells = new Cells(self, config);
 		addSegments(cells.getCell(new Position(0,0,0)));
 		addSegments(cells.getCell(new Position(0,1,0)));
-		
+
+		assert cells.getCell(new Position(0,0,1)).distalSegments.segments.size() == 0;
+
 		CellsStringConvertor conv = (CellsStringConvertor) ObjectStringConvertors.getConvertor(Cells.class);
 		
 		StringBuilder str = conv.toStringBuilder(cells);
 		Cells cells2 = conv.fromStringBuilder(str);
 		StringBuilder str2 = conv.toStringBuilder(cells2);
 		assert StrUtil.equals(str2, str);
+		
+		assert cells2.getCell(new Position(0,0,1)).distalSegments.segments.size() == 0;
 
 		assert conv.toStringBuilder(cell).length() == 0;
 		assert conv.fromStringBuilder(new StringBuilder()) == null;
@@ -49,6 +53,7 @@ public class TestCellsStringConvertor {
 		assert sysc.toStringBuilder(cell).length() == 0;
 		SegmentStringConvertor sesc = (SegmentStringConvertor) ObjectStringConvertors.getConvertor(Segment.class);
 		assert sesc.toStringBuilder(cell).length() == 0;
+		assert sesc.fromStringBuilder(new StringBuilder("")) == null;
 		CellStringConvertor csc = (CellStringConvertor) ObjectStringConvertors.getConvertor(Cell.class);
 		assert csc.toStringBuilder(cell.position).length() == 0;
 		assert csc.fromStringBuilder(new StringBuilder("1,2,3%")) == null;

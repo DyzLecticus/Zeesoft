@@ -64,8 +64,6 @@ public class TestTemporalMemoryJson {
 		
 		assert StrUtil.equals(json.toStringBuilder(), json2.toStringBuilder());
 		
-		/*
-		 * TODO: Finish test; fix NPE.
 		sdr = new Sdr(9);
 		sdr.setBit(0, true);
 		sdr.setBit(1, true);
@@ -75,6 +73,5 @@ public class TestTemporalMemoryJson {
 		assert io.outputs.size() == 4;
 		assert io.outputs.get(0).onBits.size() == 8;
 		assert io.outputs.get(0).length == 64;
-		 */
 	}
 }

@@ -68,7 +68,10 @@ public class CellStringConvertor extends ObjectStringConvertor {
 	protected void parseSegments(List<Segment> list, StringBuilder segments) {
 		List<StringBuilder> elems = StrUtil.split(segments, segmentSeparator);
 		for (StringBuilder elem: elems) {
-			list.add(segmentConvertor.fromStringBuilder(elem));
+			Segment segment = segmentConvertor.fromStringBuilder(elem);
+			if (segment!=null) {
+				list.add(segment);
+			}
 		}
 	}
 }
