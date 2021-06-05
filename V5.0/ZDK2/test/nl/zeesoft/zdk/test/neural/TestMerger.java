@@ -1,12 +1,17 @@
 package nl.zeesoft.zdk.test.neural;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.mr.Merger;
 import nl.zeesoft.zdk.neural.processor.mr.MrConfig;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestMerger {
 	public static void main(String[] args) {
@@ -60,5 +65,14 @@ public class TestMerger {
 		output = io.outputs.get(Merger.MERGED_SDR_OUTPUT);
 		assert output.length == mr.config.size.volume();
 		assert output.onBits.size() == 2;
+		
+		Json json = JsonConstructor.fromObjectUseConvertors(mr);
+		StringBuilder str = json.toStringBuilder();
+		Console.log(json.toStringBuilderReadFormat());
+		Json json2 = new Json();
+		json2.fromStringBuilder(str);
+		Merger mr2 = (Merger) ObjectConstructor.fromJson(json2);
+		json2 = JsonConstructor.fromObjectUseConvertors(mr2);
+		assert StrUtil.equals(str, json2.toStringBuilder());
 	}
 }
