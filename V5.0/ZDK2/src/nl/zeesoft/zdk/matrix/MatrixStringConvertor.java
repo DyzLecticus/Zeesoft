@@ -70,8 +70,15 @@ public class MatrixStringConvertor extends ObjectStringConvertor {
 				for (int z = 0; z < m.size.z; z++) {
 					if (m.data[x][y][z]!=null) {
 						r = m.data[x][y][z].getClass();
+						break;
 					}
 				}
+				if (r!=null) {
+					break;
+				}
+			}
+			if (r!=null) {
+				break;
 			}
 		}
 		return r;

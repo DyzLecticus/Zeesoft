@@ -64,7 +64,7 @@ public class TestTemporalMemoryJson {
 		
 		assert StrUtil.equals(json.toStringBuilder(), json2.toStringBuilder());
 		
-		sdr = new Sdr(9);
+		sdr = new Sdr(16);
 		sdr.setBit(0, true);
 		sdr.setBit(1, true);
 		io = new ProcessorIO(sdr);

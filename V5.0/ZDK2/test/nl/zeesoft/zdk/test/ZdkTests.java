@@ -17,6 +17,7 @@ import nl.zeesoft.zdk.test.neural.TestCell;
 import nl.zeesoft.zdk.test.neural.TestCells;
 import nl.zeesoft.zdk.test.neural.TestCellsStringConvertor;
 import nl.zeesoft.zdk.test.neural.TestClassifier;
+import nl.zeesoft.zdk.test.neural.TestClassifierJson;
 import nl.zeesoft.zdk.test.neural.TestMerger;
 import nl.zeesoft.zdk.test.neural.TestNetwork;
 import nl.zeesoft.zdk.test.neural.TestNetworkConfig;
@@ -129,6 +130,7 @@ public class ZdkTests {
 		TestTemporalMemoryJson.main(args);
 		Console.log("Test Classifier ...");
 		TestClassifier.main(args);
+		TestClassifierJson.main(args);
 		Console.log("Test Merger ...");
 		TestMerger.main(args);
 		Console.log("Test Network ...");

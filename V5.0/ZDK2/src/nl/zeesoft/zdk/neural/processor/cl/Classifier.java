@@ -1,12 +1,13 @@
 package nl.zeesoft.zdk.neural.processor.cl;
 
+import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrHistory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class Classifier extends LearningProcessor {
+public class Classifier extends LearningProcessor implements Finalizable {
 	public static final int		ASSOCIATE_SDR_INPUT		= 0;
 	
 	public static final int		ASSOCIATED_SDR_OUTPUT	= 0;
@@ -15,13 +16,18 @@ public class Classifier extends LearningProcessor {
 	public SdrHistory			activationHistory		= new SdrHistory();
 	public ClBits				bits					= null;
 
+	@Override
+	public void finalizeObject() {
+		bits.setConfig(config, activationHistory);
+	}
+
 	public void initialize(ClConfig config) {
 		this.config = config.copy();
 		
 		activationHistory.initialize(config.size.volume());
 		activationHistory.capacity = config.predictStep + 1;
 		
-		bits = new ClBits(this, this.config, activationHistory);
+		bits = new ClBits(this.config, activationHistory);
 	}
 
 	@Override

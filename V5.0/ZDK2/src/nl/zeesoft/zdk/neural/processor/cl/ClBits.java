@@ -12,9 +12,16 @@ public class ClBits {
 	public SdrHistory				activationHistory	= null;
 	public HashMap<Integer,ClBit>	bits				= new HashMap<Integer,ClBit>();
 	
-	public ClBits(Object caller, ClConfig config, SdrHistory activationHistory) {
+	public ClBits(ClConfig config, SdrHistory activationHistory) {
+		setConfig(config, activationHistory);
+	}
+	
+	public void setConfig(ClConfig config, SdrHistory activationHistory) {
 		this.config = config;
 		this.activationHistory = activationHistory;
+		for (ClBit bit: bits.values()) {
+			bit.config = config;
+		}
 	}
 	
 	public void reset() {
