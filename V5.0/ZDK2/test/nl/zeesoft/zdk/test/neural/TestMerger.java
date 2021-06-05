@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.neural;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
@@ -68,7 +67,6 @@ public class TestMerger {
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(mr);
 		StringBuilder str = json.toStringBuilder();
-		Console.log(json.toStringBuilderReadFormat());
 		Json json2 = new Json();
 		json2.fromStringBuilder(str);
 		Merger mr2 = (Merger) ObjectConstructor.fromJson(json2);
