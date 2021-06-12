@@ -1,14 +1,19 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
+import nl.zeesoft.zdk.neural.network.Network;
+import nl.zeesoft.zdk.neural.network.NetworkJsonConstructor;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestNetworkJson {
+	private static TestNetworkJson	self	= new TestNetworkJson();
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
@@ -24,5 +29,14 @@ public class TestNetworkJson {
 		config = (NetworkConfig) ObjectConstructor.fromJson(json2);
 		json2 = JsonConstructor.fromObjectUseConvertors(config);
 		assert StrUtil.equals(json2.toStringBuilder(), str);
+		
+		Network network = new Network();
+		assert network.initialize(config);
+		
+		NetworkJsonConstructor conv = new NetworkJsonConstructor();
+		json = conv.fromNetwork(self, network, 3000);
+		assert json.root.children.size() == 4;
+		JElem processors = json.root.get("networkProcessors");
+		assert processors.children.size() == 9;
 	}
 }

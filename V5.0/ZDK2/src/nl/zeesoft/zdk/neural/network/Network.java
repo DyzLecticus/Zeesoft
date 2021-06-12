@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.FunctionListList;
+import nl.zeesoft.zdk.json.JsonTransient;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
@@ -16,8 +17,11 @@ public class Network {
 	protected Executor					executor			= new Executor();
 	
 	protected List<String>				inputNames			= null;
+	@JsonTransient
 	protected NetworkProcessors			processors			= new NetworkProcessors(executor);
+	@JsonTransient
 	protected NetworkProcessorResetter	resetter			= new NetworkProcessorResetter(processors);
+	@JsonTransient
 	protected NetworkIOProcessor		ioProcessor			= null;
 	
 	protected NetworkIO					previousIO			= null;
