@@ -75,7 +75,11 @@ public class JsonConstructor {
 		@SuppressWarnings("unchecked")
 		List<Object> objects = (List<Object>) value;
 		for (Object object: objects) {
-			array.children.add(getListItem(object));
+			if (object!=null) {
+				array.children.add(getListItem(object));
+			} else {
+				array.children.add(new JElem());
+			}
 		}
 	}
 	
@@ -108,14 +112,10 @@ public class JsonConstructor {
 	
 	private static boolean isPrimitiveType(Object value) {
 		boolean r = false;
-		if (value instanceof String ||
-			value instanceof StringBuilder ||
-			value instanceof Integer ||
-			value instanceof Long ||
-			value instanceof Float ||
-			value instanceof Double ||
-			value instanceof Boolean ||
-			value instanceof Byte ||
+		if (value instanceof String || value instanceof StringBuilder ||
+			value instanceof Integer || value instanceof Long ||
+			value instanceof Float || value instanceof Double ||
+			value instanceof Boolean || value instanceof Byte ||
 			value instanceof Short
 			) {
 			r = true;

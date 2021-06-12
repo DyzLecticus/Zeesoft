@@ -13,38 +13,18 @@ public class ObjectConstructor {
 	public static Object fromJson(Json json) {
 		return fromJson(json.root);
 	}
-	
-	public static Object convertValueToClass(Object value, Class<?> cls) {
-		Object r = value;
-		if (value!=null && cls!=null && value.getClass()!=cls) {
-			if (cls == String.class) {
-				r = value.toString();
-			} else if (cls == Long.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).longValue();
-			} else if (cls == Float.class && value.getClass() == Double.class) {
-				r = new Float((Double)value);
-			} else if (cls == Float.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).floatValue();
-			} else if (cls == Double.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).doubleValue();
-			} else if (cls == Byte.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).byteValue();
-			} else if (cls == Short.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).shortValue();
-			}
-		}
-		return r;
-	}
 
 	protected static Object fromJson(JElem parent) {
 		Object r = null;
 		JElem cn = parent.get(JsonConstructor.CLASS_NAME);
-		r = fromString(parent, cn.value.toString());
-		if (r==null) {
-			r = fromJson(parent, cn.value.toString());
-		}
-		if (r instanceof Finalizable) {
-			((Finalizable)r).finalizeObject();
+		if (cn!=null) {
+			r = fromString(parent, cn.value.toString());
+			if (r==null) {
+				r = fromJson(parent, cn.value.toString());
+			}
+			if (r instanceof Finalizable) {
+				((Finalizable)r).finalizeObject();
+			}
 		}
 		return r;
 	}
@@ -52,7 +32,16 @@ public class ObjectConstructor {
 	private static Object fromJson(JElem parent, String className) {
 		Object r = Instantiator.getNewClassInstance(className);
 		if (r!=null) {
-			fromFields(r, parent);
+			Object val = null;
+			if (parent.get("value")!=null) {
+				val = parent.get("value").value;
+			}
+			val = ObjectConvertor.convertValueToType(val, r);
+			if (val==null) {
+				fromFields(r, parent);
+			} else {
+				r = val;
+			}
 		}
 		return r;
 	}
@@ -129,6 +118,6 @@ public class ObjectConstructor {
 		String type = Reflector.getTypeSafe(field.getType().toString());
 		type = Reflector.getArrayTypeSafe(type);
 		type = Reflector.getPrimitiveArrayTypeSafe(type);
-		return convertValueToClass(value, Instantiator.getClassForName(type));
+		return ObjectConvertor.convertValueToClass(value, Instantiator.getClassForName(type));
 	}
 }

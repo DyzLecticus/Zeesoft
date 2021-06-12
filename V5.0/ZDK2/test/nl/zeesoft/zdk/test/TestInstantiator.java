@@ -30,8 +30,8 @@ public class TestInstantiator {
 		assert (float)Instantiator.getNewClassInstance(Float.class) == 0F;
 		assert (double)Instantiator.getNewClassInstance(Double.class) == 0D;
 		assert (boolean)Instantiator.getNewClassInstance(Boolean.class) == false;
-		assert Instantiator.getNewClassInstance(Byte.class).equals(0);
-		assert Instantiator.getNewClassInstance(Short.class).equals(0);
+		assert Instantiator.getNewClassInstance(Byte.class).equals(new Integer(0).byteValue());
+		assert Instantiator.getNewClassInstance(Short.class).equals(new Integer(0).shortValue());
 		
 		assert Instantiator.getNewArrayInstance("class [Ljava.lang.String;", 2) instanceof String[];
 		assert Instantiator.getNewArrayInstance("[Ljava.lang.String;", 2) instanceof String[];

@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
+import nl.zeesoft.zdk.json.ObjectConvertor;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestJson {
@@ -123,19 +124,26 @@ public class TestJson {
 		Json json3 = JsonConstructor.fromObject(mo);
 		StringBuilder json3SB = json3.toStringBuilderReadFormat();
 		
+		// Test Object convertor
+		assert new ObjectConvertor() != null;
+		assert ObjectConvertor.convertValueToClass(null,null) == null;
+		assert ObjectConvertor.convertValueToClass(null,String.class) == null;
+		assert ObjectConvertor.convertValueToClass("",null).equals("");
+		assert ObjectConvertor.convertValueToClass("",Long.class).equals("");
+		assert ObjectConvertor.convertValueToClass("",Float.class).equals("");
+		assert ObjectConvertor.convertValueToClass("",Double.class).equals("");
+		assert ObjectConvertor.convertValueToClass("",Byte.class).equals("");
+		assert ObjectConvertor.convertValueToClass("",Short.class).equals("");
+		assert (float)ObjectConvertor.convertValueToClass(1,Float.class) == 1F;
+		assert (double)ObjectConvertor.convertValueToClass(1,Double.class) == 1D;
+		
+		assert ObjectConvertor.convertValueToType("", new StringBuilder()) == null;
+		assert ObjectConvertor.convertValueToType("", 0L) == null;
+		assert ObjectConvertor.convertValueToType("0", 0) == null;
+		assert ObjectConvertor.convertValueToType("true", true) == null;
+		
 		// Test Object constructor
 		assert new ObjectConstructor() != null;
-		assert ObjectConstructor.convertValueToClass(null,null) == null;
-		assert ObjectConstructor.convertValueToClass(null,String.class) == null;
-		assert ObjectConstructor.convertValueToClass("",null).equals("");
-		assert ObjectConstructor.convertValueToClass("",Long.class).equals("");
-		assert ObjectConstructor.convertValueToClass("",Float.class).equals("");
-		assert ObjectConstructor.convertValueToClass("",Double.class).equals("");
-		assert ObjectConstructor.convertValueToClass("",Byte.class).equals("");
-		assert ObjectConstructor.convertValueToClass("",Short.class).equals("");
-		assert (float)ObjectConstructor.convertValueToClass(1,Float.class) == 1F;
-		assert (double)ObjectConstructor.convertValueToClass(1,Double.class) == 1D;
-		
 		json.root.put("pizza", 42);
 		json.root.remove("total");
 		assert json.root.children.size() == 4;
@@ -210,5 +218,11 @@ public class TestJson {
 		json.root.get(JsonConstructor.CLASS_NAME).value = HistoricalFloat.class.getName();
 		json.root.put(hfsc, null);
 		assert ObjectConstructor.fromJson(json) != null;
+		
+		MockListObject mlo = new MockListObject();
+		mlo.change();
+		str = JsonConstructor.fromObject(mlo).toStringBuilder();
+		MockListObject mlo2 = (MockListObject) ObjectConstructor.fromJson(new Json(str));
+		assert StrUtil.equals(JsonConstructor.fromObject(mlo2).toStringBuilder(), str);
 	}
 }

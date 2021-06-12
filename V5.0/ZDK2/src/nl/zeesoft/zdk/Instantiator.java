@@ -63,9 +63,9 @@ public class Instantiator {
 		} else if (cls == Boolean.class) {
 			r = false;
 		} else if (cls == Byte.class) {
-			r = 0;
+			r = new Integer(0).byteValue();
 		} else if (cls == Short.class) {
-			r = 0;
+			r = new Integer(0).shortValue();
 		}
 		return r;
 	}
