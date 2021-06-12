@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 public class SpatialPoolerConfig extends ProcessorConfig {
 	public SpConfig		config	= new SpConfig();
 
+	public SpatialPoolerConfig() {
+		
+	}
+	
 	public SpatialPoolerConfig(int layer, String name) {
 		super(layer, name);
 	}

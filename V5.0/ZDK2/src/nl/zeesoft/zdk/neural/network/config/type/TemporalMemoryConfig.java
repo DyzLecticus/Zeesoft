@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.neural.processor.tm.TmConfig;
 public class TemporalMemoryConfig extends ProcessorConfig {
 	public TmConfig		config	= new TmConfig();
 
+	public TemporalMemoryConfig() {
+		
+	}
+	
 	public TemporalMemoryConfig(int layer, String name) {
 		super(layer, name);
 	}

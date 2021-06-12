@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.neural.processor.mr.MrConfig;
 public class MergerConfig extends ProcessorConfig {
 	public MrConfig		config	= new MrConfig();
 
+	public MergerConfig() {
+		
+	}
+	
 	public MergerConfig(int layer, String name) {
 		super(layer, name);
 	}

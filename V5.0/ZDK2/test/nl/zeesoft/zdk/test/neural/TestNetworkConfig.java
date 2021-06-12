@@ -14,6 +14,13 @@ public class TestNetworkConfig {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
+		assert new ScalarEncoderConfig() != null;
+		assert new SpatialPoolerConfig() != null;
+		assert new TemporalMemoryConfig() != null;
+		assert new ClassifierConfig() != null;
+		assert new MergerConfig() != null;
+		assert new LinkConfig() != null;
+		
 		NetworkConfig config = getNewNetworkConfig();
 		assert config.getInputNames().size() == 1;
 		assert config.getProcessorConfigs().size() == 5;

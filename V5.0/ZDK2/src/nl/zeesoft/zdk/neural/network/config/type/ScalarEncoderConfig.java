@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 public class ScalarEncoderConfig extends ProcessorConfig {
 	public ScConfig		encoder		= new ScConfig();
 
+	public ScalarEncoderConfig() {
+		
+	}
+	
 	public ScalarEncoderConfig(int layer, String name) {
 		super(layer, name);
 	}

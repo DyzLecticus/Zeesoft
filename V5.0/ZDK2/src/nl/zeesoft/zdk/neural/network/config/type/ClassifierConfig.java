@@ -9,6 +9,10 @@ import nl.zeesoft.zdk.neural.processor.cl.Classifier;
 public class ClassifierConfig extends ProcessorConfig {
 	public ClConfig		config	= new ClConfig();
 
+	public ClassifierConfig() {
+		
+	}
+	
 	public ClassifierConfig(int layer, String name) {
 		super(layer, name);
 	}

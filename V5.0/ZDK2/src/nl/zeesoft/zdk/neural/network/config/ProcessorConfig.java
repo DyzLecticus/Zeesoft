@@ -5,6 +5,10 @@ import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.Processor;
 
 public abstract class ProcessorConfig extends AbstractNetworkProcessor implements ConfigurableIO {
+	protected ProcessorConfig() {
+		
+	}
+	
 	protected ProcessorConfig(int layer, String name) {
 		this.layer = layer;
 		this.name = name;
