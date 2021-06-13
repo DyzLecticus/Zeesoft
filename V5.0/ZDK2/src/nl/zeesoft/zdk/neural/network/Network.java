@@ -6,11 +6,12 @@ import java.util.List;
 import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.FunctionListList;
+import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.json.JsonTransient;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
-public class Network {
+public class Network implements Finalizable {
 	public static final int				ALL_LAYERS			= -1;
 	public static final String			ALL_PROCESSORS		= "*";
 	
@@ -28,6 +29,11 @@ public class Network {
 	
 	public void setNumberOfWorkers(int num) {
 		executor.setWorkers(num);
+	}
+
+	@Override
+	public void finalizeObject() {
+		ioProcessor = new NetworkIOProcessor(inputNames, processors);
 	}
 	
 	public boolean initialize(NetworkConfig config) {

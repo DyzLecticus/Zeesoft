@@ -9,20 +9,20 @@ import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 
 public class NetworkJsonConstructor {
-	private static String	PROCESSORS	= "networkProcessors";
+	public static String	NETWORK_PROCESSORS	= "networkProcessors";
 	
 	public Json fromNetwork(Object caller, Network network, int timeoutMs) {
 		Json r = toJson(network);
 		FunctionListList fll = getToJsonFunctionListList(network);
 		ExecutorTask task = network.executor.execute(caller, fll, timeoutMs);
-		processTaskResults(task, r.root.get(PROCESSORS));
+		processTaskResults(task, r.root.get(NETWORK_PROCESSORS));
 		return r;
 	}
 	
 	protected Json toJson(Network network) {
 		Json r = JsonConstructor.fromObjectUseConvertors(network);
 		JElem elem = new JElem();
-		elem.key = PROCESSORS;
+		elem.key = NETWORK_PROCESSORS;
 		elem.isArray = true;
 		r.root.children.add(elem);
 		return r;

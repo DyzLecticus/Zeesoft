@@ -7,6 +7,10 @@ import nl.zeesoft.zdk.neural.processor.Processor;
 public class NetworkProcessor extends AbstractNetworkProcessor {
 	public Processor	processor 	= null;
 	
+	public NetworkProcessor() {
+		
+	}
+	
 	protected NetworkProcessor(ProcessorConfig pc) {
 		this.layer = pc.layer;
 		this.name = pc.name;

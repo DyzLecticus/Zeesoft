@@ -24,8 +24,7 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	}
 	
 	protected boolean initialize(Object caller, List<ProcessorConfig> processorConfigs, int timeoutMs) {
-		NetworkProcessorInitializer initializer = 
-			new NetworkProcessorInitializer(executor, processors, layerProcessors);
+		NetworkProcessorInitializer initializer = new NetworkProcessorInitializer(executor, this);
 		return initializer.initialize(caller, processorConfigs, timeoutMs);
 	}
 	
@@ -103,5 +102,15 @@ public class NetworkProcessors extends AbstractNetworkProcessor {
 	
 	protected SortedMap<Integer,List<NetworkProcessor>> getLayerProcessors() {
 		return new TreeMap<Integer,List<NetworkProcessor>>(layerProcessors);
+	}
+	
+	protected void addProcessor(NetworkProcessor np) {
+		processors.put(np.name, np);
+		List<NetworkProcessor> lps = layerProcessors.get(np.layer);
+		if (lps==null) {
+			lps = new ArrayList<NetworkProcessor>();
+			layerProcessors.put(np.layer, lps);
+		}
+		lps.add(np);
 	}
 }

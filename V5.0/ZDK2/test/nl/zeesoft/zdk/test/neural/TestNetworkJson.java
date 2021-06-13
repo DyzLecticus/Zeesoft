@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkJsonConstructor;
+import nl.zeesoft.zdk.neural.network.NetworkObjectConstructor;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.str.StrUtil;
@@ -33,10 +34,16 @@ public class TestNetworkJson {
 		Network network = new Network();
 		assert network.initialize(config);
 		
-		NetworkJsonConstructor conv = new NetworkJsonConstructor();
-		json = conv.fromNetwork(self, network, 3000);
+		NetworkJsonConstructor jsc = new NetworkJsonConstructor();
+		json = jsc.fromNetwork(self, network, 3000);
 		assert json.root.children.size() == 4;
-		JElem processors = json.root.get("networkProcessors");
+		JElem processors = json.root.get(NetworkJsonConstructor.NETWORK_PROCESSORS);
 		assert processors.children.size() == 9;
+		
+		NetworkObjectConstructor noc = new NetworkObjectConstructor();
+		Network network2 = noc.fromJson(self, json, 0, 3000);
+		assert network2.getWidth() == network.getWidth();
+		assert network2.getNumberOfLayers() == network.getNumberOfLayers();
+		assert network2.getNumberOfProcessors() == network.getNumberOfProcessors();
 	}
 }
