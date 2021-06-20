@@ -56,9 +56,9 @@ public class TestUtil {
 			}
 		};
 		runner.start();
-		ZdkTests.sleep(1);
+		ZdkTests.sleep(10);
 		runner.interrupt();
-		ZdkTests.sleep(1);
+		ZdkTests.sleep(10);
 		assert caughtException != null;
 
 		ex = Util.sleepNs(1);

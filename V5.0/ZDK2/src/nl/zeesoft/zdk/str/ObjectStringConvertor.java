@@ -1,6 +1,9 @@
 package nl.zeesoft.zdk.str;
 
 
+import java.util.List;
+
+import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Util;
 
 public abstract class ObjectStringConvertor {
@@ -14,6 +17,18 @@ public abstract class ObjectStringConvertor {
 	
 	public abstract Object fromStringBuilder(StringBuilder str);
 
+	public static StringBuilder getDataTypeStringBuilderForObject(Object value, String separator) {
+		StringBuilder r = new StringBuilder();
+		if (value==null) {
+			r.append(StrUtil.NULL);
+		} else {
+			r.append(value.getClass().getName());
+			r.append(separator);
+			r.append(getStringBuilderForObject(value));
+		}
+		return r;
+	}
+
 	public static StringBuilder getStringBuilderForObject(Object value) {
 		StringBuilder r = new StringBuilder();
 		if (value==null) {
@@ -25,6 +40,16 @@ public abstract class ObjectStringConvertor {
 			} else {
 				r.append(value.toString());
 			}
+		}
+		return r;
+	}
+	
+	public static Object getObjectForDataTypeStringBuilder(StringBuilder value, String separator) {
+		Object r = null;
+		if (!StrUtil.equals(value,StrUtil.NULL)) {
+			List<StringBuilder> elems = StrUtil.split(value, separator);
+			Class<?> dataType = Instantiator.getClassForName(elems.get(0).toString());
+			r = getObjectForStringBuilder(dataType, elems.get(1));
 		}
 		return r;
 	}
