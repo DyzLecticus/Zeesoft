@@ -59,6 +59,12 @@ public class TestStrUtil {
 		assert ObjectStringConvertor.convertStringBuilderToPrimitive(str, null) == str;
 		assert ObjectStringConvertor.convertStringBuilderToPrimitive(null, null) == null;
 		assert ObjectStringConvertors.getConvertor(MockObject.class) == null;
+		
+		str = ObjectStringConvertor.getDataTypeStringBuilderForObject("Pizza", "#");
+		assert str.toString().equals("java.lang.String#Pizza");
+		assert ObjectStringConvertor.getObjectForDataTypeStringBuilder(str, "#").equals("Pizza");
+		assert StrUtil.equals(ObjectStringConvertor.getDataTypeStringBuilderForObject(null, "#"), StrUtil.NULL);
+		assert ObjectStringConvertor.getObjectForDataTypeStringBuilder(StrUtil.NULL, "#") == null;
 	}
 	
 	public static void testValueConvertor(String value, Class<?> cls, Object exp) {

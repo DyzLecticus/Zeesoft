@@ -59,9 +59,7 @@ public class NetworkIOProcessor {
 		Object inputValue = getInputForProcessor(inputs, io, toProcessor);
 		ProcessorIO pio = new ProcessorIO();
 		if (complete) {
-			for (int i = 0; i < inputs.length; i++) {
-				pio.inputs.add(inputs[i]);
-			}
+			addInputsToList(inputs, pio.inputs);
 		}
 		pio.inputValue = inputValue;
 		toProcessor.processor.processIO(pio);
@@ -119,5 +117,13 @@ public class NetworkIOProcessor {
 			}
 		}
 		return r;
+	}
+	
+	protected void addInputsToList(Sdr[] inputs, List<Sdr> list) {
+		for (int i = 0; i < inputs.length; i++) {
+			if (inputs[i]!=null) {
+				list.add(inputs[i]);
+			}
+		}
 	}
 }
