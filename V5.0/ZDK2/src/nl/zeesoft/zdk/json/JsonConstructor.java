@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.json;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -30,10 +31,16 @@ public class JsonConstructor {
 	public Json fromObj(Object object) {
 		Json r = new Json();
 		r.root.put(CLASS_NAME, object.getClass().getName());
-		if (useConvertors) {
-			fromObjUseConvertors(object, r);
+		if (JsonMapConstructor.isMap(object)) {
+			@SuppressWarnings("unchecked")
+			Json map = JsonMapConstructor.fromMap((Map<Object,Object>)object, useConvertors);
+			r.root.children.add(map.root.children.get(0));
 		} else {
-			addKeyValues(r, Reflector.getFieldValues(object, JsonTransient.class));
+			if (useConvertors) {
+				fromObjUseConvertors(object, r);
+			} else {
+				addKeyValues(r, Reflector.getFieldValues(object, JsonTransient.class));
+			}
 		}
 		return r;
 	}
@@ -44,6 +51,16 @@ public class JsonConstructor {
 		return r;
 	}
 	
+	protected JElem getListItem(Object object) {
+		Json child = null;
+		if (isPrimitiveType(object)) {
+			child = getPrimitiveAsJson(object);
+		} else {
+			child = getObjectAsJson(object);
+		}
+		return child.root;
+	}
+
 	private void fromObjUseConvertors(Object object, Json r) {
 		ObjectStringConvertor conv = ObjectStringConvertors.getConvertor(object.getClass());
 		if (conv!=null) {
@@ -81,16 +98,6 @@ public class JsonConstructor {
 				array.children.add(new JElem());
 			}
 		}
-	}
-	
-	private JElem getListItem(Object object) {
-		Json child = null;
-		if (isPrimitiveType(object)) {
-			child = getPrimitiveAsJson(object);
-		} else {
-			child = getObjectAsJson(object);
-		}
-		return child.root;
 	}
 	
 	private Json getPrimitiveAsJson(Object object) {

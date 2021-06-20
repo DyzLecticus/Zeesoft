@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.json;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.Reflector;
@@ -48,11 +49,17 @@ public class ObjectConstructor {
 
 	private static Object fromString(JElem parent, String className) {
 		Object r = null;
-		Class<?> cls = Instantiator.getClassForName(className);
-		if (cls!=null) {
-			ObjectStringConvertor conv = ObjectStringConvertors.getConvertor(cls);
-			if (conv!=null) {
-				r = fromString(parent, conv);
+		if (JsonMapConstructor.isMap(className)) {
+			Json json = new Json();
+			json.root = parent;
+			r = ObjectMapConstructor.fromJson(json);
+		} else {
+			Class<?> cls = Instantiator.getClassForName(className);
+			if (cls!=null) {
+				ObjectStringConvertor conv = ObjectStringConvertors.getConvertor(cls);
+				if (conv!=null) {
+					r = fromString(parent, conv);
+				}
 			}
 		}
 		return r;
@@ -89,7 +96,7 @@ public class ObjectConstructor {
 	}
 	
 	private static void fromArray(Object r, Field field, JElem child) {
-		List<Object> cObjects = new ArrayList<Object>();
+		List<Object> cObjects = getNewList(field);
 		Object value = null;
 		for (JElem arrayElem: child.children) {
 			value = addArrayElement(field, cObjects, arrayElem);
@@ -101,6 +108,14 @@ public class ObjectConstructor {
 			value = cObjects;
 		}
 		Reflector.setFieldValue(r, field, value);
+	}
+	
+	private static List<Object> getNewList(Field field) {
+		List<Object> r = new ArrayList<Object>();
+		if (field.getType().getName().equals(CopyOnWriteArrayList.class.getName())) {
+			r = new CopyOnWriteArrayList<Object>();
+		}
+		return r;
 	}
 	
 	private static Object addArrayElement(Field field, List<Object> objects, JElem arrayElem) {

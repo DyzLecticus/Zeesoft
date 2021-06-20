@@ -100,7 +100,9 @@ public class NetworkIOStringConvertor extends ObjectStringConvertor {
 		for (StringBuilder keyVal: keyVals) {
 			List<StringBuilder> kv = StrUtil.split(keyVal, keySeparator);
 			Object value = getObjectForDataTypeStringBuilder(kv.get(1), valueSeparator);
-			r.put(kv.get(0).toString(), value);
+			if (value!=null) {
+				r.put(kv.get(0).toString(), value);
+			}
 		}
 		return r;
 	}
@@ -111,7 +113,9 @@ public class NetworkIOStringConvertor extends ObjectStringConvertor {
 		for (StringBuilder keyVal: keyVals) {
 			List<StringBuilder> kv = StrUtil.split(keyVal, keySeparator);
 			ProcessorIO pio = pioConvertor.fromStringBuilder(kv.get(1));
-			r.put(kv.get(0).toString(), pio);
+			if (pio!=null) {
+				r.put(kv.get(0).toString(), pio);
+			}
 		}
 		return r;
 	}
@@ -120,7 +124,9 @@ public class NetworkIOStringConvertor extends ObjectStringConvertor {
 		CopyOnWriteArrayList<String> r = new CopyOnWriteArrayList<String>();
 		List<StringBuilder> errors = StrUtil.split(dat, valueSeparator);
 		for (StringBuilder error: errors) {
-			r.add(error.toString());
+			if (error.length()>0) {
+				r.add(error.toString());
+			}
 		}
 		return r;
 	}

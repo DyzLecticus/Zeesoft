@@ -67,7 +67,10 @@ public class ProcessorIOStringConvertor extends ObjectStringConvertor {
 		List<Sdr> r = new ArrayList<Sdr>();
 		List<StringBuilder> sdrs = StrUtil.split(dat, valueSeparator);
 		for (StringBuilder sdr: sdrs) {
-			r.add(sdrConvertor.fromStringBuilder(sdr));
+			Sdr obj = sdrConvertor.fromStringBuilder(sdr);
+			if (obj!=null) {
+				r.add(obj);
+			}
 		}
 		return r;
 	}

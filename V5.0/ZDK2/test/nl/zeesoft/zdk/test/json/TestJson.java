@@ -9,8 +9,10 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.JsonMapConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.json.ObjectConvertor;
+import nl.zeesoft.zdk.json.ObjectMapConstructor;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestJson {
@@ -90,7 +92,9 @@ public class TestJson {
 		assert json.root.get(0).get(1).get("name").value.toString().equals("object2");
 		assert (int)json.root.get(0).get(1).get("number").value == 123;
 		
-		// Test constructors
+		// Test JSON constructors
+		assert new JsonMapConstructor() != null;
+		
 		HistoricalFloat hist = new HistoricalFloat();
 		hist.capacity = 2;
 		hist.push(0.0F);
@@ -144,6 +148,9 @@ public class TestJson {
 		
 		// Test Object constructor
 		assert new ObjectConstructor() != null;
+		assert new ObjectMapConstructor() != null;
+		assert ObjectMapConstructor.getNewMap("") == null;
+
 		json.root.put("pizza", 42);
 		json.root.remove("total");
 		assert json.root.children.size() == 4;
@@ -218,7 +225,7 @@ public class TestJson {
 		json.root.get(JsonConstructor.CLASS_NAME).value = HistoricalFloat.class.getName();
 		json.root.put(hfsc, null);
 		assert ObjectConstructor.fromJson(json) != null;
-		
+
 		MockListObject mlo = new MockListObject();
 		mlo.change();
 		str = JsonConstructor.fromObject(mlo).toStringBuilder();

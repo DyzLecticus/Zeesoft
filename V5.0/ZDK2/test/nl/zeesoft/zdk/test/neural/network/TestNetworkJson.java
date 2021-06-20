@@ -65,6 +65,7 @@ public class TestNetworkJson {
 		assert pio2.inputs.size() == 2;
 		assert pio2.inputs.get(1).onBits.contains(5);
 		assert pio2.error.equals("ERROR");
+		assert pio2.outputs.size() == 0;
 		
 		MockNetworkIO nio = new MockNetworkIO();
 		nio.setTimeoutMs(123);
@@ -100,7 +101,13 @@ public class TestNetworkJson {
 		assert psc.fromStringBuilder(new StringBuilder()) == null;
 		assert nsc.toStringBuilder(str).length() == 0;
 		assert nsc.fromStringBuilder(new StringBuilder()) == null;
+
+		Json nioJs = JsonConstructor.fromObject(nio);
+		NetworkIO nio3 = (NetworkIO) ObjectConstructor.fromJson(nioJs);
+		Json nio3Js = JsonConstructor.fromObject(nio3);
+		assert StrUtil.equals(nioJs.toStringBuilder(), nio3Js.toStringBuilder());
 		
+		// Main test
 		NetworkConfigFactory factory = new NetworkConfigFactory();
 		factory.setSmallScale();
 		
