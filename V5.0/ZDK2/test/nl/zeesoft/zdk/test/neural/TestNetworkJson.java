@@ -74,7 +74,9 @@ public class TestNetworkJson {
 		nio.addProcessorIO("MockName2", pio2);
 		nio.addError("ERROR_1");
 		nio.addError("ERROR_2");
-				
+		
+		pio.outputValue = cl;
+		
 		NetworkIOStringConvertor nsc = (NetworkIOStringConvertor) ObjectStringConvertors.getConvertor(NetworkIO.class);
 		str = nsc.toStringBuilder(nio);
 		NetworkIO nio2 = nsc.fromStringBuilder(str);
@@ -86,6 +88,11 @@ public class TestNetworkJson {
 		assert nio.getProcessorIO("MockName1").error.equals("ERROR");
 		assert nio.getErrors().size() == 4;
 		assert nio.getErrors().get(1).equals("ERROR_2");
+		Classification cl3 = ((Classification)nio.getProcessorIO("MockName1").outputValue);
+		assert cl3.name.equals("Pizza");
+		assert cl3.valueCounts.size() == 2;
+		assert cl3.valueCounts.get(0.3F) == 5;
+		assert cl3.valueCounts.get(0.5F) == 7;
 		
 		assert csc.toStringBuilder(str).length() == 0;
 		assert csc.fromStringBuilder(new StringBuilder()) == null;
