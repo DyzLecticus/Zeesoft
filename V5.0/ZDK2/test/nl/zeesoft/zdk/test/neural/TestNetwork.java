@@ -43,6 +43,7 @@ public class TestNetwork {
 		assert stats.apicalStats.segments == 0;
 		
 		NetworkIO io = new NetworkIO();
+		assert io.getInputNames().size() == 0;
 		network.processIO(io);
 		assert io.getErrors().size() == 1;
 		assert io.getErrors().get(0).equals("Network is not initialized");
@@ -76,6 +77,7 @@ public class TestNetwork {
 		assert sp.isLearn();
 		
 		io = new NetworkIO("TestInput",0);
+		assert io.getInputNames().size() == 1;
 		network.processIO(io);
 		assert io.getErrors().size() == 1;
 		assert io.getErrors().get(0).equals("Missing network input value for TestInput2");

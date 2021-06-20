@@ -31,6 +31,10 @@ public class NetworkIO {
 		inputs.put(name, value);
 	}
 	
+	public List<String> getInputNames() {
+		return new ArrayList<String>(inputs.keySet());
+	}
+	
 	public Object getInput(String name) {
 		return inputs.get(name);
 	}

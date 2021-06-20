@@ -27,6 +27,12 @@ public class Network implements Finalizable {
 	
 	protected NetworkIO					previousIO			= null;
 	
+	/**
+	 * Specifies the number of worker threads this network should use.
+	 * Remember to set the number of workers back to 0 (zero) when the network is no longer used.
+	 * 
+	 * @param num The number of worker threads
+	 */
 	public void setNumberOfWorkers(int num) {
 		executor.setWorkers(num);
 	}
@@ -36,10 +42,25 @@ public class Network implements Finalizable {
 		ioProcessor = new NetworkIOProcessor(inputNames, processors);
 	}
 	
+	/**
+	 * Initializes the network.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @param config The network configuration
+	 * @return True if the network initialized within 10 seconds
+	 */
 	public boolean initialize(NetworkConfig config) {
 		return initialize(config, 10000);
 	}
 	
+	/**
+	 * Initializes the network.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @param config The network configuration
+	 * @param timeoutMs The maximum number of milliseconds initialization can take
+	 * @return True if the network initialized within the specified time out milliseconds
+	 */
 	public boolean initialize(NetworkConfig config, int timeoutMs) {
 		inputNames = new ArrayList<String>(config.getInputNames());
 		ioProcessor = new NetworkIOProcessor(inputNames, processors);
@@ -50,14 +71,36 @@ public class Network implements Finalizable {
 		return inputNames!=null;
 	}
 	
+	/**
+	 * Resets the network.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @return True if the network initialized within 10 seconds
+	 */
 	public boolean reset() {
 		return reset(10000);
 	}
 	
+	/**
+	 * Resets the network.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @param timeoutMs The maximum number of milliseconds reset can take
+	 * @return True if the network initialized within the specified time out milliseconds
+	 */
 	public boolean reset(int timeoutMs) {
 		return reset(ALL_LAYERS, ALL_PROCESSORS, timeoutMs);
 	}
 	
+	/**
+	 * Resets the network.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @param layer Processor layer number filter; -1 = * (see ALL_LAYERS)
+	 * @param name Processor name contains filter; '*' = * (see ALL_PROCESSORS) 
+	 * @param timeoutMs The maximum number of milliseconds reset can take
+	 * @return True if the network initialized within the specified time out milliseconds
+	 */
 	public boolean reset(int layer, String name, int timeoutMs) {
 		boolean r = false;
 		if (isInitialized()) {
@@ -68,30 +111,56 @@ public class Network implements Finalizable {
 		return r;
 	}
 	
+	/**
+	 * Toggles learning for all learning network processors.
+	 * 
+	 * @param learn Indicates learning on/off
+	 */
 	public void setLearn(boolean learn) {
 		setLearn(ALL_LAYERS, ALL_PROCESSORS, learn);
 	}
 	
+	/**
+	 * Toggles learning for the specified learning network processors.
+	 * 
+	 * @param layer Processor layer number filter; -1 = * (see ALL_LAYERS)
+	 * @param name Processor name contains filter; '*' = * (see ALL_PROCESSORS) 
+	 * @param learn Indicates learning on/off
+	 */
 	public void setLearn(int layer, String name, boolean learn) {
 		processors.setLearn(layer, name, learn);
 	}
 	
+	/**
+	 * Specifies the number of workers individual executor processors should use.
+	 */
 	public void setNumberOfWorkersForProcessors(int workers) {
 		setNumberOfWorkersForProcessor(ALL_LAYERS, ALL_PROCESSORS, workers);
 	}
 	
+	/**
+	 * Specifies the number of workers individual executor processors should use.
+	 * 
+	 * @param layer Processor layer number filter; -1 = * (see ALL_LAYERS)
+	 * @param name Processor name contains filter; '*' = * (see ALL_PROCESSORS) 
+	 */
 	public void setNumberOfWorkersForProcessor(int layer, String name, int workers) {
 		processors.setNumberOfWorkers(layer, name, workers);
 	}
 	
+	/**
+	 * Main network IO processing method.
+	 * Optionally uses multiple worker threads (see setNumberOfWorkers).
+	 * 
+	 * @param io The network IO to process
+	 */
 	public void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
-			int timeoutMs = io.getTimeoutMs();
 			long start = System.nanoTime();
 			FunctionListList fll = ioProcessor.getProcessFunctionForNetworkIO(io, previousIO);
-			ExecutorTask task = executor.execute(this, fll, timeoutMs);
+			ExecutorTask task = executor.execute(this, fll, io.getTimeoutMs());
 			if (task==null) {
-				io.addError("Processing network IO timed out after " + timeoutMs + " ms");
+				io.addError("Processing network IO timed out after " + io.getTimeoutMs() + " ms");
 			}
 			io.setStats(start, task);
 			previousIO = io;

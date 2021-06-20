@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.neural;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.json.JElem;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
@@ -22,6 +23,8 @@ import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestNetworkJson {
 	private static TestNetworkJson	self	= new TestNetworkJson();
+	
+	private static int				WORKERS	= 4;
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
@@ -104,6 +107,8 @@ public class TestNetworkJson {
 		json2 = JsonConstructor.fromObjectUseConvertors(config);
 		assert StrUtil.equals(json2.toStringBuilder(), str);
 		
+		Rand.reset(0);
+		
 		Network network = new Network();
 		assert network.initialize(config);
 		assert network.reset();
@@ -118,7 +123,7 @@ public class TestNetworkJson {
 		
 		Logger.debug(self, "Converting network to JSON ...");
 		long start = System.currentTimeMillis();
-		network.setNumberOfWorkers(4);
+		network.setNumberOfWorkers(WORKERS);
 		
 		NetworkJsonConstructor jsc = new NetworkJsonConstructor();
 		json = jsc.fromNetwork(self, network, 10000);
@@ -134,11 +139,12 @@ public class TestNetworkJson {
 		start = System.currentTimeMillis();
 		
 		NetworkObjectConstructor noc = new NetworkObjectConstructor();
-		Network network2 = noc.fromJson(self, json, 0, 10000);
+		Network network2 = noc.fromJson(self, json, WORKERS, 10000);
 		assert network2.getWidth() == network.getWidth();
 		assert network2.getNumberOfLayers() == network.getNumberOfLayers();
 		assert network2.getNumberOfProcessors() == network.getNumberOfProcessors();
-		
+
+		network2.setNumberOfWorkers(0);
 		Logger.debug(self, "Converting JSON to network took " + (System.currentTimeMillis() - start) + " ms");
 	}
 }
