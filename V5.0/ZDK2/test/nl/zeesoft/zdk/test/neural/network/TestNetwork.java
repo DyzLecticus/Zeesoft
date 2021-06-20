@@ -209,6 +209,7 @@ public class TestNetwork {
 			}
 			analyzer.add(io);
 		}
+		assert network.getPreviousIO().getProcessorIO("TestEncoder").inputs.size() == 0;
 		hist = analyzer.getAccuracy().getAccuracies().get("TestClassifier");
 		assert hist != null;
 		assert hist.floats.size() == 13;
