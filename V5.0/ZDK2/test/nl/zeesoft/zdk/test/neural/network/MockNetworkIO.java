@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.neural;
+package nl.zeesoft.zdk.test.neural.network;
 
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;

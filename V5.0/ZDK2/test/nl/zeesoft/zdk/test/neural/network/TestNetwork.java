@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.neural;
+package nl.zeesoft.zdk.test.neural.network;
 
 import java.util.List;
 import java.util.TreeMap;

@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.test.neural;
+package nl.zeesoft.zdk.test.neural.processor;
 
 import java.util.ArrayList;
 import java.util.List;
