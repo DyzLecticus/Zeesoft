@@ -15,10 +15,7 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	@Override
 	public synchronized boolean open(Socket socket) {
 		boolean r = super.open(socket);
-		if (r) {
-			thread = new Thread(this);
-			thread.start();
-		}
+		startThread(r);
 		return r;
 	}
 
@@ -36,6 +33,13 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	@Override
 	public void run() {
 		handleIO();
+	}
+	
+	protected void startThread(boolean open) {
+		if (open) {
+			thread = new Thread(this);
+			thread.start();
+		}
 	}
 	
 	protected void handleIO() {

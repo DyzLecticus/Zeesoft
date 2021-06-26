@@ -51,6 +51,13 @@ public class TestHttpServer {
 		assert connection.isOpen();
 		connection.close();
 		assert connection.isOpen();
+		
+		HttpServerConfig config2 = new HttpServerConfig();
+		config2.setDebugLogHeaders(false);
+		MockHttpServerConnection serverConnection = new MockHttpServerConnection(config2);
+		serverConnection.debugLogRequestHeaders(new HttpRequest());
+		serverConnection.startThread(false);
+		serverConnection.handleIO();
 				
 		MockHttpConnections connections = new MockHttpConnections(config);
 		connections.open = true;
