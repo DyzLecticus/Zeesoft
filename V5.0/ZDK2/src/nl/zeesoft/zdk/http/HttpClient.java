@@ -12,6 +12,7 @@ public class HttpClient extends HttpConnection {
 	protected URL						url					= null;
 	
 	public HttpRequestStringConvertor	requestConvertor	= (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
+	public HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 	
 	public synchronized boolean connect(String urlString) {
 		boolean r = false;
@@ -45,11 +46,13 @@ public class HttpClient extends HttpConnection {
 		return r;
 	}
 	
-	public synchronized StringBuilder sendRequest(HttpRequest request) {
-		StringBuilder r = new StringBuilder();
+	public synchronized HttpResponse sendRequest(HttpRequest request) {
+		HttpResponse r = null;
 		if (isOpen()) {
 			writeOutput(requestConvertor.toStringBuilder(request));
-			r = readInput();
+			StringBuilder res = readInput();
+			// TODO: read body
+			r = responseConvertor.fromStringBuilder(res);
 		}
 		return r;
 	}

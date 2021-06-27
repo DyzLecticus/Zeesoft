@@ -1,14 +1,21 @@
 package nl.zeesoft.zdk.test.http;
 
+import java.net.HttpURLConnection;
+
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.http.HttpHeader;
 import nl.zeesoft.zdk.http.HttpHeaders;
 import nl.zeesoft.zdk.http.HttpHeadersStringConvertor;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestStringConvertor;
+import nl.zeesoft.zdk.http.HttpResponse;
+import nl.zeesoft.zdk.http.HttpResponseStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 
-public class TestHttpRequest {
+public class TestHttpIO {
 	public static void main(String[] args) {
+		Logger.setLoggerDebug(true);
+		
 		HttpHeader header = new HttpHeader();
 		header.name = "name";
 		header.value = "value";
@@ -53,5 +60,34 @@ public class TestHttpRequest {
 		assert request2.head.get("Keep-Alive").value.equals("300");
 		assert request2.head.get("Connection").value.equals("keep-alive");
 		assert request2.body.toString().equals("Body\r\nText");
+		
+		HttpResponse response = new HttpResponse();
+		response.protocol = "HTTP/9.9";
+		response.code = HttpURLConnection.HTTP_NOT_FOUND;
+		response.message = "Not found";
+		response.head.add("Keep-Alive", "300");
+		response.head.add("Connection", "keep-alive");
+		response.body.append("Body\r\nText");
+		
+		HttpResponseStringConvertor hpsc = (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
+		str = hpsc.toStringBuilder(response);
+		
+		HttpResponse response2 = hpsc.fromStringBuilder(str);
+		assert response2.protocol.equals("HTTP/9.9");
+		assert response2.code == HttpURLConnection.HTTP_NOT_FOUND;
+		assert response2.message.equals("Not found");
+		assert response2.head.headers.size() == 2;
+		assert response2.head.get("Keep-Alive").value.equals("300");
+		assert response2.head.get("Connection").value.equals("keep-alive");
+		assert response2.body.toString().equals("Body\r\nText");
+		
+		assert hpsc.toStringBuilder(hpsc).length() == 0;
+		assert hpsc.fromStringBuilder(new StringBuilder()) == null;
+		assert hpsc.fromStringBuilder(new StringBuilder("\r\n")) != null;
+		assert hpsc.fromStringBuilder(new StringBuilder("qwer")) != null;
+		
+		response = new HttpResponse(HttpURLConnection.HTTP_NOT_FOUND, "Not found");
+		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
+		assert response.message.equals("Not found");
 	}
 }

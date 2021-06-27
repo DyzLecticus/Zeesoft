@@ -6,6 +6,8 @@ import nl.zeesoft.zdk.http.HttpClient;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpRequestStringConvertor;
+import nl.zeesoft.zdk.http.HttpResponse;
+import nl.zeesoft.zdk.http.HttpResponseStringConvertor;
 import nl.zeesoft.zdk.http.HttpServer;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
@@ -23,15 +25,15 @@ public class TestHttpServer {
 		
 		HttpRequestHandler handler = new HttpRequestHandler() {
 			@Override
-			public StringBuilder handleRequest(HttpRequest request) {
-				StringBuilder r = super.handleRequest(request);
+			public void handleRequest(HttpRequest request, HttpResponse response) {
+				super.handleRequest(request, response);
 				if (request.method.length()>0) {
 					assert request.path.length()>0;
 					assert request.protocol.equals("HTTP/1.1");
 					assert request.head.headers.size()>0;
-					r.append("RESPONSE");
+					response.message = "Coolio";
+					response.body.append("<html></html>");
 				}
-				return r;
 			}
 		};
 		
@@ -39,6 +41,7 @@ public class TestHttpServer {
 		config.setPort(1234);
 		config.setDebugLogHeaders(true);
 		config.setRequestConvertor((HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class));
+		config.setResponseConvertor((HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class));
 		config.setRequestHandler(handler);
 		
 		MockHttpConnection connection = new MockHttpConnection();
@@ -79,7 +82,7 @@ public class TestHttpServer {
 		assert server.getNumberOfConnections() == 0;
 		HttpClient client = new HttpClient();
 		assert !client.isConnected();
-		assert client.sendRequest(null).length() == 0;
+		assert client.sendRequest(null) == null;
 		assert client.connect(SERVER_URL);
 		Util.sleep(10);
 		assert server.getNumberOfConnections() == 1;
@@ -91,8 +94,9 @@ public class TestHttpServer {
 		assert client.connect(SERVER_URL);
 		HttpRequest request = new HttpRequest("GET", "/index.html");
 		request.head.add("Connection", "close");
-		StringBuilder response = client.sendRequest(request);
-		assert response.toString().equals("RESPONSE\r\n");
+		HttpResponse response = client.sendRequest(request);
+		assert response.message.equals("Coolio");
+		//assert response.body.toString().equals("<html></html>");
 		
 		assert server.close();
 		assert !server.isOpen();

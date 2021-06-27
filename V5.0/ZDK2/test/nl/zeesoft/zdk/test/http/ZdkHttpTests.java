@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.Console;
 public class ZdkHttpTests {
 	public static void main(String[] args) {
 		Console.log("Test HttpServer ...");
-		TestHttpRequest.main(args);
+		TestHttpIO.main(args);
 		TestHttpServer.main(args);
 	}
 }

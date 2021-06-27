@@ -1,11 +1,8 @@
 package nl.zeesoft.zdk.http;
 
-public class HttpRequest {
+public class HttpRequest extends HttpIO {
 	public String			method		= "";
 	public String			path		= "";
-	public String			protocol	= "HTTP/1.1";
-	public HttpHeaders		head		= new HttpHeaders();
-	public StringBuilder	body		= new StringBuilder();
 	
 	public HttpRequest() {
 		

@@ -60,8 +60,8 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 		HttpRequest request = config.getRequestConvertor().fromStringBuilder(input);
 		debugLogRequestHeaders(request);
 		// TODO: Read body
-		StringBuilder response = config.getRequestHandler().handleRequest(request);
-		writeOutput(response);
+		HttpResponse response = config.getRequestHandler().handleRequest(request);
+		writeOutput(config.getResponseConvertor().toStringBuilder(response));
 	}
 	
 	protected void debugLogRequestHeaders(HttpRequest request) {

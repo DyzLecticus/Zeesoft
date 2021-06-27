@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.str.ObjectStringConvertors;
 public class HttpServerConfig {
 	protected int							port				= 8080;
 	protected HttpRequestStringConvertor	requestConvertor	= (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
+	protected HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 	protected HttpRequestHandler			requestHandler		= new HttpRequestHandler();
 	protected boolean						debugLogHeaders		= false;
 
@@ -13,6 +14,7 @@ public class HttpServerConfig {
 		HttpServerConfig r = (HttpServerConfig) Instantiator.getNewClassInstance(this.getClass());
 		r.port = this.port;
 		r.requestConvertor = this.requestConvertor;
+		r.responseConvertor = this.responseConvertor;
 		r.requestHandler = this.requestHandler;
 		r.debugLogHeaders = this.debugLogHeaders;
 		return r;
@@ -32,6 +34,14 @@ public class HttpServerConfig {
 
 	public void setRequestConvertor(HttpRequestStringConvertor requestConvertor) {
 		this.requestConvertor = requestConvertor;
+	}
+
+	public HttpResponseStringConvertor getResponseConvertor() {
+		return responseConvertor;
+	}
+
+	public void setResponseConvertor(HttpResponseStringConvertor responseConvertor) {
+		this.responseConvertor = responseConvertor;
 	}
 
 	public HttpRequestHandler getRequestHandler() {
