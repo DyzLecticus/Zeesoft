@@ -49,10 +49,16 @@ public class HttpClient extends HttpConnection {
 	public synchronized HttpResponse sendRequest(HttpRequest request) {
 		HttpResponse r = null;
 		if (isOpen()) {
-			writeOutput(requestConvertor.toStringBuilder(request));
-			StringBuilder res = readInput();
-			// TODO: read body
+			request.setContentLength();
+			writeHead(requestConvertor.toStringBuilder(request));
+			if (request.getContentLength()>0) {
+				writeBody(request.body, false);
+			}
+			StringBuilder res = readHead();
 			r = responseConvertor.fromStringBuilder(res);
+			if (r.getContentLength()>0) {
+				r.body = readBody(r.getContentLength(), false);
+			}
 		}
 		return r;
 	}

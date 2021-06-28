@@ -44,7 +44,7 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	
 	protected void handleIO() {
 		while(isOpen()) {
-			StringBuilder input = readInput();
+			StringBuilder input = readHead();
 			if (input.length()==0) {
 				if (isOpen()) {
 					close();
@@ -59,15 +59,28 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	protected void handleInput(StringBuilder input) {
 		HttpRequest request = config.getRequestConvertor().fromStringBuilder(input);
 		debugLogRequestHeaders(request);
-		// TODO: Read body
+		if (request.method.equals(HttpRequest.PUT) || request.method.equals(HttpRequest.POST)) {
+			request.body = readBody(request.getContentLength(), false);
+		}
 		HttpResponse response = config.getRequestHandler().handleRequest(request);
-		writeOutput(config.getResponseConvertor().toStringBuilder(response));
+		response.setContentLength();
+		debugLogResponseHeaders(response);
+		writeHead(config.getResponseConvertor().toStringBuilder(response));
+		writeBody(response.body, false);
 	}
 	
 	protected void debugLogRequestHeaders(HttpRequest request) {
 		if (config.isDebugLogHeaders()) {
 			StringBuilder str = getRequestString(request);
 			str.append(getHeadersString(request, "\n<<< "));
+			Logger.debug(this, str);
+		}
+	}
+	
+	protected void debugLogResponseHeaders(HttpResponse response) {
+		if (config.isDebugLogHeaders()) {
+			StringBuilder str = getResponseString(response);
+			str.append(getHeadersString(response, "\n>>> "));
 			Logger.debug(this, str);
 		}
 	}
@@ -80,9 +93,17 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 		return r;
 	}
 	
-	protected StringBuilder getHeadersString(HttpRequest request, String prefix) {
+	protected StringBuilder getResponseString(HttpResponse request) {
+		StringBuilder r = new StringBuilder("\n>>> ");
+		r.append(request.code);
+		r.append(" ");
+		r.append(request.message);
+		return r;
+	}
+	
+	protected StringBuilder getHeadersString(HttpIO io, String prefix) {
 		StringBuilder r = new StringBuilder();
-		for (HttpHeader header: request.head.headers) {
+		for (HttpHeader header: io.head.headers) {
 			r.append(prefix);
 			r.append(header.name);
 			r.append(": ");

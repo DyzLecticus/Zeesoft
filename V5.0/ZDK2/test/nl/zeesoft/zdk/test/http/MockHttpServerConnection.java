@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.test.http;
 
 import nl.zeesoft.zdk.http.HttpRequest;
+import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 import nl.zeesoft.zdk.http.HttpServerConnection;
 
@@ -13,6 +14,12 @@ public class MockHttpServerConnection extends HttpServerConnection {
 	public void debugLogRequestHeaders(HttpRequest request) {
 		assert config.isDebugLogHeaders() == false;
 		super.debugLogRequestHeaders(request);
+	}
+	
+	@Override
+	public void debugLogResponseHeaders(HttpResponse response) {
+		assert config.isDebugLogHeaders() == false;
+		super.debugLogResponseHeaders(response);
 	}
 
 	@Override

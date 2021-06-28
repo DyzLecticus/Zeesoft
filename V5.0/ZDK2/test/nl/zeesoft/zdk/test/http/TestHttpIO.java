@@ -39,11 +39,12 @@ public class TestHttpIO {
 		assert head2.get("Connection").value.equals("keep-alive");
 		
 		HttpRequest request = new HttpRequest();
+		assert request.getContentLength() == 0;
 		request.method = "GET";
 		request.path = "/index.html";
 		request.protocol = "HTTP/9.9";
 		request.head = head;
-		request.body.append("Body\r\nText");
+		request.setBody(new StringBuilder("Body\r\nText"));
 		
 		HttpRequestStringConvertor hrsc = (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
 		str = hrsc.toStringBuilder(request);
@@ -59,7 +60,12 @@ public class TestHttpIO {
 		assert request2.head.headers.size() == 2;
 		assert request2.head.get("Keep-Alive").value.equals("300");
 		assert request2.head.get("Connection").value.equals("keep-alive");
-		assert request2.body.toString().equals("Body\r\nText");
+		assert request2.getBody().toString().equals("");
+		
+		request2.setContentLength();
+		assert request2.head.headers.size() == 3;
+		request2.setContentLength();
+		assert request2.head.headers.size() == 3;
 		
 		HttpResponse response = new HttpResponse();
 		response.protocol = "HTTP/9.9";
@@ -67,7 +73,7 @@ public class TestHttpIO {
 		response.message = "Not found";
 		response.head.add("Keep-Alive", "300");
 		response.head.add("Connection", "keep-alive");
-		response.body.append("Body\r\nText");
+		response.setBody(new StringBuilder("Body\r\nText"));
 		
 		HttpResponseStringConvertor hpsc = (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 		str = hpsc.toStringBuilder(response);
@@ -79,7 +85,7 @@ public class TestHttpIO {
 		assert response2.head.headers.size() == 2;
 		assert response2.head.get("Keep-Alive").value.equals("300");
 		assert response2.head.get("Connection").value.equals("keep-alive");
-		assert response2.body.toString().equals("Body\r\nText");
+		assert response2.getBody().toString().equals("");
 		
 		assert hpsc.toStringBuilder(hpsc).length() == 0;
 		assert hpsc.fromStringBuilder(new StringBuilder()) == null;

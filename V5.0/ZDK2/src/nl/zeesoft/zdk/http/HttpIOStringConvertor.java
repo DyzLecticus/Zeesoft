@@ -17,9 +17,6 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 			HttpIO io = (HttpIO) obj;
 			appendFirst(r, io);
 			r.append(headConvertor.toStringBuilder(io.head));
-			r.append("\r\n");
-			r.append("\r\n");
-			r.append(io.body);
 		}
 		return r;
 	}
@@ -32,7 +29,6 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 			List<StringBuilder> data = StrUtil.split(str, "\r\n");
 			parseFirst(r, data.remove(0));
 			parseHead(r, data);
-			parseBody(r, data);
 		}
 		return r;
 	}
@@ -60,20 +56,5 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 			r.append(dat);
 		}
 		return r;
-	}
-	
-	protected void parseBody(HttpIO io, List<StringBuilder> data) {
-		boolean start = false; 
-		for (StringBuilder dat: data) {
-			if (start) {
-				if (io.body.length()>0) {
-					io.body.append("\r\n");
-				}
-				io.body.append(dat);
-			}
-			if (dat.length()==0) {
-				start = true;
-			}
-		}
 	}
 }

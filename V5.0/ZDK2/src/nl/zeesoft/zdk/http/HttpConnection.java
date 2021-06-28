@@ -73,15 +73,26 @@ public abstract class HttpConnection {
 		return open;
 	}
 	
-	protected void writeOutput(StringBuilder str) {
+	protected void writeHead(StringBuilder str) {
 		while (!StrUtil.endsWith(str, "\r\n\r\n")) {
 			str.append("\r\n");
 		}
 		writer.print(str);
 		writer.flush();
 	}
+
+	protected void writeBody(byte[] body, boolean mockException) {
+		try {
+			if (mockException) {
+				throw new IOException();
+			}
+			socket.getOutputStream().write(body);
+		} catch (IOException ex) {
+			Logger.error(this, "IO exception",ex);
+		}
+	}
 	
-	protected StringBuilder readInput() {
+	protected StringBuilder readHead() {
 		StringBuilder r = new StringBuilder();
 		boolean done = false;
 		while(!done) {
@@ -116,5 +127,22 @@ public abstract class HttpConnection {
 			input.append("\r\n");
 		}
 		return r;
+	}
+	
+	protected byte[] readBody(int contentLength, boolean mockException) {
+		byte[] bytes = new byte[contentLength];
+		int c = 0;
+		for (int i = 0; i < contentLength; i++) {
+			try {
+				if (mockException) {
+					throw new IOException();
+				}
+				c = reader.read();
+				bytes[i] = (byte) c;
+			} catch (IOException e) {
+				Logger.error(this, "IO exception", e);
+			}
+		}
+		return bytes;
 	}
 }

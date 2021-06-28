@@ -32,7 +32,7 @@ public class TestHttpServer {
 					assert request.protocol.equals("HTTP/1.1");
 					assert request.head.headers.size()>0;
 					response.message = "Coolio";
-					response.body.append("<html></html>");
+					response.setBody(new StringBuilder("<html></html>"));
 				}
 			}
 		};
@@ -46,7 +46,9 @@ public class TestHttpServer {
 		
 		MockHttpConnection connection = new MockHttpConnection();
 		assert !connection.isOpen();
+		connection.writeBody(null, true);
 		assert connection.readLine(null, true);
+		assert connection.readBody(1, true) != null;
 		assert !connection.createIO(true);
 		assert !connection.destroyReaderAndSocket(true);
 		connection.setOpen(true);
@@ -59,6 +61,7 @@ public class TestHttpServer {
 		config2.setDebugLogHeaders(false);
 		MockHttpServerConnection serverConnection = new MockHttpServerConnection(config2);
 		serverConnection.debugLogRequestHeaders(new HttpRequest());
+		serverConnection.debugLogResponseHeaders(new HttpResponse());
 		serverConnection.startThread(false);
 		serverConnection.handleIO();
 				
@@ -96,7 +99,7 @@ public class TestHttpServer {
 		request.head.add("Connection", "close");
 		HttpResponse response = client.sendRequest(request);
 		assert response.message.equals("Coolio");
-		//assert response.body.toString().equals("<html></html>");
+		assert response.getBody().toString().equals("<html></html>");
 		
 		assert server.close();
 		assert !server.isOpen();
