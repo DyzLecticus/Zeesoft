@@ -21,8 +21,12 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 
 	@Override
 	public synchronized boolean close() {
-		thread = null;
-		return super.close();
+		boolean r = false;
+		if (isOpen()) {
+			thread = null;
+			r = super.close();
+		}
+		return r;
 	}
 	
 	@Override
@@ -63,7 +67,7 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 		debugLogResponseHeaders(response);
 		writer.writeHead(config.getResponseConvertor().toStringBuilder(response));
 		writer.writeBody(response.body, false);
-		if (response.isConnectionClose() && isOpen()) {
+		if (response.isConnectionClose()) {
 			close();
 		}
 	}

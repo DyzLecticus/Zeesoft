@@ -41,8 +41,7 @@ public class TestHttpIO {
 		assert head2.get("Connection").value.equals("keep-alive");
 		
 		HttpRequest request = new HttpRequest();
-		assert request.head.get(HttpHeader.CONNECTION) == null;
-		assert request.head.get(HttpHeader.CONTENT_LENGTH) == null;
+		assert request.head.headers.size() == 0;
 		assert request.isConnectionClose();
 		assert request.getContentLength() == 0;
 		try {
@@ -50,9 +49,16 @@ public class TestHttpIO {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
+		assert request.head.headers.size() == 3;
 		assert request.head.get(HttpHeader.HOST).value.equals("www.test.com");
 		assert request.head.get(HttpHeader.CONNECTION).value.equals("close");
 		assert request.head.get(HttpHeader.CONTENT_LENGTH).value.equals("0");
+		try {
+			request.setDefaultHeaders(new URL("http://www.test.com"));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		assert request.head.headers.size() == 3;
 		request.method = "GET";
 		request.path = "/index.html";
 		request.protocol = "HTTP/9.9";

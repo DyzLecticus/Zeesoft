@@ -42,7 +42,10 @@ public class HttpClient extends HttpConnection {
 	}
 	
 	public synchronized boolean disconnect() {
-		boolean r = super.close();
+		boolean r = false;
+		if (isOpen()) {
+			r = super.close();
+		}
 		return r;
 	}
 	
@@ -54,10 +57,21 @@ public class HttpClient extends HttpConnection {
 			if (request.getContentLength()>0) {
 				writer.writeBody(request.body, false);
 			}
-			StringBuilder res = readHead();
-			r = responseConvertor.fromStringBuilder(res);
+			r = readResponse();
+		}
+		return r;
+	}
+	
+	protected HttpResponse readResponse() {
+		HttpResponse r = null;
+		StringBuilder res = readHead();
+		r = responseConvertor.fromStringBuilder(res);
+		if (r!=null) {
 			if (r.getContentLength()>0) {
 				r.body = readBody(r.getContentLength(), false);
+			}
+			if (r.isConnectionClose()) {
+				disconnect();
 			}
 		}
 		return r;
