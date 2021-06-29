@@ -68,14 +68,8 @@ public class SpActivations extends Matrix {
 		Function r = new Function() {
 			@Override
 			protected Object exec() {
-				float activation = 0;
 				Position position = (Position) param1;
-				for (Position input: activeInputPositions) {
-					float permanence = (float)((Matrix)connections.getValue(position)).getValue(input);
-					if (permanence>config.permanenceThreshold) {
-						activation = activation + 1F; 
-					}
-				}
+				float activation = activateColumnPosition(position, activeInputPositions);
 				float factor = (float)boostFactors.getValue(position);
 				if (factor!=1F) {
 					activation = activation * factor;
@@ -83,6 +77,17 @@ public class SpActivations extends Matrix {
 				return activation;
 			}
 		};
+		return r;
+	}
+	
+	protected float activateColumnPosition(Position position, List<Position> activeInputPositions) {
+		float r = 0;
+		for (Position input: activeInputPositions) {
+			float permanence = (float)((Matrix)connections.getValue(position)).getValue(input);
+			if (permanence>config.permanenceThreshold) {
+				r = r + 1F; 
+			}
+		}
 		return r;
 	}
 	

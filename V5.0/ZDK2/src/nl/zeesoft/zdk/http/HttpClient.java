@@ -29,7 +29,7 @@ public class HttpClient extends HttpConnection {
 		boolean r = false;
 		this.url = url;
 		try {
-			socket = new Socket(url.getHost(),getPort());
+			socket = new Socket(url.getHost(),HttpRequest.getPort(url));
 			r = open(socket);
 		} catch(IOException e) {
 			Logger.error(this, "IO exception", e);
@@ -48,7 +48,12 @@ public class HttpClient extends HttpConnection {
 		}
 		return r;
 	}
-	
+
+	public synchronized HttpResponse sendRequest(HttpRequest request, String urlString) {
+		connect(urlString);
+		return sendRequest(request);
+	}
+
 	public synchronized HttpResponse sendRequest(HttpRequest request) {
 		HttpResponse r = null;
 		if (isOpen()) {
@@ -73,14 +78,6 @@ public class HttpClient extends HttpConnection {
 			if (r.isConnectionClose()) {
 				disconnect();
 			}
-		}
-		return r;
-	}
-	
-	protected int getPort() {
-		int r = url.getPort();
-		if (r==-1) {
-			r = 80;
 		}
 		return r;
 	}

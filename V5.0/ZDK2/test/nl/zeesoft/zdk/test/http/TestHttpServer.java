@@ -125,10 +125,9 @@ public class TestHttpServer {
 
 		assert client.sendRequest(request) == null;
 		assert !client.isConnected();
-		assert client.connect(SERVER_URL);
 		request = new HttpRequest(HttpRequest.PUT, "/data/");
 		request.setBody(new StringBuilder("PUT_DATA=Test"));
-		response = client.sendRequest(request);
+		response = client.sendRequest(request, SERVER_URL);
 		assert response.message.equals("Coolio");
 		assert response.getBody().toString().equals("PROCESSED_PUT");
 		assert !client.disconnect();

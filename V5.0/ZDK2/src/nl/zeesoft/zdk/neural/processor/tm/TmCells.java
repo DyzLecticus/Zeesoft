@@ -77,22 +77,25 @@ public class TmCells extends Cells {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
-				Cell cell = (Cell) param2;
-				if (cell.distalSegments.size()>0) {
-					if (activeCellPositions.size()>0) {
-						cell.calculateSegmentActivity(activeCellPositions, activeApicalCellPositions);
-						cell.classifySegmentActivity();
-						if (cell.isPredictive(activeApicalCellPositions)) {
-							predictiveCellPositions.add(cell.position);
-						}
-					} else {
-						cell.reset();
-					}
-				}
+				predictActiveCells((Cell) param2);
 				return param2;
 			}
 		};
 		return function;
+	}
+
+	protected void predictActiveCells(Cell cell) {
+		if (cell.distalSegments.size()>0) {
+			if (activeCellPositions.size()>0) {
+				cell.calculateSegmentActivity(activeCellPositions, activeApicalCellPositions);
+				cell.classifySegmentActivity();
+				if (cell.isPredictive(activeApicalCellPositions)) {
+					predictiveCellPositions.add(cell.position);
+				}
+			} else {
+				cell.reset();
+			}
+		}
 	}
 	
 	protected void rewardPredictedColumn(Position column, boolean bursting) {
