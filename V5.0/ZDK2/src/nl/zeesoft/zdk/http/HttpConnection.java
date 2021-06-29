@@ -7,13 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.str.StrUtil;
 
 public abstract class HttpConnection {
-	protected boolean			open		= false;
-	protected Socket			socket		= null;
-	protected BufferedReader 	reader		= null;
-	protected PrintWriter		writer		= null;
+	protected boolean				open	= false;
+	protected Socket				socket	= null;
+	protected BufferedReader 		reader	= null;
+	protected HttpConnectionWriter	writer	= null;
 	
 	protected synchronized boolean open(Socket	socket) {
 		this.socket = socket;
@@ -35,7 +34,7 @@ public abstract class HttpConnection {
 				throw new IOException();
 			}
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			writer = new PrintWriter(socket.getOutputStream(), true);
+			writer = new HttpConnectionWriter(socket, new PrintWriter(socket.getOutputStream(), true));
 			r = true;
 		} catch (IOException e) {
 			Logger.error(this,"Failed to open connection",e);
@@ -45,9 +44,7 @@ public abstract class HttpConnection {
 	
 	protected boolean destroyIO() {
 		boolean r = false;
-		writer.flush();
-		writer.close();
-		writer = null;
+		writer.destroy();
 		r = destroyReaderAndSocket(false);
 		return r;
 	}
@@ -71,25 +68,6 @@ public abstract class HttpConnection {
 	
 	protected boolean isOpen() {
 		return open;
-	}
-	
-	protected void writeHead(StringBuilder str) {
-		while (!StrUtil.endsWith(str, "\r\n\r\n")) {
-			str.append("\r\n");
-		}
-		writer.print(str);
-		writer.flush();
-	}
-
-	protected void writeBody(byte[] body, boolean mockException) {
-		try {
-			if (mockException) {
-				throw new IOException();
-			}
-			socket.getOutputStream().write(body);
-		} catch (IOException ex) {
-			Logger.error(this, "IO exception",ex);
-		}
 	}
 	
 	protected StringBuilder readHead() {

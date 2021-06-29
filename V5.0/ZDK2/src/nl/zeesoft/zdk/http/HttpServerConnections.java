@@ -9,7 +9,7 @@ import nl.zeesoft.zdk.Lock;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.function.Function;
 
-public class HttpConnections implements Runnable {
+public class HttpServerConnections implements Runnable {
 	protected Lock						lock			= new Lock(this);
 	protected HttpServerConfig			config			= null;
 	
@@ -18,7 +18,7 @@ public class HttpConnections implements Runnable {
 	public Thread						thread			= null;
 	public List<HttpServerConnection>	connections		= new ArrayList<HttpServerConnection>();
 
-	public HttpConnections(HttpServerConfig config) {
+	public HttpServerConnections(HttpServerConfig config) {
 		this.config = config;
 	}
 	

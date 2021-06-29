@@ -50,9 +50,9 @@ public class HttpClient extends HttpConnection {
 		HttpResponse r = null;
 		if (isOpen()) {
 			request.setDefaultHeaders(url);
-			writeHead(requestConvertor.toStringBuilder(request));
+			writer.writeHead(requestConvertor.toStringBuilder(request));
 			if (request.getContentLength()>0) {
-				writeBody(request.body, false);
+				writer.writeBody(request.body, false);
 			}
 			StringBuilder res = readHead();
 			r = responseConvertor.fromStringBuilder(res);

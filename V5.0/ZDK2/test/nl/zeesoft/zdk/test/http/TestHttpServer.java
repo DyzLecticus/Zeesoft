@@ -5,6 +5,7 @@ import java.util.Calendar;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.http.HttpClient;
+import nl.zeesoft.zdk.http.HttpConnectionWriter;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpRequestStringConvertor;
@@ -49,9 +50,11 @@ public class TestHttpServer {
 		config.setResponseConvertor((HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class));
 		config.setRequestHandler(handler);
 		
+		HttpConnectionWriter writer = new HttpConnectionWriter(null, null);
+		writer.writeBody(null, true);
+		
 		MockHttpConnection connection = new MockHttpConnection();
 		assert !connection.isOpen();
-		connection.writeBody(null, true);
 		assert connection.readLine(null, true);
 		assert connection.readBody(1, true) != null;
 		assert !connection.createIO(true);

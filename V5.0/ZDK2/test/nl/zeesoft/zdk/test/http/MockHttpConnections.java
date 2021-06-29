@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import nl.zeesoft.zdk.http.HttpConnections;
+import nl.zeesoft.zdk.http.HttpServerConnections;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 import nl.zeesoft.zdk.http.HttpServerConnection;
 
-public class MockHttpConnections extends HttpConnections {
+public class MockHttpConnections extends HttpServerConnections {
 	public MockHttpConnections(HttpServerConfig config) {
 		super(config);
 	}

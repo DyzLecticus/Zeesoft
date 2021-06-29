@@ -61,8 +61,8 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 		HttpResponse response = config.getRequestHandler().handleRequest(request);
 		response.setDefaultHeaders();
 		debugLogResponseHeaders(response);
-		writeHead(config.getResponseConvertor().toStringBuilder(response));
-		writeBody(response.body, false);
+		writer.writeHead(config.getResponseConvertor().toStringBuilder(response));
+		writer.writeBody(response.body, false);
 		if (response.isConnectionClose() && isOpen()) {
 			close();
 		}

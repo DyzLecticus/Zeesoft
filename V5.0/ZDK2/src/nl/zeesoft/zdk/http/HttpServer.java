@@ -7,13 +7,13 @@ import nl.zeesoft.zdk.Logger;
 
 public class HttpServer {
 	protected HttpServerConfig		config				= null;
-	protected HttpConnections		connections			= null;
+	protected HttpServerConnections		connections			= null;
 	
 	protected ServerSocket			socket				= null;
 
 	public HttpServer(HttpServerConfig config) {
 		this.config = config.copy();
-		connections = new HttpConnections(this.config);
+		connections = new HttpServerConnections(this.config);
 	}
 	
 	public synchronized boolean open() {
