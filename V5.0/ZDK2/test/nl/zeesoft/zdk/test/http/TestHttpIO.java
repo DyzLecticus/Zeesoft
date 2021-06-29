@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.test.http;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.http.HttpHeader;
@@ -39,12 +41,28 @@ public class TestHttpIO {
 		assert head2.get("Connection").value.equals("keep-alive");
 		
 		HttpRequest request = new HttpRequest();
+		assert request.head.get(HttpHeader.CONNECTION) == null;
+		assert request.head.get(HttpHeader.CONTENT_LENGTH) == null;
+		assert request.isConnectionClose();
 		assert request.getContentLength() == 0;
+		try {
+			request.setDefaultHeaders(new URL("http://www.test.com"));
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		assert request.head.get(HttpHeader.HOST).value.equals("www.test.com");
+		assert request.head.get(HttpHeader.CONNECTION).value.equals("close");
+		assert request.head.get(HttpHeader.CONTENT_LENGTH).value.equals("0");
 		request.method = "GET";
 		request.path = "/index.html";
 		request.protocol = "HTTP/9.9";
 		request.head = head;
 		request.setBody(new StringBuilder("Body\r\nText"));
+		assert !request.isConnectionClose();
+		request.setConnectionClose();
+		assert request.isConnectionClose();
+		request.setConnectionKeepAlive();
+		assert !request.isConnectionClose();
 		
 		HttpRequestStringConvertor hrsc = (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
 		str = hrsc.toStringBuilder(request);

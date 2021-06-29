@@ -39,4 +39,34 @@ public abstract class HttpIO {
 		}
 		return r;
 	}
+	
+	public void setConnection(String connection) {
+		HttpHeader header = head.get(HttpHeader.CONNECTION);
+		if (header!=null) {
+			header.value = connection;
+		} else {
+			head.add(HttpHeader.CONNECTION, connection);
+		}
+	}
+	
+	public String getConnection() {
+		String r = "close";
+		HttpHeader header = head.get(HttpHeader.CONNECTION);
+		if (header!=null) {
+			r = header.value;
+		}
+		return r;
+	}
+	
+	public void setConnectionClose() {
+		setConnection("close");
+	}
+	
+	public void setConnectionKeepAlive() {
+		setConnection("keep-alive");
+	}
+	
+	public boolean isConnectionClose() {
+		return getConnection().equals("close");
+	}
 }

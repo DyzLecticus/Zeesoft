@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.test.http;
 
+import java.util.Calendar;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.http.HttpClient;
@@ -33,6 +35,9 @@ public class TestHttpServer {
 					assert request.head.headers.size()>0;
 					response.message = "Coolio";
 					response.setBody(new StringBuilder("<html></html>"));
+					Calendar cal = Calendar.getInstance();
+					cal.set(2021, 06, 28, 19, 25, 55);
+					response.modified = cal.getTime();
 				}
 			}
 		};
@@ -91,14 +96,22 @@ public class TestHttpServer {
 		assert server.getNumberOfConnections() == 1;
 		assert client.disconnect();
 		Util.sleep(10);
+		assert !client.isConnected();
+		assert server.getNumberOfConnections() == 1;
+		server.close();
 		assert server.getNumberOfConnections() == 0;
+		server.open();
 		
 		assert !client.isConnected();
 		assert client.connect(SERVER_URL);
 		HttpRequest request = new HttpRequest("GET", "/index.html");
-		request.head.add("Connection", "close");
+		request.head.add("Test", "Pizza");
+		request.setConnectionKeepAlive();
 		HttpResponse response = client.sendRequest(request);
 		assert response.message.equals("Coolio");
+		assert response.head.get("Cache-Control").value.equals("no-cache, no-store, must-revalidate");
+		assert response.head.get("Pragma").value.equals("no-cache");
+		assert response.head.get("Last-Modified").value.equals("Wed, 28 Jul 2021 17:25:55 GMT");
 		assert response.getBody().toString().equals("<html></html>");
 		
 		assert server.close();

@@ -49,7 +49,7 @@ public class HttpClient extends HttpConnection {
 	public synchronized HttpResponse sendRequest(HttpRequest request) {
 		HttpResponse r = null;
 		if (isOpen()) {
-			request.setContentLength();
+			request.setDefaultHeaders(url);
 			writeHead(requestConvertor.toStringBuilder(request));
 			if (request.getContentLength()>0) {
 				writeBody(request.body, false);

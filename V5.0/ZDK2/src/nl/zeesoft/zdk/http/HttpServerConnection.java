@@ -45,11 +45,7 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	protected void handleIO() {
 		while(isOpen()) {
 			StringBuilder input = readHead();
-			if (input.length()==0) {
-				if (isOpen()) {
-					close();
-				}
-			} else {
+			if (input.length()>0) {
 				handleInput(input);
 			}
 		}
@@ -63,10 +59,13 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 			request.body = readBody(request.getContentLength(), false);
 		}
 		HttpResponse response = config.getRequestHandler().handleRequest(request);
-		response.setContentLength();
+		response.setDefaultHeaders();
 		debugLogResponseHeaders(response);
 		writeHead(config.getResponseConvertor().toStringBuilder(response));
 		writeBody(response.body, false);
+		if (response.isConnectionClose() && isOpen()) {
+			close();
+		}
 	}
 	
 	protected void debugLogRequestHeaders(HttpRequest request) {
