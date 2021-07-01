@@ -5,6 +5,7 @@ import java.util.List;
 
 public class StrUtil {
 	public static StringBuilder		NULL	= new StringBuilder("null");
+	public static StringBuilder		CRLF	= new StringBuilder("\r\n");
 	
 	public static boolean equals(StringBuilder str, String other) {
 		return equals(str, new StringBuilder(other));
@@ -108,20 +109,26 @@ public class StrUtil {
 	public static List<StringBuilder> split(StringBuilder str, String concatenator) {
 		List<StringBuilder> r = new ArrayList<StringBuilder>(); 
 		if (str.length()>0) {
-			int offset = 0;
-			int i = indexOf(str,concatenator,offset);
-			while (i>=0) {
-				r.add(substring(str,offset,i));
-				offset = i+concatenator.length();
-				i = indexOf(str,concatenator,offset);
-			}
-			if (offset<str.length()) {
-				r.add(substring(str,offset,str.length()));
-			} else {
-				r.add(new StringBuilder());
-			}
+			r = splitStr(str, concatenator);
 		}
 		if (r.size()==0) {
+			r.add(new StringBuilder());
+		}
+		return r;
+	}
+
+	private static List<StringBuilder> splitStr(StringBuilder str, String concatenator) {
+		List<StringBuilder> r = new ArrayList<StringBuilder>(); 
+		int offset = 0;
+		int i = indexOf(str,concatenator,offset);
+		while (i>=0) {
+			r.add(substring(str,offset,i));
+			offset = i+concatenator.length();
+			i = indexOf(str,concatenator,offset);
+		}
+		if (offset<str.length()) {
+			r.add(substring(str,offset,str.length()));
+		} else {
 			r.add(new StringBuilder());
 		}
 		return r;

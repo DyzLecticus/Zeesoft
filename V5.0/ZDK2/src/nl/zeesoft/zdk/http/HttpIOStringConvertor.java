@@ -26,7 +26,7 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 		HttpIO r = null;
 		if (str.length()>0) {
 			r = (HttpIO) Instantiator.getNewClassInstance(getObjectClass());
-			List<StringBuilder> data = StrUtil.split(str, "\r\n");
+			List<StringBuilder> data = StrUtil.split(str, StrUtil.CRLF.toString());
 			parseFirst(r, data.remove(0));
 			parseHead(r, data);
 		}
@@ -51,7 +51,7 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 				break;
 			}
 			if (r.length()>0) {
-				r.append("\r\n");
+				r.append(StrUtil.CRLF);
 			}
 			r.append(dat);
 		}

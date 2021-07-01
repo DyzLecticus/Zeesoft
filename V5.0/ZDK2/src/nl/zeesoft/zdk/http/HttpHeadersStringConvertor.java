@@ -25,7 +25,7 @@ public class HttpHeadersStringConvertor extends ObjectStringConvertor {
 		HttpHeaders r = null;
 		if (str.length()>0) {
 			r = new HttpHeaders();
-			List<StringBuilder> data = StrUtil.split(str, "\r\n");
+			List<StringBuilder> data = StrUtil.split(str, StrUtil.CRLF.toString());
 			for (StringBuilder dat: data) {
 				List<StringBuilder> nv = StrUtil.split(dat, ": ");
 				if (nv.size()>1) {
@@ -38,7 +38,7 @@ public class HttpHeadersStringConvertor extends ObjectStringConvertor {
 	
 	protected void appendHeaders(StringBuilder str, HttpHeaders head) {
 		for (HttpHeader h: head.headers) {
-			str.append("\r\n");
+			str.append(StrUtil.CRLF);
 			str.append(h.name);
 			str.append(": ");
 			str.append(h.value);

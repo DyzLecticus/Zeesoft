@@ -7,5 +7,6 @@ public class ZdkHttpTests {
 		Console.log("Test HttpServer ...");
 		TestHttpIO.main(args);
 		TestHttpServer.main(args);
+		TestHttpContextRequestHandler.main(args);
 	}
 }

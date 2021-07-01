@@ -6,10 +6,10 @@ import java.net.ServerSocket;
 import nl.zeesoft.zdk.Logger;
 
 public class HttpServer {
-	protected HttpServerConfig		config				= null;
-	protected HttpServerConnections		connections			= null;
+	protected HttpServerConfig			config			= null;
+	protected HttpServerConnections		connections		= null;
 	
-	protected ServerSocket			socket				= null;
+	protected ServerSocket				socket			= null;
 
 	public HttpServer(HttpServerConfig config) {
 		this.config = config.copy();

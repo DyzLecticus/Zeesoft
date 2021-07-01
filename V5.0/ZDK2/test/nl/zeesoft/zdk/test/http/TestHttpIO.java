@@ -13,6 +13,7 @@ import nl.zeesoft.zdk.http.HttpRequestStringConvertor;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpResponseStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestHttpIO {
 	public static void main(String[] args) {
@@ -63,7 +64,7 @@ public class TestHttpIO {
 		request.path = "/index.html";
 		request.protocol = "HTTP/9.9";
 		request.head = head;
-		request.setBody(new StringBuilder("Body\r\nText"));
+		request.setBody(new StringBuilder("Body" + StrUtil.CRLF + "Text"));
 		assert !request.isConnectionClose();
 		request.setConnectionClose();
 		assert request.isConnectionClose();
@@ -74,7 +75,7 @@ public class TestHttpIO {
 		str = hrsc.toStringBuilder(request);
 		assert hrsc.toStringBuilder(hrsc).length() == 0;
 		assert hrsc.fromStringBuilder(new StringBuilder()) == null;
-		assert hrsc.fromStringBuilder(new StringBuilder("\r\n")) != null;
+		assert hrsc.fromStringBuilder(new StringBuilder(StrUtil.CRLF)) != null;
 		assert hrsc.fromStringBuilder(new StringBuilder("qwer")) != null;
 		
 		HttpRequest request2 = hrsc.fromStringBuilder(str);
@@ -97,7 +98,7 @@ public class TestHttpIO {
 		response.message = "Not found";
 		response.head.add("Keep-Alive", "300");
 		response.head.add("Connection", "keep-alive");
-		response.setBody(new StringBuilder("Body\r\nText"));
+		response.setBody(new StringBuilder("Body" + StrUtil.CRLF + "Text"));
 		
 		HttpResponseStringConvertor hpsc = (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 		str = hpsc.toStringBuilder(response);
@@ -113,7 +114,7 @@ public class TestHttpIO {
 		
 		assert hpsc.toStringBuilder(hpsc).length() == 0;
 		assert hpsc.fromStringBuilder(new StringBuilder()) == null;
-		assert hpsc.fromStringBuilder(new StringBuilder("\r\n")) != null;
+		assert hpsc.fromStringBuilder(new StringBuilder(StrUtil.CRLF)) != null;
 		assert hpsc.fromStringBuilder(new StringBuilder("qwer")) != null;
 		
 		response = new HttpResponse(HttpURLConnection.HTTP_NOT_FOUND, "Not found");

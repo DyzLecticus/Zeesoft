@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public abstract class HttpConnection {
 	protected boolean				open	= false;
@@ -102,7 +103,7 @@ public abstract class HttpConnection {
 			r = true;
 		} else {
 			input.append(line);
-			input.append("\r\n");
+			input.append(StrUtil.CRLF);
 		}
 		return r;
 	}

@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class HttpConnectionWriter {
+	private static String		CRLFCRLF	= "" + StrUtil.CRLF + StrUtil.CRLF; 
+	
 	protected Socket			socket		= null;
 	protected PrintWriter		writer		= null;
 	
@@ -17,8 +19,8 @@ public class HttpConnectionWriter {
 	}
 	
 	public void writeHead(StringBuilder str) {
-		while (!StrUtil.endsWith(str, "\r\n\r\n")) {
-			str.append("\r\n");
+		while (!StrUtil.endsWith(str, CRLFCRLF)) {
+			str.append(StrUtil.CRLF);
 		}
 		writer.print(str);
 		writer.flush();
