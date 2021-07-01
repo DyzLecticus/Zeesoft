@@ -26,6 +26,16 @@ public class HttpResponse extends HttpIO {
 		head.add("Last-Modified", getLastModifiedDateString(modified));
 	}
 	
+	public void setNotFound() {
+		code = HttpURLConnection.HTTP_NOT_FOUND;
+		message = "Not Found";
+	}
+	
+	public void setNotImplemented() {
+		code = HttpURLConnection.HTTP_NOT_IMPLEMENTED;
+		message = "Not Implemented";
+	}
+	
 	protected final String getLastModifiedDateString(Date modified) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));

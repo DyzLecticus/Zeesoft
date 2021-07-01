@@ -94,8 +94,14 @@ public class TestHttpIO {
 		
 		HttpResponse response = new HttpResponse();
 		response.protocol = "HTTP/9.9";
-		response.code = HttpURLConnection.HTTP_NOT_FOUND;
-		response.message = "Not found";
+		assert response.code == 200;
+		assert response.message.equals("OK");
+		response.setNotImplemented();
+		assert response.code == HttpURLConnection.HTTP_NOT_IMPLEMENTED;
+		assert response.message.equals("Not Implemented");
+		response.setNotFound();
+		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
+		assert response.message.equals("Not Found");
 		response.head.add("Keep-Alive", "300");
 		response.head.add("Connection", "keep-alive");
 		response.setBody(new StringBuilder("Body" + StrUtil.CRLF + "Text"));
@@ -106,7 +112,7 @@ public class TestHttpIO {
 		HttpResponse response2 = hpsc.fromStringBuilder(str);
 		assert response2.protocol.equals("HTTP/9.9");
 		assert response2.code == HttpURLConnection.HTTP_NOT_FOUND;
-		assert response2.message.equals("Not found");
+		assert response2.message.equals("Not Found");
 		assert response2.head.headers.size() == 2;
 		assert response2.head.get("Keep-Alive").value.equals("300");
 		assert response2.head.get("Connection").value.equals("keep-alive");
@@ -117,8 +123,8 @@ public class TestHttpIO {
 		assert hpsc.fromStringBuilder(new StringBuilder(StrUtil.CRLF)) != null;
 		assert hpsc.fromStringBuilder(new StringBuilder("qwer")) != null;
 		
-		response = new HttpResponse(HttpURLConnection.HTTP_NOT_FOUND, "Not found");
+		response = new HttpResponse(HttpURLConnection.HTTP_NOT_FOUND, "Not Found");
 		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
-		assert response.message.equals("Not found");
+		assert response.message.equals("Not Found");
 	}
 }

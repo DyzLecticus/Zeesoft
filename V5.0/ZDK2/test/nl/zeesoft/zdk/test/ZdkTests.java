@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.test.app.TestApp;
 import nl.zeesoft.zdk.test.code.TestCodeAnalyzer;
 import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
@@ -91,6 +92,9 @@ public class ZdkTests {
 		
 		ZdkNeuralTests.main(args);
 
+		Console.log("Test App ...");
+		TestApp.main(args);		
+		
 		ZdkHttpTests.main(args);
 	}
 }

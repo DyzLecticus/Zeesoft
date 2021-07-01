@@ -4,7 +4,7 @@ import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 
 public class HttpServerConfig {
-	protected int							port				= 8080;
+	protected int							port				= 80;
 	protected HttpRequestStringConvertor	requestConvertor	= (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
 	protected HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 	protected HttpRequestHandler			requestHandler		= new HttpRequestHandler();
