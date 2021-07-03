@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.http;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class HttpResponse extends HttpIO {
@@ -30,10 +31,22 @@ public class HttpResponse extends HttpIO {
 		code = HttpURLConnection.HTTP_NOT_FOUND;
 		message = "Not Found";
 	}
+
+	public void setNotAllowed(List<String> allowedMethods) {
+		code = HttpURLConnection.HTTP_BAD_METHOD;
+		message = "Method Not Allowed";
+		head.add("Allow", getMethodList(allowedMethods));
+	}
 	
-	public void setNotImplemented() {
-		code = HttpURLConnection.HTTP_NOT_IMPLEMENTED;
-		message = "Not Implemented";
+	protected String getMethodList(List<String> methods) {
+		StringBuilder r = new StringBuilder();
+		for (String method: methods) {
+			if (r.length() > 0) {
+				r.append(", ");
+			}
+			r.append(method);
+		}
+		return r.toString();
 	}
 	
 	protected final String getLastModifiedDateString(Date modified) {

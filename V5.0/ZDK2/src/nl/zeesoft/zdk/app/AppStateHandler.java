@@ -9,15 +9,13 @@ public class AppStateHandler extends AppContextHandler {
 	public AppStateHandler(App app) {
 		super(app);
 		path = PATH;
+		allowedMethods.add(HttpRequest.HEAD);
+		allowedMethods.add(HttpRequest.GET);
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		if (request.method.equals(HttpRequest.GET)) {
-			StringBuilder html = new StringBuilder();
-			html.append(app.getState());
-			response.setBody(html);
-		} else {
-			response.setNotImplemented();
-		}
+		StringBuilder html = new StringBuilder();
+		html.append(app.getState());
+		response.setBody(html);
 	}
 }

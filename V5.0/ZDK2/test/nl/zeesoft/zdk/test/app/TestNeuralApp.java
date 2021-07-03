@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.test.app;
 import java.net.HttpURLConnection;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.app.AppContextHandler;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.AppStateHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
@@ -52,14 +51,13 @@ public class TestNeuralApp {
 		requestHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().toString().equals(AppStateManager.STOPPED);
-
-		AppContextHandler stateHandler = (AppContextHandler) requestHandler.get(AppStateHandler.PATH);
+		
 		request = new HttpRequest(HttpRequest.POST,AppStateHandler.PATH);
 		response = new HttpResponse();
-		stateHandler.handleRequest(request, response);
+		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
-		assert response.code == HttpURLConnection.HTTP_NOT_IMPLEMENTED;
-		
+		assert response.code == HttpURLConnection.HTTP_BAD_METHOD;
+
 		NeuralAppContextHandler indexHandler = (NeuralAppContextHandler) requestHandler.get(IndexHandler.PATH);
 		assert indexHandler.getServer() == null;
 		assert indexHandler.getNetworkConfig() == null;
@@ -70,12 +68,6 @@ public class TestNeuralApp {
 		indexHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() > 0;
-
-		request = new HttpRequest(HttpRequest.POST,IndexHandler.PATH);
-		response = new HttpResponse();
-		indexHandler.handleRequest(request, response);
-		assert response.getBody().length() == 0;
-		assert response.code == HttpURLConnection.HTTP_NOT_IMPLEMENTED;
 		
 		try {
 			// Test app

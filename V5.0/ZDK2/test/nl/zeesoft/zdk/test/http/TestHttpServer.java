@@ -17,6 +17,7 @@ import nl.zeesoft.zdk.str.ObjectStringConvertors;
 
 public class TestHttpServer {
 	private static TestHttpServer	self		= new TestHttpServer();
+	
 	private static String			LOCALHOST	= "http://127.0.0.1";
 	private static String			SERVER_URL	= LOCALHOST + ":1234";
 	
@@ -97,7 +98,7 @@ public class TestHttpServer {
 		
 		assert !client.isConnected();
 		assert client.connect(SERVER_URL);
-		HttpRequest request = new HttpRequest("GET", "/index.html");
+		HttpRequest request = new HttpRequest(HttpRequest.GET, "/index.html");
 		request.head.add("Test", "Pizza");
 		request.setConnectionKeepAlive();
 		HttpResponse response = client.sendRequest(request);

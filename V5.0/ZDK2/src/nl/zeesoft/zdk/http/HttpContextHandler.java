@@ -1,7 +1,11 @@
 package nl.zeesoft.zdk.http;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HttpContextHandler {
-	public String	path	= "";
+	public String			path				= "";
+	public List<String>		allowedMethods	= new ArrayList<String>();
 	
 	public HttpContextHandler() {
 		

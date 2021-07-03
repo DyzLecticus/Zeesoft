@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.test.http;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.http.HttpHeader;
@@ -96,9 +98,14 @@ public class TestHttpIO {
 		response.protocol = "HTTP/9.9";
 		assert response.code == 200;
 		assert response.message.equals("OK");
-		response.setNotImplemented();
-		assert response.code == HttpURLConnection.HTTP_NOT_IMPLEMENTED;
-		assert response.message.equals("Not Implemented");
+		List<String> methods = new ArrayList<String>();
+		methods.add(HttpRequest.GET);
+		methods.add(HttpRequest.POST);
+		response.setNotAllowed(methods);
+		assert response.code == HttpURLConnection.HTTP_BAD_METHOD;
+		assert response.message.equals("Method Not Allowed");
+		assert response.head.get("Allow").value.equals("GET, POST");
+		response.head.headers.clear();
 		response.setNotFound();
 		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
 		assert response.message.equals("Not Found");

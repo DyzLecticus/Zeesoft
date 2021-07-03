@@ -18,7 +18,9 @@ public class TestHttpContextRequestHandler {
 		assert handler.indexFileName.equals("index.html");
 		assert handler.remove("/test/") == null;
 		
-		handler.put(new HttpContextHandler("/index.html"));		
+		HttpContextHandler contextHandler = new HttpContextHandler("/index.html");
+		contextHandler.allowedMethods.add(HttpRequest.GET);
+		handler.put(contextHandler);		
 		HttpResponse response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/"));
 		assert response.code == HttpURLConnection.HTTP_OK;
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/index.html"));
@@ -27,10 +29,15 @@ public class TestHttpContextRequestHandler {
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/pizza"));
 		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
 
+		response = handler.handleRequest(new HttpRequest(HttpRequest.POST, "/index.html"));
+		assert response.code == HttpURLConnection.HTTP_BAD_METHOD;
+		
 		handler.remove("/index.html");
 		assert handler.handlers.size() == 0;
 		
-		handler.put(new HttpContextHandler("/"));
+		contextHandler = new HttpContextHandler("/");
+		contextHandler.allowedMethods.add(HttpRequest.GET);
+		handler.put(contextHandler);		
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/"));
 		assert response.code == HttpURLConnection.HTTP_OK;
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/index.html"));

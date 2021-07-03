@@ -92,9 +92,9 @@ public class ZdkTests {
 		
 		ZdkNeuralTests.main(args);
 
+		ZdkHttpTests.main(args);
+		
 		Console.log("Test App ...");
 		TestNeuralApp.main(args);		
-		
-		ZdkHttpTests.main(args);
 	}
 }

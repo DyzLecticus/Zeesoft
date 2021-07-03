@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.http;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +11,13 @@ public class HttpContextRequestHandler extends HttpRequestHandler {
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		HttpContextHandler handler = getHandler(request.path);
 		if (handler!=null) {
-			handler.handleRequest(request, response);
+			if (handler.allowedMethods.contains(request.method)) {
+				handler.handleRequest(request, response);
+			} else {
+				response.setNotAllowed(handler.allowedMethods);
+			}
 		} else {
-			handlerNotFound(request, response);
+			response.setNotFound();
 		}
 	}
 	
@@ -40,11 +43,6 @@ public class HttpContextRequestHandler extends HttpRequestHandler {
 			handlers.remove(r);
 		}
 		return r;
-	}
-	
-	protected void handlerNotFound(HttpRequest request, HttpResponse response) {
-		response.code = HttpURLConnection.HTTP_NOT_FOUND;
-		response.message = "Not Found";
 	}
 	
 	protected HttpContextHandler getHandler(String path) {
