@@ -2,18 +2,18 @@ package nl.zeesoft.zdk.test.app;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
-import nl.zeesoft.zdk.app.App;
-import nl.zeesoft.zdk.app.AppConfig;
+import nl.zeesoft.zdk.app.neural.NeuralApp;
+import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 
-public class TestAppLive {
-	protected static TestAppLive	self		= new TestAppLive();
-	protected static int			sleepMs		= 600000;
+public class TestNeuralAppLive {
+	protected static TestNeuralAppLive	self		= new TestNeuralAppLive();
+	protected static int				sleepMs		= 600000;
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		AppConfig config = new AppConfig();
-		App app = new App(config);
+		NeuralAppConfig config = new NeuralAppConfig();
+		NeuralApp app = new NeuralApp(config);
 		
 		Logger.debug(self,"Starting app ...");
 		assert app.start();
