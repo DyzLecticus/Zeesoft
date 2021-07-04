@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.app.App;
 import nl.zeesoft.zdk.app.AppConfig;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
-import nl.zeesoft.zdk.app.AppStateHandler;
+import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
 import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
@@ -14,7 +14,7 @@ import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
-import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
@@ -77,13 +77,13 @@ public class TestNeuralApp {
 		assert response.getBody().length() == 0;
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 
-		request = new HttpRequest(HttpRequest.GET,AppStateHandler.PATH);
+		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
 		response = new HttpResponse();
 		requestHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().toString().equals(AppStateManager.STOPPED);
 		
-		request = new HttpRequest(HttpRequest.POST,AppStateHandler.PATH);
+		request = new HttpRequest(HttpRequest.POST,AppStateTextHandler.PATH);
 		response = new HttpResponse();
 		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
@@ -112,7 +112,7 @@ public class TestNeuralApp {
 			
 			//assert indexHandler.getNetworkManager().resetNetwork();
 			
-			request = new HttpRequest(HttpRequest.GET,AppStateHandler.PATH);
+			request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
 			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().toString().equals(AppStateManager.STARTED);
@@ -122,7 +122,7 @@ public class TestNeuralApp {
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().length() > 0;
 
-			request = new HttpRequest(HttpRequest.GET,NetworkStateHandler.PATH);
+			request = new HttpRequest(HttpRequest.GET,NetworkStateTextHandler.PATH);
 			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().toString().equals(NetworkStateManager.READY);

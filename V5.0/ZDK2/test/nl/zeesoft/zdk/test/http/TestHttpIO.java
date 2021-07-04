@@ -141,5 +141,9 @@ public class TestHttpIO {
 		assert response.message.equals("Not Found");
 		assert response.getBody().toString().equals("{}");
 		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("application/json");
+		response.setContentTypeHtml();
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("text/html");
+		response.setContentTypeText();
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("text/plain");
 	}
 }

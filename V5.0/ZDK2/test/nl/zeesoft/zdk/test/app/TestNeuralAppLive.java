@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 
 public class TestNeuralAppLive {
 	protected static TestNeuralAppLive	self		= new TestNeuralAppLive();
-	protected static int				sleepMs		= 600000;
+	protected static int				sleepMs		= 300000;
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);

@@ -15,7 +15,7 @@ public class AppContextRequestHandler extends HttpContextRequestHandler {
 	
 	@Override
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		if (app.isStarted() || request.path.startsWith(AppStateHandler.PATH)) {
+		if (app.isStarted() || request.path.startsWith(AppStateTextHandler.PATH)) {
 			super.handleRequest(request, response);
 		} else {
 			serviceUnavailable(request, response);
@@ -23,7 +23,7 @@ public class AppContextRequestHandler extends HttpContextRequestHandler {
 	}
 
 	protected void initializeContextHandlers() {
-		put(new AppStateHandler(app));
+		put(new AppStateTextHandler(app));
 	}
 	
 	protected void serviceUnavailable(HttpRequest request, HttpResponse response) {

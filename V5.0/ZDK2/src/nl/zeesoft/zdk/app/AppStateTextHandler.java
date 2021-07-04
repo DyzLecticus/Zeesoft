@@ -3,10 +3,10 @@ package nl.zeesoft.zdk.app;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 
-public class AppStateHandler extends AppContextHandler {
-	public static String	PATH	= "/app/state/";
+public class AppStateTextHandler extends AppContextHandler {
+	public static String	PATH	= "/app/state.txt";
 	
-	public AppStateHandler(App app) {
+	public AppStateTextHandler(App app) {
 		super(app);
 		path = PATH;
 		allowedMethods.add(HttpRequest.HEAD);
@@ -14,6 +14,7 @@ public class AppStateHandler extends AppContextHandler {
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
+		response.setContentTypeText();
 		response.setBody(new StringBuilder(app.getState()));
 	}
 }

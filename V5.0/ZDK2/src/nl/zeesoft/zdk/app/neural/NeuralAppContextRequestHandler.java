@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.app.neural;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
-import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 
 public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 	public NeuralAppContextRequestHandler(NeuralApp app) {
@@ -14,7 +14,7 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 	protected void initializeContextHandlers() {
 		super.initializeContextHandlers();
 		put(new IndexHtmlHandler((NeuralApp)app));
-		put(new NetworkStateHandler((NeuralApp)app));
+		put(new NetworkStateTextHandler((NeuralApp)app));
 		put(new NetworkConfigJsonHandler((NeuralApp)app));
 	}
 }

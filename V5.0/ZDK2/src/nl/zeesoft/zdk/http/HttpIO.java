@@ -10,7 +10,7 @@ public abstract class HttpIO {
 	
 	public void setBody(Json json) {
 		setBody(json.toStringBuilder());
-		setContentType("application/json");
+		setContentTypeJson();
 	}
 		
 	public void setBody(StringBuilder str) {
@@ -30,6 +30,18 @@ public abstract class HttpIO {
 	
 	public void setContentType(String type) {
 		head.set(HttpHeader.CONTENT_TYPE, type);
+	}
+	
+	public void setContentTypeHtml() {
+		setContentType("text/html");
+	}
+	
+	public void setContentTypeJson() {
+		setContentType("application/json");
+	}
+	
+	public void setContentTypeText() {
+		setContentType("text/plain");
 	}
 	
 	public void setContentLength() {
