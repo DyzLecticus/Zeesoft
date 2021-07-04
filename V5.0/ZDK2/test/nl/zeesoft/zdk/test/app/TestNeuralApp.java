@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.AppStateHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
+import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
@@ -31,11 +32,31 @@ public class TestNeuralApp {
 		assert stateManager.ifSetState(AppStateManager.STOPPED);
 		assert !stateManager.ifSetState(AppStateManager.STOPPING);
 		
+		NetworkStateManager networkStateManager = new NetworkStateManager();
+		assert !networkStateManager.ifSetState(NetworkStateManager.READY);
+		assert networkStateManager.ifSetState(NetworkStateManager.INITIALIZING);
+		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
+		assert networkStateManager.ifSetState(NetworkStateManager.LOADING);
+		assert !networkStateManager.ifSetState(NetworkStateManager.INITIALIZING);
+		assert networkStateManager.ifSetState(NetworkStateManager.READY);
+		assert !networkStateManager.ifSetState(NetworkStateManager.LOADING);
+		assert networkStateManager.ifSetState(NetworkStateManager.SAVING);
+		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
+		assert networkStateManager.ifSetState(NetworkStateManager.READY);
+		assert networkStateManager.ifSetState(NetworkStateManager.RESETTING);
+		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
+		assert networkStateManager.ifSetState(NetworkStateManager.READY);
+		assert networkStateManager.ifSetState(NetworkStateManager.TRAINING);
+		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
+		assert networkStateManager.ifSetState(NetworkStateManager.READY);
+		
 		NeuralAppConfig config = new NeuralAppConfig();
 		NeuralApp app = new NeuralApp(config);
-		app.setNetworkConfig(new NetworkConfig());
-		assert app.getNetworkConfig() == null;
-		assert app.getNetwork() == null;
+		NetworkConfig networkConfig = new NetworkConfig();
+		app.getNetworkManager().setNetworkConfig(networkConfig);
+		assert app.getNetworkManager().getNetworkConfig() == networkConfig;
+		assert app.getNetworkManager().getState().equals(NetworkStateManager.CREATED);
+		assert !app.getNetworkManager().isReady();
 		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
@@ -60,8 +81,8 @@ public class TestNeuralApp {
 
 		NeuralAppContextHandler indexHandler = (NeuralAppContextHandler) requestHandler.get(IndexHandler.PATH);
 		assert indexHandler.getServer() == null;
-		assert indexHandler.getNetworkConfig() == null;
-		assert indexHandler.getNetwork() == null;
+		assert indexHandler.getNetworkManager() != null;
+		assert indexHandler.getNetworkManager().getNetworkConfig() == networkConfig;
 		
 		request = new HttpRequest(HttpRequest.GET,IndexHandler.PATH);
 		response = new HttpResponse();
@@ -74,14 +95,12 @@ public class TestNeuralApp {
 			assert app.start();
 			assert app.getState().equals(AppStateManager.STARTED);
 			assert app.isStarted();
-			assert app.getNetworkConfig() != null;
-			assert app.getNetwork() != null;
+			assert app.getNetworkManager() != null;
+			assert app.getNetworkManager().isReady();
 			assert indexHandler.getServer().isOpen();
-			NetworkConfig networkConfig = new NetworkConfig();
-			indexHandler.setNetworkConfig(networkConfig);
-			assert indexHandler.getNetworkConfig() == networkConfig;
-			assert indexHandler.getNetwork().isInitialized();
 			assert !app.start();
+			
+			assert indexHandler.getNetworkManager().resetNetwork();
 			
 			request = new HttpRequest(HttpRequest.GET,AppStateHandler.PATH);
 			response = new HttpResponse();

@@ -1,0 +1,91 @@
+package nl.zeesoft.zdk.app.neural;
+
+import nl.zeesoft.zdk.neural.network.Network;
+import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
+import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
+
+public class NetworkManager {
+	protected NetworkStateManager 	stateManager	= new NetworkStateManager();
+	protected NetworkConfig			networkConfig	= null;
+	protected Network				network			= new Network();
+
+	public synchronized NetworkConfig getNetworkConfig() {
+		return networkConfig;
+	}
+
+	public synchronized void setNetworkConfig(NetworkConfig networkConfig) {
+		this.networkConfig = networkConfig;
+	}
+
+	public boolean isReady() {
+		return stateManager.isReady();
+	}
+
+	public String getState() {
+		return stateManager.getState();
+	}
+	
+	public boolean loadNetwork() {
+		boolean r = false;
+		if (stateManager.ifSetState(NetworkStateManager.LOADING)) {
+			if (!loadNetwork(network)) {
+				network.reset();
+			}
+			r = stateManager.ifSetState(NetworkStateManager.READY);
+		}
+		return r;
+	}
+
+	public boolean resetNetwork() {
+		boolean r = false;
+		if (stateManager.ifSetState(NetworkStateManager.RESETTING)) {
+			network.reset();
+			r = stateManager.ifSetState(NetworkStateManager.READY);
+		}
+		return r;
+	}
+
+	public boolean saveNetwork() {
+		boolean r = false;
+		if (stateManager.ifSetState(NetworkStateManager.SAVING)) {
+			saveNetworkConfig(networkConfig);
+			saveNetwork(network);
+			r = stateManager.ifSetState(NetworkStateManager.READY);
+		}
+		return r;
+	}
+	
+	protected void onAppStart() {
+		initializeNetwork();
+	}
+	
+	protected void onAppStop() {
+		saveNetwork();
+	}
+
+	protected void initializeNetwork() {
+		networkConfig = loadNetworkConfig();
+		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
+			network.initialize(networkConfig);
+			loadNetwork();
+		}
+	}
+	
+	protected NetworkConfig loadNetworkConfig() {
+		NetworkConfigFactory factory = new NetworkConfigFactory();
+		return factory.getSimpleConfig("input1", "input2");
+	}
+	
+	protected boolean loadNetwork(Network network) {
+		// Override to implement; return true if loaded
+		return false;
+	}
+	
+	protected void saveNetworkConfig(NetworkConfig config) {
+		// Override to implement
+	}
+	
+	protected void saveNetwork(Network network) {
+		// Override to implement
+	}
+}
