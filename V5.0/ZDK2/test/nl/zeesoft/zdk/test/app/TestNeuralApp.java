@@ -61,6 +61,9 @@ public class TestNeuralApp {
 		assert app.getNetworkManager().getConfig() == networkConfig;
 		assert app.getNetworkManager().getState().equals(NetworkStateManager.CREATED);
 		assert !app.getNetworkManager().isReady();
+		assert !app.getNetworkManager().loadNetwork();
+		assert !app.getNetworkManager().resetNetwork();
+		assert !app.getNetworkManager().saveNetwork();
 		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
