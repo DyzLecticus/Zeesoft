@@ -108,6 +108,9 @@ public class TestHttpIO {
 		assert response.message.equals("Method Not Allowed");
 		assert response.head.get("Allow").value.equals("GET, POST");
 		response.head.headers.clear();
+		response.setBadRequest();
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.message.equals("Bad Request");
 		response.setNotFound();
 		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
 		assert response.message.equals("Not Found");

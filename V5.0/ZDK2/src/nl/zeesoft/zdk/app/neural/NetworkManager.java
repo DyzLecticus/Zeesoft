@@ -6,15 +6,15 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 
 public class NetworkManager {
 	protected NetworkStateManager 	stateManager	= new NetworkStateManager();
-	protected NetworkConfig			networkConfig	= null;
+	protected NetworkConfig			config			= null;
 	protected Network				network			= new Network();
 
-	public synchronized NetworkConfig getNetworkConfig() {
-		return networkConfig;
+	public synchronized NetworkConfig getConfig() {
+		return config;
 	}
 
-	public synchronized void setNetworkConfig(NetworkConfig networkConfig) {
-		this.networkConfig = networkConfig;
+	public synchronized void setConfig(NetworkConfig config) {
+		this.config = config;
 	}
 
 	public boolean isReady() {
@@ -48,7 +48,7 @@ public class NetworkManager {
 	public boolean saveNetwork() {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.SAVING)) {
-			saveNetworkConfig(networkConfig);
+			saveNetworkConfig(config);
 			saveNetwork(network);
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -64,9 +64,9 @@ public class NetworkManager {
 	}
 
 	protected void initializeNetwork() {
-		networkConfig = loadNetworkConfig();
+		config = loadNetworkConfig();
 		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
-			network.initialize(networkConfig);
+			network.initialize(config);
 			loadNetwork();
 		}
 	}

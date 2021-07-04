@@ -2,6 +2,7 @@ package nl.zeesoft.zdk.test.app;
 
 import java.net.HttpURLConnection;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.AppStateHandler;
@@ -11,10 +12,12 @@ import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
+import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
 public class TestNeuralApp {
@@ -54,8 +57,8 @@ public class TestNeuralApp {
 		NeuralAppConfig config = new NeuralAppConfig();
 		NeuralApp app = new NeuralApp(config);
 		NetworkConfig networkConfig = new NetworkConfig();
-		app.getNetworkManager().setNetworkConfig(networkConfig);
-		assert app.getNetworkManager().getNetworkConfig() == networkConfig;
+		app.getNetworkManager().setConfig(networkConfig);
+		assert app.getNetworkManager().getConfig() == networkConfig;
 		assert app.getNetworkManager().getState().equals(NetworkStateManager.CREATED);
 		assert !app.getNetworkManager().isReady();
 		
@@ -83,7 +86,7 @@ public class TestNeuralApp {
 		NeuralAppContextHandler indexHandler = (NeuralAppContextHandler) requestHandler.get(IndexHtmlHandler.PATH);
 		assert indexHandler.getServer() == null;
 		assert indexHandler.getNetworkManager() != null;
-		assert indexHandler.getNetworkManager().getNetworkConfig() == networkConfig;
+		assert indexHandler.getNetworkManager().getConfig() == networkConfig;
 		
 		request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
 		response = new HttpResponse();
@@ -104,22 +107,44 @@ public class TestNeuralApp {
 			assert indexHandler.getNetworkManager().resetNetwork();
 			
 			request = new HttpRequest(HttpRequest.GET,AppStateHandler.PATH);
-			response = new HttpResponse();
-			requestHandler.handleRequest(request, response);
+			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().toString().equals(AppStateManager.STARTED);
 			
 			request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
-			response = new HttpResponse();
-			requestHandler.handleRequest(request, response);
+			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().length() > 0;
 
 			request = new HttpRequest(HttpRequest.GET,NetworkStateHandler.PATH);
-			response = new HttpResponse();
-			requestHandler.handleRequest(request, response);
+			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().toString().equals(NetworkStateManager.READY);
+
+			request = new HttpRequest(HttpRequest.GET,NetworkConfigJsonHandler.PATH);
+			response = requestHandler.handleRequest(request);
+			assert response.code == HttpURLConnection.HTTP_OK;
+			assert response.getBody().length() > 0;
+
+			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+			request.setBody(JsonConstructor.fromObject(networkConfig));
+			response = requestHandler.handleRequest(request);
+			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+			assert response.getBody().toString().equals(
+				"A network must have at least one input\n" + 
+				"A network must have at least one processor"
+			);
+
+			networkConfig.addInput("Input");
+			networkConfig.addScalarEncoder("Encoder");
+			networkConfig.addLink("Input", "Encoder");
+			
+			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+			request.setBody(JsonConstructor.fromObject(networkConfig));
+			response = requestHandler.handleRequest(request);
+			Console.log(response.getBody());
+			assert response.code == HttpURLConnection.HTTP_OK;
+			assert response.getBody().length() == 0;
 
 			assert app.stop();
 			assert !indexHandler.getServer().isOpen();

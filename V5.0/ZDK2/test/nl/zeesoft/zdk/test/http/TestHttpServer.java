@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.http;
 
+import java.net.HttpURLConnection;
 import java.util.Calendar;
 
 import nl.zeesoft.zdk.Logger;
@@ -24,9 +25,15 @@ public class TestHttpServer {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
-		HttpRequestHandler handler = getRequestHandler();
-
 		Logger.debug(self, "Testing exception handling ...");
+
+		HttpRequestHandler handler = getRequestErrorHandler();
+		
+		HttpRequest request = new HttpRequest(HttpRequest.GET, "/index.html");
+		HttpResponse response = handler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_INTERNAL_ERROR;
+		
+		handler = getRequestHandler();
 
 		HttpClient testClient = new HttpClient();
 		assert !testClient.connect("pizza");
@@ -98,10 +105,10 @@ public class TestHttpServer {
 		
 		assert !client.isConnected();
 		assert client.connect(SERVER_URL);
-		HttpRequest request = new HttpRequest(HttpRequest.GET, "/index.html");
+		request = new HttpRequest(HttpRequest.GET, "/index.html");
 		request.head.add("Test", "Pizza");
 		request.setConnectionKeepAlive();
-		HttpResponse response = client.sendRequest(request);
+		response = client.sendRequest(request);
 		assert response.message.equals("Coolio");
 		assert response.head.get("Cache-Control").value.equals("no-cache, no-store, must-revalidate");
 		assert response.head.get("Pragma").value.equals("no-cache");
@@ -163,6 +170,15 @@ public class TestHttpServer {
 					cal.set(2021, 06, 28, 19, 25, 55);
 					response.modified = cal.getTime();
 				}
+			}
+		};
+	}
+	
+	private static HttpRequestHandler getRequestErrorHandler() {
+		return new HttpRequestHandler() {
+			@Override
+			public void handleRequest(HttpRequest request, HttpResponse response) {
+				Integer.parseInt("Test exception");
 			}
 		};
 	}

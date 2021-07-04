@@ -29,6 +29,11 @@ public class HttpResponse extends HttpIO {
 		head.add("Last-Modified", getLastModifiedDateString(modified));
 	}
 	
+	public void setBadRequest() {
+		code = HttpURLConnection.HTTP_BAD_REQUEST;
+		message = "Bad Request";
+	}
+	
 	public void setNotFound() {
 		code = HttpURLConnection.HTTP_NOT_FOUND;
 		message = "Not Found";
@@ -38,6 +43,11 @@ public class HttpResponse extends HttpIO {
 		code = HttpURLConnection.HTTP_BAD_METHOD;
 		message = "Method Not Allowed";
 		head.add("Allow", getMethodList(allowedMethods));
+	}
+	
+	public void setInternalError() {
+		code = HttpURLConnection.HTTP_INTERNAL_ERROR;
+		message = "Internal Server Error";
 	}
 	
 	protected String getMethodList(List<String> methods) {
