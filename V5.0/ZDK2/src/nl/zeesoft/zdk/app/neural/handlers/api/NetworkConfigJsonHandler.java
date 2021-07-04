@@ -28,6 +28,7 @@ public class NetworkConfigJsonHandler extends NeuralAppContextHandler {
 			StringBuilder err = config.test();
 			if (err.length()==0) {
 				getNetworkManager().setConfig(config);
+				getNetworkManager().resetNetwork();
 			} else {
 				response.setBadRequest();
 				response.setBody(err);

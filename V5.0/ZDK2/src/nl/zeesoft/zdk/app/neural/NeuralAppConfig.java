@@ -5,8 +5,12 @@ import nl.zeesoft.zdk.app.AppConfig;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 
 public class NeuralAppConfig extends AppConfig {
-	protected NetworkManager	networkManager	= new NetworkManager();
+	protected NetworkManager	networkManager	= null;
 
+	public NeuralAppConfig() {
+		networkManager = getNewNetworkManager();
+	}
+	
 	@Override
 	public void onAppStart() {
 		super.onAppStart();
@@ -30,5 +34,9 @@ public class NeuralAppConfig extends AppConfig {
 	
 	public NetworkManager getNetworkManager() {
 		return networkManager;
+	}
+	
+	protected NetworkManager getNewNetworkManager() {
+		return new NetworkManager();
 	}
 }

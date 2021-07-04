@@ -15,9 +15,13 @@ public class App {
 		boolean r = state.ifSetState(AppStateManager.STARTING);
 		if (r) {
 			server = new HttpServer(config.loadHttpServerConfig(this));
-			server.open();
-			config.onAppStart();
-			r = state.ifSetState(AppStateManager.STARTED);
+			if (server.open()) {
+				config.onAppStart();
+				r = state.ifSetState(AppStateManager.STARTED);
+			} else {
+				state.ifSetState(AppStateManager.STOPPED);
+				r = false;
+			}
 		}
 		return r;
 	}

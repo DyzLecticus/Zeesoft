@@ -13,6 +13,7 @@ public class AppStateManager {
 		if (
 			(this.state.equals(STOPPED) && state.equals(STARTING)) ||
 			(this.state.equals(STARTING) && state.equals(STARTED)) ||
+			(this.state.equals(STARTING) && state.equals(STOPPED)) ||
 			(this.state.equals(STARTED) && state.equals(STOPPING)) ||
 			(this.state.equals(STOPPING) && state.equals(STOPPED))
 			) {

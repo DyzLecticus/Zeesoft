@@ -39,7 +39,10 @@ public class NetworkManager {
 	public boolean resetNetwork() {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.RESETTING)) {
-			network.reset();
+			r = network.initialize(config);
+			if (r) {
+				r = network.reset();
+			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;

@@ -2,8 +2,9 @@ package nl.zeesoft.zdk.test.app;
 
 import java.net.HttpURLConnection;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.app.App;
+import nl.zeesoft.zdk.app.AppConfig;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.AppStateHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
@@ -28,7 +29,9 @@ public class TestNeuralApp {
 		
 		AppStateManager stateManager = new AppStateManager();
 		assert stateManager.ifSetState(AppStateManager.STARTING);
-		assert !stateManager.ifSetState(AppStateManager.STOPPED);
+		assert stateManager.ifSetState(AppStateManager.STOPPED);
+		assert stateManager.ifSetState(AppStateManager.STARTING);
+		assert !stateManager.ifSetState(AppStateManager.STOPPING);
 		assert stateManager.ifSetState(AppStateManager.STARTED);
 		assert !stateManager.ifSetState(AppStateManager.STARTING);
 		assert stateManager.ifSetState(AppStateManager.STOPPING);
@@ -107,7 +110,7 @@ public class TestNeuralApp {
 			assert indexHandler.getServer().isOpen();
 			assert !app.start();
 			
-			assert indexHandler.getNetworkManager().resetNetwork();
+			//assert indexHandler.getNetworkManager().resetNetwork();
 			
 			request = new HttpRequest(HttpRequest.GET,AppStateHandler.PATH);
 			response = requestHandler.handleRequest(request);
@@ -145,14 +148,20 @@ public class TestNeuralApp {
 			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 			request.setBody(JsonConstructor.fromObject(networkConfig));
 			response = requestHandler.handleRequest(request);
-			Console.log(response.getBody());
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().length() == 0;
 
+			AppConfig testConfig = new AppConfig(); 
+			App testApp = new App(testConfig);
+			assert !testApp.start();
+			assert testApp.getState().equals(AppStateManager.STOPPED);
+			
 			assert app.stop();
 			assert !indexHandler.getServer().isOpen();
 			assert !app.isStarted();
 			assert !app.stop();
+			
+			Logger.debug(self, "Test success!");
 		} catch(AssertionError e) {
 			e.printStackTrace();
 			if (app.isStarted()) {
