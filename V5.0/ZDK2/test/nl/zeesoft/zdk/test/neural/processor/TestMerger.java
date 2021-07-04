@@ -67,8 +67,7 @@ public class TestMerger {
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(mr);
 		StringBuilder str = json.toStringBuilder();
-		Json json2 = new Json();
-		json2.fromStringBuilder(str);
+		Json json2 = new Json(str);
 		Merger mr2 = (Merger) ObjectConstructor.fromJson(json2);
 		json2 = JsonConstructor.fromObjectUseConvertors(mr2);
 		assert StrUtil.equals(str, json2.toStringBuilder());

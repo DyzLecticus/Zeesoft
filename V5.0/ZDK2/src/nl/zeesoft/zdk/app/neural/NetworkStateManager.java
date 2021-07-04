@@ -6,7 +6,7 @@ public class NetworkStateManager {
 	public static String	LOADING			= "Loading";
 	public static String	RESETTING		= "Resetting";
 	public static String	READY			= "Ready";
-	public static String	TRAINING		= "Training";
+	public static String	PROCESSING		= "Processing";
 	public static String	SAVING			= "Saving";
 	
 	protected String		state			= CREATED;
@@ -35,8 +35,8 @@ public class NetworkStateManager {
 			(this.state.equals(LOADING) && state.equals(READY)) ||
 			(this.state.equals(READY) && state.equals(RESETTING)) ||
 			(this.state.equals(RESETTING) && state.equals(READY)) ||
-			(this.state.equals(READY) && state.equals(TRAINING)) ||
-			(this.state.equals(TRAINING) && state.equals(READY)) ||
+			(this.state.equals(READY) && state.equals(PROCESSING)) ||
+			(this.state.equals(PROCESSING) && state.equals(READY)) ||
 			(this.state.equals(READY) && state.equals(SAVING)) ||
 			(this.state.equals(SAVING) && state.equals(READY))
 		);

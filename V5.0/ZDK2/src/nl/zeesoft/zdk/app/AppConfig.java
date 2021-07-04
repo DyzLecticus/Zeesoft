@@ -24,4 +24,11 @@ public class AppConfig {
 		}
 		return r;
 	}
+	
+	public StringBuilder getParseBodyJsonError(Class<?> cls) {
+		StringBuilder r = new StringBuilder("Failed to parse ");
+		r.append(cls.getName());
+		r.append(" from JSON");
+		return r;
+	}
 }

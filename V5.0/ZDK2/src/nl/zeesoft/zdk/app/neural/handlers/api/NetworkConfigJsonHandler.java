@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.app.neural.handlers.api;
 
+import java.net.HttpURLConnection;
+
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
@@ -22,20 +24,34 @@ public class NetworkConfigJsonHandler extends NeuralAppContextHandler {
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		if (request.method.equals(HttpRequest.POST)) {
-			Json json = new Json();
-			json.fromStringBuilder(request.getBody());
-			NetworkConfig config = (NetworkConfig) ObjectConstructor.fromJson(json);
-			StringBuilder err = config.test();
-			if (err.length()==0) {
+			NetworkConfig config = parseBody(request, response);
+			testConfig(config, response);
+			if (response.code == HttpURLConnection.HTTP_OK) {
 				getNetworkManager().setConfig(config);
 				getNetworkManager().resetNetwork();
-			} else {
-				response.setBadRequest();
-				response.setBody(err);
 			}
 		} else {
 			NetworkConfig config = getNetworkManager().getConfig();
 			response.setBody(JsonConstructor.fromObject(config));
+		}
+	}
+	
+	protected NetworkConfig parseBody(HttpRequest request, HttpResponse response) {
+		NetworkConfig r = (NetworkConfig) ObjectConstructor.fromJson(new Json(request.getBody()));
+		if (r==null) {
+			response.setBadRequest();
+			response.setBody(app.getParseBodyJsonError(NetworkConfig.class));
+		}
+		return r;
+	}
+	
+	protected void testConfig(NetworkConfig config, HttpResponse response) {
+		if (config!=null) {
+			StringBuilder err = config.test();
+			if (err.length()>0) {
+				response.setBadRequest();
+				response.setBody(err);
+			}
 		}
 	}
 }

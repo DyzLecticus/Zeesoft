@@ -42,4 +42,8 @@ public class App {
 		}
 		return r;
 	}
+	
+	public StringBuilder getParseBodyJsonError(Class<?> cls) {
+		return config.getParseBodyJsonError(cls);
+	}
 }

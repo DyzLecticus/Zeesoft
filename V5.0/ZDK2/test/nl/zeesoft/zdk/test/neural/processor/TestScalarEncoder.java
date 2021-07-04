@@ -136,8 +136,7 @@ public class TestScalarEncoder {
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(se);
 		StringBuilder str = json.toStringBuilder();
-		Json json2 = new Json();
-		json2.fromStringBuilder(str);
+		Json json2 = new Json(str);
 		ScalarEncoder se2 = (ScalarEncoder) ObjectConstructor.fromJson(json2);
 		json2 = JsonConstructor.fromObjectUseConvertors(se2);
 		assert StrUtil.equals(str, json2.toStringBuilder());

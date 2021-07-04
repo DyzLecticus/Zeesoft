@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.app.neural;
 
 import nl.zeesoft.zdk.neural.network.Network;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 
@@ -25,6 +26,15 @@ public class NetworkManager {
 		return stateManager.getState();
 	}
 	
+	public boolean processNetworkIO(NetworkIO io) {
+		boolean r = false;
+		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
+			network.processIO(io);
+			r = stateManager.ifSetState(NetworkStateManager.READY);
+		}
+		return r;
+	}
+	
 	public boolean loadNetwork() {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.LOADING)) {
@@ -39,7 +49,7 @@ public class NetworkManager {
 	public boolean resetNetwork() {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.RESETTING)) {
-			r = network.initialize(config);
+			r = network.initialize(getConfig());
 			if (r) {
 				r = network.reset();
 			}
@@ -51,7 +61,7 @@ public class NetworkManager {
 	public boolean saveNetwork() {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.SAVING)) {
-			saveNetworkConfig(config);
+			saveNetworkConfig(getConfig());
 			saveNetwork(network);
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -66,7 +76,7 @@ public class NetworkManager {
 		saveNetwork();
 	}
 
-	protected void initializeNetwork() {
+	protected synchronized void initializeNetwork() {
 		config = loadNetworkConfig();
 		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
 			network.initialize(config);

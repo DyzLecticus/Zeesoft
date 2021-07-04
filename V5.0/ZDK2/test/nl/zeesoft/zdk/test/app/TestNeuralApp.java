@@ -3,22 +3,27 @@ package nl.zeesoft.zdk.test.app;
 import java.net.HttpURLConnection;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
 import nl.zeesoft.zdk.app.AppConfig;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
-import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
+import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
+import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
 public class TestNeuralApp {
@@ -53,7 +58,7 @@ public class TestNeuralApp {
 		assert networkStateManager.ifSetState(NetworkStateManager.RESETTING);
 		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
 		assert networkStateManager.ifSetState(NetworkStateManager.READY);
-		assert networkStateManager.ifSetState(NetworkStateManager.TRAINING);
+		assert networkStateManager.ifSetState(NetworkStateManager.PROCESSING);
 		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
 		assert networkStateManager.ifSetState(NetworkStateManager.READY);
 		
@@ -133,6 +138,12 @@ public class TestNeuralApp {
 			assert response.getBody().length() > 0;
 
 			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+			request.setBody(new Json());
+			response = requestHandler.handleRequest(request);
+			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+			assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
+
+			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 			request.setBody(JsonConstructor.fromObject(networkConfig));
 			response = requestHandler.handleRequest(request);
 			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
@@ -151,6 +162,25 @@ public class TestNeuralApp {
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().length() == 0;
 
+			request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+			request.setBody(new Json());
+			response = requestHandler.handleRequest(request);
+			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+			assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
+
+
+			NetworkIO io = new NetworkIO();
+			io.addInput("Input", 1);
+			request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+			request.setBody(JsonConstructor.fromObject(io));
+			response = requestHandler.handleRequest(request);
+			assert response.code == HttpURLConnection.HTTP_OK;
+			assert response.getBody().length() > 0;
+			Json json = new Json(response.getBody());
+			io = (NetworkIO) ObjectConstructor.fromJson(json);
+			assert io.getProcessorIO("Encoder").outputs.size() == 1;
+			assert io.getProcessorIO("Encoder").outputs.get(0).onBits.size() == 16;
+
 			AppConfig testConfig = new AppConfig(); 
 			App testApp = new App(testConfig);
 			assert !testApp.start();
@@ -161,6 +191,7 @@ public class TestNeuralApp {
 			assert !app.isStarted();
 			assert !app.stop();
 			
+			Util.sleep(100);
 			Logger.debug(self, "Test success!");
 		} catch(AssertionError e) {
 			e.printStackTrace();
