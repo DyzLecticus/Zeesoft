@@ -33,12 +33,12 @@ public class Network implements Finalizable {
 	 * 
 	 * @param num The number of worker threads
 	 */
-	public void setNumberOfWorkers(int num) {
+	public synchronized void setNumberOfWorkers(int num) {
 		executor.setWorkers(num);
 	}
 
 	@Override
-	public void finalizeObject() {
+	public synchronized void finalizeObject() {
 		ioProcessor = new NetworkIOProcessor(inputNames, processors);
 	}
 	
@@ -61,13 +61,13 @@ public class Network implements Finalizable {
 	 * @param timeoutMs The maximum number of milliseconds initialization can take
 	 * @return True if the network initialized within the specified time out milliseconds
 	 */
-	public boolean initialize(NetworkConfig config, int timeoutMs) {
+	public synchronized boolean initialize(NetworkConfig config, int timeoutMs) {
 		inputNames = new ArrayList<String>(config.getInputNames());
 		ioProcessor = new NetworkIOProcessor(inputNames, processors);
 		return processors.initialize(this, config.getProcessorConfigs(), timeoutMs);
 	}
 	
-	public boolean isInitialized() {
+	public synchronized boolean isInitialized() {
 		return inputNames!=null;
 	}
 	
@@ -101,7 +101,7 @@ public class Network implements Finalizable {
 	 * @param timeoutMs The maximum number of milliseconds reset can take
 	 * @return True if the network initialized within the specified time out milliseconds
 	 */
-	public boolean reset(int layer, String name, int timeoutMs) {
+	public synchronized boolean reset(int layer, String name, int timeoutMs) {
 		boolean r = false;
 		if (isInitialized()) {
 			previousIO = null;
@@ -127,7 +127,7 @@ public class Network implements Finalizable {
 	 * @param name Processor name contains filter; '*' = * (see ALL_PROCESSORS) 
 	 * @param learn Indicates learning on/off
 	 */
-	public void setLearn(int layer, String name, boolean learn) {
+	public synchronized void setLearn(int layer, String name, boolean learn) {
 		processors.setLearn(layer, name, learn);
 	}
 	
@@ -144,7 +144,7 @@ public class Network implements Finalizable {
 	 * @param layer Processor layer number filter; -1 = * (see ALL_LAYERS)
 	 * @param name Processor name contains filter; '*' = * (see ALL_PROCESSORS) 
 	 */
-	public void setNumberOfWorkersForProcessor(int layer, String name, int workers) {
+	public synchronized void setNumberOfWorkersForProcessor(int layer, String name, int workers) {
 		processors.setNumberOfWorkers(layer, name, workers);
 	}
 	
@@ -154,7 +154,7 @@ public class Network implements Finalizable {
 	 * 
 	 * @param io The network IO to process
 	 */
-	public void processIO(NetworkIO io) {
+	public synchronized void processIO(NetworkIO io) {
 		if (isInitialized(io) && isValidIO(io)) {
 			long start = System.nanoTime();
 			FunctionListList fll = ioProcessor.getProcessFunctionForNetworkIO(io, previousIO);
@@ -167,7 +167,7 @@ public class Network implements Finalizable {
 		}
 	}
 	
-	public NetworkIO getPreviousIO() {
+	public synchronized NetworkIO getPreviousIO() {
 		return previousIO;
 	}
 	
@@ -175,27 +175,27 @@ public class Network implements Finalizable {
 		return getCellStats(ALL_LAYERS, ALL_PROCESSORS);
 	}
 	
-	public CellStats getCellStats(int layer, String name) {
+	public synchronized CellStats getCellStats(int layer, String name) {
 		return processors.getCellStats(this, layer, name);
 	}
 	
-	public List<String> getInputNames() {
+	public synchronized List<String> getInputNames() {
 		return new ArrayList<String>(inputNames);
 	}
 	
-	public List<String> getProcessorNames() {
+	public synchronized List<String> getProcessorNames() {
 		return processors.getProcessorNames();
 	}
 	
-	public int getNumberOfLayers() {
+	public synchronized int getNumberOfLayers() {
 		return processors.getNumberOfLayers();
 	}
 	
-	public int getNumberOfProcessors() {
+	public synchronized int getNumberOfProcessors() {
 		return processors.getNumberOfProcessors();
 	}
 	
-	public int getWidth() {
+	public synchronized int getWidth() {
 		return processors.getWidth();
 	}
 	
@@ -207,7 +207,7 @@ public class Network implements Finalizable {
 		return getProcessors(ALL_LAYERS, name);
 	}
 	
-	public List<NetworkProcessor> getProcessors(int layer, String name) {
+	public synchronized List<NetworkProcessor> getProcessors(int layer, String name) {
 		return processors.getProcessors(layer, name);
 	}
 	

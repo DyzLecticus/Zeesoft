@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.code.CodeAnalyzer;
 import nl.zeesoft.zdk.code.CodeFile;
 import nl.zeesoft.zdk.code.MethodParser;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestCodeAnalyzer {
 	public static void main(String[] args) {
@@ -58,37 +58,37 @@ public class TestCodeAnalyzer {
 	
 	public static StringBuilder getMockCode(int num) {
 		StringBuilder r = new StringBuilder();
-		Util.appendLine(r, "public class MockCode {");
-		Util.appendLine(r, "	public int		number	= 0;");
-		Util.appendLine(r, "	public String	test1	= \"}\";");
-		Util.appendLine(r, "	public String	test2	= '}';");
-		Util.appendLine(r, "	public String	test3	= \"\\\"\";");
-		Util.appendLine(r, "	public String	test4	= \"'\";");
+		StrUtil.appendLine(r, "public class MockCode {");
+		StrUtil.appendLine(r, "	public int		number	= 0;");
+		StrUtil.appendLine(r, "	public String	test1	= \"}\";");
+		StrUtil.appendLine(r, "	public String	test2	= '}';");
+		StrUtil.appendLine(r, "	public String	test3	= \"\\\"\";");
+		StrUtil.appendLine(r, "	public String	test4	= \"'\";");
 		if (num<2) {
-			Util.appendLine(r, "	");
-			Util.appendLine(r, "	public int getNumber() {");
-			Util.appendLine(r, "		return number;");
-			Util.appendLine(r, "	}");
-			Util.appendLine(r, "	");
-			Util.appendLine(r, "	protected void setNumber(int number) {");
-			Util.appendLine(r, "		// Inline comment");
-			Util.appendLine(r, "		this.number = number;");
-			Util.appendLine(r, "	}");
+			StrUtil.appendLine(r, "	");
+			StrUtil.appendLine(r, "	public int getNumber() {");
+			StrUtil.appendLine(r, "		return number;");
+			StrUtil.appendLine(r, "	}");
+			StrUtil.appendLine(r, "	");
+			StrUtil.appendLine(r, "	protected void setNumber(int number) {");
+			StrUtil.appendLine(r, "		// Inline comment");
+			StrUtil.appendLine(r, "		this.number = number;");
+			StrUtil.appendLine(r, "	}");
 			if (num==1) {
-				Util.appendLine(r, "	");
-				Util.appendLine(r, "	/*");
-				Util.appendLine(r, "	 * Method comment");
-				Util.appendLine(r, "	 */");
-				Util.appendLine(r, "	private void increment(int number) {");
-				Util.appendLine(r, "		this.number += number;");
-				Util.appendLine(r, "		if (number == 10) {");
-				Util.appendLine(r, "			number = 10;");
-				Util.appendLine(r, "		}");
-				Util.appendLine(r, "	}");
-				Util.appendLine(r, "	");
+				StrUtil.appendLine(r, "	");
+				StrUtil.appendLine(r, "	/*");
+				StrUtil.appendLine(r, "	 * Method comment");
+				StrUtil.appendLine(r, "	 */");
+				StrUtil.appendLine(r, "	private void increment(int number) {");
+				StrUtil.appendLine(r, "		this.number += number;");
+				StrUtil.appendLine(r, "		if (number == 10) {");
+				StrUtil.appendLine(r, "			number = 10;");
+				StrUtil.appendLine(r, "		}");
+				StrUtil.appendLine(r, "	}");
+				StrUtil.appendLine(r, "	");
 			}
 		}
-		Util.appendLine(r, "}");
+		StrUtil.appendLine(r, "}");
 		return r;
 	}
 }

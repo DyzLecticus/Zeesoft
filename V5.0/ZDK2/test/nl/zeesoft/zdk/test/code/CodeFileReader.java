@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.code.CodeFile;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class CodeFileReader {
 	public List<CodeFile> readFiles() {
@@ -41,7 +41,7 @@ public class CodeFileReader {
 		try {
 			Scanner scanner = new Scanner(file);
 			while (scanner.hasNextLine()) {
-				Util.appendLine(r, scanner.nextLine());
+				StrUtil.appendLine(r, scanner.nextLine());
 			}
 			scanner.close();
 		} catch (FileNotFoundException e) {

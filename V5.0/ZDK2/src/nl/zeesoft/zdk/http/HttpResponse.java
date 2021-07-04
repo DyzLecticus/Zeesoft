@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import nl.zeesoft.zdk.str.StrUtil;
+
 public class HttpResponse extends HttpIO {
 	public int		code		= HttpURLConnection.HTTP_OK;
 	public String	message		= "OK";
@@ -41,10 +43,7 @@ public class HttpResponse extends HttpIO {
 	protected String getMethodList(List<String> methods) {
 		StringBuilder r = new StringBuilder();
 		for (String method: methods) {
-			if (r.length() > 0) {
-				r.append(", ");
-			}
-			r.append(method);
+			StrUtil.append(r, method, ", ");
 		}
 		return r.toString();
 	}

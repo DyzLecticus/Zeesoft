@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.code;
 
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class CodeFile {
 	public String				path	= "";
@@ -28,7 +28,7 @@ public class CodeFile {
 		for (String line: lines) {
 			line = line.replaceAll("\t", "").trim();
 			if (isCode(line)) {
-				Util.appendLine(r, line);
+				StrUtil.appendLine(r, line);
 			}
 		}
 		return r;

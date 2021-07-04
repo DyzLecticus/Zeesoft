@@ -3,8 +3,8 @@ package nl.zeesoft.zdk.neural.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class InputOutputConfig {
 	public List<InputConfig>	inputs		= new ArrayList<InputConfig>();
@@ -22,10 +22,10 @@ public class InputOutputConfig {
 	public String toString() {
 		StringBuilder r = new StringBuilder();
 		for (InputConfig input: inputs) {
-			Util.appendLine(r, input.toString());
+			StrUtil.appendLine(r, input.toString());
 		}
 		for (OutputConfig output: outputs) {
-			Util.appendLine(r, output.toString());
+			StrUtil.appendLine(r, output.toString());
 		}
 		return r.toString();
 	}

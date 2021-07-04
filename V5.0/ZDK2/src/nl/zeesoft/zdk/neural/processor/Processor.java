@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public abstract class Processor implements ConfigurableIO {
 	public final void processIO(ProcessorIO io) {
@@ -31,7 +32,7 @@ public abstract class Processor implements ConfigurableIO {
 	public String toString() {
 		StringBuilder r = new StringBuilder();
 		r.append(this.getClass().getSimpleName());
-		Util.appendLine(r, getInputOutputConfig().toString());
+		StrUtil.appendLine(r, getInputOutputConfig().toString());
 		return r.toString();
 	}
 	

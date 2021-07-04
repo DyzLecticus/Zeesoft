@@ -5,7 +5,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class NetworkIOAccuracy {
 	protected SortedMap<String,HistoricalFloat>		accuracies	= null;
@@ -32,10 +32,10 @@ public class NetworkIOAccuracy {
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		Util.appendLine(r, "Average: ");
+		StrUtil.appendLine(r, "Average: ");
 		r.append(getAverage());
 		for (Entry<String,HistoricalFloat> entry: accuracies.entrySet()) {
-			Util.appendLine(r, entry.getKey());
+			StrUtil.appendLine(r, entry.getKey());
 			r.append(": ");
 			r.append(entry.getValue().getAverage());
 		}

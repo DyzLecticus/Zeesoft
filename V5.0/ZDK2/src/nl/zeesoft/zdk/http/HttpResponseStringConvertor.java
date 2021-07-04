@@ -49,10 +49,7 @@ public class HttpResponseStringConvertor extends HttpIOStringConvertor {
 	protected StringBuilder buildMessage(List<StringBuilder> elems) {
 		StringBuilder r = new StringBuilder();
 		for (StringBuilder elem: elems) {
-			if (r.length()>0) {
-				r.append(" ");
-			}
-			r.append(elem);
+			StrUtil.append(r, elem, " ");
 		}
 		return r;
 	}

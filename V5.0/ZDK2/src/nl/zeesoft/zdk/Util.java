@@ -18,17 +18,6 @@ public class Util {
 		return (float) Math.sqrt((len1 * len1) + (len2 * len2));
 	}
 	
-	public static void appendLine(StringBuilder sb, String line) {
-		appendLine(sb, new StringBuilder(line));
-	}
-	
-	public static void appendLine(StringBuilder sb, StringBuilder line) {
-		if (sb.length()>0) {
-			sb.append("\n");
-		}
-		sb.append(line);
-	}
-	
 	@SuppressWarnings({ "rawtypes" })
 	public static void removeNullValuesFromList(List list) {
 		int r = 0;

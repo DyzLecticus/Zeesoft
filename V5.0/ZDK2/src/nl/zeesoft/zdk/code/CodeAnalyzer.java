@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.code;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class CodeAnalyzer {
 	public int					maxLinesPerFile			= 200;
@@ -39,11 +39,11 @@ public class CodeAnalyzer {
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
-		Util.appendLine(r, getFileAnalysis());
+		StrUtil.appendLine(r, getFileAnalysis());
 		StringBuilder ma = getMethodAnalysis();
 		if (ma.length()>0) {
 			r.append("\n");
-			Util.appendLine(r, ma);
+			StrUtil.appendLine(r, ma);
 		}
 		return r.toString();
 	}
@@ -87,10 +87,10 @@ public class CodeAnalyzer {
 		for (AnalyzerFile file: files) {
 			if (file.lines > max) {
 				if (first) {
-					Util.appendLine(r, "Largest files;");
+					StrUtil.appendLine(r, "Largest files;");
 					first = false;
 				}
-				Util.appendLine(r, "- " + file.toString());
+				StrUtil.appendLine(r, "- " + file.toString());
 			}
 		}
 	}
@@ -111,10 +111,10 @@ public class CodeAnalyzer {
 			for (FileMethod method: file.methods) {
 				if (method.lines > max) {
 					if (first) {
-						Util.appendLine(r, "Largest methods;");
+						StrUtil.appendLine(r, "Largest methods;");
 						first = false;
 					}
-					Util.appendLine(r, "- " + method.toString());
+					StrUtil.appendLine(r, "- " + method.toString());
 				}
 			}
 		}

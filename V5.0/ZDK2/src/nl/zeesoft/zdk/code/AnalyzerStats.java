@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.code;
 import java.util.List;
 
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class AnalyzerStats {
 	public int		total		= 0;
@@ -27,9 +28,9 @@ public class AnalyzerStats {
 	
 	public StringBuilder getAnalysisHeader(String items, String totalVal, String average) {
 		StringBuilder r = new StringBuilder();
-		Util.appendLine(r, items + ": " + total);
-		Util.appendLine(r, totalVal + ": " + totalValue);
-		Util.appendLine(r, average + ": " + avg + " (standard deviation: " + stdDev + ")");
+		StrUtil.appendLine(r, items + ": " + total);
+		StrUtil.appendLine(r, totalVal + ": " + totalValue);
+		StrUtil.appendLine(r, average + ": " + avg + " (standard deviation: " + stdDev + ")");
 		return r;
 	}
 }

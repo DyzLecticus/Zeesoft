@@ -50,10 +50,7 @@ public abstract class HttpIOStringConvertor extends ObjectStringConvertor {
 			if (dat.length()==0) {
 				break;
 			}
-			if (r.length()>0) {
-				r.append(StrUtil.CRLF);
-			}
-			r.append(dat);
+			StrUtil.append(r, dat, StrUtil.CRLF.toString());
 		}
 		return r;
 	}

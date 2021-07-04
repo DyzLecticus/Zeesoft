@@ -23,12 +23,6 @@ public class TestUtil {
 				
 		assert Util.getHypotenuse(3, 4) == 5;
 		
-		StringBuilder sb = new StringBuilder();
-		Util.appendLine(sb, "Test");
-		assert sb.toString().equals("Test");
-		Util.appendLine(sb, "Test");
-		assert sb.toString().equals("Test\nTest");
-		
 		List<Util> utils = new ArrayList<Util>();
 		utils.add(new Util());
 		utils.add(null);
@@ -46,17 +40,17 @@ public class TestUtil {
 		assert utils.size() == 1;
 		
 		Exception ex = Util.sleep(1);
-		ZdkTests.sleep(10);
+		ZdkTests.sleep(1);
 		assert ex == null;
 		
 		Thread runner = new Thread() {
 			@Override
 			public void run() {
-				caughtException = Util.sleep(100);
+				caughtException = Util.sleep(250);
 			}
 		};
 		runner.start();
-		ZdkTests.sleep(10);
+		ZdkTests.sleep(50);
 		runner.interrupt();
 		ZdkTests.sleep(10);
 		assert caughtException != null;

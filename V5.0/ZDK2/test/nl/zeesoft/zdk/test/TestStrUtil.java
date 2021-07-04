@@ -14,11 +14,24 @@ public class TestStrUtil {
 		
 		StrUtil strUtil = new StrUtil();
 		assert strUtil != null;
+		
 		StringBuilder str = new StringBuilder();
+		StrUtil.appendLine(str, "Test");
+		assert str.toString().equals("Test");
+		StrUtil.appendLine(str, new StringBuilder("Test"));
+		assert str.toString().equals("Test\nTest");
+
+		str = new StringBuilder();
+		StrUtil.append(str, "Test",", ");
+		assert str.toString().equals("Test");
+		StrUtil.append(str, "Test",", ");
+		assert str.toString().equals("Test, Test");
+
+		str = new StringBuilder();
 		StrUtil.trim(str);
 		assert str.length()==0;
 		assert StrUtil.indexOf(str, "qwer", 0) == -1;
-		
+				
 		str = new StringBuilder("  Test  ");
 		assert StrUtil.indexOf(str, "qwer", 0) == -1;
 		StrUtil.trim(str);
