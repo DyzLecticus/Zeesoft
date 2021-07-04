@@ -12,6 +12,16 @@ public class HttpHeaders {
 		return r;
 	}
 	
+	public HttpHeader set(String name, String value) {
+		HttpHeader r = get(name);
+		if (r!=null) {
+			r.value = value;
+		} else {
+			r = add(name, value);
+		}
+		return r;
+	}
+
 	public HttpHeader get(String name) {
 		HttpHeader r = null;
 		for (HttpHeader header: headers) {

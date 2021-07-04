@@ -10,8 +10,8 @@ import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
-import nl.zeesoft.zdk.app.neural.handlers.IndexHandler;
-import nl.zeesoft.zdk.app.neural.handlers.NetworkStateHandler;
+import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
@@ -62,7 +62,7 @@ public class TestNeuralApp {
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
 		AppContextRequestHandler requestHandler = (AppContextRequestHandler) serverConfig.getRequestHandler();
-		HttpRequest request = new HttpRequest(HttpRequest.GET,IndexHandler.PATH);
+		HttpRequest request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
 		HttpResponse response = new HttpResponse();
 		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
@@ -80,12 +80,12 @@ public class TestNeuralApp {
 		assert response.getBody().length() == 0;
 		assert response.code == HttpURLConnection.HTTP_BAD_METHOD;
 
-		NeuralAppContextHandler indexHandler = (NeuralAppContextHandler) requestHandler.get(IndexHandler.PATH);
+		NeuralAppContextHandler indexHandler = (NeuralAppContextHandler) requestHandler.get(IndexHtmlHandler.PATH);
 		assert indexHandler.getServer() == null;
 		assert indexHandler.getNetworkManager() != null;
 		assert indexHandler.getNetworkManager().getNetworkConfig() == networkConfig;
 		
-		request = new HttpRequest(HttpRequest.GET,IndexHandler.PATH);
+		request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
 		response = new HttpResponse();
 		indexHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_OK;
@@ -109,7 +109,7 @@ public class TestNeuralApp {
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().toString().equals(AppStateManager.STARTED);
 			
-			request = new HttpRequest(HttpRequest.GET,IndexHandler.PATH);
+			request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
 			response = new HttpResponse();
 			requestHandler.handleRequest(request, response);
 			assert response.code == HttpURLConnection.HTTP_OK;

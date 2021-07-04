@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestStringConvertor;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpResponseStringConvertor;
+import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
 
@@ -93,6 +94,7 @@ public class TestHttpIO {
 		assert request2.head.headers.size() == 3;
 		request2.setContentLength();
 		assert request2.head.headers.size() == 3;
+		assert request2.getContentLength() == 0;
 		
 		HttpResponse response = new HttpResponse();
 		response.protocol = "HTTP/9.9";
@@ -131,7 +133,10 @@ public class TestHttpIO {
 		assert hpsc.fromStringBuilder(new StringBuilder("qwer")) != null;
 		
 		response = new HttpResponse(HttpURLConnection.HTTP_NOT_FOUND, "Not Found");
+		response.setBody(new Json());
 		assert response.code == HttpURLConnection.HTTP_NOT_FOUND;
 		assert response.message.equals("Not Found");
+		assert response.getBody().toString().equals("{}");
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("application/json");
 	}
 }

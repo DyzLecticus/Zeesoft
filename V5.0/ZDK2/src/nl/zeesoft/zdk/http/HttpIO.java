@@ -1,12 +1,18 @@
 package nl.zeesoft.zdk.http;
 
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.json.Json;
 
 public abstract class HttpIO {
 	public String			protocol	= "HTTP/1.1";
 	public HttpHeaders		head		= new HttpHeaders();
 	public byte[]			body		= new byte[0];
 	
+	public void setBody(Json json) {
+		setBody(json.toStringBuilder());
+		setContentType("application/json");
+	}
+		
 	public void setBody(StringBuilder str) {
 		body = new byte[str.length()];
 		for (int i = 0; i < str.length(); i++) {
@@ -22,13 +28,12 @@ public abstract class HttpIO {
 		return r;
 	}
 	
+	public void setContentType(String type) {
+		head.set(HttpHeader.CONTENT_TYPE, type);
+	}
+	
 	public void setContentLength() {
-		HttpHeader header = head.get(HttpHeader.CONTENT_LENGTH);
-		if (header!=null) {
-			header.value = "" + body.length;
-		} else {
-			head.add(HttpHeader.CONTENT_LENGTH, "" + body.length);
-		}
+		head.set(HttpHeader.CONTENT_LENGTH, "" + body.length);
 	}
 	
 	public int getContentLength() {
@@ -41,12 +46,7 @@ public abstract class HttpIO {
 	}
 	
 	public void setConnection(String connection) {
-		HttpHeader header = head.get(HttpHeader.CONNECTION);
-		if (header!=null) {
-			header.value = connection;
-		} else {
-			head.add(HttpHeader.CONNECTION, connection);
-		}
+		head.set(HttpHeader.CONNECTION, connection);
 	}
 	
 	public String getConnection() {

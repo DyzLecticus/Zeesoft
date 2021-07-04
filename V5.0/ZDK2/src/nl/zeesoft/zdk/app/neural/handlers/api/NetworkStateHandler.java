@@ -1,14 +1,14 @@
-package nl.zeesoft.zdk.app.neural.handlers;
+package nl.zeesoft.zdk.app.neural.handlers.api;
 
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 
-public class IndexHandler extends NeuralAppContextHandler {
-	public static String	PATH	= "/";
+public class NetworkStateHandler extends NeuralAppContextHandler {
+	public static String	PATH	= "/network/state/";
 	
-	public IndexHandler(NeuralApp app) {
+	public NetworkStateHandler(NeuralApp app) {
 		super(app);
 		path = PATH;
 		allowedMethods.add(HttpRequest.HEAD);
@@ -16,8 +16,6 @@ public class IndexHandler extends NeuralAppContextHandler {
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		StringBuilder html = new StringBuilder();
-		html.append("<html>Hello world!</html>");
-		response.setBody(html);
+		response.setBody(new StringBuilder(getNetworkManager().getState()));
 	}
 }
