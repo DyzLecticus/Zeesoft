@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHandler;
+import nl.zeesoft.zdk.app.neural.handlers.NetworkStateHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.http.HttpServerConfig;
@@ -113,7 +114,13 @@ public class TestNeuralApp {
 			requestHandler.handleRequest(request, response);
 			assert response.code == HttpURLConnection.HTTP_OK;
 			assert response.getBody().length() > 0;
-			
+
+			request = new HttpRequest(HttpRequest.GET,NetworkStateHandler.PATH);
+			response = new HttpResponse();
+			requestHandler.handleRequest(request, response);
+			assert response.code == HttpURLConnection.HTTP_OK;
+			assert response.getBody().toString().equals(NetworkStateManager.READY);
+
 			assert app.stop();
 			assert !indexHandler.getServer().isOpen();
 			assert !app.isStarted();

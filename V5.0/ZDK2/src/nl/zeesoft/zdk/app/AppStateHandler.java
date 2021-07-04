@@ -14,8 +14,6 @@ public class AppStateHandler extends AppContextHandler {
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		StringBuilder html = new StringBuilder();
-		html.append(app.getState());
-		response.setBody(html);
+		response.setBody(new StringBuilder(app.getState()));
 	}
 }
