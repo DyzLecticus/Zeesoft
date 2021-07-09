@@ -19,6 +19,8 @@ import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
@@ -128,107 +130,13 @@ public class TestNeuralApp {
 			assert indexHandler.getServer().isOpen();
 			assert !app.start();
 
-			// App state
-			request = new HttpRequest(HttpRequest.HEAD,AppStateTextHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() == 0;
+			testRequests(requestHandler);
 
-			request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().toString().equals(AppStateManager.STARTED);
-			
-			// App index
-			request = new HttpRequest(HttpRequest.HEAD,IndexHtmlHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() == 0;
-			
-			request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() > 0;
-
-			// Network state
-			request = new HttpRequest(HttpRequest.HEAD,NetworkStateTextHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() == 0;
-			
-			request = new HttpRequest(HttpRequest.GET,NetworkStateTextHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().toString().equals(NetworkStateManager.READY);
-
-			// Network config
-			request = new HttpRequest(HttpRequest.HEAD,NetworkConfigJsonHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() == 0;
-			
-			request = new HttpRequest(HttpRequest.GET,NetworkConfigJsonHandler.PATH);
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() > 0;
-
-			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-			request.setBody(new Json());
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
-			assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
-
-			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-			request.setBody(JsonConstructor.fromObject(networkConfig));
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
-			assert response.getBody().toString().equals(
-				"A network must have at least one input\n" + 
-				"A network must have at least one processor"
-			);
-
-			networkConfig.addInput("Input");
-			networkConfig.addScalarEncoder("Encoder");
-			networkConfig.addLink("Input", "Encoder");
-			networkConfig.addSpatialPooler("Pooler");
-			networkConfig.addLink("Encoder", "Pooler");
-
-			HttpRequest request2 = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
-			request2.setBody(JsonConstructor.fromObject(new NetworkIO()));
-			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-			request.setBody(JsonConstructor.fromObject(networkConfig));
-			List<Thread> tests = new ArrayList<Thread>();
-			tests.add(getRequestAssertUnavailableThread(requestHandler, request));
-			tests.add(getRequestAssertUnavailableThread(requestHandler, request2));
-			for (Thread test: tests) {
-				test.start();
-			}
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() == 0;
-			for(Integer code: responseCodes) {
-				assert code == HttpURLConnection.HTTP_UNAVAILABLE;
-			}
-			
-			request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
-			request.setBody(new Json());
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
-			assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
-			assert responseCodes.size() == 2;
-			
-			// Network IO
-			NetworkIO io = new NetworkIO();
-			io.addInput("Input", 1);
-			request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
-			request.setBody(JsonConstructor.fromObject(io));
-			response = requestHandler.handleRequest(request);
-			assert response.code == HttpURLConnection.HTTP_OK;
-			assert response.getBody().length() > 0;
-			Json json = new Json(response.getBody());
-			io = (NetworkIO) ObjectConstructor.fromJson(json);
-			assert io.getProcessorIO("Encoder").outputs.size() == 1;
-			assert io.getProcessorIO("Encoder").outputs.get(0).onBits.size() == 16;
+			NetworkSettings settings = new NetworkSettings();
+			settings.workers = 3;
+			assert app.getNetworkManager().getWorkers() == 3;
+			settings.configure(app.getNetworkManager());
+			assert app.getNetworkManager().getWorkers() == 3;
 
 			AppConfig testConfig = new AppConfig(); 
 			App testApp = new App(testConfig);
@@ -249,10 +157,12 @@ public class TestNeuralApp {
 			}
 		}
 		
+		networkConfig = getSimpleNetworkConfig();
 		MockNeuralApp mockApp = new MockNeuralApp(config);
 		NetworkConfigJsonHandler configJsonHandler = new NetworkConfigJsonHandler(mockApp);
 		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(networkConfig));
+		response = new HttpResponse();
 		configJsonHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 	}
@@ -261,10 +171,165 @@ public class TestNeuralApp {
 		return new Thread() {
 			@Override
 			public void run() {
-				Util.sleep(20);
+				Util.sleep(50);
 				HttpResponse response = handler.handleRequest(request);
 				responseCodes.add(response.code);
 			}
 		};
+	}
+	
+	private static void testRequests(HttpRequestHandler requestHandler) {
+		HttpRequest request = null;
+		HttpResponse response = null;
+		
+		NetworkConfig networkConfig = new NetworkConfig();
+		
+		// App state
+		request = new HttpRequest(HttpRequest.HEAD,AppStateTextHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+
+		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().toString().equals(AppStateManager.STARTED);
+		
+		// App index
+		request = new HttpRequest(HttpRequest.HEAD,IndexHtmlHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+
+		// Network state
+		request = new HttpRequest(HttpRequest.HEAD,NetworkStateTextHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,NetworkStateTextHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().toString().equals(NetworkStateManager.READY);
+
+		// Network config
+		request = new HttpRequest(HttpRequest.HEAD,NetworkConfigJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,NetworkConfigJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+
+		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+		request.setBody(new Json());
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
+
+		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(networkConfig));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.getBody().toString().equals(
+			"A network must have at least one input\n" + 
+			"A network must have at least one processor"
+		);
+
+		networkConfig = getSimpleNetworkConfig();
+
+		HttpRequest request2 = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+		request2.setBody(JsonConstructor.fromObject(new NetworkIO()));
+		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(networkConfig));
+		List<Thread> tests = new ArrayList<Thread>();
+		tests.add(getRequestAssertUnavailableThread(requestHandler, request));
+		tests.add(getRequestAssertUnavailableThread(requestHandler, request2));
+		for (Thread test: tests) {
+			test.start();
+		}
+		for (int i = 0; i < 10; i++) {
+			response = requestHandler.handleRequest(request);
+		}
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		for(Integer code: responseCodes) {
+			assert code == HttpURLConnection.HTTP_UNAVAILABLE;
+		}
+		
+		request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+		request.setBody(new Json());
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
+		assert responseCodes.size() == 2;
+
+		// Network settings
+		request = new HttpRequest(HttpRequest.HEAD,NetworkSettingsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+
+		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
+		request.setBody(new Json());
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings from JSON");
+
+		NetworkSettings settings = new NetworkSettings();
+		settings.workers = 3;
+		settings.initTimeoutMs = 10101;
+		settings.resetTimeoutMs = 10102;
+		
+		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(settings));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+
+		request = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+		
+		Json json = new Json(response.getBody());
+		assert (int)json.root.get("workers").value == 3;
+		assert (int)json.root.get("initTimeoutMs").value == 10101;
+		assert (int)json.root.get("resetTimeoutMs").value == 10102;
+		
+		// Network IO
+		NetworkIO io = new NetworkIO();
+		io.addInput("Input", 1);
+		request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(io));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+		json = new Json(response.getBody());
+		io = (NetworkIO) ObjectConstructor.fromJson(json);
+		assert io.getProcessorIO("Encoder").outputs.size() == 1;
+		assert io.getProcessorIO("Encoder").outputs.get(0).onBits.size() == 16;
+	}
+	
+	private static NetworkConfig getSimpleNetworkConfig() {
+		NetworkConfig r = new NetworkConfig();
+		r.addInput("Input");
+		r.addScalarEncoder("Encoder");
+		r.addLink("Input", "Encoder");
+		r.addSpatialPooler("Pooler");
+		r.addLink("Encoder", "Pooler");
+		return r;
 	}
 }

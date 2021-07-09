@@ -23,28 +23,28 @@ public class NetworkManager {
 		this.config = config;
 	}
 
-	public int getWorkers() {
+	public synchronized int getWorkers() {
 		return workers;
 	}
 
-	public void setWorkers(int workers) {
+	public synchronized void setWorkers(int workers) {
 		this.workers = workers;
 		network.setNumberOfWorkers(workers);
 	}
 
-	public int getInitTimeoutMs() {
+	public synchronized int getInitTimeoutMs() {
 		return initTimeoutMs;
 	}
 
-	public void setInitTimeoutMs(int initTimeoutMs) {
+	public synchronized void setInitTimeoutMs(int initTimeoutMs) {
 		this.initTimeoutMs = initTimeoutMs;
 	}
 
-	public int getResetTimeoutMs() {
+	public synchronized int getResetTimeoutMs() {
 		return resetTimeoutMs;
 	}
 
-	public void setResetTimeoutMs(int resetTimeoutMs) {
+	public synchronized void setResetTimeoutMs(int resetTimeoutMs) {
 		this.resetTimeoutMs = resetTimeoutMs;
 	}
 	
@@ -69,7 +69,7 @@ public class NetworkManager {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.LOADING)) {
 			if (!loadNetwork(network)) {
-				network.reset(resetTimeoutMs);
+				network.reset(getResetTimeoutMs());
 			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -81,7 +81,7 @@ public class NetworkManager {
 		if (stateManager.ifSetState(NetworkStateManager.RESETTING)) {
 			r = network.initialize(getConfig());
 			if (r) {
-				network.reset(resetTimeoutMs);
+				network.reset(getResetTimeoutMs());
 			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -110,9 +110,9 @@ public class NetworkManager {
 	protected synchronized void initializeNetwork() {
 		config = loadNetworkConfig();
 		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
-			network.initialize(config, initTimeoutMs);
+			network.initialize(config, getInitTimeoutMs());
 			loadNetwork();
-			network.setNumberOfWorkers(workers);
+			network.setNumberOfWorkers(getWorkers());
 		}
 	}
 	
