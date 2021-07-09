@@ -8,8 +8,13 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 public class NetworkManager {
 	protected NetworkStateManager 	stateManager	= new NetworkStateManager();
 	protected NetworkConfig			config			= null;
-	protected Network				network			= new Network();
+	
+	protected int					workers			= Runtime.getRuntime().availableProcessors();
+	protected int					initTimeoutMs	= 10000;
+	protected int					resetTimeoutMs	= 10000;
 
+	protected Network				network			= new Network();
+	
 	public synchronized NetworkConfig getConfig() {
 		return config;
 	}
@@ -18,6 +23,31 @@ public class NetworkManager {
 		this.config = config;
 	}
 
+	public int getWorkers() {
+		return workers;
+	}
+
+	public void setWorkers(int workers) {
+		this.workers = workers;
+		network.setNumberOfWorkers(workers);
+	}
+
+	public int getInitTimeoutMs() {
+		return initTimeoutMs;
+	}
+
+	public void setInitTimeoutMs(int initTimeoutMs) {
+		this.initTimeoutMs = initTimeoutMs;
+	}
+
+	public int getResetTimeoutMs() {
+		return resetTimeoutMs;
+	}
+
+	public void setResetTimeoutMs(int resetTimeoutMs) {
+		this.resetTimeoutMs = resetTimeoutMs;
+	}
+	
 	public boolean isReady() {
 		return stateManager.isReady();
 	}
@@ -39,7 +69,7 @@ public class NetworkManager {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.LOADING)) {
 			if (!loadNetwork(network)) {
-				network.reset();
+				network.reset(resetTimeoutMs);
 			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -51,7 +81,7 @@ public class NetworkManager {
 		if (stateManager.ifSetState(NetworkStateManager.RESETTING)) {
 			r = network.initialize(getConfig());
 			if (r) {
-				r = network.reset();
+				network.reset(resetTimeoutMs);
 			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
@@ -74,13 +104,15 @@ public class NetworkManager {
 	
 	protected void onAppStop() {
 		saveNetwork();
+		network.setNumberOfWorkers(0);
 	}
 
 	protected synchronized void initializeNetwork() {
 		config = loadNetworkConfig();
 		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
-			network.initialize(config);
+			network.initialize(config, initTimeoutMs);
 			loadNetwork();
+			network.setNumberOfWorkers(workers);
 		}
 	}
 	

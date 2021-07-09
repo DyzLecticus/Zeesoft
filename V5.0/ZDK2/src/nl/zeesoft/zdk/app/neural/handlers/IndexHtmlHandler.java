@@ -16,8 +16,11 @@ public class IndexHtmlHandler extends NeuralAppContextHandler {
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		StringBuilder html = new StringBuilder();
-		html.append("<html>Hello world!</html>");
-		response.setBody(html);
+		request.setContentTypeHtml();
+		if (request.method.equals(HttpRequest.GET)) {
+			StringBuilder html = new StringBuilder();
+			html.append("<html>Hello world!</html>");
+			response.setBody(html);
+		}
 	}
 }

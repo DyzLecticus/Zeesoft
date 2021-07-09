@@ -73,9 +73,9 @@ public class TestExecutor {
 			@Override
 			protected Object exec() {
 				if (returnValue) {
-					Util.sleep(20);
+					Util.sleep(50);
 				} else {
-					Util.sleep(2);
+					Util.sleep(5);
 				}
 				return returnValue;
 			}
@@ -84,9 +84,9 @@ public class TestExecutor {
 			@Override
 			protected Object exec() {
 				if (returnValue) {
-					Util.sleep(20);
+					Util.sleep(50);
 				} else {
-					Util.sleep(2);
+					Util.sleep(5);
 				}
 				return returnValue;
 			}

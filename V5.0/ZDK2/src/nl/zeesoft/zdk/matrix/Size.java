@@ -1,6 +1,10 @@
 package nl.zeesoft.zdk.matrix;
 
 public class Size extends XYZ {
+	public Size() {
+		
+	}
+	
 	public Size(int x, int y) {
 		setXYZ(x, y, 1);
 	}

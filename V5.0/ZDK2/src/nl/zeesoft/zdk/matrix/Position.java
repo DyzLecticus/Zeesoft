@@ -6,6 +6,10 @@ import java.util.List;
 import nl.zeesoft.zdk.Util;
 
 public class Position extends XYZ {
+	public Position() {
+		
+	}
+	
 	public Position(int x, int y) {
 		this.x = x;
 		this.y = y;

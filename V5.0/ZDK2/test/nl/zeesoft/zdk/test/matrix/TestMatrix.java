@@ -15,6 +15,9 @@ public class TestMatrix {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		assert new Size() != null;
+		assert new Position() != null;
+
 		Size size = new Size(2,3,4);
 		Position position1 = new Position(1,2);
 		Position position2 = new Position(1,2,3);

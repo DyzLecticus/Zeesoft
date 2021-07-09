@@ -17,6 +17,8 @@ public class NetworkStateTextHandler extends NeuralAppContextHandler {
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		response.setContentTypeText();
-		response.setBody(new StringBuilder(getNetworkManager().getState()));
+		if (request.method.equals(HttpRequest.GET)) {
+			response.setBody(new StringBuilder(getNetworkManager().getState()));
+		}
 	}
 }

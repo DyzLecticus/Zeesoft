@@ -15,6 +15,8 @@ public class AppStateTextHandler extends AppContextHandler {
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		response.setContentTypeText();
-		response.setBody(new StringBuilder(app.getState()));
+		if (request.method.equals(HttpRequest.GET)) {
+			response.setBody(new StringBuilder(app.getState()));
+		}
 	}
 }
