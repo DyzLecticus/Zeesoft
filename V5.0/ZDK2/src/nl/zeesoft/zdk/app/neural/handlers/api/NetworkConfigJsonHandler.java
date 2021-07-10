@@ -24,19 +24,23 @@ public class NetworkConfigJsonHandler extends NeuralAppContextHandler {
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		if (request.method.equals(HttpRequest.POST)) {
-			NetworkConfig config = parseBody(request, response);
-			testConfig(config, response);
-			if (response.code == HttpURLConnection.HTTP_OK && checkNetworkReady(response)) {
-				getNetworkManager().setConfig(config);
-				if (!getNetworkManager().resetNetwork()) {
-					setResponseUnavailable(response);
-				}
-			}
+			handlePostRequest(request, response);
 		} else if (request.method.equals(HttpRequest.GET)) {
 			NetworkConfig config = getNetworkManager().getConfig();
 			response.setBody(JsonConstructor.fromObject(config));
 		} else {
 			request.setContentTypeJson();
+		}
+	}
+	
+	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
+		NetworkConfig config = parseBody(request, response);
+		testConfig(config, response);
+		if (response.code == HttpURLConnection.HTTP_OK && checkNetworkReady(response)) {
+			getNetworkManager().setConfig(config);
+			if (!getNetworkManager().resetNetwork()) {
+				setResponseUnavailable(response);
+			}
 		}
 	}
 	

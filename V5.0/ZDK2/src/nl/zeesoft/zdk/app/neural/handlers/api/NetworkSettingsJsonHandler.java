@@ -21,19 +21,27 @@ public class NetworkSettingsJsonHandler extends NeuralAppContextHandler {
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		if (request.method.equals(HttpRequest.POST)) {
-			NetworkSettings settings = parseBody(request, response);
-			if (settings!=null && !settings.configure(getNetworkManager())) {
-				setResponseUnavailable(response);
-			}
+			handlePostRequest(request, response);
 		} else if (request.method.equals(HttpRequest.GET)) {
-			NetworkSettings settings = new NetworkSettings(getNetworkManager());
-			if (settings.processorLearning!=null) {
-				response.setBody(JsonConstructor.fromObject(settings));
-			} else {
-				setResponseUnavailable(response);
-			}
+			handleGetRequest(request, response);
 		} else {
 			request.setContentTypeJson();
+		}
+	}
+	
+	protected void handlePostRequest(HttpRequest request, HttpResponse response) {
+		NetworkSettings settings = parseBody(request, response);
+		if (settings!=null && !settings.configure(getNetworkManager())) {
+			setResponseUnavailable(response);
+		}
+	}
+	
+	protected void handleGetRequest(HttpRequest request, HttpResponse response) {
+		NetworkSettings settings = new NetworkSettings(getNetworkManager());
+		if (settings.processorLearning!=null) {
+			response.setBody(JsonConstructor.fromObject(settings));
+		} else {
+			setResponseUnavailable(response);
 		}
 	}
 	
