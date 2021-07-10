@@ -1,24 +1,16 @@
 package nl.zeesoft.zdk.app.neural;
 
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
-import nl.zeesoft.zdk.neural.network.NetworkProcessor;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
-import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 
-public class NetworkManager {
+public class NetworkManager extends NetworkManagerSettings {
 	protected NetworkStateManager 	stateManager	= new NetworkStateManager();
 	protected NetworkConfig			config			= null;
-	
-	protected int					workers			= Runtime.getRuntime().availableProcessors();
-	protected int					initTimeoutMs	= 10000;
-	protected int					resetTimeoutMs	= 10000;
 
 	protected Network				network			= new Network();
 	
@@ -30,29 +22,10 @@ public class NetworkManager {
 		this.config = config;
 	}
 
-	public synchronized int getWorkers() {
-		return workers;
-	}
-
+	@Override
 	public synchronized void setWorkers(int workers) {
-		this.workers = workers;
+		super.setWorkers(workers);
 		network.setNumberOfWorkers(workers);
-	}
-
-	public synchronized int getInitTimeoutMs() {
-		return initTimeoutMs;
-	}
-
-	public synchronized void setInitTimeoutMs(int initTimeoutMs) {
-		this.initTimeoutMs = initTimeoutMs;
-	}
-
-	public synchronized int getResetTimeoutMs() {
-		return resetTimeoutMs;
-	}
-
-	public synchronized void setResetTimeoutMs(int resetTimeoutMs) {
-		this.resetTimeoutMs = resetTimeoutMs;
 	}
 	
 	public boolean isReady() {
@@ -86,13 +59,7 @@ public class NetworkManager {
 	public SortedMap<String,Boolean> getProcessorLearning() {
 		SortedMap<String,Boolean> r = null;
 		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
-			r = new TreeMap<String,Boolean>();
-			List<NetworkProcessor> processors = network.getProcessors(Network.ALL_LAYERS, Network.ALL_PROCESSORS);
-			for (NetworkProcessor processor: processors) {
-				if (processor.processor instanceof LearningProcessor) {
-					r.put(processor.name, ((LearningProcessor)processor.processor).isLearn());
-				}
-			}
+			r = getProcessorLearningForNetwork(network);
 			stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;
