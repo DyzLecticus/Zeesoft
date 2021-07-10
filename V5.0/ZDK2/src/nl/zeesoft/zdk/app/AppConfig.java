@@ -1,10 +1,14 @@
 package nl.zeesoft.zdk.app;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.http.HttpContextRequestHandler;
 import nl.zeesoft.zdk.http.HttpServerConfig;
 
 public class AppConfig {
 	public HttpServerConfig loadHttpServerConfig(App app) {
+		HttpServerConfig r = getNewHttpServerConfig(app);
+		HttpContextRequestHandler handler = (HttpContextRequestHandler) r.getRequestHandler();
+		Logger.debug(this, handler.getPathHandlersStringBuilder());
 		return getNewHttpServerConfig(app);
 	}
 	
@@ -22,6 +26,9 @@ public class AppConfig {
 			r.setPort(1234);
 			r.setDebugLogHeaders(Logger.isLoggerDebug());
 		}
+		AppContextRequestHandler handler = new AppContextRequestHandler(app);
+		handler.initializeContextHandlers();
+		r.setRequestHandler(handler);
 		return r;
 	}
 	

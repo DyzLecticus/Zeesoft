@@ -65,6 +65,7 @@ public class TestHttpIO {
 		assert request.head.headers.size() == 3;
 		request.method = "GET";
 		request.path = "/index.html";
+		request.query.append("test=true");
 		request.protocol = "HTTP/9.9";
 		request.head = head;
 		request.setBody(new StringBuilder("Body" + StrUtil.CRLF + "Text"));
@@ -84,6 +85,7 @@ public class TestHttpIO {
 		HttpRequest request2 = hrsc.fromStringBuilder(str);
 		assert request2.method.equals("GET");
 		assert request2.path.equals("/index.html");
+		assert request2.query.toString().equals("test=true");
 		assert request2.protocol.equals("HTTP/9.9");
 		assert request2.head.headers.size() == 2;
 		assert request2.head.get("Keep-Alive").value.equals("300");

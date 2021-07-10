@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.http;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.str.StrUtil;
+
 public class HttpContextRequestHandler extends HttpRequestHandler {
 	public List<HttpContextHandler>		handlers		= new ArrayList<HttpContextHandler>();
 	public String						indexFileName	= "index.html";
@@ -19,6 +21,22 @@ public class HttpContextRequestHandler extends HttpRequestHandler {
 		} else {
 			response.setNotFound();
 		}
+	}
+	
+	public StringBuilder getPathHandlersStringBuilder() {
+		StringBuilder r = new StringBuilder("Path handlers:");
+		for (HttpContextHandler contextHandler: handlers) {
+			StringBuilder line = new StringBuilder();
+			for (String method: contextHandler.allowedMethods) {
+				StrUtil.append(line, method, ", ");
+			}
+			line.append(")");
+			line.insert(0, " (");
+			line.insert(0, contextHandler.path);
+			line.insert(0, "- ");
+			StrUtil.appendLine(r, line);
+		}
+		return r;
 	}
 	
 	public void put(HttpContextHandler handler) {

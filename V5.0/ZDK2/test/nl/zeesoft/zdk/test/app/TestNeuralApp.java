@@ -31,6 +31,7 @@ import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestNeuralApp {
 	private static TestNeuralApp					self			= new TestNeuralApp();
@@ -97,6 +98,8 @@ public class TestNeuralApp {
 		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		String startsWith = "Path handlers:\n- /app/state.txt (HEAD, GET)\n- / (HEAD, GET)";
+		assert StrUtil.startsWith(requestHandler.getPathHandlersStringBuilder(), startsWith);
 
 		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
 		response = new HttpResponse();

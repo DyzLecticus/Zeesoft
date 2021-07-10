@@ -105,7 +105,7 @@ public class TestHttpServer {
 		
 		assert !client.isConnected();
 		assert client.connect(SERVER_URL);
-		request = new HttpRequest(HttpRequest.GET, "/index.html");
+		request = new HttpRequest(HttpRequest.GET, "/index.html?test=true");
 		request.head.add("Test", "Pizza");
 		request.setConnectionKeepAlive();
 		response = client.sendRequest(request);
@@ -141,7 +141,7 @@ public class TestHttpServer {
 		assert !client.disconnect();
 
 		assert client.connect(SERVER_URL);
-		request = new HttpRequest(HttpRequest.HEAD, "index.html");
+		request = new HttpRequest(HttpRequest.HEAD, "/index.html?test=true");
 		response = client.sendRequest(request);
 		assert response.message.equals("Coolio");
 		assert response.getBody().length() == 0;
@@ -156,6 +156,10 @@ public class TestHttpServer {
 				super.handleRequest(request, response);
 				if (request.method.length()>0) {
 					assert request.path.length()>0;
+					if (request.query.length()>0) {
+						assert request.query.toString().equals("test=true");
+						assert request.path.equals("/index.html");
+					}
 					assert request.protocol.equals("HTTP/1.1");
 					assert request.head.headers.size()>0;
 					response.message = "Coolio";

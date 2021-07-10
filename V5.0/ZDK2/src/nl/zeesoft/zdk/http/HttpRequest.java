@@ -10,6 +10,7 @@ public class HttpRequest extends HttpIO {
 	
 	public String			method		= "";
 	public String			path		= "";
+	public StringBuilder	query		= new StringBuilder();
 	
 	public HttpRequest() {
 		

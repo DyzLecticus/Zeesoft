@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.http.HttpContextHandler;
 import nl.zeesoft.zdk.http.HttpContextRequestHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestHttpContextRequestHandler {
 	public static void main(String[] args) {
@@ -37,7 +38,8 @@ public class TestHttpContextRequestHandler {
 		
 		contextHandler = new HttpContextHandler("/");
 		contextHandler.allowedMethods.add(HttpRequest.GET);
-		handler.put(contextHandler);		
+		handler.put(contextHandler);
+		assert StrUtil.startsWith(handler.getPathHandlersStringBuilder(), "Path handlers:\n- / (GET)");
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/"));
 		assert response.code == HttpURLConnection.HTTP_OK;
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/index.html"));
