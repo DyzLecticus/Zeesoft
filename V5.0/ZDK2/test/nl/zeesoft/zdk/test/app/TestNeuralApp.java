@@ -100,7 +100,7 @@ public class TestNeuralApp {
 		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
-		String startsWith = "Path handlers:\n- /app/state.txt (HEAD, GET)\n- / (HEAD, GET)";
+		String startsWith = "- /app/state.txt (HEAD, GET)\n- / (HEAD, GET)";
 		assert StrUtil.startsWith(requestHandler.getPathHandlersStringBuilder(), startsWith);
 
 		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);

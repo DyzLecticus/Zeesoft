@@ -24,7 +24,7 @@ public class HttpContextRequestHandler extends HttpRequestHandler {
 	}
 	
 	public StringBuilder getPathHandlersStringBuilder() {
-		StringBuilder r = new StringBuilder("Path handlers:");
+		StringBuilder r = new StringBuilder();
 		for (HttpContextHandler contextHandler: handlers) {
 			StringBuilder line = new StringBuilder();
 			for (String method: contextHandler.allowedMethods) {

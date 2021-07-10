@@ -1,6 +1,10 @@
 package nl.zeesoft.zdk.app;
 
+import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.http.HttpContextRequestHandler;
 import nl.zeesoft.zdk.http.HttpServer;
+import nl.zeesoft.zdk.http.HttpServerConfig;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class App {
 	protected AppConfig			config			= null;
@@ -14,13 +18,15 @@ public class App {
 	public boolean start() {
 		boolean r = state.ifSetState(AppStateManager.STARTING);
 		if (r) {
-			server = new HttpServer(config.loadHttpServerConfig(this));
+			HttpServerConfig serverConfig = config.loadHttpServerConfig(this);
+			logAppServerStarting(serverConfig);
+			server = new HttpServer(serverConfig);
 			if (server.open()) {
+				logAppServerPathHandlers(serverConfig);
 				config.onAppStart();
 				r = state.ifSetState(AppStateManager.STARTED);
 			} else {
-				state.ifSetState(AppStateManager.STOPPED);
-				r = false;
+				r = !state.ifSetState(AppStateManager.STOPPED);
 			}
 		}
 		return r;
@@ -45,5 +51,19 @@ public class App {
 	
 	public StringBuilder getParseBodyJsonError(Class<?> cls) {
 		return config.getParseBodyJsonError(cls);
+	}
+	
+	protected void logAppServerStarting(HttpServerConfig serverConfig) {
+		StringBuilder msg = new StringBuilder("Starting app server on port ");
+		msg.append(serverConfig.getPort());
+		msg.append(" ...");
+		Logger.debug(this, msg);
+	}
+	
+	protected void logAppServerPathHandlers(HttpServerConfig serverConfig) {
+		StringBuilder msg = new StringBuilder("Started app server. Path handlers;");
+		HttpContextRequestHandler handler = (HttpContextRequestHandler) serverConfig.getRequestHandler();
+		StrUtil.appendLine(msg, handler.getPathHandlersStringBuilder());
+		Logger.debug(this, msg);
 	}
 }

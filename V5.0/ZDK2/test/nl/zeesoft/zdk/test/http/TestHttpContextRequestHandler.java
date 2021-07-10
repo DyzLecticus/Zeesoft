@@ -39,7 +39,7 @@ public class TestHttpContextRequestHandler {
 		contextHandler = new HttpContextHandler("/");
 		contextHandler.allowedMethods.add(HttpRequest.GET);
 		handler.put(contextHandler);
-		assert StrUtil.startsWith(handler.getPathHandlersStringBuilder(), "Path handlers:\n- / (GET)");
+		assert StrUtil.startsWith(handler.getPathHandlersStringBuilder(), "- / (GET)");
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/"));
 		assert response.code == HttpURLConnection.HTTP_OK;
 		response = handler.handleRequest(new HttpRequest(HttpRequest.GET, "/index.html"));
