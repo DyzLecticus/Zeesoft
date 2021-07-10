@@ -1,15 +1,15 @@
 package nl.zeesoft.zdk.app.neural;
 
 public class NetworkStateManager {
-	public static String	CREATED			= "Created";
-	public static String	INITIALIZING	= "Initializing";
-	public static String	LOADING			= "Loading";
-	public static String	RESETTING		= "Resetting";
-	public static String	READY			= "Ready";
-	public static String	PROCESSING		= "Processing";
-	public static String	SAVING			= "Saving";
+	public static String	CREATED				= "Created";
+	public static String	INITIALIZING		= "Initializing";
+	public static String	LOADING				= "Loading";
+	public static String	RESETTING			= "Resetting";
+	public static String	READY				= "Ready";
+	public static String	PROCESSING			= "Processing";
+	public static String	SAVING				= "Saving";
 	
-	protected String		state			= CREATED;
+	protected String		state				= CREATED;
 	
 	public synchronized boolean ifSetState(String state) {
 		boolean r = false;

@@ -86,6 +86,8 @@ public class TestNeuralApp {
 		assert !app.getNetworkManager().loadNetwork();
 		assert !app.getNetworkManager().resetNetwork();
 		assert !app.getNetworkManager().saveNetwork();
+		assert !app.getNetworkManager().setProcessorLearning(null);
+		assert app.getNetworkManager().getProcessorLearning() == null;
 		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
@@ -133,10 +135,13 @@ public class TestNeuralApp {
 			testRequests(requestHandler);
 
 			NetworkSettings settings = new NetworkSettings();
-			settings.workers = 3;
 			assert app.getNetworkManager().getWorkers() == 3;
+			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
+			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
 			settings.configure(app.getNetworkManager());
 			assert app.getNetworkManager().getWorkers() == 3;
+			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
+			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
 
 			AppConfig testConfig = new AppConfig(); 
 			App testApp = new App(testConfig);
@@ -165,17 +170,6 @@ public class TestNeuralApp {
 		response = new HttpResponse();
 		configJsonHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
-	}
-	
-	private static Thread getRequestAssertUnavailableThread(HttpRequestHandler handler, HttpRequest request) {
-		return new Thread() {
-			@Override
-			public void run() {
-				Util.sleep(50);
-				HttpResponse response = handler.handleRequest(request);
-				responseCodes.add(response.code);
-			}
-		};
 	}
 	
 	private static void testRequests(HttpRequestHandler requestHandler) {
@@ -247,11 +241,19 @@ public class TestNeuralApp {
 
 		HttpRequest request2 = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
 		request2.setBody(JsonConstructor.fromObject(new NetworkIO()));
+		HttpRequest request3 = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
+		HttpRequest request4 = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
+		NetworkSettings settings = new NetworkSettings();
+		settings.processorLearning.put("Pooler", false);
+		request4.setBody(JsonConstructor.fromObject(settings));
+
 		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(networkConfig));
 		List<Thread> tests = new ArrayList<Thread>();
 		tests.add(getRequestAssertUnavailableThread(requestHandler, request));
 		tests.add(getRequestAssertUnavailableThread(requestHandler, request2));
+		tests.add(getRequestAssertUnavailableThread(requestHandler, request3));
+		tests.add(getRequestAssertUnavailableThread(requestHandler, request4));
 		for (Thread test: tests) {
 			test.start();
 		}
@@ -260,6 +262,7 @@ public class TestNeuralApp {
 		}
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() == 0;
+		assert responseCodes.size() == 4;
 		for(Integer code: responseCodes) {
 			assert code == HttpURLConnection.HTTP_UNAVAILABLE;
 		}
@@ -269,7 +272,6 @@ public class TestNeuralApp {
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
-		assert responseCodes.size() == 2;
 
 		// Network settings
 		request = new HttpRequest(HttpRequest.HEAD,NetworkSettingsJsonHandler.PATH);
@@ -288,10 +290,11 @@ public class TestNeuralApp {
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings from JSON");
 
-		NetworkSettings settings = new NetworkSettings();
+		settings = new NetworkSettings();
 		settings.workers = 3;
 		settings.initTimeoutMs = 10101;
 		settings.resetTimeoutMs = 10102;
+		settings.processorLearning.put("Pooler", false);
 		
 		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(settings));
@@ -308,6 +311,7 @@ public class TestNeuralApp {
 		assert (int)json.root.get("workers").value == 3;
 		assert (int)json.root.get("initTimeoutMs").value == 10101;
 		assert (int)json.root.get("resetTimeoutMs").value == 10102;
+		assert (boolean)json.root.get("processorLearning").get("keyValues").get(0).get("value").get("value").value == false;
 		
 		// Network IO
 		NetworkIO io = new NetworkIO();
@@ -331,5 +335,16 @@ public class TestNeuralApp {
 		r.addSpatialPooler("Pooler");
 		r.addLink("Encoder", "Pooler");
 		return r;
+	}
+	
+	private static Thread getRequestAssertUnavailableThread(HttpRequestHandler handler, HttpRequest request) {
+		return new Thread() {
+			@Override
+			public void run() {
+				Util.sleep(50);
+				HttpResponse response = handler.handleRequest(request);
+				responseCodes.add(response.code);
+			}
+		};
 	}
 }
