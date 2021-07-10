@@ -9,9 +9,9 @@ import nl.zeesoft.zdk.neural.network.NetworkProcessor;
 import nl.zeesoft.zdk.neural.processor.LearningProcessor;
 
 public class NetworkManagerSettings {
-	protected int	workers			= Runtime.getRuntime().availableProcessors();
-	protected int	initTimeoutMs	= 10000;
-	protected int	resetTimeoutMs	= 10000;
+	private int	workers			= Runtime.getRuntime().availableProcessors();
+	private int	initTimeoutMs	= 10000;
+	private int	resetTimeoutMs	= 10000;
 
 	public synchronized int getWorkers() {
 		return workers;

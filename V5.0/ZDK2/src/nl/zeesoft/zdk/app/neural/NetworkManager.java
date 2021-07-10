@@ -107,13 +107,15 @@ public class NetworkManager extends NetworkManagerSettings {
 		network.setNumberOfWorkers(0);
 	}
 
-	protected synchronized void initializeNetwork() {
+	protected synchronized boolean initializeNetwork() {
+		boolean r = false;
 		config = loadNetworkConfig();
 		if (stateManager.ifSetState(NetworkStateManager.INITIALIZING)) {
-			network.initialize(config, getInitTimeoutMs());
+			r = network.initialize(config, getInitTimeoutMs());
 			loadNetwork();
 			network.setNumberOfWorkers(getWorkers());
 		}
+		return r;
 	}
 	
 	protected NetworkConfig loadNetworkConfig() {

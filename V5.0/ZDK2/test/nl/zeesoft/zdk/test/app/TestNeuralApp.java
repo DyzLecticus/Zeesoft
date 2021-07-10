@@ -153,6 +153,16 @@ public class TestNeuralApp {
 			assert !app.isStarted();
 			assert !app.stop();
 			
+			networkConfig = getSimpleNetworkConfig();
+			MockNeuralApp mockApp = new MockNeuralApp(config);
+			NetworkConfigJsonHandler configJsonHandler = new NetworkConfigJsonHandler(mockApp);
+			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+			request.setBody(JsonConstructor.fromObject(networkConfig));
+			response = new HttpResponse();
+			configJsonHandler.handleRequest(request, response);
+			assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+			assert !((MockNetworkManager)mockApp.getNetworkManager()).initializeNetwork();
+			
 			Util.sleep(100);
 			Logger.debug(self, "Test success!");
 		} catch(AssertionError e) {
@@ -161,15 +171,6 @@ public class TestNeuralApp {
 				app.stop();
 			}
 		}
-		
-		networkConfig = getSimpleNetworkConfig();
-		MockNeuralApp mockApp = new MockNeuralApp(config);
-		NetworkConfigJsonHandler configJsonHandler = new NetworkConfigJsonHandler(mockApp);
-		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-		request.setBody(JsonConstructor.fromObject(networkConfig));
-		response = new HttpResponse();
-		configJsonHandler.handleRequest(request, response);
-		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 	}
 	
 	private static void testRequests(HttpRequestHandler requestHandler) {
