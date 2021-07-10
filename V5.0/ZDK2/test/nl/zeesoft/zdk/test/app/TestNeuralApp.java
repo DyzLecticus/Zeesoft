@@ -22,6 +22,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpResponse;
@@ -89,6 +90,7 @@ public class TestNeuralApp {
 		assert !app.getNetworkManager().saveNetwork();
 		assert !app.getNetworkManager().setProcessorLearning(null);
 		assert app.getNetworkManager().getProcessorLearning() == null;
+		assert app.getNetworkManager().getCellStats() == null;
 		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
@@ -329,6 +331,22 @@ public class TestNeuralApp {
 		io = (NetworkIO) ObjectConstructor.fromJson(json);
 		assert io.getProcessorIO("Encoder").outputs.size() == 1;
 		assert io.getProcessorIO("Encoder").outputs.get(0).onBits.size() == 16;
+
+		// Network stats
+		request = new HttpRequest(HttpRequest.HEAD,NetworkStatsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+
+		json = new Json(response.getBody());
+		assert (int)json.root.get("proximalStats").get("activeSynapses").value >= 100000;
+		assert (int)json.root.get("proximalStats").get("segments").value >= 1000;
+		assert (int)json.root.get("proximalStats").get("synapses").value >= 100000;
 	}
 	
 	private static NetworkConfig getSimpleNetworkConfig() {

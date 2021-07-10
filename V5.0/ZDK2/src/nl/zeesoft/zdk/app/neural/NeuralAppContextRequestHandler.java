@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
 
 public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 	public NeuralAppContextRequestHandler(NeuralApp app) {
@@ -20,5 +21,6 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		put(new NetworkConfigJsonHandler((NeuralApp)app));
 		put(new NetworkSettingsJsonHandler((NeuralApp)app));
 		put(new NetworkIOJsonHandler((NeuralApp)app));
+		put(new NetworkStatsJsonHandler((NeuralApp)app));
 	}
 }

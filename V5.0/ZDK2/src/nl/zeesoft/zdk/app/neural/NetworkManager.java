@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.app.neural;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
@@ -60,6 +61,15 @@ public class NetworkManager extends NetworkManagerSettings {
 		SortedMap<String,Boolean> r = null;
 		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
 			r = getProcessorLearningForNetwork(network);
+			stateManager.ifSetState(NetworkStateManager.READY);
+		}
+		return r;
+	}
+	
+	public CellStats getCellStats() {
+		CellStats r = null;
+		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
+			r = network.getCellStats();
 			stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;
