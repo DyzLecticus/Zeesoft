@@ -25,7 +25,7 @@ public class NetworkSettingsJsonHandler extends NeuralAppContextHandler {
 		} else if (request.method.equals(HttpRequest.GET)) {
 			handleGetRequest(request, response);
 		} else {
-			request.setContentTypeJson();
+			response.setContentTypeJson();
 		}
 	}
 	

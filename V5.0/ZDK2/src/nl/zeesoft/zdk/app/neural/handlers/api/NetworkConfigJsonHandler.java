@@ -29,7 +29,7 @@ public class NetworkConfigJsonHandler extends NeuralAppContextHandler {
 			NetworkConfig config = getNetworkManager().getConfig();
 			response.setBody(JsonConstructor.fromObject(config));
 		} else {
-			request.setContentTypeJson();
+			response.setContentTypeJson();
 		}
 	}
 	

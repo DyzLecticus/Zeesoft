@@ -40,6 +40,10 @@ public abstract class HttpIO {
 		setContentType("application/javascript");
 	}
 	
+	public void setContentTypeCss() {
+		setContentType("text/css");
+	}
+	
 	public void setContentTypeJson() {
 		setContentType("application/json");
 	}

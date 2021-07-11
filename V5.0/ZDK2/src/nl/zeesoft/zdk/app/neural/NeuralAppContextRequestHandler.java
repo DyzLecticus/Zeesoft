@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.app.neural;
 
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
+import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
@@ -19,6 +20,7 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		super.initializeContextHandlers();
 		put(new IndexHtmlHandler((NeuralApp)app));
 		put(new IndexJsHandler((NeuralApp)app));
+		put(new IndexCssHandler((NeuralApp)app));
 		
 		put(new NetworkStateTextHandler((NeuralApp)app));
 		put(new NetworkConfigJsonHandler((NeuralApp)app));

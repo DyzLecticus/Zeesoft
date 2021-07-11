@@ -16,6 +16,7 @@ import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
+import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
@@ -24,6 +25,8 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.resource.HtmlResource;
+import nl.zeesoft.zdk.http.HttpHeader;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpRequestHandler;
 import nl.zeesoft.zdk.http.HttpResponse;
@@ -73,6 +76,9 @@ public class TestNeuralApp {
 		assert !networkStateManager.ifSetState(NetworkStateManager.CREATED);
 		assert networkStateManager.ifSetState(NetworkStateManager.READY);
 		
+		HtmlResource html = new HtmlResource();
+		assert html.render().length() == 134;
+		
 		NeuralAppConfig config = new NeuralAppConfig();
 		NeuralApp app = new NeuralApp(config);
 		NetworkConfig networkConfig = new NetworkConfig();
@@ -101,7 +107,7 @@ public class TestNeuralApp {
 		requestHandler.handleRequest(request, response);
 		assert response.getBody().length() == 0;
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
-		String startsWith = "- /app/state.txt (HEAD, GET)\n- / (HEAD, GET)";
+		String startsWith = "- /app/state.txt (HEAD, GET)\n- /index.html (HEAD, GET)";
 		assert StrUtil.startsWith(requestHandler.getPathHandlersStringBuilder(), startsWith);
 
 		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
@@ -186,59 +192,24 @@ public class TestNeuralApp {
 		NetworkConfig networkConfig = new NetworkConfig();
 		
 		// App state
-		request = new HttpRequest(HttpRequest.HEAD,AppStateTextHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-
-		request = new HttpRequest(HttpRequest.GET,AppStateTextHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().toString().equals(AppStateManager.STARTED);
+		StringBuilder body = testHeadGetRequest(requestHandler, AppStateTextHandler.PATH, "text/plain");
+		assert body.toString().equals(AppStateManager.STARTED);
 		
 		// App index html
-		request = new HttpRequest(HttpRequest.HEAD,IndexHtmlHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-		
-		request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
+		body = testHeadGetRequest(requestHandler, IndexHtmlHandler.PATH, "text/html");
 		
 		// App index js
-		request = new HttpRequest(HttpRequest.HEAD,IndexJsHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
+		body = testHeadGetRequest(requestHandler, IndexJsHandler.PATH, "application/javascript");
 		
-		request = new HttpRequest(HttpRequest.GET,IndexJsHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
-
+		// App index css
+		body = testHeadGetRequest(requestHandler, IndexCssHandler.PATH, "text/css");
+		
 		// Network state
-		request = new HttpRequest(HttpRequest.HEAD,NetworkStateTextHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-		
-		request = new HttpRequest(HttpRequest.GET,NetworkStateTextHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().toString().equals(NetworkStateManager.READY);
+		body = testHeadGetRequest(requestHandler, NetworkStateTextHandler.PATH, "text/plain");
+		assert body.toString().equals(NetworkStateManager.READY);
 
 		// Network config
-		request = new HttpRequest(HttpRequest.HEAD,NetworkConfigJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-		
-		request = new HttpRequest(HttpRequest.GET,NetworkConfigJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
+		body = testHeadGetRequest(requestHandler, NetworkConfigJsonHandler.PATH, "application/json");
 
 		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 		request.setBody(new Json());
@@ -292,15 +263,7 @@ public class TestNeuralApp {
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
 
 		// Network settings
-		request = new HttpRequest(HttpRequest.HEAD,NetworkSettingsJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-		
-		request = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
+		body = testHeadGetRequest(requestHandler, NetworkSettingsJsonHandler.PATH, "application/json");
 
 		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
 		request.setBody(new Json());
@@ -345,17 +308,9 @@ public class TestNeuralApp {
 		assert io.getProcessorIO("Encoder").outputs.get(0).onBits.size() == 16;
 
 		// Network stats
-		request = new HttpRequest(HttpRequest.HEAD,NetworkStatsJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() == 0;
-		
-		request = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
+		body = testHeadGetRequest(requestHandler, NetworkStatsJsonHandler.PATH, "application/json");
 
-		json = new Json(response.getBody());
+		json = new Json(body);
 		assert (int)json.root.get("proximalStats").get("activeSynapses").value >= 100000;
 		assert (int)json.root.get("proximalStats").get("segments").value >= 1000;
 		assert (int)json.root.get("proximalStats").get("synapses").value >= 100000;
@@ -380,5 +335,23 @@ public class TestNeuralApp {
 				responseCodes.add(response.code);
 			}
 		};
+	}
+	
+	private static StringBuilder testHeadGetRequest(HttpRequestHandler requestHandler, String path, String expectedContentType) {
+		Logger.debug(self, "Test HEAD " + path);
+		HttpRequest request = new HttpRequest(HttpRequest.HEAD,path);
+		HttpResponse response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals(expectedContentType);
+		assert response.getBody().length() == 0;
+
+		Logger.debug(self, "Test GET " + path);
+		request = new HttpRequest(HttpRequest.GET,path);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals(expectedContentType);
+		StringBuilder body = response.getBody();
+		assert body.length()>0;
+		return body;
 	}
 }

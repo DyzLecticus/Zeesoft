@@ -7,8 +7,6 @@ public class HtmlResource extends Resource {
 	public String			title			= "";
 	public String			onload			= "";
 	public String			faviconPath		= "/favicon.ico";
-
-	public String			bodyBgColor		= "DEDEDE";
 	
 	public List<String>		scriptFiles 	= new ArrayList<String>();
 	public List<String>		styleFiles		= new ArrayList<String>();
@@ -42,11 +40,6 @@ public class HtmlResource extends Resource {
 		if (onload.length()>0) {
 			tag.append(" onload=\"");
 			tag.append(onload);
-			tag.append("\"");
-		}
-		if (bodyBgColor.length()>0) {
-			tag.append(" bgcolor=\"");
-			tag.append(bodyBgColor);
 			tag.append("\"");
 		}
 		tag.append(">");
