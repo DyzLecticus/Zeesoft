@@ -17,6 +17,7 @@ import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
@@ -195,13 +196,24 @@ public class TestNeuralApp {
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().toString().equals(AppStateManager.STARTED);
 		
-		// App index
+		// App index html
 		request = new HttpRequest(HttpRequest.HEAD,IndexHtmlHandler.PATH);
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() == 0;
 		
 		request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() > 0;
+		
+		// App index js
+		request = new HttpRequest(HttpRequest.HEAD,IndexJsHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		assert response.getBody().length() == 0;
+		
+		request = new HttpRequest(HttpRequest.GET,IndexJsHandler.PATH);
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() > 0;

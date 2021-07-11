@@ -2,16 +2,16 @@ package nl.zeesoft.zdk.app.neural.handlers;
 
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
-import nl.zeesoft.zdk.app.neural.resources.IndexHtml;
+import nl.zeesoft.zdk.app.neural.resources.IndexJs;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 
-public class IndexHtmlHandler extends NeuralAppContextHandler {
-	public static String	PATH	= "/";
+public class IndexJsHandler extends NeuralAppContextHandler {
+	public static String	PATH	= "/index.js";
 	
-	private StringBuilder	html	= (new IndexHtml("Welcome")).render();
+	private StringBuilder	js		= (new IndexJs()).render();
 	
-	public IndexHtmlHandler(NeuralApp app) {
+	public IndexJsHandler(NeuralApp app) {
 		super(app);
 		path = PATH;
 		allowedMethods.add(HttpRequest.HEAD);
@@ -19,9 +19,9 @@ public class IndexHtmlHandler extends NeuralAppContextHandler {
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
-		request.setContentTypeHtml();
+		request.setContentTypeJavaScript();
 		if (request.method.equals(HttpRequest.GET)) {
-			response.setBody(html);
+			response.setBody(js);
 		}
 	}
 }

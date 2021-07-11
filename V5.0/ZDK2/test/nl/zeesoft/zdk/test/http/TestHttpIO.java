@@ -145,6 +145,8 @@ public class TestHttpIO {
 		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("application/json");
 		response.setContentTypeHtml();
 		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("text/html");
+		response.setContentTypeJavaScript();
+		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("application/javascript");
 		response.setContentTypeText();
 		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals("text/plain");
 	}

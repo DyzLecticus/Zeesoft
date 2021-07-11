@@ -26,7 +26,8 @@ public class App {
 				config.onAppStart();
 				r = state.ifSetState(AppStateManager.STARTED);
 			} else {
-				r = !state.ifSetState(AppStateManager.STOPPED);
+				state.ifSetState(AppStateManager.STOPPED);
+				r = false;
 			}
 		}
 		return r;
