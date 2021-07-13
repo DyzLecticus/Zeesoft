@@ -211,15 +211,11 @@ public class TestNeuralApp {
 		// Network config
 		body = testHeadGetRequest(requestHandler, NetworkConfigJsonHandler.PATH, "application/json");
 
-		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-		request.setBody(new Json());
-		response = requestHandler.handleRequest(request);
+		response = testPostRequest(requestHandler, NetworkConfigJsonHandler.PATH, new Json());
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
 
-		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-		request.setBody(JsonConstructor.fromObject(networkConfig));
-		response = requestHandler.handleRequest(request);
+		response = testPostRequest(requestHandler, NetworkConfigJsonHandler.PATH, JsonConstructor.fromObject(networkConfig));
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals(
 			"A network must have at least one input\n" + 
@@ -256,18 +252,14 @@ public class TestNeuralApp {
 			assert code == HttpURLConnection.HTTP_UNAVAILABLE;
 		}
 		
-		request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
-		request.setBody(new Json());
-		response = requestHandler.handleRequest(request);
+		response = testPostRequest(requestHandler, NetworkIOJsonHandler.PATH, new Json());
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
 
 		// Network settings
 		body = testHeadGetRequest(requestHandler, NetworkSettingsJsonHandler.PATH, "application/json");
 
-		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
-		request.setBody(new Json());
-		response = requestHandler.handleRequest(request);
+		response = testPostRequest(requestHandler, NetworkSettingsJsonHandler.PATH, new Json());
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings from JSON");
 
@@ -277,18 +269,12 @@ public class TestNeuralApp {
 		settings.resetTimeoutMs = 10102;
 		settings.processorLearning.put("Pooler", false);
 		
-		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
-		request.setBody(JsonConstructor.fromObject(settings));
-		response = requestHandler.handleRequest(request);
+		response = testPostRequest(requestHandler, NetworkSettingsJsonHandler.PATH, JsonConstructor.fromObject(settings));
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() == 0;
 
-		request = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.getBody().length() > 0;
-		
-		Json json = new Json(response.getBody());
+		body = testRequest(requestHandler,HttpRequest.GET,NetworkSettingsJsonHandler.PATH,"application/json");
+		Json json = new Json(body);
 		assert (int)json.root.get("workers").value == 3;
 		assert (int)json.root.get("initTimeoutMs").value == 10101;
 		assert (int)json.root.get("resetTimeoutMs").value == 10102;
@@ -338,20 +324,28 @@ public class TestNeuralApp {
 	}
 	
 	private static StringBuilder testHeadGetRequest(HttpRequestHandler requestHandler, String path, String expectedContentType) {
-		Logger.debug(self, "Test HEAD " + path);
-		HttpRequest request = new HttpRequest(HttpRequest.HEAD,path);
+		testRequest(requestHandler,HttpRequest.HEAD,path,"");
+		return testRequest(requestHandler,HttpRequest.GET,path,expectedContentType);
+	}
+	
+	private static StringBuilder testRequest(HttpRequestHandler requestHandler, String method, String path, String expectedContentType) {
+		Logger.debug(self, "Test " + method + " " + path);
+		HttpRequest request = new HttpRequest(method,path);
 		HttpResponse response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals(expectedContentType);
-		assert response.getBody().length() == 0;
-
-		Logger.debug(self, "Test GET " + path);
-		request = new HttpRequest(HttpRequest.GET,path);
-		response = requestHandler.handleRequest(request);
-		assert response.code == HttpURLConnection.HTTP_OK;
-		assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals(expectedContentType);
 		StringBuilder body = response.getBody();
-		assert body.length()>0;
-		return body;
+		if (expectedContentType.length()>0) {
+			assert response.head.get(HttpHeader.CONTENT_TYPE).value.equals(expectedContentType);
+			assert body.length() > 0;
+		} else {
+			assert body.length() == 0;
+		}
+		return response.getBody();
+	}
+	
+	private static HttpResponse testPostRequest(HttpRequestHandler requestHandler, String path, Json body) {
+		HttpRequest request = new HttpRequest(HttpRequest.POST,path);
+		request.setBody(body);
+		return requestHandler.handleRequest(request);
 	}
 }
