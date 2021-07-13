@@ -79,6 +79,7 @@ public class TestNeuralApp {
 		
 		HtmlResource html = new HtmlResource();
 		assert html.render().length() == 134;
+		assert HtmlResource.renderLinkListItem("A","B").toString().equals("<li><a href=\"A\">B</a></li>");
 		
 		NeuralAppConfig config = new NeuralAppConfig();
 		NeuralApp app = new NeuralApp(config);
