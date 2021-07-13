@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.app.neural;
 
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
+import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -19,6 +20,7 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 	protected void initializeContextHandlers() {
 		super.initializeContextHandlers();
 		put(new IndexHtmlHandler((NeuralApp)app));
+		put(new FaviconIcoHandler((NeuralApp)app));
 		put(new IndexJsHandler((NeuralApp)app));
 		put(new IndexCssHandler((NeuralApp)app));
 		

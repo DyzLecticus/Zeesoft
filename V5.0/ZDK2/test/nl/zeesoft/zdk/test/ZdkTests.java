@@ -64,6 +64,8 @@ public class ZdkTests {
 		TestInstantiator.main(args);
 		Console.log("Test Reflector ...");
 		TestReflector.main(args);
+		Console.log("Test TextIcon ...");
+		TestTextIcon.main(args);
 
 		Console.log("Test Analyzer ...");
 		TestCodeAnalyzer.main(args);

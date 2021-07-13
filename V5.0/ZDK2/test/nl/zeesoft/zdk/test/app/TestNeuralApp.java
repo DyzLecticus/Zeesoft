@@ -16,6 +16,7 @@ import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
+import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -197,7 +198,10 @@ public class TestNeuralApp {
 		
 		// App index html
 		body = testHeadGetRequest(requestHandler, IndexHtmlHandler.PATH, "text/html");
-		
+
+		// App favicon ico
+		body = testHeadGetRequest(requestHandler, FaviconIcoHandler.PATH, "image/x-icon");
+
 		// App index js
 		body = testHeadGetRequest(requestHandler, IndexJsHandler.PATH, "application/javascript");
 		

@@ -40,6 +40,4 @@ public class TestLock implements Runnable {
 		}
 		lock.unlock();
 	}
-	
-	
 }
