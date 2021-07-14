@@ -7,7 +7,11 @@ public class NeuralApp extends App {
 		super(config);
 	}
 	
-	public synchronized NetworkManager getNetworkManager() {
+	public NetworkManager getNetworkManager() {
 		return ((NeuralAppConfig) this.config).getNetworkManager();
+	}
+	
+	public NetworkRecorder getNetworkRecorder() {
+		return ((NeuralAppConfig) this.config).getNetworkRecorder();
 	}
 }

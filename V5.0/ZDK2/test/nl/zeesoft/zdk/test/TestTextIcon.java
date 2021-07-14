@@ -31,5 +31,7 @@ public class TestTextIcon {
 		icon.background = null;
 		icon.renderPanel();
 		assert icon.getPanel() != null;
+		assert icon.getByteArray(true) == null;
+		assert icon.getByteArray(false).length > 0;
 	}
 }

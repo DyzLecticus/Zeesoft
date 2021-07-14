@@ -37,10 +37,11 @@ public class NetworkManager extends NetworkManagerSettings {
 		return stateManager.getState();
 	}
 	
-	public boolean processNetworkIO(NetworkIO io) {
+	public boolean processNetworkIO(NetworkIO io, NetworkRecorder recorder) {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
 			network.processIO(io);
+			recorder.add(io);
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;

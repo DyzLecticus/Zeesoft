@@ -14,6 +14,10 @@ public class NeuralAppContextHandler extends AppContextHandler {
 		return ((NeuralApp)app).getNetworkManager();
 	}
 	
+	public NetworkRecorder getNetworkRecorder() {
+		return ((NeuralApp)app).getNetworkRecorder();
+	}
+	
 	public boolean checkNetworkReady(HttpResponse response) {
 		boolean r = getNetworkManager().isReady();
 		if (!r) {

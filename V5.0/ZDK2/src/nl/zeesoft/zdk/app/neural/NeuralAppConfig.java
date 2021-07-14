@@ -6,9 +6,11 @@ import nl.zeesoft.zdk.http.HttpServerConfig;
 
 public class NeuralAppConfig extends AppConfig {
 	protected NetworkManager	networkManager	= null;
+	protected NetworkRecorder	networkRecorder	= null;
 
 	public NeuralAppConfig() {
 		networkManager = getNewNetworkManager();
+		networkRecorder = getNewNetworkRecorder();
 	}
 	
 	@Override
@@ -36,7 +38,15 @@ public class NeuralAppConfig extends AppConfig {
 		return networkManager;
 	}
 	
+	public NetworkRecorder getNetworkRecorder() {
+		return networkRecorder;
+	}
+	
 	protected NetworkManager getNewNetworkManager() {
 		return new NetworkManager();
+	}
+	
+	protected NetworkRecorder getNewNetworkRecorder() {
+		return new NetworkRecorder();
 	}
 }

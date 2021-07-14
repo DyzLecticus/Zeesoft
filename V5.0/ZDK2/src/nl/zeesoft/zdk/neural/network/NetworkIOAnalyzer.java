@@ -33,6 +33,10 @@ public class NetworkIOAnalyzer {
 		}
 	}
 	
+	public List<NetworkIO> getNetworkIO() {
+		return new ArrayList<NetworkIO>(networkIO);
+	}
+	
 	public NetworkIOStats getAverageStats() {
 		NetworkIOStats r = new NetworkIOStats();
 		r.nsPerLayer = new TreeMap<Integer,Long>();

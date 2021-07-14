@@ -21,7 +21,7 @@ public class NetworkIOJsonHandler extends NeuralAppContextHandler {
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		NetworkIO io = parseBody(request, response);
 		if (io!=null) {
-			if (getNetworkManager().processNetworkIO(io)) {
+			if (getNetworkManager().processNetworkIO(io, getNetworkRecorder())) {
 				response.setBody(JsonConstructor.fromObjectUseConvertors(io));
 			} else {
 				setResponseUnavailable(response);

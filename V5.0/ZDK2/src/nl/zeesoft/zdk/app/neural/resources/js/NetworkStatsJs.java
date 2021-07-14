@@ -46,16 +46,4 @@ public class NetworkStatsJs extends Resource {
 		append(r, "    return html;");
 		append(r, "};");
 	}
-
-	protected void renderExecuteAndPublish(StringBuilder r) {
-		append(r, "ObjectLoader.executeAndPublish = (loader) => {");
-		append(r, "    loader.request.execute((xhr) => {");
-		append(r, "        let value = xhr.response;");
-		append(r, "        if (xhr.getResponseHeader(\"Content-Type\")===\"application/json\") {");
-		append(r, "            value = JSON.parse(xhr.response);");
-		append(r, "        }");
-		append(r, "        changePublisher.setValue(loader.key, value);");
-		append(r, "    });");
-		append(r, "};");
-	}
 }

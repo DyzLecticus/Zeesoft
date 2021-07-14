@@ -101,6 +101,15 @@ public class TestNeuralApp {
 		assert app.getNetworkManager().getProcessorLearning() == null;
 		assert app.getNetworkManager().getCellStats() == null;
 		
+		assert app.getNetworkRecorder().getNetworkIO().size() == 0;
+		NetworkIO io = new NetworkIO();
+		app.getNetworkRecorder().add(io);
+		assert app.getNetworkRecorder().getNetworkIO().size() == 1;
+		assert app.getNetworkRecorder().getAverageStats().totalNs == 0;
+		assert app.getNetworkRecorder().getAccuracy().getAverage() == 0F;
+		app.getNetworkRecorder().reset();
+		assert app.getNetworkRecorder().getNetworkIO().size() == 0;
+		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
 		AppContextRequestHandler requestHandler = (AppContextRequestHandler) serverConfig.getRequestHandler();

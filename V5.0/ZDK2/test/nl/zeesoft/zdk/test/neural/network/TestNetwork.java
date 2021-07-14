@@ -110,6 +110,7 @@ public class TestNetwork {
 		assert network.reset();
 		
 		NetworkIOAnalyzer analyzer = new NetworkIOAnalyzer();
+		assert analyzer.getNetworkIO().size() == 0;
 		assert analyzer.getAverageStats().totalNs == 0;
 		
 		io = new NetworkIO("TestInput",0);
@@ -126,6 +127,7 @@ public class TestNetwork {
 		assert ioStats.nsPerLayer.size() == network.getNumberOfLayers();
 		long totalNs = ioStats.totalNs;
 		analyzer.add(io);
+		assert analyzer.getNetworkIO().size() == 1;
 
 		io = new NetworkIO("TestInput",1);
 		io.addInput("TestInput2", new Sdr(100));
