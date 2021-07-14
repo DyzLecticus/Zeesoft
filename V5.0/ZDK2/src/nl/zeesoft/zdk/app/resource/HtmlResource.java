@@ -5,6 +5,7 @@ import java.util.List;
 
 public class HtmlResource extends Resource {
 	public static String	LINE_BREAK		= "<br />";
+	public static String	SPACE			= "&nbsp;";
 	
 	public String			title			= "";
 	public String			onload			= "";

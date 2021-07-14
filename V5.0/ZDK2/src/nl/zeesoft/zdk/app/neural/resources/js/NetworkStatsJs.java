@@ -1,0 +1,61 @@
+package nl.zeesoft.zdk.app.neural.resources.js;
+
+import nl.zeesoft.zdk.app.resource.Resource;
+
+public class NetworkStatsJs extends Resource {
+	@Override
+	protected void render(StringBuilder r) {
+		append(r, "var networkStats = networkStats || {};");
+		renderToHtmlTable(r);
+		renderToHtmlTableHeader(r);
+		renderToHtmlTableRow(r);
+	}
+
+	protected void renderToHtmlTable(StringBuilder r) {
+		append(r, "networkStats.toHtmlTable = (json) => {");
+		append(r, "    var html = \"<table>\";");
+		append(r, "    html += networkStats.toHtmlTableHeader();");
+		append(r, "    html += networkStats.toHtmlTableRow(\"Proximal\", json.proximalStats);");
+		append(r, "    html += networkStats.toHtmlTableRow(\"Distal\", json.distalStats);");
+		append(r, "    html += networkStats.toHtmlTableRow(\"Apical\", json.apicalStats);");
+		append(r, "    html += \"</table>\";");
+		append(r, "    return html;");
+		append(r, "};");
+	}
+	
+	protected void renderToHtmlTableHeader(StringBuilder r) {
+		append(r, "networkStats.toHtmlTableHeader = () => {");
+		append(r, "    var html = \"<tr>\";");
+		append(r, "    html += \"<th></th>\";");
+		append(r, "    html += \"<th>Segments</th>\";");
+		append(r, "    html += \"<th>Synapses</th>\";");
+		append(r, "    html += \"<th>Active</th>\";");
+		append(r, "    html += \"<tr>\";");
+		append(r, "    return html;");
+		append(r, "};");
+	}
+	
+	protected void renderToHtmlTableRow(StringBuilder r) {
+		append(r, "networkStats.toHtmlTableRow = (type, segmentStats) => {");
+		append(r, "    var html = \"<tr>\";");
+		append(r, "    html += \"<td>\" + type + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + segmentStats.segments + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + segmentStats.synapses + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + segmentStats.activeSynapses + \"</td>\";");
+		append(r, "    html += \"<tr>\";");
+		append(r, "    return html;");
+		append(r, "};");
+	}
+
+	protected void renderExecuteAndPublish(StringBuilder r) {
+		append(r, "ObjectLoader.executeAndPublish = (loader) => {");
+		append(r, "    loader.request.execute((xhr) => {");
+		append(r, "        let value = xhr.response;");
+		append(r, "        if (xhr.getResponseHeader(\"Content-Type\")===\"application/json\") {");
+		append(r, "            value = JSON.parse(xhr.response);");
+		append(r, "        }");
+		append(r, "        changePublisher.setValue(loader.key, value);");
+		append(r, "    });");
+		append(r, "};");
+	}
+}

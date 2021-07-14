@@ -20,7 +20,11 @@ public class NetworkStatsJsonHandler extends NeuralAppContextHandler {
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		if (request.method.equals(HttpRequest.GET)) {
 			CellStats stats = getNetworkManager().getCellStats();
-			response.setBody(JsonConstructor.fromObject(stats));
+			if (stats!=null) {
+				response.setBody(JsonConstructor.fromObject(stats));
+			} else {
+				setResponseUnavailable(response);
+			}
 		} else {
 			response.setContentTypeJson();
 		}

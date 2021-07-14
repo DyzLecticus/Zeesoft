@@ -236,6 +236,7 @@ public class TestNeuralApp {
 		NetworkSettings settings = new NetworkSettings();
 		settings.processorLearning.put("Pooler", false);
 		request4.setBody(JsonConstructor.fromObject(settings));
+		HttpRequest request5 = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
 
 		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(networkConfig));
@@ -244,6 +245,7 @@ public class TestNeuralApp {
 		tests.add(getRequestAssertUnavailableThread(requestHandler, request2));
 		tests.add(getRequestAssertUnavailableThread(requestHandler, request3));
 		tests.add(getRequestAssertUnavailableThread(requestHandler, request4));
+		tests.add(getRequestAssertUnavailableThread(requestHandler, request5));
 		for (Thread test: tests) {
 			test.start();
 		}
@@ -252,7 +254,7 @@ public class TestNeuralApp {
 		}
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() == 0;
-		assert responseCodes.size() == 4;
+		assert responseCodes.size() == 5;
 		for(Integer code: responseCodes) {
 			assert code == HttpURLConnection.HTTP_UNAVAILABLE;
 		}
