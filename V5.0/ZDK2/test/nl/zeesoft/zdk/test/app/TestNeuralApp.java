@@ -21,7 +21,9 @@ import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
@@ -316,6 +318,12 @@ public class TestNeuralApp {
 		assert (int)json.root.get("proximalStats").get("activeSynapses").value >= 100000;
 		assert (int)json.root.get("proximalStats").get("segments").value >= 1000;
 		assert (int)json.root.get("proximalStats").get("synapses").value >= 100000;
+
+		// Network IO stats
+		body = testHeadGetRequest(requestHandler, NetworkIOStatsJsonHandler.PATH, "application/json");
+
+		// Network IO accuracy
+		body = testHeadGetRequest(requestHandler, NetworkIOAccuracyJsonHandler.PATH, "application/json");
 	}
 	
 	private static NetworkConfig getSimpleNetworkConfig() {

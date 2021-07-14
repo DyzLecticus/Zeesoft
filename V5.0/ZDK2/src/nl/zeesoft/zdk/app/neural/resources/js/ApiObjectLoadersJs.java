@@ -2,6 +2,8 @@ package nl.zeesoft.zdk.app.neural.resources.js;
 
 import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
@@ -20,6 +22,8 @@ public class ApiObjectLoadersJs extends Resource {
 		append(r, renderLoader("networkConfig", NetworkConfigJsonHandler.PATH));
 		append(r, renderLoader("networkSettings", NetworkSettingsJsonHandler.PATH));
 		append(r, renderLoader("networkStats", NetworkStatsJsonHandler.PATH));
+		append(r, renderLoader("networkIOStats", NetworkIOStatsJsonHandler.PATH));
+		append(r, renderLoader("networkIOAccuracy", NetworkIOAccuracyJsonHandler.PATH));
 	}
 	
 	protected void renderLoadApiObjects(StringBuilder r) {
@@ -29,6 +33,8 @@ public class ApiObjectLoadersJs extends Resource {
 		append(r, "    networkConfigLoader.execute();");
 		append(r, "    networkSettingsLoader.execute();");
 		append(r, "    networkStatsLoader.execute();");
+		append(r, "    networkIOStatsLoader.execute();");
+		append(r, "    networkIOAccuracyLoader.execute();");
 		append(r, "};");
 	}
 

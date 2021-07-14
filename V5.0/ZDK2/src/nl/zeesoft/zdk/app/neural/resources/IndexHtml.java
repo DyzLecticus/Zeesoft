@@ -4,7 +4,9 @@ import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
@@ -35,12 +37,20 @@ public class IndexHtml extends HtmlResource {
 	protected void renderLinks(StringBuilder body) {
 		append(body, "<h2>API links</h2>");
 		append(body, "<ul>");
+		renderLinkListItems(body);
+		append(body, "</ul>");
+	}
+	
+	protected void renderLinkListItems(StringBuilder body) {
 		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state"));
 		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state"));
 		append(body, renderLinkListItem(NetworkConfigJsonHandler.PATH, "Network configuration"));
 		append(body, renderLinkListItem(NetworkSettingsJsonHandler.PATH, "Network settings"));
+		
 		append(body, renderLinkListItem(NetworkStatsJsonHandler.PATH, "Network statistics"));
+		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network I/O statistics"));
+		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network I/O accuracy"));
+		
 		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O (POST only)"));
-		append(body, "</ul>");
 	}
 }

@@ -6,7 +6,9 @@ import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
@@ -23,11 +25,18 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		put(new FaviconIcoHandler((NeuralApp)app));
 		put(new IndexJsHandler((NeuralApp)app));
 		put(new IndexCssHandler((NeuralApp)app));
-		
+		initializeNetworkContextHandlers();
+	}
+	
+	protected void initializeNetworkContextHandlers() {
 		put(new NetworkStateTextHandler((NeuralApp)app));
 		put(new NetworkConfigJsonHandler((NeuralApp)app));
 		put(new NetworkSettingsJsonHandler((NeuralApp)app));
-		put(new NetworkIOJsonHandler((NeuralApp)app));
+		
 		put(new NetworkStatsJsonHandler((NeuralApp)app));
+		put(new NetworkIOStatsJsonHandler((NeuralApp)app));
+		put(new NetworkIOAccuracyJsonHandler((NeuralApp)app));
+		
+		put(new NetworkIOJsonHandler((NeuralApp)app));
 	}
 }
