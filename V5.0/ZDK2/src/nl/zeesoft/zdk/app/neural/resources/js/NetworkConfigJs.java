@@ -59,7 +59,7 @@ public class NetworkConfigJs extends Resource {
 	
 	protected void renderToInputsString(StringBuilder r) {
 		append(r, "networkConfig.toInputsString = (json) => {");
-		append(r, "    var html = \"<p>Inputs: \";");
+		append(r, "    var html = \"<p class='mt-0'>Inputs: \";");
 		append(r, "    for (var i = 0; i < json.inputNames.length; i++) {");
 		append(r, "        if (i > 0) {");
 		append(r, "            html += \", \";");

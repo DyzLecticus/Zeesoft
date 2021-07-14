@@ -27,13 +27,14 @@ public class HtmlResource extends Resource {
 	}
 
 	protected void renderHeadContent(StringBuilder r) {
-		append(r, "    <title>" + title + "</title>");
-		append(r, "    <link rel=\"icon\" href=\"" + faviconPath + "\" type=\"image/png\" />");
+		append(r, "<title>" + title + "</title>");
+		append(r, "<link rel=\"icon\" href=\"" + faviconPath + "\" type=\"image/png\" />");
+		append(r, "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
 		for (String src: scriptFiles) {
-			append(r, "    <script type=\"text/javascript\" src=\"" + src + "\"></script>");
+			append(r, "<script type=\"text/javascript\" src=\"" + src + "\"></script>");
 		}
 		for (String href: styleFiles) {
-			append(r, "    <link rel=\"stylesheet\" type=\"text/css\" href=\"" + href + "\">");
+			append(r, "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + href + "\">");
 		}
 		append(r, "</head>");
 	}
@@ -76,5 +77,18 @@ public class HtmlResource extends Resource {
 		r.append(content);
 		r.append("</a>");
 		return r;
+	}
+	
+	protected StringBuilder getAccordionStart(String id, String title) {
+		StringBuilder r = new StringBuilder();
+		r.append("<div onclick=\"dom.toggleVisible('" + id + "');\" class=\"clickable\">");
+		r.append("<h2 class='accordion-title mt-0 mb-0'>" + title + "</h2>");
+		r.append("</div>");
+		r.append("<div id=\"" + id + "\" class=\"hidden\">");
+		return r;
+	}
+	
+	protected StringBuilder getAccordionEnd() {
+		return new StringBuilder("</div>");
 	}
 }

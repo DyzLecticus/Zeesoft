@@ -13,7 +13,7 @@ public class NetworkStatsJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkStats.toHtmlTable = (json) => {");
-		append(r, "    var html = \"<p>Cells: \" + json.cells + \"</p>\";");
+		append(r, "    var html = \"<p class='mt-0'>Cells: \" + json.cells + \"</p>\";");
 		append(r, "    html += \"<table class='padded'>\";");
 		append(r, "    html += networkStats.toHtmlTableHeader();");
 		append(r, "    html += networkStats.toHtmlTableRow(\"Proximal\", json.proximalStats);");

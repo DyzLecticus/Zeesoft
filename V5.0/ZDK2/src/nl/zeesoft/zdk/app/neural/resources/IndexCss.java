@@ -6,30 +6,23 @@ public class IndexCss extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		renderBody(r);
-		renderTablePadding(r);
 		renderHidden(r);
 		renderClickable(r);
 		renderXScrollable(r);
+		renderMarginPaddingZero(r);
+		renderAccordionTitle(r);
+		renderTablePadding(r);
 	}
 
 	protected void renderBody(StringBuilder r) {
 		append(r, "body {");
 		append(r, "    font-family: Tahoma, sans-serif;");
-		append(r, "    font-size: 16px;");
+		append(r, "    font-size: 1em;");
 		append(r, "    background-color: #DEDEDE;");
 		append(r, "}");
 		append(r, "input, select {");
 		append(r, "    font-family: inherit;");
-		append(r, "    font-size: 16px;");
-		append(r, "}");
-	}
-	
-	protected void renderTablePadding(StringBuilder r) {
-		append(r, "table.padded tr td {");
-		append(r, "    padding: 4px;");
-		append(r, "}");
-		append(r, "table.padded tr th {");
-		append(r, "    padding: 4px;");
+		append(r, "    font-size: 1em;");
 		append(r, "}");
 	}
 	
@@ -50,5 +43,42 @@ public class IndexCss extends Resource {
 		append(r,".x-scrollable {");
 		append(r,"    overflow-x: auto;");
 		append(r,"}");
+	}
+	
+	protected void renderMarginPaddingZero(StringBuilder r) {
+		renderZero("padding", r);
+		renderZero("margin", r);
+	}
+	
+	protected void renderZero(String type, StringBuilder r) {
+		String t = type.substring(0, 1);
+		append(r,"." + t + "-0 { " + type + ": 0; }");
+		if (type.equals("margin")) {
+			append(r,"." + t + "t-0 { " + type + "-top: 0; " + type + "-block-start: 0 }");
+			append(r,"." + t + "b-0 { " + type + "-bottom: 0; " + type + "-block-end: 0 }");
+		} else {
+			append(r,"." + t + "t-0 { " + type + "-top: 0; }");
+			append(r,"." + t + "b-0 { " + type + "-bottom: 0 }");
+		}
+		append(r,"." + t + "l-0 { " + type + "-left: 0; }");
+		append(r,"." + t + "r-0 { " + type + "-right: 0 }");
+	}
+	
+	protected void renderAccordionTitle(StringBuilder r) {
+		append(r, ".accordion-title {");
+		append(r, "    padding-top: 0.5em;");
+		append(r, "    padding-bottom: 0.5em;");
+		append(r, "}");
+	}
+	
+	protected void renderTablePadding(StringBuilder r) {
+		append(r, "table.padded tr td {");
+		append(r, "    padding-left: 0.5em;");
+		append(r, "    padding-right: 0.5em;");
+		append(r, "}");
+		append(r, "table.padded tr th {");
+		append(r, "    padding-left: 0.5em;");
+		append(r, "    padding-right: 0.5em;");
+		append(r, "}");
 	}
 }

@@ -27,6 +27,9 @@ public class HtmlResponse extends ResponseObject {
 		r.sb().append(title);
 		r.sb().append("</title>");
 		r.sb().append("\n");
+		r.sb().append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
+		r.sb().append("\n");
+
 		r.sb().append("    <link rel=\"icon\" href=\"" + faviconPath + "\" type=\"image/png\" />");
 		r.sb().append("\n");
 		for (String src: scriptFiles) {
