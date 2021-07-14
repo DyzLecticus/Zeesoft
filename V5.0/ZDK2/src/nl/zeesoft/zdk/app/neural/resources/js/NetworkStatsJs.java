@@ -13,7 +13,8 @@ public class NetworkStatsJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkStats.toHtmlTable = (json) => {");
-		append(r, "    var html = \"<table>\";");
+		append(r, "    var html = \"<p>Cells: \" + json.cells + \"</p>\";");
+		append(r, "    html += \"<table class='padded'>\";");
 		append(r, "    html += networkStats.toHtmlTableHeader();");
 		append(r, "    html += networkStats.toHtmlTableRow(\"Proximal\", json.proximalStats);");
 		append(r, "    html += networkStats.toHtmlTableRow(\"Distal\", json.distalStats);");
@@ -27,9 +28,9 @@ public class NetworkStatsJs extends Resource {
 		append(r, "networkStats.toHtmlTableHeader = () => {");
 		append(r, "    var html = \"<tr>\";");
 		append(r, "    html += \"<th></th>\";");
-		append(r, "    html += \"<th>Segments</th>\";");
-		append(r, "    html += \"<th>Synapses</th>\";");
-		append(r, "    html += \"<th>Active</th>\";");
+		append(r, "    html += \"<th align='right'>Segments</th>\";");
+		append(r, "    html += \"<th align='right'>Synapses</th>\";");
+		append(r, "    html += \"<th align='right'>Active</th>\";");
 		append(r, "    html += \"<tr>\";");
 		append(r, "    return html;");
 		append(r, "};");

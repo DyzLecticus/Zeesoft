@@ -1,5 +1,6 @@
-package nl.zeesoft.zdk.app.neural.resources.js;
+package nl.zeesoft.zdk.app.neural.resources;
 
+import nl.zeesoft.zdk.app.neural.resources.js.ApiJs;
 import nl.zeesoft.zdk.app.resource.Resource;
 
 public class IndexJs extends Resource {
@@ -10,6 +11,7 @@ public class IndexJs extends Resource {
 		renderChangeListener(r);
 		renderOnNetworkStateChanged(r);
 		renderOnNetworkStatsChanged(r);
+		renderOnNetworkConfigChanged(r);
 	}
 	
 	protected void renderLoadApp(StringBuilder r) {
@@ -27,6 +29,8 @@ public class IndexJs extends Resource {
 		append(r, "        onNetworkStateChanged(newValue);");
 		append(r, "    } else if (key===\"networkStats\") {");
 		append(r, "        onNetworkStatsChanged(newValue);");
+		append(r, "    } else if (key===\"networkConfig\") {");
+		append(r, "        onNetworkConfigChanged(newValue);");
 		append(r, "    }");
 		append(r, "});");
 	}
@@ -42,10 +46,13 @@ public class IndexJs extends Resource {
 	
 	protected void renderOnNetworkStatsChanged(StringBuilder r) {
 		append(r, "var onNetworkStatsChanged = (newValue) => {");
-		append(r, "    var elem = document.getElementById(\"networkStats\");");
-		append(r, "    if (elem!=null) {");
-		append(r, "        elem.innerHTML = networkStats.toHtmlTable(newValue);");
-		append(r, "    }");
+		append(r, "    dom.setInnerHTML(\"networkStats\", networkStats.toHtmlTable(newValue));");
+		append(r, "};");
+	}
+	
+	protected void renderOnNetworkConfigChanged(StringBuilder r) {
+		append(r, "var onNetworkConfigChanged = (newValue) => {");
+		append(r, "    dom.setInnerHTML(\"networkConfig\", networkConfig.toHtmlTable(newValue));");
 		append(r, "};");
 	}
 }

@@ -73,10 +73,6 @@ public class MainCss extends ResponseObject {
 		append(r,"    display:none;");
 		append(r,"    visibility:hidden;");
 		append(r,"}");
-		append(r,".visible {");
-		append(r,"    display:block;");
-		append(r,"    visibility:visible;");
-		append(r,"}");
 		
 		append(r,".instrument-label {");
 		append(r,"    display:block;");

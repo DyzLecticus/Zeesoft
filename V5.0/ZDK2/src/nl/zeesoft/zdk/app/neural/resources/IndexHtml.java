@@ -26,17 +26,28 @@ public class IndexHtml extends HtmlResource {
 		append(body, "<h1>Zeesoft Neural Server</h1>");
 		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
-		append(body, "<hr />");
-		append(body, "<h2>Network statistics</h2>");
-		append(body, "<div id=\"networkStats\" /></div>");
-		append(body, "<hr />");
-		renderLinks(body);
+		renderNetworkConfig(body);
+		renderNetworkStats(body);
+		renderApiLinks(body);
 		return body;
 	}
 	
-	protected void renderLinks(StringBuilder body) {
-		append(body, "<h2>API links</h2>");
-		append(body, "<ul>");
+	protected void renderNetworkConfig(StringBuilder body) {
+		append(body, "<hr />");
+		append(body, "<h2 onclick=\"dom.toggleVisible('networkConfig');\" class=\"clickable\">Network configuration</h2>");
+		append(body, "<div id=\"networkConfig\" class=\"x-scrollable hidden\"></div>");
+	}
+	
+	protected void renderNetworkStats(StringBuilder body) {
+		append(body, "<hr />");
+		append(body, "<h2 onclick=\"dom.toggleVisible('networkStats');\" class=\"clickable\">Network statistics</h2>");
+		append(body, "<div id=\"networkStats\" class=\"x-scrollable hidden\"></div>");
+	}
+	
+	protected void renderApiLinks(StringBuilder body) {
+		append(body, "<hr />");
+		append(body, "<h2 onclick=\"dom.toggleVisible('apiLinks');\" class=\"clickable\">API links</h2>");
+		append(body, "<ul id=\"apiLinks\" class=\"x-scrollable hidden\">");
 		renderLinkListItems(body);
 		append(body, "</ul>");
 	}
