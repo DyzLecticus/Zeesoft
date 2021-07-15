@@ -16,7 +16,7 @@ public class IndexCss extends Resource {
 
 	protected void renderBody(StringBuilder r) {
 		append(r, "body {");
-		append(r, "    font-family: Tahoma, sans-serif;");
+		append(r, "    font-family: Arial, Helvetica, sans-serif;");
 		append(r, "    font-size: 1em;");
 		append(r, "    background-color: #DEDEDE;");
 		append(r, "}");
