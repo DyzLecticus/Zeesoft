@@ -80,7 +80,7 @@ public class TestNeuralApp {
 		assert networkStateManager.ifSetState(NetworkStateManager.READY);
 		
 		HtmlResource html = new HtmlResource();
-		assert html.render().length() == 134;
+		assert html.render().length() == 199;
 		assert HtmlResource.renderLinkListItem("A","B").toString().equals("<li><a href=\"A\">B</a></li>");
 		
 		NeuralAppConfig config = new NeuralAppConfig();

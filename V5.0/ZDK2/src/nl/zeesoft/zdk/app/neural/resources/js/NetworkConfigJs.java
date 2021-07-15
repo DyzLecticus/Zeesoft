@@ -15,6 +15,7 @@ public class NetworkConfigJs extends Resource {
 		renderProcessorToHtmlTable(r);
 		renderProcessorToHtmlTableRow(r);
 		renderGetPropertyValue(r);
+		renderProcessorLinksToHtmlTableRow(r);
 	}
 
 	protected void renderProcessorsByLayer(StringBuilder r) {
@@ -108,6 +109,7 @@ public class NetworkConfigJs extends Resource {
 		append(r, "            html += networkConfig.processorToHtmlTableRow(name, props[name]);");
 		append(r, "        }");
 		append(r, "    }");
+		append(r, "    html += networkConfig.processorLinksToHtmlTableRow(processor.inputLinks);");
 		append(r, "    html += \"</table>\";");
 		append(r, "    return html;");
 		append(r, "};");
@@ -129,6 +131,21 @@ public class NetworkConfigJs extends Resource {
 		append(r, "        value = value.x + \"*\" + value.y + \"*\" + value.z;");
 		append(r, "    }");
 		append(r, "    return value;");
+		append(r, "};");
+	}
+
+	protected void renderProcessorLinksToHtmlTableRow(StringBuilder r) {
+		append(r, "networkConfig.processorLinksToHtmlTableRow = (links) => {");
+		append(r, "    var ordered = [];");
+		append(r, "    for (var i = 0; i < links.length; i++) {");
+		append(r, "        ordered[links[i].toInput] = links[i].fromName + \" / \" + links[i].fromOutput;");
+		append(r, "    }");
+		append(r, "    var html = \"<tr><td colspan='2'><b>Input links</b><ul>\";");
+		append(r, "    for (var i = 0; i < ordered.length; i++) {");
+		append(r, "        html += \"<li>\" + ordered[i] + \"</li>\";");
+		append(r, "    }");
+		append(r, "    html += \"</ul></td></tr>\";");
+		append(r, "    return html;");
 		append(r, "};");
 	}
 }

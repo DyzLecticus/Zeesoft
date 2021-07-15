@@ -79,16 +79,16 @@ public class HtmlResource extends Resource {
 		return r;
 	}
 	
-	protected StringBuilder getAccordionStart(String id, String title) {
+	public static StringBuilder getAccordionStart(String id, String title) {
 		StringBuilder r = new StringBuilder();
-		r.append("<div onclick=\"dom.toggleVisible('" + id + "');\" class=\"clickable\">");
+		r.append("<div onclick=\"dom.toggleVisible('" + id + "', true);\" class=\"clickable\">");
 		r.append("<h2 class='accordion-title mt-0 mb-0'>" + title + "</h2>");
 		r.append("</div>");
 		r.append("<div id=\"" + id + "\" class=\"hidden\">");
 		return r;
 	}
 	
-	protected StringBuilder getAccordionEnd() {
+	public static StringBuilder getAccordionEnd() {
 		return new StringBuilder("</div>");
 	}
 }
