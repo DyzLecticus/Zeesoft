@@ -51,6 +51,8 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 			StringBuilder input = readHead();
 			if (input.length()>0) {
 				handleInput(input);
+			} else {
+				close();
 			}
 		}
 		stopped();

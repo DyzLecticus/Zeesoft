@@ -27,33 +27,45 @@ public class IndexHtml extends HtmlResource {
 		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
 		renderNetworkConfig(body);
+		renderNetworkSettings(body);
 		renderNetworkStats(body);
 		renderApiLinks(body);
 		return body;
 	}
 	
 	protected void renderNetworkConfig(StringBuilder body) {
-		append(body, "<hr />");
-		append(body, getAccordionStart("networkConfigAccordion","Network configuration"));
-		append(body, "<div id=\"networkConfig\" class=\"x-scrollable\"></div>");
-		append(body, getAccordionEnd());
+		append(body, getAccordion("networkConfigAccordion","Network configuration","<div id=\"networkConfig\" class=\"x-scrollable\"></div>"));
+	}
+	
+	protected void renderNetworkSettings(StringBuilder body) {
+		append(body, getAccordion("networkSettingsAccordion","Network settings","<div id=\"networkSettings\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderNetworkStats(StringBuilder body) {
-		append(body, "<hr />");
-		append(body, getAccordionStart("networkStatsAccordion","Network statistics"));
-		append(body, "<div id=\"networkStats\" class=\"x-scrollable\"></div>");
-		append(body, getAccordionEnd());
+		append(body, getAccordion("networkStatsAccordion","Network statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderApiLinks(StringBuilder body) {
-		append(body, "<hr />");
-		append(body, getAccordionStart("apiLinksAccordion","API links"));
-		append(body, "<ul class=\"x-scrollable\">");
-		renderLinkListItems(body);
-		append(body, getAccordionEnd());
+		StringBuilder content = new StringBuilder("<ul class=\"x-scrollable\">");
+		append(content, "<ul class=\"x-scrollable\">");
+		renderLinkListItems(content);
+		append(content, "</ul>");
+		append(body, getAccordion("apiLinksAccordion","API links",content));
+	}
+
+	protected StringBuilder getAccordion(String id, String title, String content) {
+		return getAccordion(id, title, new StringBuilder(content));
 	}
 	
+	protected StringBuilder getAccordion(String id, String title, StringBuilder content) {
+		StringBuilder r = new StringBuilder();
+		append(r, "<hr />");
+		append(r, getAccordionStart(id,title));
+		append(r, content);
+		append(r, getAccordionEnd());
+		return r;
+	}
+
 	protected void renderLinkListItems(StringBuilder body) {
 		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state"));
 		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state"));

@@ -98,11 +98,15 @@ public class TestHttpServer {
 		assert client.disconnect();
 		Util.sleep(10);
 		assert !client.isConnected();
+		assert server.getNumberOfConnections() == 0;
+		assert client.connect(SERVER_URL);
+		Util.sleep(10);
 		assert server.getNumberOfConnections() == 1;
 		server.close();
 		assert server.getNumberOfConnections() == 0;
-		server.open();
+		assert client.disconnect();
 		
+		server.open();
 		assert !client.isConnected();
 		assert client.connect(SERVER_URL);
 		request = new HttpRequest(HttpRequest.GET, "/index.html?test=true");

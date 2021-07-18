@@ -10,8 +10,9 @@ public class IndexJs extends Resource {
 		renderLoadApp(r);
 		renderChangeListener(r);
 		renderOnNetworkStateChanged(r);
-		renderOnNetworkStatsChanged(r);
 		renderOnNetworkConfigChanged(r);
+		renderOnNetworkSettingsChanged(r);
+		renderOnNetworkStatsChanged(r);
 	}
 	
 	protected void renderLoadApp(StringBuilder r) {
@@ -27,10 +28,12 @@ public class IndexJs extends Resource {
 		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
 		append(r, "    if (key===\"networkState\") {");
 		append(r, "        onNetworkStateChanged(newValue);");
-		append(r, "    } else if (key===\"networkStats\") {");
-		append(r, "        onNetworkStatsChanged(newValue);");
 		append(r, "    } else if (key===\"networkConfig\") {");
 		append(r, "        onNetworkConfigChanged(newValue);");
+		append(r, "    } else if (key===\"networkSettings\") {");
+		append(r, "        onNetworkSettingsChanged(newValue);");
+		append(r, "    } else if (key===\"networkStats\") {");
+		append(r, "        onNetworkStatsChanged(newValue);");
 		append(r, "    }");
 		append(r, "});");
 	}
@@ -44,15 +47,21 @@ public class IndexJs extends Resource {
 		append(r, "};");
 	}
 	
-	protected void renderOnNetworkStatsChanged(StringBuilder r) {
-		append(r, "var onNetworkStatsChanged = (newValue) => {");
-		append(r, "    dom.setInnerHTML(\"networkStats\", networkStats.toHtmlTable(newValue));");
-		append(r, "};");
-	}
-	
 	protected void renderOnNetworkConfigChanged(StringBuilder r) {
 		append(r, "var onNetworkConfigChanged = (newValue) => {");
 		append(r, "    dom.setInnerHTML(\"networkConfig\", networkConfig.toHtmlTable(newValue));");
+		append(r, "};");
+	}
+	
+	protected void renderOnNetworkSettingsChanged(StringBuilder r) {
+		append(r, "var onNetworkSettingsChanged = (newValue) => {");
+		append(r, "    dom.setInnerHTML(\"networkSettings\", networkSettings.toHtmlTable(newValue));");
+		append(r, "};");
+	}
+	
+	protected void renderOnNetworkStatsChanged(StringBuilder r) {
+		append(r, "var onNetworkStatsChanged = (newValue) => {");
+		append(r, "    dom.setInnerHTML(\"networkStats\", networkStats.toHtmlTable(newValue));");
 		append(r, "};");
 	}
 }

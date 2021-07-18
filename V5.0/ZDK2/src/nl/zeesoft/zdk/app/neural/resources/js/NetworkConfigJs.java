@@ -6,8 +6,8 @@ public class NetworkConfigJs extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		append(r, "var networkConfig = networkConfig || {};");
-		renderProcessorsByLayer(r);
-		renderProcessorsByLayerHeight(r);
+		renderGetProcessorsByLayer(r);
+		renderGetProcessorsByLayerHeight(r);
 		renderGetWidthHeight(r);
 		renderToInputsString(r);
 		renderToHtmlTable(r);
@@ -18,7 +18,7 @@ public class NetworkConfigJs extends Resource {
 		renderProcessorLinksToHtmlTableRow(r);
 	}
 
-	protected void renderProcessorsByLayer(StringBuilder r) {
+	protected void renderGetProcessorsByLayer(StringBuilder r) {
 		append(r, "networkConfig.getProcessorsPerLayer = (json) => {");
 		append(r, "    var height = 0;");
 		append(r, "    for (var i = 0; i < json.processorConfigs.length; i++) {");
@@ -31,7 +31,7 @@ public class NetworkConfigJs extends Resource {
 		append(r, "};");
 	}
 
-	protected void renderProcessorsByLayerHeight(StringBuilder r) {
+	protected void renderGetProcessorsByLayerHeight(StringBuilder r) {
 		append(r, "networkConfig.getProcessorsPerLayerHeight = (json, height) => {");
 		append(r, "    var r = [];");
 		append(r, "    for (var i = 0; i < height; i++) {");

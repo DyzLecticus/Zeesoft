@@ -7,6 +7,7 @@ public class DomJs extends Resource {
 	protected void render(StringBuilder r) {
 		append(r, "var dom = dom || {};");
 		renderSetInnerHTML(r);
+		renderGetInputValue(r);
 		renderToggleVisible(r);
 		renderStartFadeIn(r);
 		renderFadeIn(r);
@@ -20,6 +21,17 @@ public class DomJs extends Resource {
 		append(r, "    if (elem!=null) {");
 		append(r, "        elem.innerHTML = html;");
 		append(r, "    }");
+		append(r, "};");
+	}
+
+	protected void renderGetInputValue(StringBuilder r) {
+		append(r, "dom.getInputValue = function(id) {");
+		append(r, "    r = null;");
+		append(r, "    var elem = window.document.getElementById(id);");
+		append(r, "    if (elem!=null) {");
+		append(r, "        r = elem.checked || elem.value;");
+		append(r, "    }");
+		append(r, "    return r;");
 		append(r, "};");
 	}
 
