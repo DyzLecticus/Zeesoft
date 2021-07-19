@@ -44,9 +44,8 @@ public class NetworkSettingsJs extends Resource {
 
 	protected void renderSubmit(StringBuilder r) {
 		append(r, "networkSettings.submit = () => {");
-		append(r, "    var json = networkSettings.getFormAsJson();");
 		append(r, "    request = new HttpRequest(\"POST\",\"" + NetworkSettingsJsonHandler.PATH + "\");");
-		append(r, "    request.body = JSON.stringify(json);");
+		append(r, "    request.body = JSON.stringify(networkSettings.getFormAsJson());");
 		append(r, "    request.contentType = \"application/json\";");
 		append(r, "    request.execute(() => {");
 		append(r, "        networkSettingsLoader.execute();");
@@ -57,18 +56,17 @@ public class NetworkSettingsJs extends Resource {
 	protected void renderGetFormAsJson(StringBuilder r) {
 		append(r, "networkSettings.getFormAsJson = () => {");
 		append(r, "    var json = { className: \"" + NetworkSettings.class.getName() + "\" };");
-		append(r, "    var form = document.getElementById(\"networkSettingsForm\");");
 		append(r, "    var obj = {};");
+		append(r, "    var form = document.getElementById(\"networkSettingsForm\");");
 		append(r, "    var inputs = form.getElementsByTagName(\"INPUT\");");
 		append(r, "    for (var i = 0; i < inputs.length; i++) {");
 		append(r, "        if (inputs[i].id.indexOf(\"learning\")==0) {");
 		append(r, "            var name = inputs[i].id.substring(8,inputs[i].id.length);");
 		append(r, "            obj[name] = dom.getInputValue(inputs[i].id) === true;");
+		append(r, "        } else if (inputs[i].type!=\"button\") {");
+		append(r, "            json[inputs[i].id] = parseInt(dom.getInputValue(inputs[i].id));");
 		append(r, "        }");
 		append(r, "    }");
-		append(r, "    json.workers = parseInt(dom.getInputValue(\"workers\"), 10);");
-		append(r, "    json.initTimeoutMs = parseInt(dom.getInputValue(\"initTimeoutMs\"), 10);");
-		append(r, "    json.resetTimeoutMs = parseInt(dom.getInputValue(\"resetTimeoutMs\"), 10);");
 		append(r, "    json.processorLearning = util.objectToMap(obj,\"" + Boolean.class.getName() + "\");");
 		append(r, "    return json;");
 		append(r, "};");

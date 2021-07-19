@@ -47,7 +47,6 @@ public class IndexHtml extends HtmlResource {
 	
 	protected void renderApiLinks(StringBuilder body) {
 		StringBuilder content = new StringBuilder("<ul class=\"x-scrollable\">");
-		append(content, "<ul class=\"x-scrollable\">");
 		renderLinkListItems(content);
 		append(content, "</ul>");
 		append(body, getAccordion("apiLinksAccordion","API links",content));
