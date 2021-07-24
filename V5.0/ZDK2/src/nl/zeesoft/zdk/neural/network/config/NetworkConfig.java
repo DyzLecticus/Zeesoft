@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
+import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
@@ -24,6 +25,10 @@ public class NetworkConfig {
 		}
 	}
 	
+	public DateTimeEncoderConfig addDateTimeEncoder(String name) {
+		return addDateTimeEncoder(processorConfigs.size(),name);
+	}
+	
 	public ScalarEncoderConfig addScalarEncoder(String name) {
 		return addScalarEncoder(processorConfigs.size(),name);
 	}
@@ -42,6 +47,12 @@ public class NetworkConfig {
 	
 	public MergerConfig addMerger(String name) {
 		return addMerger(processorConfigs.size(),name);
+	}
+	
+	public DateTimeEncoderConfig addDateTimeEncoder(int layer, String name) {
+		DateTimeEncoderConfig r = new DateTimeEncoderConfig(layer,name);
+		addProcessorConfig(r);
+		return r;
 	}
 	
 	public ScalarEncoderConfig addScalarEncoder(int layer, String name) {

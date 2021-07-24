@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.test.neural.processor;
 
 import java.util.Calendar;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
@@ -42,7 +41,7 @@ public class TestDateTimeEncoder {
 		DateTimeSdrEncoder enc = new DateTimeSdrEncoder();
 		enc.setOnBitsPerEncoder(4);
 		
-		Console.log("Month cycle");
+		Logger.debug(self, "Month cycle");
 		for (int i = 0; i < 12; i++) {
 			cal.set(Calendar.MONTH, i);
 			Sdr sdr = enc.getEncodedValue(cal.getTime());
@@ -52,7 +51,7 @@ public class TestDateTimeEncoder {
 			assert (float)sdr.onBits.size() / (float)sdr.length == 0.06185567F;
 		}
 
-		Console.log("Date cycle");
+		Logger.debug(self, "Date cycle");
 		for (int i = 1; i < 32; i++) {
 			cal.set(Calendar.DATE, i);
 			Sdr sdr = enc.getEncodedValue(cal.getTime().getTime());
@@ -91,12 +90,12 @@ public class TestDateTimeEncoder {
 		assert enc.getEncodedValue(cal.getTime()).onBits.size() == 0;
 		
 		DateTimeEncoder de = new DateTimeEncoder();
-		de.encoder.includeSecond = false;
-		de.encoder.setOnBitsPerEncoder(8);
+		((DeConfig)de.encoder).includeSecond = false;
+		((DeConfig)de.encoder).setOnBitsPerEncoder(8);
 		
 		assert de.getInputOutputConfig()!=null;
 		
-		InputOutputConfig ioConfig = de.encoder.getInputOutputConfig();
+		InputOutputConfig ioConfig = ((DeConfig)de.encoder).getInputOutputConfig();
 		assert ioConfig.inputs.size() == 1;
 		assert ioConfig.inputs.get(DateTimeEncoder.SENSOR_VALUE_INPUT).name.equals("SensorValue");
 		assert ioConfig.outputs.size() == 1;
@@ -130,7 +129,7 @@ public class TestDateTimeEncoder {
 		sdr2 = de2.encoder.getEncodedValue(cal.getTime());
 		assert sdr2.equals(sdr);
 		
-		enc = de.encoder.copy();
+		enc = ((DeConfig)de.encoder).copy();
 		de.encoder = null;
 		assert de.getInputOutputConfig() != null;
 		de.encoder = (DeConfig) enc;

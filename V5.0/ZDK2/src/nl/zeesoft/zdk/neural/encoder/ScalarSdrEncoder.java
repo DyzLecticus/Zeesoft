@@ -2,14 +2,15 @@ package nl.zeesoft.zdk.neural.encoder;
 
 import nl.zeesoft.zdk.neural.Sdr;
 
-public class ScalarSdrEncoder {
+public class ScalarSdrEncoder extends AbstractEncoder {
 	public int			encodeLength	= 256;
 	public int			onBits			= 16;
 	public float		minValue		= 0;
 	public float		maxValue		= 200;
 	public float		resolution		= 1;
 	public boolean		periodic		= false;
-
+	
+	@Override
 	public Sdr getEncodedValue(Object value) {
 		Sdr r = new Sdr(encodeLength);
 		float percentage = getCorrectedInputValue(value) / getCorrectedMaxValue();

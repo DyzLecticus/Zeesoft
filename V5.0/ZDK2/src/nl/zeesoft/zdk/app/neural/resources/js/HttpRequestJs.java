@@ -16,7 +16,7 @@ public class HttpRequestJs extends Resource {
 		append(r, "    this.method = method;");
 		append(r, "    this.url = url;");
 		append(r, "    this.body = body;");
-		append(r, "    this.contentType = \"application/text\";");
+		append(r, "    this.headers = {\"Content-Type\": \"application/text\"};");
 		append(r, "    this.retryDelayMs = 250;");
 		append(r, "    this.errorCallback = (xhr) => {};");
 		append(r, "    this.execute = (successCallback) => {");
@@ -47,7 +47,9 @@ public class HttpRequestJs extends Resource {
 		append(r, "        HttpRequest.onReadyStateChange(xhr, successCallback);");
 		append(r, "    };");
 		append(r, "    xhr.open(request.method,request.url,true);");
-		append(r, "    xhr.setRequestHeader(\"Content-Type\",request.contentType);");
+		append(r, "    for (name in request.headers) {");
+		append(r, "        xhr.setRequestHeader(name,request.headers[name]);");
+		append(r, "    }");
 		append(r, "    xhr.send(request.body);");
 		append(r, "    return xhr;");
 		append(r, "};");

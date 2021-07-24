@@ -128,7 +128,11 @@ public class NetworkConfigJs extends Resource {
 	protected void renderGetPropertyValue(StringBuilder r) {
 		append(r, "networkConfig.getPropertyValue = (value) => {");
 		append(r, "    if (value.className) {");
-		append(r, "        value = value.x + \"*\" + value.y + \"*\" + value.z;");
+		append(r, "        if (value.x) {");
+		append(r, "            value = value.x + \"*\" + value.y + \"*\" + value.z;");
+		append(r, "        } else {");
+		append(r, "            value = value.onBits + \"/\" + value.encodeLength;");
+		append(r, "        }");
 		append(r, "    }");
 		append(r, "    return value;");
 		append(r, "};");

@@ -17,6 +17,8 @@ import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
+import nl.zeesoft.zdk.app.neural.handlers.HotGymHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.HotGymJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -219,7 +221,13 @@ public class TestNeuralApp {
 		
 		// App index css
 		body = testHeadGetRequest(requestHandler, IndexCssHandler.PATH, "text/css");
-		
+
+		// App hot-gym html
+		body = testHeadGetRequest(requestHandler, HotGymHtmlHandler.PATH, "text/html");
+
+		// App hot-gym js
+		body = testHeadGetRequest(requestHandler, HotGymJsHandler.PATH, "application/javascript");
+
 		// Network state
 		body = testHeadGetRequest(requestHandler, NetworkStateTextHandler.PATH, "text/plain");
 		assert body.toString().equals(NetworkStateManager.READY);

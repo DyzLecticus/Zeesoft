@@ -1,8 +1,12 @@
 package nl.zeesoft.zdk.test.neural.network;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoderTester;
+import nl.zeesoft.zdk.neural.network.config.HotGymConfigFactory;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
@@ -42,6 +46,14 @@ public class TestNetworkConfigFactory {
 		factory.setSmallScale();
 		assert tester.testMinimalOverlap(factory.encoder).length()==0;
 		testSimpleConfig(factory, 100, 1024, new Size(16,16,4));
+		
+		assert new HotGymConfigFactory() != null;
+		config = HotGymConfigFactory.getHotGymNetworkConfig();
+		assert config.test().length() == 0;
+		
+		Json json = JsonConstructor.fromObject(config);
+		NetworkConfig config2 = (NetworkConfig) ObjectConstructor.fromJson(new Json(json.toStringBuilder()));
+		assert config2.getProcessorConfig("DateTimeEncoder") != null;
 	}
 	
 	public static void testSimpleConfig(NetworkConfigFactory factory, int maxSpVolume, int maxTmVolume, Size size) {

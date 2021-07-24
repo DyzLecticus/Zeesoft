@@ -25,6 +25,9 @@ public class IndexCss extends Resource {
 		append(r, "    font-family: inherit;");
 		append(r, "    font-size: 1em;");
 		append(r, "}");
+		append(r, "td {");
+		append(r, "    vertical-align: top;");
+		append(r, "}");
 	}
 
 	protected void renderLists(StringBuilder r) {

@@ -9,8 +9,8 @@ import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoderTester;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
-import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
+import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestScalarEncoder {
@@ -87,7 +87,7 @@ public class TestScalarEncoder {
 		ScalarEncoder se = new ScalarEncoder();
 		assert se.getInputOutputConfig()!=null;
 		
-		InputOutputConfig ioConfig = se.encoder.getInputOutputConfig();
+		InputOutputConfig ioConfig = ((SeConfig)se.encoder).getInputOutputConfig();
 		assert ioConfig.inputs.size() == 1;
 		assert ioConfig.inputs.get(ScalarEncoder.SENSOR_VALUE_INPUT).name.equals("SensorValue");
 		assert ioConfig.outputs.size() == 1;
@@ -111,6 +111,7 @@ public class TestScalarEncoder {
 		assert io.outputs.size() == 1;
 		assert io.outputs.get(0).toString().equals("256,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
 
+		io.error = "";
 		io.outputs.clear();
 		io.inputValue = 0F;
 		se.processIO(io);
@@ -126,13 +127,14 @@ public class TestScalarEncoder {
 		assert copy.resolution == enc.resolution;
 		assert copy.periodic == enc.periodic;
 		
-		SeConfig scCopy = se.encoder.copy();
-		assert scCopy.encodeLength == se.encoder.encodeLength;
-		assert scCopy.onBits == se.encoder.onBits;
-		assert scCopy.minValue == se.encoder.minValue;
-		assert scCopy.maxValue == se.encoder.maxValue;
-		assert scCopy.resolution == se.encoder.resolution;
-		assert scCopy.periodic == se.encoder.periodic;
+		SeConfig scOri = ((SeConfig)se.encoder);
+		SeConfig scCopy = scOri.copy();
+		assert scCopy.encodeLength == scOri.encodeLength;
+		assert scCopy.onBits == scOri.onBits;
+		assert scCopy.minValue == scOri.minValue;
+		assert scCopy.maxValue == scOri.maxValue;
+		assert scCopy.resolution == scOri.resolution;
+		assert scCopy.periodic == scOri.periodic;
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(se);
 		StringBuilder str = json.toStringBuilder();

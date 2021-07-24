@@ -7,7 +7,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.neural.Sdr;
 
-public class DateSdrEncoder {
+public class DateSdrEncoder extends AbstractEncoder {
 	public ScalarSdrEncoder			monthEncoder	= new ScalarSdrEncoder();
 	public ScalarSdrEncoder			dateEncoder		= new ScalarSdrEncoder();
 	public ScalarSdrEncoder			weekdayEncoder	= new ScalarSdrEncoder();
@@ -15,6 +15,30 @@ public class DateSdrEncoder {
 	public boolean					includeMonth	= true;
 	public boolean					includeDate		= true;
 	public boolean					includeWeekday	= true;
+
+	@Override
+	public Sdr getEncodedValue(Object value) {
+		Sdr r = new Sdr(getEncodeLength());
+		if (value instanceof Long) {
+			value = new Date((Long)value);
+		}
+		if (value instanceof Date) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime((Date)value);
+			r.concat(getSdrs(cal));
+		}
+		return r;
+	}
+
+	public DateSdrEncoder copy() {
+		DateSdrEncoder r = new DateSdrEncoder();
+		r.copyFrom(this);
+		return r;
+	}
+	
+	public void setOnBitsPerEncoder(int onBits) {
+		initializeEncoders(onBits);
+	}
 
 	public List<ScalarSdrEncoder> getActiveEncoders() {
 		List<ScalarSdrEncoder> r = new ArrayList<ScalarSdrEncoder>();
@@ -26,12 +50,6 @@ public class DateSdrEncoder {
 		}
 		return r;
 	}	
-
-	public DateSdrEncoder copy() {
-		DateSdrEncoder r = new DateSdrEncoder();
-		r.copyFrom(this);
-		return r;
-	}
 	
 	public int getEncodeLength() {
 		int r = 0;
@@ -41,27 +59,10 @@ public class DateSdrEncoder {
 		return r;
 	}
 	
-	public void setOnBitsPerEncoder(int onBits) {
-		initializeEncoders(onBits);
-	}
-	
 	public int getOnBits() {
 		int r = 0;
 		for (ScalarSdrEncoder encoder: getActiveEncoders()) {
 			r += encoder.onBits;
-		}
-		return r;
-	}
-	
-	public Sdr getEncodedValue(Object value) {
-		Sdr r = new Sdr(getEncodeLength());
-		if (value instanceof Long) {
-			value = new Date((Long)value);
-		}
-		if (value instanceof Date) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime((Date)value);
-			r.concat(getSdrs(cal));
 		}
 		return r;
 	}

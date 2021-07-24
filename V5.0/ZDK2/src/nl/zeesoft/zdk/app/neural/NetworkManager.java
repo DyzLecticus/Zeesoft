@@ -6,8 +6,8 @@ import java.util.SortedMap;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.config.HotGymConfigFactory;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
-import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 
 public class NetworkManager extends NetworkManagerSettings {
 	protected NetworkStateManager 	stateManager	= new NetworkStateManager();
@@ -130,8 +130,7 @@ public class NetworkManager extends NetworkManagerSettings {
 	}
 	
 	protected NetworkConfig loadNetworkConfig() {
-		NetworkConfigFactory factory = new NetworkConfigFactory();
-		return factory.getSimpleConfig("input1", "input2");
+		return HotGymConfigFactory.getHotGymNetworkConfig();
 	}
 	
 	protected boolean loadNetwork(Network network) {
