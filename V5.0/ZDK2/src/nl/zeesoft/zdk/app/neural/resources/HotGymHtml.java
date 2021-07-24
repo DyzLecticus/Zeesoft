@@ -7,7 +7,7 @@ import nl.zeesoft.zdk.app.resource.HtmlResource;
 
 public class HotGymHtml extends HtmlResource {
 	public HotGymHtml() {
-		this.title = "Zeesoft NeuralServer - HotGym";
+		this.title = "Zeesoft NeuralServer - Hot Gym";
 		onload = "loadApp(); hotGym.loadData();";
 		scriptFiles.add(IndexJsHandler.PATH);
 		scriptFiles.add(HotGymJsHandler.PATH);
@@ -17,27 +17,13 @@ public class HotGymHtml extends HtmlResource {
 	@Override
 	protected StringBuilder renderBody() {
 		StringBuilder body = super.renderBody();
-		append(body, "<h1>Zeesoft NeuralServer</h1>");
-		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
+		append(body, "<h1>Hot gym</h1>");
+		append(body, "<p>This page can be used to train the neural network using the Numenta Hot Gym example <a href='" + HotGymJs.SOURCE_URL + "'>data</a>.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
-		renderNetworkStats(body);
+		append(body, "<hr />");
+		append(body, "<input id='trainNetworkButton' type='button' value='Train' onclick='hotGym.trainNetwork();' DISABLED/>");
+		append(body, "<input id='pauzeNetworkTrainingButton' type='button' value='Pauze' onclick='hotGym.pauzeNetworkTraining();' DISABLED/>");
+		append(body, "&nbsp;<span id=\"networkTrainingStateText\" />");
 		return body;
-	}
-	
-	protected void renderNetworkStats(StringBuilder body) {
-		append(body, getAccordion("networkStatsAccordion","Statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
-	}
-
-	protected StringBuilder getAccordion(String id, String title, String content) {
-		return getAccordion(id, title, new StringBuilder(content));
-	}
-	
-	protected StringBuilder getAccordion(String id, String title, StringBuilder content) {
-		StringBuilder r = new StringBuilder();
-		append(r, "<hr />");
-		append(r, getAccordionStart(id,title));
-		append(r, content);
-		append(r, getAccordionEnd());
-		return r;
 	}
 }

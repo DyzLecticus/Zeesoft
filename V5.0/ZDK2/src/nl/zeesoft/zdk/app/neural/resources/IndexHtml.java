@@ -75,6 +75,6 @@ public class IndexHtml extends HtmlResource {
 		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network I/O statistics"));
 		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network I/O accuracy"));
 		
-		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O (POST only)"));
+		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O"));
 	}
 }

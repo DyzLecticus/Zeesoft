@@ -235,6 +235,12 @@ public class TestNeuralApp {
 		// Network config
 		body = testHeadGetRequest(requestHandler, NetworkConfigJsonHandler.PATH, "application/json");
 
+		// Network IO
+		body = testHeadGetRequest(requestHandler, NetworkIOJsonHandler.PATH, "application/json");
+		NetworkIO io = (NetworkIO) ObjectConstructor.fromJson(new Json(body));
+		assert (float)io.getInput("Value") == 0F;
+		assert (long)io.getInput("DateTime") == 0L;
+		
 		response = testPostRequest(requestHandler, NetworkConfigJsonHandler.PATH, new Json());
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
@@ -307,7 +313,9 @@ public class TestNeuralApp {
 		assert (boolean)json.root.get("processorLearning").get("keyValues").get(0).get("value").get("value").value == false;
 		
 		// Network IO
-		NetworkIO io = new NetworkIO();
+		body = testHeadGetRequest(requestHandler, NetworkIOJsonHandler.PATH, "application/json");
+
+		io = new NetworkIO();
 		io.addInput("Input", 1);
 		request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(io));

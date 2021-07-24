@@ -49,5 +49,6 @@ public class HotGymConfigFactory {
 		
 		config.addClassifier(4, "Classifier");
 		config.addLink("TemporalMemory", "Classifier");
+		config.addLink("Value", 0, "Classifier", 1);
 	}
 }

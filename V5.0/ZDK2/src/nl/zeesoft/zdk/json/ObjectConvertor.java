@@ -10,6 +10,8 @@ public class ObjectConvertor {
 				r = value.toString();
 			} else if (cls == Long.class && value.getClass() == Integer.class) {
 				r = ((Integer)value).longValue();
+			} else if (cls == Long.class && value.getClass() == Double.class) {
+				r = ((Double)value).longValue();
 			} else if (cls == Float.class && value.getClass() == Double.class) {
 				r = new Float((Double)value);
 			} else if (cls == Float.class && value.getClass() == Integer.class) {

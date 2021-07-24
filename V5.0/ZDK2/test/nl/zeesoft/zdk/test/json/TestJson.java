@@ -138,6 +138,7 @@ public class TestJson {
 		assert ObjectConvertor.convertValueToClass("",Double.class).equals("");
 		assert ObjectConvertor.convertValueToClass("",Byte.class).equals("");
 		assert ObjectConvertor.convertValueToClass("",Short.class).equals("");
+		assert (long)ObjectConvertor.convertValueToClass(1D,Long.class) == 1L;
 		assert (float)ObjectConvertor.convertValueToClass(1,Float.class) == 1F;
 		assert (double)ObjectConvertor.convertValueToClass(1,Double.class) == 1D;
 		
