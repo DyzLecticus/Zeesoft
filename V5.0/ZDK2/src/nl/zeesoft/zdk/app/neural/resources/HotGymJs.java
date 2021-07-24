@@ -11,17 +11,22 @@ public class HotGymJs extends Resource {
 	
 	@Override
 	protected void render(StringBuilder r) {
-		append(r, "var hotGym = hotGym || {};");
-		append(r, "hotGym.data = { inputs: [] };");
-		append(r, "hotGym.trainingIO = 0;");
-		append(r, "hotGym.pauze = false;");
+		renderObject(r);
 		renderLoadData(r);
 		renderParseData(r);
 		renderParseDateTime(r);
 		renderTrainNetwork(r);
 		renderPauzeNetworkTraining(r);
 		renderTrainNetworkRequest(r);
+		renderHanldeTrainNetworkResponse(r);
 		renderGetNewNetworkIO(r);
+	}
+	
+	protected void renderObject(StringBuilder r) {
+		append(r, "var hotGym = hotGym || {};");
+		append(r, "hotGym.data = { inputs: [] };");
+		append(r, "hotGym.trainingIO = 0;");
+		append(r, "hotGym.pauze = false;");
 	}
 	
 	protected void renderLoadData(StringBuilder r) {
@@ -94,21 +99,25 @@ public class HotGymJs extends Resource {
 	protected void renderTrainNetworkRequest(StringBuilder r) {
 		append(r, "hotGym.trainNetworkRequest = () => {");
 		append(r, "    var input = hotGym.data.inputs[hotGym.trainingIO];");
-		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", hotGym.trainingIO + \" / \" + hotGym.data.inputs.length);");
+		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", (hotGym.trainingIO + 1) + \" / \" + hotGym.data.inputs.length);");
 		append(r, "    var request = new HttpRequest(\"POST\",\"" + NetworkIOJsonHandler.PATH + "\");");
 		append(r, "    request.body = JSON.stringify(hotGym.getNewNetworkIO(input));");
-		append(r, "    request.execute(() => {");
-		append(r, "        hotGym.trainingIO++;");
-		append(r, "        if (!hotGym.pauze && hotGym.trainingIO < hotGym.data.inputs.length) {");
-		append(r, "            setTimeout(() => { hotGym.trainNetworkRequest(); }, 10);");
-		append(r, "        } else {");
-		append(r, "            if (!hotGym.pauze) {");
-		append(r, "                hotGym.trainingIO = 0;");
-		append(r, "                dom.setInnerHTML(\"networkTrainingStateText\",\"\");");
-		append(r, "            }");
-		append(r, "            dom.setDisabled(\"trainNetworkButton\", false);");
+		append(r, "    request.execute(hotGym.handleTrainNetworkResponse);");
+		append(r, "};");
+	}
+	
+	protected void renderHanldeTrainNetworkResponse(StringBuilder r) {
+		append(r, "hotGym.handleTrainNetworkResponse = (xhr) => {");
+		append(r, "    hotGym.trainingIO++;");
+		append(r, "    if (!hotGym.pauze && hotGym.trainingIO < hotGym.data.inputs.length) {");
+		append(r, "        setTimeout(() => { hotGym.trainNetworkRequest(); }, 10);");
+		append(r, "    } else {");
+		append(r, "        if (!hotGym.pauze) {");
+		append(r, "            hotGym.trainingIO = 0;");
+		append(r, "            dom.setInnerHTML(\"networkTrainingStateText\",\"\");");
 		append(r, "        }");
-		append(r, "    });");
+		append(r, "        dom.setDisabled(\"trainNetworkButton\", false);");
+		append(r, "    }");
 		append(r, "};");
 	}
 	
