@@ -34,15 +34,15 @@ public class IndexHtml extends HtmlResource {
 	}
 	
 	protected void renderNetworkConfig(StringBuilder body) {
-		append(body, getAccordion("networkConfigAccordion","Network configuration","<div id=\"networkConfig\" class=\"x-scrollable\"></div>"));
+		append(body, getAccordion("networkConfigAccordion","Configuration","<div id=\"networkConfig\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderNetworkSettings(StringBuilder body) {
-		append(body, getAccordion("networkSettingsAccordion","Network settings","<div id=\"networkSettings\" class=\"x-scrollable\"></div>"));
+		append(body, getAccordion("networkSettingsAccordion","Settings","<div id=\"networkSettings\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderNetworkStats(StringBuilder body) {
-		append(body, getAccordion("networkStatsAccordion","Network statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
+		append(body, getAccordion("networkStatsAccordion","Statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderApiLinks(StringBuilder body) {

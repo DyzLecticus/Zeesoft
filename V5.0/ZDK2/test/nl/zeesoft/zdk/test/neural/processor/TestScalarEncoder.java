@@ -4,12 +4,12 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoderTester;
 import nl.zeesoft.zdk.neural.Sdr;
+import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoder;
+import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoderTester;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
-import nl.zeesoft.zdk.neural.processor.se.ScConfig;
+import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 import nl.zeesoft.zdk.str.StrUtil;
 
@@ -102,7 +102,7 @@ public class TestScalarEncoder {
 		io.error = "";
 		io.inputValue = true;
 		se.processIO(io);
-		assert io.error.equals("ScalarEncoder requires an integer or float value");
+		assert io.error.equals("ScalarEncoder requires an integer or float input value");
 		
 		io.error = "";
 		io.inputValue = 0;
@@ -126,7 +126,7 @@ public class TestScalarEncoder {
 		assert copy.resolution == enc.resolution;
 		assert copy.periodic == enc.periodic;
 		
-		ScConfig scCopy = se.encoder.copy();
+		SeConfig scCopy = se.encoder.copy();
 		assert scCopy.encodeLength == se.encoder.encodeLength;
 		assert scCopy.onBits == se.encoder.onBits;
 		assert scCopy.minValue == se.encoder.minValue;

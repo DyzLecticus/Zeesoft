@@ -1,14 +1,14 @@
 package nl.zeesoft.zdk.neural.processor.se;
 
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoder;
+import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoder;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
-public class ScConfig extends ScalarSdrEncoder implements ConfigurableIO {
+public class SeConfig extends ScalarSdrEncoder implements ConfigurableIO {
 	@Override
-	public ScConfig copy() {
-		ScConfig r = new ScConfig();
+	public SeConfig copy() {
+		SeConfig r = new SeConfig();
 		r.copyFrom(this);
 		return r;
 	}

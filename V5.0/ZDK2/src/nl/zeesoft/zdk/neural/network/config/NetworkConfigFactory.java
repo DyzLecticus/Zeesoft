@@ -6,10 +6,10 @@ import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.TemporalMemoryConfig;
-import nl.zeesoft.zdk.neural.processor.se.ScConfig;
+import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 
 public class NetworkConfigFactory {
-	public ScConfig		encoder				= new ScConfig();
+	public SeConfig		encoder				= new SeConfig();
 	public Size			size				= new Size(48,48,16);
 	public int			onBits				= 46;
 	public int			activationThreshold	= 13;
@@ -17,7 +17,7 @@ public class NetworkConfigFactory {
 	public int			maxApicalOnBits		= 256;
 
 	public void setSmallScale() {
-		encoder = new ScConfig();
+		encoder = new SeConfig();
 		encoder.encodeLength = 100;
 		encoder.maxValue = 20;
 		encoder.onBits = 8;
@@ -29,7 +29,7 @@ public class NetworkConfigFactory {
 	}
 
 	public void setMediumScale() {
-		encoder = new ScConfig();
+		encoder = new SeConfig();
 		encoder.encodeLength = 144;
 		encoder.maxValue = 32;
 		encoder.onBits = 8;

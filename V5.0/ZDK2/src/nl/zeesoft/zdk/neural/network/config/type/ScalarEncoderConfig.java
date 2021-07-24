@@ -3,11 +3,11 @@ package nl.zeesoft.zdk.neural.network.config.type;
 import nl.zeesoft.zdk.neural.network.config.ProcessorConfig;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 import nl.zeesoft.zdk.neural.processor.Processor;
-import nl.zeesoft.zdk.neural.processor.se.ScConfig;
+import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 
 public class ScalarEncoderConfig extends ProcessorConfig {
-	public ScConfig		encoder		= new ScConfig();
+	public SeConfig		encoder		= new SeConfig();
 
 	public ScalarEncoderConfig() {
 		

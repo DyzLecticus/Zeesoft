@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.test.neural.network;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.ScalarSdrEncoderTester;
+import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoderTester;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;

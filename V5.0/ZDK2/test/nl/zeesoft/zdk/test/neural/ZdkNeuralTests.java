@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.test.neural.network.TestNetworkJson;
 import nl.zeesoft.zdk.test.neural.network.TestNetworkTrainer;
 import nl.zeesoft.zdk.test.neural.processor.TestClassifier;
 import nl.zeesoft.zdk.test.neural.processor.TestClassifierJson;
+import nl.zeesoft.zdk.test.neural.processor.TestDateTimeEncoder;
 import nl.zeesoft.zdk.test.neural.processor.TestMerger;
 import nl.zeesoft.zdk.test.neural.processor.TestScalarEncoder;
 import nl.zeesoft.zdk.test.neural.processor.TestSpatialPooler;
@@ -26,6 +27,8 @@ public class ZdkNeuralTests {
 		TestSdrStringConvertor.main(args);
 		Console.log("Test ScalarEncoder ...");
 		TestScalarEncoder.main(args);
+		Console.log("Test DateTimeEncoder ...");
+		TestDateTimeEncoder.main(args);
 		Console.log("Test Cells ...");
 		TestSegment.main(args);
 		TestCell.main(args);
