@@ -48,7 +48,7 @@ public class TestNetworkConfigFactory {
 		testSimpleConfig(factory, 100, 1024, new Size(16,16,4));
 		
 		assert new HotGymConfigFactory() != null;
-		config = HotGymConfigFactory.getHotGymNetworkConfig();
+		config = HotGymConfigFactory.getNewHotGymNetworkConfig();
 		assert config.test().length() == 0;
 		
 		Json json = JsonConstructor.fromObject(config);

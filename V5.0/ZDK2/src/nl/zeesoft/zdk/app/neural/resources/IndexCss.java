@@ -13,6 +13,8 @@ public class IndexCss extends Resource {
 		renderMarginPaddingZero(r);
 		renderAccordionTitle(r);
 		renderTablePadding(r);
+		renderSdrTable(r);
+		renderBgColors(r);
 	}
 
 	protected void renderBody(StringBuilder r) {
@@ -91,5 +93,42 @@ public class IndexCss extends Resource {
 		append(r, "    padding-left: 0.5em;");
 		append(r, "    padding-right: 0.5em;");
 		append(r, "}");
+	}
+
+	protected void renderSdrTable(StringBuilder r) {
+		append(r, "table.sdr {\n");
+		append(r, "    border: 1px solid grey;\n");
+		append(r, "    border-collapse: separate;\n");
+		append(r, "    border-spacing: 0px;\n");
+		append(r, "}\n");
+		append(r, "table.sdr tr {\n");
+		append(r, "    border: 1px solid grey;\n");
+		append(r, "    border-collapse: separate;\n");
+		append(r, "    border-spacing: 0px;\n");
+		append(r, "}\n");
+		append(r, "table.sdr tr td {\n");
+		append(r, "    border: 1px solid grey;\n");
+		append(r, "    border-collapse: separate;\n");
+		append(r, "    border-spacing: 0px;\n");
+		append(r, "    padding: 0px;\n");
+		append(r, "    width: 5px;\n");
+		append(r, "    height: 5px;\n");
+		append(r, "    font-size: 1px;\n");
+		append(r, "}\n");
+	}
+
+	protected void renderBgColors(StringBuilder r) {
+		append(r, ".bg-r {\n");
+		append(r, "    background-color: red;\n");
+		append(r, "}\n");
+		append(r, ".bg-g {\n");
+		append(r, "    background-color: green;\n");
+		append(r, "}\n");
+		append(r, ".bg-b {\n");
+		append(r, "    background-color: blue;\n");
+		append(r, "}\n");
+		append(r, ".bg-w {\n");
+		append(r, "    background-color: white;\n");
+		append(r, "}\n");
 	}
 }

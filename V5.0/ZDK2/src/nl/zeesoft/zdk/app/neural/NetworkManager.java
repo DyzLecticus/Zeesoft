@@ -130,7 +130,7 @@ public class NetworkManager extends NetworkManagerSettings {
 	}
 	
 	protected NetworkConfig loadNetworkConfig() {
-		return HotGymConfigFactory.getHotGymNetworkConfig();
+		return HotGymConfigFactory.getNewHotGymNetworkConfig();
 	}
 	
 	protected boolean loadNetwork(Network network) {

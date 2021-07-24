@@ -15,8 +15,10 @@ public class ApiJs extends Resource {
 	}
 	
 	protected void renderNetworkApiJs(StringBuilder r) {
+		append(r, (new SdrJs()).render());
 		append(r, (new NetworkConfigJs()).render());
 		append(r, (new NetworkSettingsJs()).render());
 		append(r, (new NetworkStatsJs()).render());
+		append(r, (new NetworkIOJs()).render());
 	}
 }

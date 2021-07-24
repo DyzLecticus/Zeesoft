@@ -111,6 +111,9 @@ public class HotGymJs extends Resource {
 		append(r, "    hotGym.trainingIO++;");
 		append(r, "    if (!hotGym.pauze && hotGym.trainingIO < hotGym.data.inputs.length) {");
 		append(r, "        setTimeout(() => { hotGym.trainNetworkRequest(); }, 10);");
+		append(r, "        setTimeout(() => {");
+		append(r, "            changePublisher.setValue(\"networkIO\", JSON.parse(xhr.response));");
+		append(r, "        }, 20);");
 		append(r, "    } else {");
 		append(r, "        if (!hotGym.pauze) {");
 		append(r, "            hotGym.trainingIO = 0;");

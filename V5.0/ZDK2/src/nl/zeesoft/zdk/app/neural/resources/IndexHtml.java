@@ -52,19 +52,6 @@ public class IndexHtml extends HtmlResource {
 		append(body, getAccordion("apiLinksAccordion","API links",content));
 	}
 
-	protected StringBuilder getAccordion(String id, String title, String content) {
-		return getAccordion(id, title, new StringBuilder(content));
-	}
-	
-	protected StringBuilder getAccordion(String id, String title, StringBuilder content) {
-		StringBuilder r = new StringBuilder();
-		append(r, "<hr />");
-		append(r, getAccordionStart(id,title));
-		append(r, content);
-		append(r, getAccordionEnd());
-		return r;
-	}
-
 	protected void renderLinkListItems(StringBuilder body) {
 		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state"));
 		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state"));

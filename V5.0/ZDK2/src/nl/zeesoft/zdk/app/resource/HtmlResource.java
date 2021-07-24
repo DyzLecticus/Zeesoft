@@ -78,6 +78,19 @@ public class HtmlResource extends Resource {
 		r.append("</a>");
 		return r;
 	}
+
+	public static StringBuilder getAccordion(String id, String title, String content) {
+		return getAccordion(id, title, new StringBuilder(content));
+	}
+	
+	public static StringBuilder getAccordion(String id, String title, StringBuilder content) {
+		StringBuilder r = new StringBuilder();
+		append(r, "<hr />");
+		append(r, getAccordionStart(id,title));
+		append(r, content);
+		append(r, getAccordionEnd());
+		return r;
+	}
 	
 	public static StringBuilder getAccordionStart(String id, String title) {
 		StringBuilder r = new StringBuilder();
