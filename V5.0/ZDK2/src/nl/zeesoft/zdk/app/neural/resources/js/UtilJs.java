@@ -10,6 +10,7 @@ public class UtilJs extends Resource {
 		append(r, "var util = util || {};");
 		renderObjectFromMap(r);
 		renderObjectToMap(r);
+		renderFormatDecimal(r);
 	}
 
 	protected void renderObjectFromMap(StringBuilder r) {
@@ -36,6 +37,12 @@ public class UtilJs extends Resource {
 		append(r, "        keyValues[keyValues.length] = kv;");
 		append(r, "    }");
 		append(r, "    return { className: mapCls, keyValues };");
+		append(r, "};");
+	}
+	
+	protected void renderFormatDecimal(StringBuilder r) {
+		append(r, "util.formatDecimal = (value) => {");
+		append(r, "    return value.length == 0 || value.toString().indexOf(\".\") >= 0 ? value.toString() : value + \".0\";");
 		append(r, "};");
 	}
 }

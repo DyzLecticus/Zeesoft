@@ -79,7 +79,7 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 	@Override
 	protected void processValidIO(ProcessorIO io) {
 		List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(config.inputSize);
-		activations.activate(this, activeInputPositions);
+		activations.activate(this, activeInputPositions, io.timeoutMs);
 		List<Position> winners = activations.getWinners(this, config.outputOnBits);
 		addOutput(io, winners);
 		if (learn) {
@@ -87,7 +87,7 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 		}
 		activationHistory.push(io.outputs.get(0).copy());
 		processed++;
-		boostFactors.update(this, processed);
+		boostFactors.update(this, processed, io.timeoutMs);
 	}
 	
 	@Override

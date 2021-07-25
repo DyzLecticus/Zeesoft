@@ -62,6 +62,7 @@ public class NetworkIOProcessor {
 			addInputsToList(inputs, pio.inputs);
 		}
 		pio.inputValue = inputValue;
+		pio.timeoutMs = io.timeoutMs;
 		toProcessor.processor.processIO(pio);
 		io.addProcessorIO(toProcessor.name,pio);
 		return pio.error.length() == 0;

@@ -77,9 +77,9 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "    }");
 		append(r, "    var dateTime = new Date();");
 		append(r, "    dateTime.setTime(networkIo.json.inputs.keyValues[0].value.value);");
-		append(r, "    var html = \"<td align='right'>\" + dateTime.toISOString() + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + actualValue + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + predictedValue + \"</td>\";");
+		append(r, "    var html = \"<td align='left'>\" + dateTime.toISOString() + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(actualValue) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(predictedValue) + \"</td>\";");
 		append(r, "    html += networkIOHist.toHtmlTableGraphColumns(networkIo, actualValue, predictedValue);");
 		append(r, "    return html;");
 		append(r, "};");

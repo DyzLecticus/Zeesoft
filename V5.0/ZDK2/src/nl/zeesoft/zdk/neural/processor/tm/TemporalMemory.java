@@ -65,9 +65,9 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	@Override
 	protected void processValidIO(ProcessorIO io) {
 		cells.cycleState(getNewActiveApicalCellPositions(io));
-		columns.activate(this, getNewActiveColumnPositions(io));
+		columns.activate(this, getNewActiveColumnPositions(io), io.timeoutMs);
 		if (learn) {
-			columns.adapt(this);
+			columns.adapt(this, io.timeoutMs);
 		}
 		cells.predictActiveCells(this);
 		addOutput(io, cells.activeCellPositions);

@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.processor.sp;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.MatrixExecutor;
@@ -25,7 +26,8 @@ public class SpBoostFactors extends Matrix {
 		setValue(caller, 1F);
 	}
 
-	public void update(Object caller, int processed) {
+	public ExecutorTask update(Object caller, int processed, int timeoutMs) {
+		ExecutorTask r = null;
 		if (processed % config.boostFactorPeriod == 0) {
 			float averageGlobalActivation = activationHistory.getTotalAverage();
 			MatrixExecutor exec = new MatrixExecutor(this, executor) {
@@ -34,8 +36,9 @@ public class SpBoostFactors extends Matrix {
 					return getUpdateBoostFactorsFunction(averageGlobalActivation);
 				}
 			};
-			exec.execute(caller, 1000);
+			r = exec.execute(caller, timeoutMs);
 		}
+		return r;
 	}
 	
 	protected Function getUpdateBoostFactorsFunction(float averageGlobalActivation) {

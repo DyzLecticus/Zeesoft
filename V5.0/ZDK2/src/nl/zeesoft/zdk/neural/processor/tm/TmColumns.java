@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural.processor.tm;
 import java.util.List;
 
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.MatrixExecutor;
@@ -27,24 +28,24 @@ public class TmColumns extends Matrix {
 		initialize(new Size(config.size.x,config.size.y));
 	}
 	
-	public void activate(Object caller, List<Position> activeColumnPositions) {
+	public ExecutorTask activate(Object caller, List<Position> activeColumnPositions, int timeoutMs) {
 		MatrixExecutor exec = new MatrixExecutor(this, executor) {
 			@Override
 			protected Function getFunctionForWorker() {
 				return getActivateFunction(activeColumnPositions);
 			}
 		};
-		exec.execute(caller, 1000);
+		return exec.execute(caller, timeoutMs);
 	}
 	
-	public void adapt(Object caller) {
+	public ExecutorTask adapt(Object caller, int timeoutMs) {
 		MatrixExecutor exec = new MatrixExecutor(this, executor) {
 			@Override
 			protected Function getFunctionForWorker() {
 				return getAdaptFunction();
 			}
 		};
-		exec.execute(caller, 1000);
+		return exec.execute(caller, timeoutMs);
 	}
 	
 	protected Function getActivateFunction(List<Position> activeColumnPositions) {

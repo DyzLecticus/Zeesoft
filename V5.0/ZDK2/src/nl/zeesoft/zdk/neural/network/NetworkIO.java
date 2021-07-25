@@ -11,8 +11,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
-public class NetworkIO {	
-	protected int								timeoutMs		= 1000;
+public class NetworkIO {
+	// TODO: timeout handling
+	protected int								timeoutMs		= 10000;
 	protected SortedMap<String,Object>			inputs			= new TreeMap<String,Object>();
 	
 	protected ConcurrentMap<String,ProcessorIO>	processorIO		= new ConcurrentHashMap<String,ProcessorIO>();

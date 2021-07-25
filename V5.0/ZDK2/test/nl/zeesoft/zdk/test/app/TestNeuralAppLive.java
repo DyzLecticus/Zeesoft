@@ -1,5 +1,6 @@
 package nl.zeesoft.zdk.test.app;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
@@ -10,20 +11,20 @@ public class TestNeuralAppLive {
 	protected static int				sleepMs		= 60 * 60 * 1000;
 	
 	public static void main(String[] args) {
-		Logger.setLoggerDebug(true);
+		Logger.setLoggerDebug(false);
 		
 		NeuralAppConfig config = new NeuralAppConfig();
 		NeuralApp app = new NeuralApp(config);
 		
-		Logger.debug(self,"Starting app ...");
+		Console.log("Starting app ...");
 		if (app.start()) {
-			Logger.debug(self,"Started app");
+			Console.log("Started app");
 			Util.sleep(sleepMs);
-			Logger.debug(self,"Stopping app ...");
+			Console.log("Stopping app ...");
 			assert app.stop();
-			Logger.debug(self,"Stopped app");
+			Console.log("Stopped app");
 		} else {
-			Logger.debug(self,"Failed to start app");
+			Console.err("Failed to start app");
 		}
 	}
 }

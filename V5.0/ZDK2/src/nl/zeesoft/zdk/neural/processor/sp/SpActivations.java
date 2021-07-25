@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.MatrixExecutor;
@@ -39,14 +40,14 @@ public class SpActivations extends Matrix {
 		initialize(config.outputSize);
 	}
 	
-	public void activate(Object caller, List<Position> activeInputPositions) {
+	public ExecutorTask activate(Object caller, List<Position> activeInputPositions, int timeoutMs) {
 		MatrixExecutor exec = new MatrixExecutor(this, executor) {
 			@Override
 			protected Function getFunctionForWorker() {
 				return getActivateFunction(activeInputPositions);
 			}
 		};
-		exec.execute(caller, 1000);
+		return exec.execute(caller, timeoutMs);
 	}
 
 	public List<Position> getWinners(Object caller, int limit) {
