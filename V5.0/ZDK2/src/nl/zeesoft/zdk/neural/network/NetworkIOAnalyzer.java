@@ -93,11 +93,7 @@ public class NetworkIOAnalyzer {
 	}
 	
 	protected boolean predictedValueWasWithinRange(Object value, Object predictedValue) {
-		boolean r = false;
-		if (predictedValue.equals(value)) {
-			r = true;
-		}
-		return r;
+		return predictedValue.equals(value);
 	}
 	
 	protected void logAccuracy(String name, float accuracy) {
