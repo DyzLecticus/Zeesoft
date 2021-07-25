@@ -41,8 +41,13 @@ public class UtilJs extends Resource {
 	}
 	
 	protected void renderFormatDecimal(StringBuilder r) {
-		append(r, "util.formatDecimal = (value) => {");
-		append(r, "    return value.length == 0 || value.toString().indexOf(\".\") >= 0 ? value.toString() : value + \".0\";");
+		append(r, "util.formatDecimal = (value, decimals) => {");
+		append(r, "    decimals = decimals || 1;");
+		append(r, "    var mult = 1;");
+		append(r, "    for (var i = 0; i < decimals; i++) {");
+		append(r, "        mult = mult * 10;");
+		append(r, "    }");
+		append(r, "    return value.toString().length == 0 ? value : (Math.round(value * mult) / mult).toFixed(decimals);");
 		append(r, "};");
 	}
 }

@@ -29,6 +29,7 @@ public class IndexHtml extends HtmlResource {
 		renderNetworkConfig(body);
 		renderNetworkSettings(body);
 		renderNetworkStats(body);
+		renderNetworkIOStats(body);
 		renderApiLinks(body);
 		return body;
 	}
@@ -42,7 +43,11 @@ public class IndexHtml extends HtmlResource {
 	}
 	
 	protected void renderNetworkStats(StringBuilder body) {
-		append(body, getAccordion("networkStatsAccordion","Statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
+		append(body, getAccordion("networkStatsAccordion","Neural statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
+	}
+	
+	protected void renderNetworkIOStats(StringBuilder body) {
+		append(body, getAccordion("networkIOStatsAccordion","Performance statistics","<div id=\"networkIOStats\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderApiLinks(StringBuilder body) {
@@ -53,15 +58,13 @@ public class IndexHtml extends HtmlResource {
 	}
 
 	protected void renderLinkListItems(StringBuilder body) {
-		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state"));
-		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state"));
-		append(body, renderLinkListItem(NetworkConfigJsonHandler.PATH, "Network configuration"));
-		append(body, renderLinkListItem(NetworkSettingsJsonHandler.PATH, "Network settings"));
-		
-		append(body, renderLinkListItem(NetworkStatsJsonHandler.PATH, "Network statistics"));
-		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network I/O statistics"));
-		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network I/O accuracy"));
-		
-		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O"));
+		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state", "_blank"));
+		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state", "_blank"));
+		append(body, renderLinkListItem(NetworkConfigJsonHandler.PATH, "Network configuration", "_blank"));
+		append(body, renderLinkListItem(NetworkSettingsJsonHandler.PATH, "Network settings", "_blank"));
+		append(body, renderLinkListItem(NetworkStatsJsonHandler.PATH, "Network neural statistics", "_blank"));
+		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network performance statistics", "_blank"));
+		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network accuracy", "_blank"));
+		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O", "_blank"));
 	}
 }

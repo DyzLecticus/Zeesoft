@@ -32,11 +32,13 @@ public class ObjectLoaderJs extends Resource {
 		append(r, "ObjectLoader.executeAndPublish = (loader) => {");
 		append(r, "    loader.request.execute((xhr) => {");
 		append(r, "        changePublisher.setValue(loader.key, ObjectLoader.parseResponse(xhr));");
-		append(r, "        if (loader.autoRefresh) {");
-		append(r, "            setTimeout(() => { if (loader.autoRefresh) loader.execute(); }, loader.autoRefreshMs);");
-		append(r, "        } else {");
-		append(r, "            loader.autoRefreshing = false;");
-		append(r, "        }");
+		append(r, "        setTimeout(() => {");
+		append(r, "            if (loader.autoRefresh) {");
+		append(r, "                loader.execute();");
+		append(r, "            } else {");
+		append(r, "                loader.autoRefreshing = false;");
+		append(r, "            }");
+		append(r, "        }, loader.autoRefreshMs);");
 		append(r, "    });");
 		append(r, "};");
 	}

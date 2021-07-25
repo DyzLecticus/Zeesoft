@@ -53,9 +53,13 @@ public class HtmlResource extends Resource {
 	protected StringBuilder renderBody() {
 		return new StringBuilder();
 	}
-
+	
 	public static StringBuilder renderLinkListItem(String href, String content) {
-		return wrapListItem(renderLink(href, content));
+		return wrapListItem(renderLink(href, content, ""));
+	}
+
+	public static StringBuilder renderLinkListItem(String href, String content, String target) {
+		return wrapListItem(renderLink(href, content, target));
 	}
 
 	public static StringBuilder wrapListItem(StringBuilder content) {
@@ -65,14 +69,18 @@ public class HtmlResource extends Resource {
 		return r;
 	}
 	
-	public static StringBuilder renderLink(String href, String content) {
-		return renderLink(href, new StringBuilder(content));
+	public static StringBuilder renderLink(String href, String content, String target) {
+		return renderLink(href, new StringBuilder(content), target);
 	}
 	
-	public static StringBuilder renderLink(String href, StringBuilder content) {
+	public static StringBuilder renderLink(String href, StringBuilder content, String target) {
 		StringBuilder r = new StringBuilder();
 		r.append("<a href=\"");
 		r.append(href);
+		if (target.length()>0) {
+			r.append("\" target=\"");
+			r.append(target);
+		}
 		r.append("\">");
 		r.append(content);
 		r.append("</a>");
