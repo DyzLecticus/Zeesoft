@@ -50,6 +50,7 @@ public class TestDateTimeEncoder {
 			assert sdr.onBits.size() == enc.getOnBits();
 			assert (float)sdr.onBits.size() / (float)sdr.length == 0.06185567F;
 		}
+		cal.set(Calendar.MONTH, 0);
 
 		Logger.debug(self, "Date cycle");
 		for (int i = 1; i < 32; i++) {
@@ -60,6 +61,18 @@ public class TestDateTimeEncoder {
 			assert sdr.onBits.size() == enc.getOnBits();
 			assert (float)sdr.onBits.size() / (float)sdr.length == 0.06185567F;
 		}
+		cal.set(Calendar.DATE, 1);
+
+		Logger.debug(self, "Hour cycle");
+		for (int i = 0; i < 24; i++) {
+			cal.set(Calendar.HOUR_OF_DAY, i);
+			Sdr sdr = enc.getEncodedValue(cal.getTime().getTime());
+			logSdr(sdr);
+			assert sdr.length == enc.getEncodeLength();
+			assert sdr.onBits.size() == enc.getOnBits();
+			assert (float)sdr.onBits.size() / (float)sdr.length == 0.06185567F;
+		}
+		cal.set(Calendar.HOUR_OF_DAY, 0);
 
 		enc.setOnBitsPerEncoder(2);
 		Sdr sdr = enc.getEncodedValue(cal.getTime());

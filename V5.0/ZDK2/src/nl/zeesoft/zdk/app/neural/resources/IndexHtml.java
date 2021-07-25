@@ -15,7 +15,7 @@ import nl.zeesoft.zdk.app.resource.HtmlResource;
 public class IndexHtml extends HtmlResource {
 	public IndexHtml() {
 		this.title = "Zeesoft NeuralServer";
-		onload = "loadApp();";
+		onload = "loadApp(true);";
 		scriptFiles.add(IndexJsHandler.PATH);
 		styleFiles.add(IndexCssHandler.PATH);
 	}

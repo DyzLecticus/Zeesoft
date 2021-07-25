@@ -71,9 +71,7 @@ public class HotGymJs extends Resource {
 		append(r, "    r.setMonth(parseInt(mdy[0],10) - 1);");
 		append(r, "    r.setDate(parseInt(mdy[1],10));");
 		append(r, "    r.setFullYear(parseInt(mdy[2],10));");
-		append(r, "    r.setHours(parseInt(hm[0],10));");
-		append(r, "    r.setMinutes(parseInt(hm[1],10));");
-		append(r, "    r.setSeconds(0);");
+		append(r, "    r.setHours(parseInt(hm[0],10),parseInt(hm[1],10),0,0);");
 		append(r, "    return r;");
 		append(r, "};");
 	}
@@ -99,7 +97,9 @@ public class HotGymJs extends Resource {
 	protected void renderTrainNetworkRequest(StringBuilder r) {
 		append(r, "hotGym.trainNetworkRequest = () => {");
 		append(r, "    var input = hotGym.data.inputs[hotGym.trainingIO];");
-		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", (hotGym.trainingIO + 1) + \" / \" + hotGym.data.inputs.length);");
+		append(r, "    var perc = Math.round((hotGym.trainingIO / hotGym.data.inputs.length) * 100);");
+		append(r, "    var html = input.dateTime.toISOString() + \" = <b>\" + input.value + \"</b> (\" + perc + \"%)\";");
+		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", html);");
 		append(r, "    var request = new HttpRequest(\"POST\",\"" + NetworkIOJsonHandler.PATH + "\");");
 		append(r, "    request.body = JSON.stringify(hotGym.getNewNetworkIO(input));");
 		append(r, "    request.execute(hotGym.handleTrainNetworkResponse);");

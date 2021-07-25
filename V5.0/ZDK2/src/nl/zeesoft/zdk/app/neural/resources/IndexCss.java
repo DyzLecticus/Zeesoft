@@ -96,39 +96,39 @@ public class IndexCss extends Resource {
 	}
 
 	protected void renderSdrTable(StringBuilder r) {
-		append(r, "table.sdr {\n");
-		append(r, "    border: 1px solid grey;\n");
-		append(r, "    border-collapse: separate;\n");
-		append(r, "    border-spacing: 0px;\n");
+		append(r, "table.sdr {");
+		renderSdrBorder(r);
 		append(r, "}\n");
-		append(r, "table.sdr tr {\n");
-		append(r, "    border: 1px solid grey;\n");
-		append(r, "    border-collapse: separate;\n");
-		append(r, "    border-spacing: 0px;\n");
+		append(r, "table.sdr tr {");
+		renderSdrBorder(r);
 		append(r, "}\n");
-		append(r, "table.sdr tr td {\n");
-		append(r, "    border: 1px solid grey;\n");
-		append(r, "    border-collapse: separate;\n");
-		append(r, "    border-spacing: 0px;\n");
-		append(r, "    padding: 0px;\n");
-		append(r, "    width: 5px;\n");
-		append(r, "    height: 5px;\n");
-		append(r, "    font-size: 1px;\n");
-		append(r, "}\n");
+		append(r, "table.sdr tr td {");
+		renderSdrBorder(r);
+		append(r, "    padding: 0px;");
+		append(r, "    width: 5px;");
+		append(r, "    height: 5px;");
+		append(r, "    font-size: 1px;");
+		append(r, "}");
 	}
 
+	protected void renderSdrBorder(StringBuilder r) {
+		append(r, "    border: 1px solid #DEDEDE;");
+		append(r, "    border-collapse: separate;");
+		append(r, "    border-spacing: 0px;");
+	}
+	
 	protected void renderBgColors(StringBuilder r) {
-		append(r, ".bg-r {\n");
-		append(r, "    background-color: red;\n");
-		append(r, "}\n");
-		append(r, ".bg-g {\n");
-		append(r, "    background-color: green;\n");
-		append(r, "}\n");
-		append(r, ".bg-b {\n");
-		append(r, "    background-color: blue;\n");
+		append(r, ".bg-r {");
+		append(r, "    background-color: red;");
+		append(r, "}");
+		append(r, ".bg-g {");
+		append(r, "    background-color: green;");
+		append(r, "}");
+		append(r, ".bg-b {");
+		append(r, "    background-color: blue;");
 		append(r, "}\n");
 		append(r, ".bg-w {\n");
-		append(r, "    background-color: white;\n");
+		append(r, "    background-color: white;");
 		append(r, "}\n");
 	}
 }

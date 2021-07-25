@@ -65,9 +65,11 @@ public class NetworkIOJs extends Resource {
 		append(r, "    }");
 		append(r, "    for (var i = 0; i < json.processorIO.keyValues.length; i++) {");
 		append(r, "        var kv = json.processorIO.keyValues[i];");
-		append(r, "        var sdr = Sdr.fromStr(kv.value.outputs[0].SdrStringConvertor);");
-		append(r, "        var sdrTableId = kv.key.value + \"OutputSdr0\";");
-		append(r, "        changePublisher.setValue(sdrTableId, sdr);");
+		append(r, "        if (kv.value.outputs[0]) {");
+		append(r, "            var sdr = Sdr.fromStr(kv.value.outputs[0].SdrStringConvertor);");
+		append(r, "            var sdrTableId = kv.key.value + \"OutputSdr0\";");
+		append(r, "            changePublisher.setValue(sdrTableId, sdr);");
+		append(r, "        }");
 		append(r, "    }");
 		append(r, "};");
 	}

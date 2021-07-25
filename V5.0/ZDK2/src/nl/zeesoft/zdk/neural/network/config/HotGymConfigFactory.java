@@ -27,8 +27,8 @@ public class HotGymConfigFactory {
 	
 	protected static int addHotGymDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
-		deConfig.encoder.setOnBitsPerEncoder(6);
-		deConfig.encoder.includeDate = false;
+		deConfig.encoder.setOnBitsPerEncoder(16);
+		deConfig.encoder.includeMonth = false;
 		deConfig.encoder.includeMinute = false;
 		deConfig.encoder.includeSecond = false;
 		config.addLink("DateTime", "DateTimeEncoder");
@@ -37,8 +37,8 @@ public class HotGymConfigFactory {
 	
 	protected static int addHotGymValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
-		seConfig.encoder.onBits = 18;
-		seConfig.encoder.encodeLength = 1017;
+		seConfig.encoder.onBits = 16;
+		seConfig.encoder.encodeLength = 1007;
 		seConfig.encoder.maxValue = 100F;
 		seConfig.encoder.resolution = 0.1F;
 		config.addLink("Value", "ValueEncoder");
@@ -49,7 +49,7 @@ public class HotGymConfigFactory {
 		MergerConfig mrConfig = config.addMerger(1, "Merger");
 		mrConfig.config.concatenate = true;
 		mrConfig.config.size = new Size(length);
-		mrConfig.config.maxOnBits = 36;
+		mrConfig.config.maxOnBits = 96;
 		config.addLink("DateTimeEncoder", DateTimeEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 0);
 		config.addLink("ValueEncoder", ScalarEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 1);
 	}

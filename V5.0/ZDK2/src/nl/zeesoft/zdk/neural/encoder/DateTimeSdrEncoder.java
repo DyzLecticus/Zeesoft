@@ -15,6 +15,7 @@ public class DateTimeSdrEncoder extends DateSdrEncoder {
 		initializeEncoders(4);
 	}
 
+	@Override
 	public DateTimeSdrEncoder copy() {
 		DateTimeSdrEncoder r = new DateTimeSdrEncoder();
 		r.copyFrom(this);
@@ -25,7 +26,7 @@ public class DateTimeSdrEncoder extends DateSdrEncoder {
 	protected int getCalendarPropertyForEncoder(ScalarSdrEncoder encoder) {
 		int r = super.getCalendarPropertyForEncoder(encoder);
 		if (encoder == hourEncoder) {
-			r = Calendar.HOUR;
+			r = Calendar.HOUR_OF_DAY;
 		} else if (encoder == minuteEncoder) {
 			r = Calendar.MINUTE;
 		} else if (encoder == secondEncoder) {

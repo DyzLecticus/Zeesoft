@@ -69,8 +69,8 @@ public class SdrJs extends Resource {
 	protected void renderGetWidthHeight(StringBuilder r) {
 		append(r, "Sdr.getWidthHeight = (length) => {");
 		append(r, "    var width = Math.sqrt(length);");
-		append(r, "    if (width > 100) {");
-		append(r, "        width = 100;");
+		append(r, "    if (width > 96) {");
+		append(r, "        width = 96;");
 		append(r, "    }");
 		append(r, "    var height = length / width;");
 		append(r, "    if (width * height < length) {");

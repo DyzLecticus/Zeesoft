@@ -16,10 +16,12 @@ public class IndexJs extends Resource {
 	}
 	
 	protected void renderLoadApp(StringBuilder r) {
-		append(r, "var loadApp = () => {");
-		append(r, "    changePublisher.addListener((key, oldValue, newValue) => {");
-		append(r, "        console.log(key + \" was \" + oldValue + \" is \" + newValue);");
-		append(r, "    });");
+		append(r, "var loadApp = (logChanges) => {");
+		append(r, "    if (logChanges) {");
+		append(r, "        changePublisher.addListener((key, oldValue, newValue) => {");
+		append(r, "            console.log(key + \" was \" + oldValue + \" is \" + newValue);");
+		append(r, "        });");
+		append(r, "    }");
 		append(r, "    loadApiObjects();");
 		append(r, "};");
 	}

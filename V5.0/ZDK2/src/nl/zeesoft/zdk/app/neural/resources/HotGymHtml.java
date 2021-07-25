@@ -18,7 +18,7 @@ public class HotGymHtml extends HtmlResource {
 	protected StringBuilder renderBody() {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Hot gym</h1>");
-		append(body, "<p>This page can be used to train the neural network using the Numenta Hot Gym example <a href='" + HotGymJs.SOURCE_URL + "'>data</a>.</p>");
+		append(body, "<p>This page can be used to train the neural network using the Numenta Hot Gym example <a href='" + HotGymJs.SOURCE_URL + "' target='_blank'>data</a>.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
 		append(body, "<hr />");
 		append(body, "<p>");
@@ -31,6 +31,6 @@ public class HotGymHtml extends HtmlResource {
 	}
 	
 	protected void renderNetworkIO(StringBuilder body) {
-		append(body, getAccordion("networkIOAccordion","Input/output","<div id=\"networkIO\" class=\"x-scrollable\"></div>"));
+		append(body, getAccordion("networkIOAccordion","Primary output SDRs","<div id=\"networkIO\" class=\"x-scrollable\"></div>"));
 	}
 }
