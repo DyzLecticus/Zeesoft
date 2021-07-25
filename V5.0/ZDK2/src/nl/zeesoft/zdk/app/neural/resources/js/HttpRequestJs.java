@@ -31,6 +31,7 @@ public class HttpRequestJs extends Resource {
 		append(r, "HttpRequest.onReadyStateChange = (xhr, successCallback) => {");
 		append(r, "    if (xhr.readyState == 4) {");
 		append(r, "        if (xhr.status == 200) {");
+		append(r, "            xhr.request.retries = 0;");
 		append(r, "            successCallback(xhr);");
 		append(r, "        } else if (xhr.status == 503 && xhr.request.retries < xhr.request.maxRetries) {");
 		append(r, "            xhr.request.retries++;");

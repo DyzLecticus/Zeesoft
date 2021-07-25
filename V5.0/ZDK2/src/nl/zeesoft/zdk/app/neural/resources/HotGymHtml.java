@@ -17,7 +17,7 @@ public class HotGymHtml extends HtmlResource {
 	@Override
 	protected StringBuilder renderBody() {
 		StringBuilder body = super.renderBody();
-		append(body, "<h1>Hot gym</h1>");
+		append(body, "<h1>Hot Gym</h1>");
 		append(body, "<p>This page can be used to train the neural network using the Numenta Hot Gym example <a href='" + HotGymJs.SOURCE_URL + "' target='_blank'>data</a>.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
 		append(body, "<hr />");

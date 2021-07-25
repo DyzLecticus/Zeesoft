@@ -6,6 +6,8 @@ public class NetworkStatsJs extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		append(r, "var networkStats = networkStats || {};");
+		append(r, "networkStats.autoRefresh = false;");
+		append(r, "networkStats.autoRefreshing = false;");
 		renderToHtmlTable(r);
 		renderToHtmlTableHeader(r);
 		renderToHtmlTableRow(r);
@@ -13,7 +15,9 @@ public class NetworkStatsJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkStats.toHtmlTable = (json) => {");
-		append(r, "    var html = \"<p class='mt-0'>Cells: \" + json.cells + \"</p>\";");
+		append(r, "    var checked = networkStatsLoader.autoRefresh ? \" CHECKED\" : \"\";");
+		append(r, "    var html = \"<p class='mt-0'>Auto refresh <input type='checkbox' onclick='networkStatsLoader.toggleAutoRefresh(this);'\" + checked + \" /></p>\";");
+		append(r, "    html += \"<p>Cells \" + json.cells + \"</p>\";");
 		append(r, "    html += \"<table class='padded'>\";");
 		append(r, "    html += networkStats.toHtmlTableHeader();");
 		append(r, "    html += networkStats.toHtmlTableRow(\"Proximal\", json.proximalStats);");
