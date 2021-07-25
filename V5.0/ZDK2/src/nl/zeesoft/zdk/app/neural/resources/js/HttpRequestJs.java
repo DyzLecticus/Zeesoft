@@ -18,6 +18,8 @@ public class HttpRequestJs extends Resource {
 		append(r, "    this.body = body;");
 		append(r, "    this.headers = {\"Content-Type\": \"application/text\"};");
 		append(r, "    this.retryDelayMs = 250;");
+		append(r, "    this.maxRetries = 40;");
+		append(r, "    this.retries = 0;");
 		append(r, "    this.errorCallback = (xhr) => {};");
 		append(r, "    this.execute = (successCallback) => {");
 		append(r, "        HttpRequest.executeHttpRequest(that,successCallback);");
@@ -30,7 +32,8 @@ public class HttpRequestJs extends Resource {
 		append(r, "    if (xhr.readyState == 4) {");
 		append(r, "        if (xhr.status == 200) {");
 		append(r, "            successCallback(xhr);");
-		append(r, "        } else if (xhr.status == 503) {");
+		append(r, "        } else if (xhr.status == 503 && xhr.request.retries < xhr.request.maxRetries) {");
+		append(r, "            xhr.request.retries++;");
 		append(r, "            setTimeout(() => { xhr.request.execute(successCallback); }, xhr.request.retryDelayMs);");
 		append(r, "        } else {");
 		append(r, "            xhr.request.errorCallback(xhr);");

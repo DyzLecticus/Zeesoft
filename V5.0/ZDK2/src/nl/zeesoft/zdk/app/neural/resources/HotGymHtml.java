@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.app.resource.HtmlResource;
 public class HotGymHtml extends HtmlResource {
 	public HotGymHtml() {
 		this.title = "Zeesoft NeuralServer - Hot Gym";
-		onload = "loadApp(); hotGym.loadData();";
+		onload = "hotGym.loadApp();";
 		scriptFiles.add(IndexJsHandler.PATH);
 		scriptFiles.add(HotGymJsHandler.PATH);
 		styleFiles.add(IndexCssHandler.PATH);
@@ -27,10 +27,15 @@ public class HotGymHtml extends HtmlResource {
 		append(body, "&nbsp;<span id=\"networkTrainingStateText\" />");
 		append(body, "</p>");
 		renderNetworkIO(body);
+		renderNetworkIOHist(body);
 		return body;
 	}
 	
 	protected void renderNetworkIO(StringBuilder body) {
 		append(body, getAccordion("networkIOAccordion","Primary output SDRs","<div id=\"networkIO\" class=\"x-scrollable\"></div>"));
+	}
+	
+	protected void renderNetworkIOHist(StringBuilder body) {
+		append(body, getAccordion("networkIOHistAccordion","Predictions","<div id=\"networkIOHist\" class=\"x-scrollable\"></div>"));
 	}
 }

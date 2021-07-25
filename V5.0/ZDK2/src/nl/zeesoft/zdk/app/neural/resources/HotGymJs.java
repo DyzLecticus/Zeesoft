@@ -1,10 +1,6 @@
 package nl.zeesoft.zdk.app.neural.resources;
 
-import java.util.TreeMap;
-
-import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
 import nl.zeesoft.zdk.app.resource.Resource;
-import nl.zeesoft.zdk.neural.network.NetworkIO;
 
 public class HotGymJs extends Resource {
 	protected static String	SOURCE_URL	= "https://raw.githubusercontent.com/numenta/nupic/master/examples/opf/clients/hotgym/prediction/one_gym/rec-center-hourly.csv";
@@ -12,13 +8,14 @@ public class HotGymJs extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		renderObject(r);
+		renderLoadApp(r);
 		renderLoadData(r);
 		renderParseData(r);
 		renderParseDateTime(r);
 		renderTrainNetwork(r);
 		renderPauzeNetworkTraining(r);
 		renderTrainNetworkRequest(r);
-		renderHanldeTrainNetworkResponse(r);
+		renderProcessedNetworkIO(r);
 		renderGetNewNetworkIO(r);
 	}
 	
@@ -27,6 +24,14 @@ public class HotGymJs extends Resource {
 		append(r, "hotGym.data = { inputs: [] };");
 		append(r, "hotGym.trainingIO = 0;");
 		append(r, "hotGym.pauze = false;");
+	}
+	
+	protected void renderLoadApp(StringBuilder r) {
+		append(r, "hotGym.loadApp = () => {");
+		append(r, "    loadApp();");
+		append(r, "    hotGym.loadData();");
+		append(r, "    dom.setInnerHTML(\"networkIOHist\", networkIOHist.toHtmlTable());");
+		append(r, "};");
 	}
 	
 	protected void renderLoadData(StringBuilder r) {
@@ -100,20 +105,20 @@ public class HotGymJs extends Resource {
 		append(r, "    var perc = Math.round((hotGym.trainingIO / hotGym.data.inputs.length) * 100);");
 		append(r, "    var html = input.dateTime.toISOString() + \" = <b>\" + input.value + \"</b> (\" + perc + \"%)\";");
 		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", html);");
-		append(r, "    var request = new HttpRequest(\"POST\",\"" + NetworkIOJsonHandler.PATH + "\");");
-		append(r, "    request.body = JSON.stringify(hotGym.getNewNetworkIO(input));");
-		append(r, "    request.execute(hotGym.handleTrainNetworkResponse);");
+		append(r, "    hotGym.getNewNetworkIO(input).execute(hotGym.handleTrainNetworkResponse);");
 		append(r, "};");
 	}
-	
-	protected void renderHanldeTrainNetworkResponse(StringBuilder r) {
-		append(r, "hotGym.handleTrainNetworkResponse = (xhr) => {");
+
+	protected void renderProcessedNetworkIO(StringBuilder r) {
+		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
+		append(r, "    if (key == \"networkIO\") {");
+		append(r, "        hotGym.processedNetworkIO(newValue);");
+		append(r, "    }");
+		append(r, "});");
+		append(r, "hotGym.processedNetworkIO = () => {");
 		append(r, "    hotGym.trainingIO++;");
 		append(r, "    if (!hotGym.pauze && hotGym.trainingIO < hotGym.data.inputs.length) {");
 		append(r, "        setTimeout(() => { hotGym.trainNetworkRequest(); }, 10);");
-		append(r, "        setTimeout(() => {");
-		append(r, "            changePublisher.setValue(\"networkIO\", JSON.parse(xhr.response));");
-		append(r, "        }, 20);");
 		append(r, "    } else {");
 		append(r, "        if (!hotGym.pauze) {");
 		append(r, "            hotGym.trainingIO = 0;");
@@ -126,22 +131,10 @@ public class HotGymJs extends Resource {
 	
 	protected void renderGetNewNetworkIO(StringBuilder r) {
 		append(r, "hotGym.getNewNetworkIO = (input) => {");
-		append(r, "    return {");
-		append(r, "        className: \"" + NetworkIO.class.getName() + "\",");
-		append(r, "        inputs: {");
-		append(r, "            className: \"" + TreeMap.class.getName() + "\",");
-		append(r, "            keyValues: [");
-		append(r, "                {");
-		append(r, "                    key: {className:\"" + String.class.getName() + "\", value: \"DateTime\"},");
-		append(r, "                    value: {className:\"" + Long.class.getName() + "\", value: input.dateTime.getTime()}");
-		append(r, "                },");
-		append(r, "                {");
-		append(r, "                    key: {className:\"" + String.class.getName() + "\", value: \"Value\"},");
-		append(r, "                    value: {className:\"" + Float.class.getName() + "\", value: input.value}");
-		append(r, "                }");
-		append(r, "            ]");
-		append(r, "        }");
-		append(r, "    };");
+		append(r, "    var io = new NetworkIO();");
+		append(r, "    io.json.inputs.keyValues[0].value.value = input.dateTime.getTime();");
+		append(r, "    io.json.inputs.keyValues[1].value.value = input.value;");
+		append(r, "    return io;");
 		append(r, "};");
 	}
 }

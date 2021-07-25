@@ -87,6 +87,14 @@ public class NetworkIOAnalyzer {
 		boolean r = false;
 		List<Object> mostCountedValues = prediction.getMostCountedValues();
 		if (mostCountedValues.size()==1 && mostCountedValues.get(0).equals(value)) {
+			r = predictedValueWasWithinRange(value, mostCountedValues.get(0));
+		}
+		return r;
+	}
+	
+	protected boolean predictedValueWasWithinRange(Object value, Object predictedValue) {
+		boolean r = false;
+		if (predictedValue.equals(value)) {
 			r = true;
 		}
 		return r;
