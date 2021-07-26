@@ -35,6 +35,8 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 
 	@Override
 	public void finalizeObject() {
+		columns.executor = executor;
+		cells.executor = executor;
 		configureColumns();
 		cells.setConfig(this, config);
 	}
@@ -42,7 +44,7 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	public void initialize(TmConfig config) {
 		this.config = config.copy();
 
-		cells = new TmCells(this, this.config);
+		cells = new TmCells(this, this.config, executor);
 		columns = new TmColumns(this, this.config, cells, executor);
 	}
 	
@@ -69,7 +71,7 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 		if (learn) {
 			columns.adapt(this, io.timeoutMs);
 		}
-		cells.predictActiveCells(this);
+		cells.predictActiveCells(this, io.timeoutMs);
 		addOutput(io, cells.activeCellPositions);
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);

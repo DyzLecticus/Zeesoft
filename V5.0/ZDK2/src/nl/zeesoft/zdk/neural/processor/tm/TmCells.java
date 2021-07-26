@@ -6,8 +6,11 @@ import java.util.SortedMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import nl.zeesoft.zdk.Rand;
+import nl.zeesoft.zdk.function.Executor;
+import nl.zeesoft.zdk.function.ExecutorTask;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
+import nl.zeesoft.zdk.matrix.MatrixExecutor;
 import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellSegments;
@@ -23,12 +26,15 @@ public class TmCells extends Cells {
 	public List<Position>					activeApicalCellPositions		= new ArrayList<Position>();
 	public List<Position>					prevActiveApicalCellPositions	= new ArrayList<Position>();
 	
+	public Executor							executor						= null;
+
 	protected TmCells(Object caller, Matrix matrix) {
 		super(caller, matrix);
 	}
 
-	public TmCells(Object caller, TmConfig config) {
+	public TmCells(Object caller, TmConfig config, Executor executor) {
 		super(caller, config);
+		this.executor = executor;
 	}
 	
 	public void cycleState(List<Position> newActiveApicalCellPositions) {
@@ -68,9 +74,15 @@ public class TmCells extends Cells {
 		}
 	}
 	
-	public void predictActiveCells(Object caller) {
+	public ExecutorTask predictActiveCells(Object caller, int timeoutMs) {
 		predictiveCellPositions.clear();
-		applyFunction(caller, getPredictActiveCellsFunction());
+		MatrixExecutor exec = new MatrixExecutor(this, executor) {
+			@Override
+			protected Function getFunctionForWorker() {
+				return getPredictActiveCellsFunction();
+			}
+		};
+		return exec.execute(caller, timeoutMs);
 	}
 	
 	protected Function getPredictActiveCellsFunction() {
