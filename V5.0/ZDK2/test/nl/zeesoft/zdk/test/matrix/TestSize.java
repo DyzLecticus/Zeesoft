@@ -11,6 +11,8 @@ public class TestSize {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		assert new Size() != null;
+		
 		Size size = new Size(0,0);
 		assert size.x == 1;
 		assert size.y == 1;

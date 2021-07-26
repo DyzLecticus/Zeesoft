@@ -11,6 +11,8 @@ public class TestPosition {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		assert new Position() != null;
+
 		Position position1 = new Position(1,2);
 		assert position1.x == 1;
 		assert position1.y == 2;
@@ -58,5 +60,14 @@ public class TestPosition {
 		assert squashed.size() == 2;
 		assert squashed.get(0).equals(new Position(2,2,0));
 		assert squashed.get(1).equals(position1);
+		
+		position = new Position(1,1,1);
+		assert position.compareTo(new Position(1,1,1)) == 0;
+		assert position.compareTo(new Position(0,1,1)) == 1;
+		assert position.compareTo(new Position(1,0,1)) == 1;
+		assert position.compareTo(new Position(1,1,0)) == 1;
+		assert position.compareTo(new Position(2,1,1)) == -1;
+		assert position.compareTo(new Position(1,2,1)) == -1;
+		assert position.compareTo(new Position(1,1,2)) == -1;
 	}
 }

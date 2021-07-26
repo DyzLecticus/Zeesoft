@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.Util;
 
-public class Position extends XYZ {
+public class Position extends XYZ implements Comparable<Position> {
 	public Position() {
 		
 	}
@@ -94,6 +94,25 @@ public class Position extends XYZ {
 			r = len2;
 		} else {
 			r = Util.getHypotenuse(len1, len2);
+		}
+		return r;
+	}
+
+	@Override
+	public int compareTo(Position other) {
+		int r = 0;
+		if (other.x < this.x) {
+			r = 1;
+		} else if (other.x > this.x) {
+			r = -1;
+		} else if (other.y < this.y) {
+			r = 1;
+		} else if (other.y > this.y) {
+			r = -1;
+		} else if (other.z < this.z) {
+			r = 1;
+		} else if (other.z > this.z) {
+			r = -1;
 		}
 		return r;
 	}
