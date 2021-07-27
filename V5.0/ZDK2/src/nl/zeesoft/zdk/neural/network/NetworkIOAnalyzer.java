@@ -38,15 +38,21 @@ public class NetworkIOAnalyzer {
 	}
 	
 	public NetworkIOStats getAverageStats() {
-		NetworkIOStats r = new NetworkIOStats();
+		return getAverageStats(100);
+	}
+	
+	public NetworkIOAverageStats getAverageStats(int max) {
+		if (max<=0) {
+			max = networkIO.size();
+		}
+		NetworkIOAverageStats r = new NetworkIOAverageStats();
 		r.nsPerLayer = new TreeMap<Integer,Long>();
+		r.recorded = networkIO.size();
 		int total = 0;
-		for (NetworkIO io: networkIO) {
-			NetworkIOStats stats = io.getStats();
-			if (stats!=null) {
-				total++;
-				addStats(r, stats);
-			}
+		List<NetworkIOStats> stats = getRecentStats(max);
+		for (NetworkIOStats stat: stats) {
+			total++;
+			addStats(r, stat);
 		}
 		divideStats(r, total);
 		return r;
@@ -127,5 +133,25 @@ public class NetworkIOAnalyzer {
 				stats.nsPerLayer.put(layer, (ns / total));
 			}
 		}
+	}
+
+	protected List<NetworkIOStats> getRecentStats(int max) {
+		List<NetworkIOStats> r = new ArrayList<NetworkIOStats>();
+		List<NetworkIOStats> stats = new ArrayList<NetworkIOStats>();
+		for (NetworkIO io: networkIO) {
+			NetworkIOStats stat = io.getStats();
+			if (stat!=null) {
+				stats.add(stat);
+			}
+		}
+		int i = 0;
+		int start = stats.size() - max;
+		for (NetworkIOStats stat: stats) {
+			if (i>=start) {
+				r.add(stat);
+			}
+			i++;
+		}
+		return r;
 	}
 }

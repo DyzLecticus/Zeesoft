@@ -224,5 +224,11 @@ public class TestNetwork {
 		assert analyzer.getAccuracy().getAverage() == 0F;
 		assert analyzer.getAccuracy().getAccuracies().get("TestClassifier") == null;
 		assert analyzer.getAccuracy().toString().length() == 12;
+		
+		assert analyzer.getNetworkIO().size() == 17;
+		assert analyzer.getAverageStats(3).recorded == 17;
+		assert analyzer.getAverageStats(3).totalNs > 0;
+		assert analyzer.getAverageStats(-1).totalNs > 0;
+		assert analyzer.getAverageStats(3).totalNs != analyzer.getAverageStats(-1).totalNs;
 	}
 }

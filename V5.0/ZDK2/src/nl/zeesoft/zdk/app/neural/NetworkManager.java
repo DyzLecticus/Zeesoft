@@ -34,6 +34,14 @@ public class NetworkManager extends NetworkManagerSettings {
 		}
 	}
 	
+	@Override
+	public synchronized void setProcessorWorkers(SortedMap<String, Integer> processorWorkers) {
+		super.setProcessorWorkers(processorWorkers);
+		for (Entry<String,Integer> entry: getProcessorWorkers().entrySet()) {
+			network.setNumberOfWorkersForProcessor(Network.ALL_LAYERS, entry.getKey(), entry.getValue());
+		}
+	}
+	
 	public boolean isReady() {
 		return stateManager.isReady();
 	}
@@ -59,9 +67,6 @@ public class NetworkManager extends NetworkManagerSettings {
 				network.setLearn(Network.ALL_LAYERS, entry.getKey(), entry.getValue());
 			}
 			setProcessorWorkers(processorWorkers);
-			for (Entry<String,Integer> entry: getProcessorWorkers().entrySet()) {
-				network.setNumberOfWorkersForProcessor(Network.ALL_LAYERS, entry.getKey(), entry.getValue());
-			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;
@@ -141,6 +146,9 @@ public class NetworkManager extends NetworkManagerSettings {
 			r = network.initialize(config, getInitTimeoutMs());
 			loadNetwork();
 			network.setNumberOfWorkers(getWorkers());
+			if (getProcessorWorkers().size()>0) {
+				setProcessorWorkers(getProcessorWorkers());
+			}
 		}
 		return r;
 	}
