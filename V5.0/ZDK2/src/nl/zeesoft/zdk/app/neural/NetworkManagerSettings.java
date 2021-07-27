@@ -51,7 +51,7 @@ public class NetworkManagerSettings {
 
 	public synchronized void setProcessorWorkers(SortedMap<String, Integer> processorWorkers) {
 		for (Entry<String,Integer> entry: processorWorkers.entrySet()) {
-			if (entry.getValue() >=0 && processorWorkers.containsKey(entry.getKey())) {
+			if (entry.getValue() >=0 && this.processorWorkers.containsKey(entry.getKey())) {
 				this.processorWorkers.put(entry.getKey(), entry.getValue());
 			}
 		}

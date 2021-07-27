@@ -119,6 +119,9 @@ public class TestNeuralApp {
 		processorWorkers.put("qwer", -1);
 		app.getNetworkManager().setProcessorWorkers(processorWorkers);
 		assert app.getNetworkManager().getProcessorWorkers().size() == 0;
+		processorWorkers.put("qwer", 4);
+		app.getNetworkManager().setProcessorWorkers(processorWorkers);
+		assert app.getNetworkManager().getProcessorWorkers().size() == 0;
 		app.getNetworkManager().getProcessorWorkers().put("qwer", 0);
 		processorWorkers.put("qwer", 4);
 		app.getNetworkManager().setProcessorWorkers(processorWorkers);
@@ -200,6 +203,8 @@ public class TestNeuralApp {
 			assert app.getNetworkManager().getWorkers() == 3;
 			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
 			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
+			settings.processorWorkers.put("qwer", 1);
+			assert settings.configure(app.getNetworkManager());
 
 			AppConfig testConfig = new AppConfig(); 
 			App testApp = new App(testConfig);
