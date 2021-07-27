@@ -3,8 +3,11 @@ package nl.zeesoft.zdk.test.app;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
@@ -97,13 +100,33 @@ public class TestNeuralApp {
 		assert app.getNetworkManager().getWorkers() == 2;
 		assert app.getNetworkManager().getInitTimeoutMs() == 10001;
 		assert app.getNetworkManager().getResetTimeoutMs() == 10002;
+		app.getNetworkManager().setWorkers(-1);
+		app.getNetworkManager().setInitTimeoutMs(999);
+		app.getNetworkManager().setResetTimeoutMs(999);
+		assert app.getNetworkManager().getWorkers() == 2;
+		assert app.getNetworkManager().getInitTimeoutMs() == 10001;
+		assert app.getNetworkManager().getResetTimeoutMs() == 10002;
 		assert !app.getNetworkManager().isReady();
 		assert !app.getNetworkManager().loadNetwork();
 		assert !app.getNetworkManager().resetNetwork();
 		assert !app.getNetworkManager().saveNetwork();
-		assert !app.getNetworkManager().setProcessorLearning(null);
-		assert app.getNetworkManager().getProcessorLearning() == null;
+		assert !app.getNetworkManager().setProcessorLearningAndWorkers(null, null);
+		assert !app.getNetworkManager().setProcessorLearningAndWorkers(null);
 		assert app.getNetworkManager().getCellStats() == null;
+		
+		SortedMap<String,Integer> processorWorkers = new TreeMap<String,Integer>();
+		assert processorWorkers.size() == 0;
+		processorWorkers.put("qwer", -1);
+		app.getNetworkManager().setProcessorWorkers(processorWorkers);
+		assert app.getNetworkManager().getProcessorWorkers().size() == 0;
+		app.getNetworkManager().getProcessorWorkers().put("qwer", 0);
+		processorWorkers.put("qwer", 4);
+		app.getNetworkManager().setProcessorWorkers(processorWorkers);
+		assert app.getNetworkManager().getProcessorWorkers().get("qwer") == 4;
+		processorWorkers.put("qwer", -1);
+		app.getNetworkManager().setProcessorWorkers(processorWorkers);
+		assert app.getNetworkManager().getProcessorWorkers().get("qwer") == 4;
+		app.getNetworkManager().getProcessorWorkers().clear();
 		
 		assert app.getNetworkRecorder().getNetworkIO().size() == 0;
 		NetworkIO io = new NetworkIO();
@@ -159,9 +182,17 @@ public class TestNeuralApp {
 			assert indexHandler.getServer().isOpen();
 			assert !app.start();
 
+			NetworkSettings settings = new NetworkSettings();
+			assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
+			assert settings.processorWorkers.size() == 2;
+
 			testRequests(requestHandler);
 
-			NetworkSettings settings = new NetworkSettings();
+			settings = new NetworkSettings();
+			assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
+			assert settings.processorWorkers.size() == 1;
+
+			settings = new NetworkSettings();
 			assert app.getNetworkManager().getWorkers() == 3;
 			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
 			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
@@ -358,6 +389,9 @@ public class TestNeuralApp {
 			public void run() {
 				Util.sleep(50);
 				HttpResponse response = handler.handleRequest(request);
+				if (response.code!=HttpURLConnection.HTTP_UNAVAILABLE) {
+					Console.err(request.method + " " + request.path + " = " + response.code);
+				}
 				responseCodes.add(response.code);
 			}
 		};

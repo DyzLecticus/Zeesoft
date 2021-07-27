@@ -1,8 +1,10 @@
 package nl.zeesoft.zdk.app.neural;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
+import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
@@ -20,13 +22,16 @@ public class NetworkManager extends NetworkManagerSettings {
 	}
 
 	public synchronized void setConfig(NetworkConfig config) {
+		super.getProcessorWorkers().clear();
 		this.config = config;
 	}
 
 	@Override
 	public synchronized void setWorkers(int workers) {
-		super.setWorkers(workers);
-		network.setNumberOfWorkers(workers);
+		if (workers>=0) {
+			super.setWorkers(workers);
+			network.setNumberOfWorkers(workers);
+		}
 	}
 	
 	public boolean isReady() {
@@ -47,22 +52,33 @@ public class NetworkManager extends NetworkManagerSettings {
 		return r;
 	}
 	
-	public boolean setProcessorLearning(SortedMap<String,Boolean> processorLearning) {
+	public boolean setProcessorLearningAndWorkers(SortedMap<String,Boolean> processorLearning,SortedMap<String,Integer> processorWorkers) {
 		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
 			for (Entry<String,Boolean> entry: processorLearning.entrySet()) {
 				network.setLearn(Network.ALL_LAYERS, entry.getKey(), entry.getValue());
 			}
+			setProcessorWorkers(processorWorkers);
+			for (Entry<String,Integer> entry: getProcessorWorkers().entrySet()) {
+				network.setNumberOfWorkersForProcessor(Network.ALL_LAYERS, entry.getKey(), entry.getValue());
+			}
 			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;
 	}
-	
-	public SortedMap<String,Boolean> getProcessorLearning() {
-		SortedMap<String,Boolean> r = null;
+
+	public boolean setProcessorLearningAndWorkers(NetworkSettings settings) {
+		boolean r = false;
 		if (stateManager.ifSetState(NetworkStateManager.PROCESSING)) {
-			r = getProcessorLearningForNetwork(network);
-			stateManager.ifSetState(NetworkStateManager.READY);
+			settings.processorLearning = getProcessorLearningForNetwork(network);
+			if (getProcessorWorkers().size()==0) {
+				List<String> names = getExecutorProcessorsForNetwork(network);
+				for (String name: names) {
+					getProcessorWorkers().put(name, 0);
+				}
+			}
+			settings.processorWorkers = getProcessorWorkers();
+			r = stateManager.ifSetState(NetworkStateManager.READY);
 		}
 		return r;
 	}
@@ -130,6 +146,8 @@ public class NetworkManager extends NetworkManagerSettings {
 	}
 	
 	protected NetworkConfig loadNetworkConfig() {
+		getProcessorWorkers().put("SpatialPooler", getWorkers());
+		getProcessorWorkers().put("TemporalMemory", getWorkers());
 		return HotGymConfigFactory.getNewHotGymNetworkConfig();
 	}
 	

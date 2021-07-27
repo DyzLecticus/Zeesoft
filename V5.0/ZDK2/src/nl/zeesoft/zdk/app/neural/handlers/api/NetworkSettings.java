@@ -10,6 +10,7 @@ public class NetworkSettings {
 	public int							initTimeoutMs		= -1;
 	public int							resetTimeoutMs		= -1;
 	public SortedMap<String,Boolean>	processorLearning	= new TreeMap<String,Boolean>();
+	public SortedMap<String,Integer>	processorWorkers	= new TreeMap<String,Integer>();
 	
 	public NetworkSettings() {
 		
@@ -19,11 +20,15 @@ public class NetworkSettings {
 		this.workers = manager.getWorkers();
 		this.initTimeoutMs = manager.getInitTimeoutMs();
 		this.resetTimeoutMs = manager.getResetTimeoutMs();
-		this.processorLearning = manager.getProcessorLearning();
+		if (!manager.setProcessorLearningAndWorkers(this)) {
+			processorLearning = null;
+			processorWorkers = null;
+		}
 	}
 	
 	public boolean configure(NetworkManager manager) {
-		boolean r = processorLearning.size()==0 || manager.setProcessorLearning(processorLearning);
+		boolean r = (processorLearning.size()==0 && processorWorkers.size()==0)
+			|| manager.setProcessorLearningAndWorkers(processorLearning, processorWorkers);
 		if (r) {
 			if (workers>=0) {
 				manager.setWorkers(workers);
