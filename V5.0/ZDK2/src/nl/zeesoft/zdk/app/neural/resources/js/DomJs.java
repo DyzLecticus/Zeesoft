@@ -9,7 +9,9 @@ public class DomJs extends Resource {
 		renderSetInnerHTML(r);
 		renderGetInputValue(r);
 		renderSetDisabled(r);
+		renderIsVisible(r);
 		renderToggleVisible(r);
+		renderSetVisible(r);
 		renderStartFadeIn(r);
 		renderFadeIn(r);
 		renderStartFadeOut(r);
@@ -45,14 +47,34 @@ public class DomJs extends Resource {
 		append(r, "};");
 	}
 
+	protected void renderIsVisible(StringBuilder r) {
+		append(r, "dom.isVisible = function(id) {");
+		append(r, "    var r = true;");
+		append(r, "    var elem = window.document.getElementById(id);");
+		append(r, "    if (elem && elem.classList.contains(\"hidden\")) {");
+		append(r, "        r = false;");
+		append(r, "    }");
+		append(r, "    return r;");
+		append(r, "};");
+	}
+
 	protected void renderToggleVisible(StringBuilder r) {
 		append(r, "dom.toggleVisible = function(id, fade) {");
 		append(r, "    var elem = window.document.getElementById(id);");
-		append(r, "    if (elem!=null) {");
+		append(r, "    if (elem) {");
 		append(r, "        if (fade && elem.classList.contains(\"hidden\")) {");
 		append(r, "            dom.startFadeIn(id);");
 		append(r, "        }");
 		append(r, "        elem.classList.toggle(\"hidden\");");
+		append(r, "    }");
+		append(r, "};");
+	}
+
+	protected void renderSetVisible(StringBuilder r) {
+		append(r, "dom.setVisible = function(id, visible, fade) {");
+		append(r, "    var elem = window.document.getElementById(id);");
+		append(r, "    if (elem && visible != dom.isVisible(id)) {");
+		append(r, "        dom.toggleVisible(id, fade);");
 		append(r, "    }");
 		append(r, "};");
 	}

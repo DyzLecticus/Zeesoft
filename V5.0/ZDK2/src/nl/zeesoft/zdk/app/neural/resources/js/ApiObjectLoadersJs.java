@@ -22,7 +22,7 @@ public class ApiObjectLoadersJs extends Resource {
 		append(r, renderLoader("networkConfig", NetworkConfigJsonHandler.PATH));
 		append(r, renderLoader("networkSettings", NetworkSettingsJsonHandler.PATH));
 		append(r, renderLoader("networkStats", NetworkStatsJsonHandler.PATH));
-		append(r, "networkStats.autoRefreshMs = 30000;");
+		append(r, "networkStatsLoader.autoRefreshMs = 30000;");
 		append(r, renderLoader("networkIOStats", NetworkIOStatsJsonHandler.PATH));
 		append(r, renderLoader("networkIOAccuracy", NetworkIOAccuracyJsonHandler.PATH));
 	}
