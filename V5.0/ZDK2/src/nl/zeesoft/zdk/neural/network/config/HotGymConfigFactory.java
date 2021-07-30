@@ -5,6 +5,8 @@ import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.SpatialPoolerConfig;
+import nl.zeesoft.zdk.neural.network.config.type.TemporalMemoryConfig;
+import nl.zeesoft.zdk.neural.processor.cl.Classifier;
 import nl.zeesoft.zdk.neural.processor.de.DateTimeEncoder;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 
@@ -57,17 +59,19 @@ public class HotGymConfigFactory {
 	protected static void addHotGymSpatialPooler(NetworkConfig config, int length) {
 		SpatialPoolerConfig spc = config.addSpatialPooler(2, "SpatialPooler");
 		spc.config.inputSize = new Size(length);
+		spc.config.boostFactorPeriod = 1000;
 		config.addLink("Merger", "SpatialPooler");
 	}
 	
 	protected static void addHotGymTemporalMemory(NetworkConfig config) {
-		config.addTemporalMemory(3, "TemporalMemory");
+		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
+		tmc.config.segmentCreationSubsample = 1F;
 		config.addLink("SpatialPooler", "TemporalMemory");
 	}
 	
 	protected static void addHotGymClassifier(NetworkConfig config) {
 		config.addClassifier(4, "Classifier");
 		config.addLink("TemporalMemory", "Classifier");
-		config.addLink("Value", 0, "Classifier", 1);
+		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}
 }

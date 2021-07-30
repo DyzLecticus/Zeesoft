@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class Classifier extends LearningProcessor implements Finalizable {
 	public static final int		ASSOCIATE_SDR_INPUT		= 0;
+	public static final int		ASSOCIATE_VALUE_INPUT	= 1;
 	
 	public static final int		ASSOCIATED_SDR_OUTPUT	= 0;
 	

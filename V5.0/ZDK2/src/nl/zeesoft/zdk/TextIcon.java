@@ -6,10 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class TextIcon {
@@ -36,10 +33,7 @@ public class TextIcon {
 	public BufferedImage getBufferedImage() {
 		BufferedImage r = null;
 		if (panel!=null) {
-			r = new BufferedImage(panel.getWidth(),panel.getHeight(),BufferedImage.TYPE_INT_RGB);
-			Graphics2D g2 = r.createGraphics();
-			panel.print(g2);
-			g2.dispose();
+			r = ImgUtil.toBufferedImage(panel);
 		}
 		return r;
 	}
@@ -47,16 +41,7 @@ public class TextIcon {
 	public byte[] getByteArray(boolean mockException) {
 		byte[] r = null;
 		if (panel!=null) {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			try {
-				if (mockException) {
-					throw(new IOException());
-				}
-				ImageIO.write(getBufferedImage(),"PNG",bos);
-				r = bos.toByteArray();
-			} catch (IOException e) {
-				Logger.error(this, "IO exception", e);
-			}
+			r = ImgUtil.toByteArray(this, panel, mockException);
 		}
 		return r;
 	}

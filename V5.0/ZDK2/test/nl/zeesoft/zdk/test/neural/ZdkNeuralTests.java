@@ -22,6 +22,7 @@ public class ZdkNeuralTests {
 	public static void main(String[] args) {
 		Console.log("Test Sdr ...");
 		TestSdr.main(args);
+		TestSdrPanel.main(args);
 		Console.log("Test SdrHistory ...");
 		TestSdrHistory.main(args);
 		TestSdrStringConvertor.main(args);

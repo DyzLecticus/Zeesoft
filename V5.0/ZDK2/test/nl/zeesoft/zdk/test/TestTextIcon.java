@@ -1,11 +1,14 @@
 package nl.zeesoft.zdk.test;
 
+import nl.zeesoft.zdk.ImgUtil;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.TextIcon;
 
 public class TestTextIcon {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
+		
+		assert new ImgUtil() != null;
 		
 		int size = 0;
 		int assertSize = 16;
