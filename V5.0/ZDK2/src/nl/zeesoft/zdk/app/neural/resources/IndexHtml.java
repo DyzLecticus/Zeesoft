@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.HtmlResource;
 
 public class IndexHtml extends HtmlResource {
@@ -66,5 +67,6 @@ public class IndexHtml extends HtmlResource {
 		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network performance statistics", "_blank"));
 		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network accuracy", "_blank"));
 		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O", "_blank"));
+		append(body, renderLinkListItem(SdrPngHandler.PATH + "?100,7,8,9,10,11,12,58,59,60,61,62,63", "SDR image rendering", "_blank"));
 	}
 }

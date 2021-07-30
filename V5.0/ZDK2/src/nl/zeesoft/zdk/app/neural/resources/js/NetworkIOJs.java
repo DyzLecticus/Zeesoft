@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.app.neural.resources.js;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.Resource;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 
@@ -10,16 +11,15 @@ public class NetworkIOJs extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		append(r, "var networkIO = networkIO || {};");
-		append(r, "networkIO.renderedSdrTables = false;");
-		append(r, "networkIO.initializedSdrTables = false;");
+		append(r, "networkIO.selectedProcessor = '';");
 		renderNetworkIOObject(r);
 		
 		renderNetworkConfigChangeListener(r);
-		renderToHtmlTable(r);
-		renderToHtmlTableRow(r);
+		renderToHtmlSelect(r);
+		renderChangedSelectedProcessor(r);
 		renderProcessedNetworkIO(r);
-		renderInitializeSdrTables(r);
-		renderUpdateSdrTables(r);
+		renderUpdateSdrImage(r);
+		renderClearSdrImage(r);
 	}
 	
 	protected void renderNetworkIOObject(StringBuilder r) {
@@ -95,36 +95,33 @@ public class NetworkIOJs extends Resource {
 		append(r, "    }");
 		append(r, "});");
 		append(r, "networkIO.configChanged = (json) => {");
-		append(r, "    var html = networkIO.toHtmlTable(json);");
+		append(r, "    var html = networkIO.toHtmlSelect(json);");
 		append(r, "    dom.setInnerHTML(\"networkIO\", html);");
 		append(r, "};");
 	}
 
-	protected void renderToHtmlTable(StringBuilder r) {
-		append(r, "networkIO.toHtmlTable = (json) => {");
+	protected void renderToHtmlSelect(StringBuilder r) {
+		append(r, "networkIO.toHtmlSelect = (json) => {");
 		append(r, "    var processorsByLayer = networkConfig.getProcessorsPerLayer(json);");
 		append(r, "    var { width, height } = networkConfig.getWidthHeight(processorsByLayer);");
-		append(r, "    var html = \"<table class='padded'>\";");
+		append(r, "    var html = \"<select class='pb-3' onchange='networkIO.changedSelectedProcessor(this);'>\";");
+		append(r, "    html += \"<option value='' SELECTED></option>\";");
 		append(r, "    for (var i = 0; i < height; i++) {");
-		append(r, "        html += networkIO.toHtmlTableRow(processorsByLayer,i);");
+		append(r, "        for (var j = 0; j < processorsByLayer[i].length; j++) {");
+		append(r, "            html += \"<option value='\" + processorsByLayer[i][j].name + \"'>\" +  processorsByLayer[i][j].name + \"</option>\";");
+		append(r, "        }");
 		append(r, "    }");
-		append(r, "    html += \"</table>\";");
-		append(r, "    networkIO.renderedSdrTables = true;");
+		append(r, "    html += \"</select><br /><br />\";");
+		append(r, "    html += \"<img id='sdrImage' />\";");
 		append(r, "    return html;");
 		append(r, "};");
 	}
 
-	protected void renderToHtmlTableRow(StringBuilder r) {
-		append(r, "networkIO.toHtmlTableRow = (processorsByLayer, layer) => {");
-		append(r, "    var html = \"<tr>\";");
-		append(r, "    for (var j = 0; j < processorsByLayer[layer].length; j++) {");
-		append(r, "        html += \"<td>\";");
-		append(r, "        html += \"<b>\" + processorsByLayer[layer][j].name + \"</b>\";");
-		append(r, "        html += \"<div id='\" + processorsByLayer[layer][j].name + \"OutputSdrs'></div>\";");
-		append(r, "        html += \"</td>\";");
+	protected void renderChangedSelectedProcessor(StringBuilder r) {
+		append(r, "networkIO.changedSelectedProcessor = (select) => {");
+		append(r, "    if (select.value!=networkIO.selectedProcessor) {");
+		append(r, "        networkIO.selectedProcessor = select.value;");
 		append(r, "    }");
-		append(r, "    html += \"</tr>\";");
-		append(r, "    return html;");
 		append(r, "};");
 	}
 
@@ -132,41 +129,38 @@ public class NetworkIOJs extends Resource {
 		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
 		append(r, "    if (key == \"networkIO\") {");
 		append(r, "        networkIO.processedNetworkIO(newValue);");
+		append(r, "    } else if (key == \"networkIOAccordion:visible\") {");
+		append(r, "        setTimeout(() => { networkIO.clearSdrImage(); }, 10);");
 		append(r, "    }");
 		append(r, "});");
 		append(r, "networkIO.processedNetworkIO = (networkIo) => {");
-		append(r, "    if (networkIO.renderedSdrTables) {");
-		append(r, "        if (!networkIO.initializedSdrTables) {");
-		append(r, "            networkIO.initializeSdrTables(networkIo.json);");
-		append(r, "        }");
-		append(r, "        networkIO.updateSdrTables(networkIo.json);");
-		append(r, "    };");
-		append(r, "};");
-	}
-
-	protected void renderInitializeSdrTables(StringBuilder r) {
-		append(r, "networkIO.initializeSdrTables = (json) => {");
-		append(r, "    for (var i = 0; i < json.processorIO.keyValues.length; i++) {");
-		append(r, "        var kv = json.processorIO.keyValues[i];");
-		append(r, "        var id = kv.key.value + \"OutputSdrs\";");
-		append(r, "        var sdr = Sdr.fromStr(kv.value.outputs[0].SdrStringConvertor);");
-		append(r, "        var sdrTableId = kv.key.value + \"OutputSdr0\";");
-		append(r, "        dom.setInnerHTML(id, sdr.toHtml(sdrTableId));");
-		append(r, "        Sdr.addChangeListener(sdrTableId);");
+		append(r, "    if (changePublisher.keyValues[\"networkIOAccordion:visible\"]) {");
+		append(r, "        networkIO.updateSdrImage(networkIo.json);");
 		append(r, "    }");
-		append(r, "    networkIO.initializedSdrTables = true;");
 		append(r, "};");
 	}
 	
-	protected void renderUpdateSdrTables(StringBuilder r) {
-		append(r, "networkIO.updateSdrTables = (json) => {");
-		append(r, "    for (var i = 0; i < json.processorIO.keyValues.length; i++) {");
-		append(r, "        var kv = json.processorIO.keyValues[i];");
-		append(r, "        if (kv.value.outputs[0]) {");
-		append(r, "            var sdr = Sdr.fromStr(kv.value.outputs[0].SdrStringConvertor);");
-		append(r, "            var sdrTableId = kv.key.value + \"OutputSdr0\";");
-		append(r, "            changePublisher.setValue(sdrTableId, sdr);");
+	protected void renderUpdateSdrImage(StringBuilder r) {
+		append(r, "networkIO.updateSdrImage = (json) => {");
+		append(r, "    var elem = window.document.getElementById(\"sdrImage\");");
+		append(r, "    if (elem && networkIO.selectedProcessor) {");
+		append(r, "        for (var i = 0; i < json.processorIO.keyValues.length; i++) {");
+		append(r, "            var kv = json.processorIO.keyValues[i];");
+		append(r, "            if (kv.key.value==networkIO.selectedProcessor && kv.value.outputs[0]) {");
+		append(r, "                elem.src = \"" + SdrPngHandler.PATH + "?\" + kv.value.outputs[0].SdrStringConvertor;");
+		append(r, "            }");
 		append(r, "        }");
+		append(r, "    } else {");
+		append(r, "        networkIO.clearSdrImage();");
+		append(r, "    }");
+		append(r, "};");
+	}
+	
+	protected void renderClearSdrImage(StringBuilder r) {
+		append(r, "networkIO.clearSdrImage = () => {");
+		append(r, "    var elem = window.document.getElementById(\"sdrImage\");");
+		append(r, "    if (elem) {");
+		append(r, "        elem.src = \"\";");
 		append(r, "    }");
 		append(r, "};");
 	}

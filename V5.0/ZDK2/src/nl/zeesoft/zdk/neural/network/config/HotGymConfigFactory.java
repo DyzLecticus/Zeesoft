@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -70,7 +71,8 @@ public class HotGymConfigFactory {
 	}
 	
 	protected static void addHotGymClassifier(NetworkConfig config) {
-		config.addClassifier(4, "Classifier");
+		ClassifierConfig clc = config.addClassifier(4, "Classifier");
+		clc.config.maxOnBits = 512;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

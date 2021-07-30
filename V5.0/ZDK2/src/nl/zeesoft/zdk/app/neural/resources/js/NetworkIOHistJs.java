@@ -11,7 +11,7 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "networkIOHist.accuracyRange = 0.0;");
 		append(r, "networkIOHist.maxValue = 99.0;");
 		append(r, "networkIOHist.graphWidth = 50;");
-		append(r, "networkIOHist.maxTableRows = 30;");
+		append(r, "networkIOHist.maxTableRows = 20;");
 		
 		renderProcessedNetworkIO(r);
 		renderToHtmlTable(r);
@@ -20,17 +20,22 @@ public class NetworkIOHistJs extends Resource {
 		renderToHtmlTableGraphColumns(r);
 		renderToGraphValue(r);
 		renderAppendHtmlTableRow(r);
+		renderClearHtmlTableRows(r);
 	}
 
 	protected void renderProcessedNetworkIO(StringBuilder r) {
 		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
 		append(r, "    if (key == \"networkIO\") {");
 		append(r, "        setTimeout(() => {networkIOHist.processedNetworkIO(newValue)}, 10);");
+		append(r, "    } else if (key == \"networkIOHistAccordion:visible\") {");
+		append(r, "        setTimeout(() => { networkIOHist.clearHtmlTableRows(); }, 10);");
 		append(r, "    }");
 		append(r, "});");
 		append(r, "networkIOHist.processedNetworkIO = (networkIo) => {");
 		append(r, "    networkIOHist.io[networkIOHist.io.length] = networkIo;");
-		append(r, "    networkIOHist.appendHtmlTableRow(networkIo, networkIOHist.io.length);");
+		append(r, "    if (changePublisher.keyValues[\"networkIOHistAccordion:visible\"]) {");
+		append(r, "        networkIOHist.appendHtmlTableRow(networkIo, networkIOHist.io.length);");
+		append(r, "    }");
 		append(r, "};");
 	}
 	
@@ -126,6 +131,17 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "            if (remTr) {");
 		append(r, "                table.removeChild(remTr);");
 		append(r, "            }");
+		append(r, "        }");
+		append(r, "    }");
+		append(r, "};");
+	}
+	
+	protected void renderClearHtmlTableRows(StringBuilder r) {
+		append(r, "networkIOHist.clearHtmlTableRows = () => {");
+		append(r, "    var table = window.document.getElementById(\"networkIOHistTable\");");
+		append(r, "    if (table) {");
+		append(r, "        while (table.firstChild) {");
+		append(r, "            table.removeChild(table.firstChild);");
 		append(r, "        }");
 		append(r, "    }");
 		append(r, "};");

@@ -10,12 +10,6 @@ public class SdrJs extends Resource {
 		renderFromStr(r);
 		renderBitIsOn(r);
 		renderGetWidthHeight(r);
-		renderAddChangeListener(r);
-		renderChangedSdr(r);
-		renderActivateTableColumn(r);
-		renderDeactivateTableColumn(r);
-		renderToHtmlTable(r);
-		renderToHtmlTableColumn(r);
 	}
 
 	protected void renderSdrObject(StringBuilder r) {
@@ -69,9 +63,6 @@ public class SdrJs extends Resource {
 	protected void renderGetWidthHeight(StringBuilder r) {
 		append(r, "Sdr.getWidthHeight = (length) => {");
 		append(r, "    var width = Math.sqrt(length);");
-		append(r, "    if (width > 96) {");
-		append(r, "        width = 96;");
-		append(r, "    }");
 		append(r, "    var height = length / width;");
 		append(r, "    if (width * height < length) {");
 		append(r, "        width++;");
@@ -80,83 +71,6 @@ public class SdrJs extends Resource {
 		append(r, "        height++;");
 		append(r, "    }");
 		append(r, "    return { width, height }");
-		append(r, "};");
-	}
-
-	protected void renderAddChangeListener(StringBuilder r) {
-		append(r, "Sdr.addChangeListener = (tableId) => {");
-		append(r, "    changePublisher.addListener((key, oldValue, newValue) => {");
-		append(r, "        if (key == tableId) {");
-		append(r, "            Sdr.changedSdr(tableId, oldValue, newValue);");
-		append(r, "        }");
-		append(r, "    });");
-		append(r, "};");
-	}
-
-	protected void renderChangedSdr(StringBuilder r) {
-		append(r, "Sdr.changedSdr = (tableId, oldValue, newValue) => {");
-		append(r, "    activateBits = [];");
-		append(r, "    deactivateBits = [];");
-		append(r, "    if (oldValue) {");
-		append(r, "        for (var i = 0; i < oldValue.onBits.length; i++) {");
-		append(r, "            if (!newValue.isOn(oldValue.onBits[i])) {");
-		append(r, "                Sdr.deactivateTableColumn(tableId, oldValue.onBits[i]);");
-		append(r, "            }");
-		append(r, "        }");
-		append(r, "    }");
-		append(r, "    for (var i = 0; i < newValue.onBits.length; i++) {");
-		append(r, "        if (!oldValue || !oldValue.isOn(newValue.onBits[i])) {");
-		append(r, "            Sdr.activateTableColumn(tableId, newValue.onBits[i]);");
-		append(r, "        }");
-		append(r, "    }");
-		append(r, "};");
-	}
-
-	protected void renderActivateTableColumn(StringBuilder r) {
-		append(r, "Sdr.activateTableColumn = (tableId, bit) => {");
-		append(r, "    elem = window.document.getElementById(tableId + \"-\" + bit);");
-		append(r, "    if (elem) {");
-		append(r, "        elem.classList.add(\"bg-b\");");
-		append(r, "        elem.classList.remove(\"bg-w\");");
-		append(r, "    };");
-		append(r, "};");
-	}
-
-	protected void renderDeactivateTableColumn(StringBuilder r) {
-		append(r, "Sdr.deactivateTableColumn = (tableId, bit) => {");
-		append(r, "    elem = window.document.getElementById(tableId + \"-\" + bit);");
-		append(r, "    if (elem) {");
-		append(r, "        elem.classList.add(\"bg-w\");");
-		append(r, "        elem.classList.remove(\"bg-b\");");
-		append(r, "    };");
-		append(r, "};");
-	}
-
-	protected void renderToHtmlTable(StringBuilder r) {
-		append(r, "Sdr.toHtmlTable = (sdr, id) => {");
-		append(r, "    var size = Sdr.getWidthHeight(sdr.length);");
-		append(r, "    var bit = 0;");
-		append(r, "    var html = \"<table id='\" + id + \"' class='sdr'>\";");
-		append(r, "    for (var i = 0; i < size.height; i++) {");
-		append(r, "        html += \"<tr>\";");
-		append(r, "        for (var j = 0; j < size.width; j++) {");
-		append(r, "            html += Sdr.toHtmlTableColumn(id, bit);");
-		append(r, "            bit++;");
-		append(r, "        }");
-		append(r, "        html += \"</tr>\";");
-		append(r, "    }");
-		append(r, "    html += \"</table>\";");
-		append(r, "    return html;");
-		append(r, "};");
-	}
-
-	protected void renderToHtmlTableColumn(StringBuilder r) {
-		append(r, "Sdr.toHtmlTableColumn = (idPrefix, bit) => {");
-		append(r, "    var cls = \"bg-w\";");
-		append(r, "    var html = \"<td id='\" + idPrefix + \"-\" + bit + \"' class='bg-w'>\";");
-		append(r, "    html += \"&nbsp;\";");
-		append(r, "    html += \"</td>\";");
-		append(r, "    return html;");
 		append(r, "};");
 	}
 }

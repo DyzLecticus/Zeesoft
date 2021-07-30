@@ -33,6 +33,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.HtmlResource;
 import nl.zeesoft.zdk.http.HttpHeader;
 import nl.zeesoft.zdk.http.HttpRequest;
@@ -264,6 +265,13 @@ public class TestNeuralApp {
 		// App hot-gym js
 		body = testHeadGetRequest(requestHandler, HotGymJsHandler.PATH, "application/javascript");
 
+		// Sdr png image
+		body = testHeadGetRequest(requestHandler, SdrPngHandler.PATH + "?4,2", "image/png");
+		assert body.length() == 92;
+		request = new HttpRequest("GET",SdrPngHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+
 		// Network state
 		body = testHeadGetRequest(requestHandler, NetworkStateTextHandler.PATH, "text/plain");
 		assert body.toString().equals(NetworkStateManager.READY);
@@ -409,8 +417,17 @@ public class TestNeuralApp {
 	
 	private static StringBuilder testRequest(HttpRequestHandler requestHandler, String method, String path, String expectedContentType) {
 		Logger.debug(self, "Test " + method + " " + path);
+		String query = "";
+		if (path.contains("?")) {
+			query = path.split("\\?")[1];
+			path = path.split("\\?")[0];
+		}
 		HttpRequest request = new HttpRequest(method,path);
+		request.query = new StringBuilder(query);
 		HttpResponse response = requestHandler.handleRequest(request);
+		if (response.code!=HttpURLConnection.HTTP_OK) {
+			Console.err("Response code: " + response.code);
+		}
 		assert response.code == HttpURLConnection.HTTP_OK;
 		StringBuilder body = response.getBody();
 		if (expectedContentType.length()>0) {

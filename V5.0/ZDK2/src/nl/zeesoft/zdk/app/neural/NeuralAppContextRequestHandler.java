@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 
 public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 	public NeuralAppContextRequestHandler(NeuralApp app) {
@@ -42,5 +43,6 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		put(new NetworkIOAccuracyJsonHandler((NeuralApp)app));
 		
 		put(new NetworkIOJsonHandler((NeuralApp)app));
+		put(new SdrPngHandler((NeuralApp)app));
 	}
 }

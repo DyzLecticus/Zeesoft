@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.neural;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrPanel;
