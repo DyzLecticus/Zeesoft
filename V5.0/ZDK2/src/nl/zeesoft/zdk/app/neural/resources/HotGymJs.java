@@ -101,10 +101,12 @@ public class HotGymJs extends Resource {
 	
 	protected void renderTrainNetworkRequest(StringBuilder r) {
 		append(r, "hotGym.trainNetworkRequest = () => {");
+		append(r, "    if (hotGym.trainingIO % 10 == 0) {");
+		append(r, "        var perc = Math.round((hotGym.trainingIO / hotGym.data.inputs.length) * 100);");
+		append(r, "        var html = hotGym.trainingIO + \" / \" + hotGym.data.inputs.length + \" (\" + perc + \"%)\";");
+		append(r, "        dom.setInnerHTML(\"networkTrainingStateText\", html);");
+		append(r, "    }");
 		append(r, "    var input = hotGym.data.inputs[hotGym.trainingIO];");
-		append(r, "    var perc = Math.round((hotGym.trainingIO / hotGym.data.inputs.length) * 100);");
-		append(r, "    var html = input.dateTime.toISOString() + \" = <b>\" + util.formatDecimal(input.value) + \"</b> (\" + perc + \"%)\";");
-		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", html);");
 		append(r, "    hotGym.getNewNetworkIO(input).execute(hotGym.handleTrainNetworkResponse);");
 		append(r, "};");
 	}
@@ -118,7 +120,7 @@ public class HotGymJs extends Resource {
 		append(r, "hotGym.processedNetworkIO = () => {");
 		append(r, "    hotGym.trainingIO++;");
 		append(r, "    if (!hotGym.pauze && hotGym.trainingIO < hotGym.data.inputs.length) {");
-		append(r, "        setTimeout(() => { hotGym.trainNetworkRequest(); }, 10);");
+		append(r, "        hotGym.trainNetworkRequest();");
 		append(r, "    } else {");
 		append(r, "        if (!hotGym.pauze) {");
 		append(r, "            hotGym.trainingIO = 0;");

@@ -26,9 +26,9 @@ public class NetworkIOHistJs extends Resource {
 	protected void renderProcessedNetworkIO(StringBuilder r) {
 		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
 		append(r, "    if (key == \"networkIO\") {");
-		append(r, "        setTimeout(() => {networkIOHist.processedNetworkIO(newValue)}, 10);");
+		append(r, "        networkIOHist.processedNetworkIO(newValue);");
 		append(r, "    } else if (key == \"networkIOHistAccordion:visible\") {");
-		append(r, "        setTimeout(() => { networkIOHist.clearHtmlTableRows(); }, 10);");
+		append(r, "        networkIOHist.clearHtmlTableRows();");
 		append(r, "    }");
 		append(r, "});");
 		append(r, "networkIOHist.processedNetworkIO = (networkIo) => {");

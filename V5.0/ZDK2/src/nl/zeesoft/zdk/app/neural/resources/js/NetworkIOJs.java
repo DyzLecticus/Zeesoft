@@ -130,7 +130,7 @@ public class NetworkIOJs extends Resource {
 		append(r, "    if (key == \"networkIO\") {");
 		append(r, "        networkIO.processedNetworkIO(newValue);");
 		append(r, "    } else if (key == \"networkIOAccordion:visible\") {");
-		append(r, "        setTimeout(() => { networkIO.clearSdrImage(); }, 10);");
+		append(r, "        networkIO.clearSdrImage();");
 		append(r, "    }");
 		append(r, "});");
 		append(r, "networkIO.processedNetworkIO = (networkIo) => {");
