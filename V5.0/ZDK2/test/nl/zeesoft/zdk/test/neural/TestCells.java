@@ -114,8 +114,10 @@ public class TestCells {
 		segmentsCells = cellsBySegments.get(cellsBySegments.lastKey());
 		assert segmentsCells.size() == 2;
 		
-		Synapse synapse1 = cell.distalSegments.matchingSegments.get(0).synapses.get(0);
-		Synapse synapse2 = cell.apicalSegments.matchingSegments.get(0).synapses.get(0);
+		Segment segment1 = cell.distalSegments.matchingSegments.get(0);
+		Synapse synapse1 = segment1.synapses.get(segment1.synapses.firstKey());
+		Segment segment2 = cell.apicalSegments.matchingSegments.get(0);
+		Synapse synapse2 = segment2.synapses.get(segment2.synapses.firstKey());
 		assert synapse1.permanence == 0.21F;
 		assert synapse2.permanence == 0.21F;
 		cells.punishPredictedColumn(cell.position, CellSegments.DISTAL, winners1, 0F);
@@ -126,15 +128,20 @@ public class TestCells {
 		assert synapse2.permanence == 0.10999999F;
 		
 		Segment segment = new Segment();
-		Synapse synapse = new Synapse();
-		synapse.permanence = 0.2F;
-		segment.synapses.add(synapse);
-		synapse = new Synapse();
-		synapse.permanence = 0F;
-		segment.synapses.add(synapse);
+		synapse1 = new Synapse();
+		synapse1.permanence = 0.2F;
+		synapse1.connectTo = new Position(0,0,0);
+		segment.addSynapse(synapse1);
+		synapse2 = new Synapse();
+		synapse2.permanence = 0F;
+		synapse2.connectTo = new Position(0,0,1);
+		segment.addSynapse(synapse2);
 		cell.proximalSegments.add(segment);
-		cell.distalSegments.get(0).synapses.get(0).permanence = 0;
-		cell.apicalSegments.get(0).synapses.get(0).permanence = 0;
+		
+		segment1 = cell.distalSegments.get(0);
+		segment1.synapses.get(segment1.synapses.firstKey()).permanence = 0;
+		segment2 = cell.apicalSegments.get(0);
+		segment2.synapses.get(segment2.synapses.firstKey()).permanence = 0;
 		
 		CellStats stats = new CellStats();
 		stats.addModelCells(self, cells);

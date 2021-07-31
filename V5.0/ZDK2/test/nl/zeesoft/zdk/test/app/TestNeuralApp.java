@@ -318,7 +318,7 @@ public class TestNeuralApp {
 		for (Thread test: tests) {
 			test.start();
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 20; i++) {
 			response = requestHandler.handleRequest(request);
 		}
 		assert response.code == HttpURLConnection.HTTP_OK;

@@ -56,7 +56,7 @@ public class SpCells {
 						Synapse synapse = new Synapse();
 						synapse.connectTo = (Position) param1;
 						synapse.permanence = permanence;
-						segment.synapses.add(synapse);
+						segment.addSynapse(synapse);
 					}
 				}
 				return param2;

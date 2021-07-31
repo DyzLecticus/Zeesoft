@@ -78,8 +78,8 @@ public class TestCellsStringConvertor {
 		syn2.connectTo = new Position(0,0,base+1);
 		syn2.permanence = 0.02F * (float) base;
 		
-		seg.synapses.add(syn1);
-		seg.synapses.add(syn2);
+		seg.addSynapse(syn1);
+		seg.addSynapse(syn2);
 		
 		return seg;
 	}

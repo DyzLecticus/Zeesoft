@@ -9,10 +9,10 @@ import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Position;
 
 public class Segment {
-	public List<Synapse>	synapses			= new ArrayList<Synapse>();
+	public SortedMap<Position,Synapse>	synapses			= new TreeMap<Position,Synapse>();
 	
-	public List<Synapse>	activeSynapses		= new ArrayList<Synapse>();
-	public List<Synapse>	potentialSynapses	= new ArrayList<Synapse>();
+	public List<Synapse>				activeSynapses		= new ArrayList<Synapse>();
+	public List<Synapse>				potentialSynapses	= new ArrayList<Synapse>();
 	
 	public void clear() {
 		synapses.clear();
@@ -24,22 +24,19 @@ public class Segment {
 		potentialSynapses.clear();
 	}
 
-	public Synapse getSynapseTo(Position position) {
-		Synapse r = null;
-		for (Synapse synapse: synapses) {
-			if (synapse.connectTo.equals(position)) {
-				r = synapse;
-				break;
-			}
-		}
-		return r;
+	public void addSynapse(Synapse synapse) {
+		synapses.put(synapse.connectTo, synapse);
+	}
+
+	public void removeSynapse(Synapse synapse) {
+		synapses.remove(synapse.connectTo);
 	}
 	
 	public void calculateActiveAndPotentialSynapses(List<Position> activeCellPositions, float permanenceThreshold) {
 		activeSynapses.clear();
 		potentialSynapses.clear();
 		for (Position pos: activeCellPositions) {
-			Synapse synapse = getSynapseTo(pos);
+			Synapse synapse = synapses.get(pos);
 			if (synapse!=null) {
 				if (synapse.permanence > permanenceThreshold) {
 					activeSynapses.add(synapse);
@@ -51,7 +48,7 @@ public class Segment {
 	
 	public void adaptSynapses(List<Position> prevActiveCellPositions, float increment, float decrement) {
 		List<Synapse> removeSynapses = new ArrayList<Synapse>();
-		for (Synapse synapse: synapses) {
+		for (Synapse synapse: synapses.values()) {
 			if (prevActiveCellPositions.contains(synapse.connectTo)) {
 				synapse.permanence = synapse.permanence + increment;
 				if (synapse.permanence > 1F) {
@@ -65,7 +62,7 @@ public class Segment {
 			}
 		}
 		for (Synapse remove: removeSynapses) {
-			synapses.remove(remove);
+			removeSynapse(remove);
 		}
 	}
 
@@ -82,7 +79,7 @@ public class Segment {
 				Synapse synapse = new Synapse();
 				synapse.connectTo = pos;
 				synapse.permanence = initialPermanence;
-				synapses.add(synapse);
+				addSynapse(synapse);
 			}
 			applySynapsePerSegmentLimit(maxSynapsesPerSegment,prevWinnerCellPositions);
 		}
@@ -92,7 +89,7 @@ public class Segment {
 		List<Position> r = new ArrayList<Position>(prevWinnerCellPositions);
 		r.remove(cellPosition);
 		for (Position pos: prevWinnerCellPositions) {
-			if (getSynapseTo(pos)!=null) {
+			if (synapses.get(pos)!=null) {
 				r.remove(pos);
 			}
 		}
@@ -112,14 +109,14 @@ public class Segment {
 				if (list.size()==0) {
 					synapsesByPermanence.remove(firstKey);
 				}
-				synapses.remove(remove);
+				removeSynapse(remove);
 			}
 		}
 	}
 	
 	protected SortedMap<Float,List<Synapse>> getSynapsesByPermanence(List<Position> excludePositions) {
 		SortedMap<Float,List<Synapse>> r = new TreeMap<Float,List<Synapse>>();
-		for (Synapse synapse: synapses) {
+		for (Synapse synapse: synapses.values()) {
 			if (!excludePositions.contains(synapse.connectTo)) {
 				float permanence = synapse.permanence;
 				List<Synapse> list = r.get(permanence);

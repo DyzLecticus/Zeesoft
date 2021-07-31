@@ -20,7 +20,7 @@ public class SegmentStringConvertor extends ObjectStringConvertor {
 		StringBuilder r = new StringBuilder();
 		if (obj instanceof Segment) {
 			Segment seg = (Segment) obj;
-			for (Synapse syn: seg.synapses) {
+			for (Synapse syn: seg.synapses.values()) {
 				if (r.length()>0) {
 					r.append(separator);
 				}
@@ -40,7 +40,7 @@ public class SegmentStringConvertor extends ObjectStringConvertor {
 				if(r==null) {
 					r = new Segment();
 				}
-				r.synapses.add(syn);
+				r.addSynapse(syn);
 			}
 		}
 		return r;

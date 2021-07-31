@@ -200,8 +200,10 @@ public class TestCell {
 		assert cell.getSegments(CellSegments.APICAL) == cell.apicalSegments;
 		assert cell.getSegments("Pizza") == null;
 		
-		Synapse synapse1 = cell.distalSegments.activeSegments.get(0).synapses.get(0);
-		Synapse synapse2 = cell.apicalSegments.activeSegments.get(0).synapses.get(0);
+		Segment segment1 = cell.distalSegments.activeSegments.get(0);
+		Synapse synapse1 = segment1.synapses.get(segment1.synapses.firstKey());
+		Segment segment2 = cell.apicalSegments.activeSegments.get(0);
+		Synapse synapse2 = segment2.synapses.get(segment2.synapses.firstKey());
 		assert synapse1.permanence == 0.21F;
 		assert synapse2.permanence == 0.21F;
 
@@ -226,8 +228,11 @@ public class TestCell {
 		config.distalPotentialRadius = 0F;
 		config.apicalPotentialRadius = 0F;
 		config.maxNewSynapseCount = 10;
-		synapse1 = cell.distalSegments.matchingSegment.synapses.get(0);
-		synapse2 = cell.apicalSegments.matchingSegment.synapses.get(0);
+
+		segment1 = cell.distalSegments.matchingSegment;
+		synapse1 = segment1.synapses.get(segment1.synapses.firstKey());
+		segment2 = cell.apicalSegments.matchingSegment;
+		synapse2 = segment2.synapses.get(segment2.synapses.firstKey());
 		assert synapse1.permanence == 0.21F;
 		assert synapse2.permanence == 0.21F;
 		cell.adaptMatchingSegments(winners2, winners2, apical2);

@@ -21,7 +21,7 @@ public class CellSegmentStats {
 	public void addSegments(List<Segment> list, float permanenceThreshold) {
 		for (Segment segment: list)  {
 			segments++;
-			for (Synapse syn: segment.synapses) {
+			for (Synapse syn: segment.synapses.values()) {
 				if (syn.permanence>0) {
 					synapses++;
 					if (syn.permanence > permanenceThreshold) {
