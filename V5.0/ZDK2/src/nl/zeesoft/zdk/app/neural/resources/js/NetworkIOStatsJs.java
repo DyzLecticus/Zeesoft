@@ -13,13 +13,13 @@ public class NetworkIOStatsJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkIOStats.toHtmlTable = (json) => {");
-		append(r, "    var checked = networkIOStatsLoader.autoRefresh ? \" CHECKED\" : \"\";");
-		append(r, "    var html = \"<p class='mt-0'>Auto refresh <input type='checkbox' onclick='networkIOStatsLoader.toggleAutoRefresh(this);'\" + checked + \" /></p>\";");
-		append(r, "    html += \"<p>Recorded requests: <b>\" + json.recorded + \"</b><br />\";");
-		append(r, "    html += \"Average processing milliseconds per request: <b>\" + util.formatDecimal(json.totalNs / 1000000, 3) + \"</b> (last 100 requests)</p>\";");
+		append(r, "    var html = \"Recorded requests: <b>\" + json.recorded + \"</b><br />\";");
+		append(r, "    html += \"Average processing milliseconds per request: <b>\" + util.formatDecimal(json.totalNs / 1000000, 3) + \"</b> (last 100 requests)<br />\";");
 		append(r, "    html += \"<table class='padded'>\";");
-		append(r, "    html += networkIOStats.toHtmlTableHeader();");
 		append(r, "    for (var i = 0; i < json.nsPerLayer.keyValues.length; i++) {");
+		append(r, "        if (i==0) {");
+		append(r, "            html += networkIOStats.toHtmlTableHeader();");
+		append(r, "        }");
 		append(r, "        var kv = json.nsPerLayer.keyValues[i];");
 		append(r, "        html += networkIOStats.toHtmlTableRow(kv.key.value, kv.value.value);");
 		append(r, "    }");

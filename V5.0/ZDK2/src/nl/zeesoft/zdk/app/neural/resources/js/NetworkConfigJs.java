@@ -91,7 +91,7 @@ public class NetworkConfigJs extends Resource {
 		append(r, "    var html = \"<tr>\";");
 		append(r, "    for (var j = 0; j < processorsByLayer[layer].length; j++) {");
 		append(r, "        html += \"<td>\";");
-		append(r, "        html += \"<b>\" + processorsByLayer[layer][j].name + \"</b>\";");
+		append(r, "        html += \"<h3 class='mb-0'>\" + processorsByLayer[layer][j].name + \"</h3>\";");
 		append(r, "        html += networkConfig.processorToHtmlTable(processorsByLayer[layer][j]);");
 		append(r, "        html += \"</td>\";");
 		append(r, "    }");

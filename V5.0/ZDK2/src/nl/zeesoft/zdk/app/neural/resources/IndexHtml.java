@@ -29,9 +29,7 @@ public class IndexHtml extends HtmlResource {
 		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
 		renderNetworkConfig(body);
 		renderNetworkSettings(body);
-		renderNetworkStats(body);
-		renderNetworkIOStats(body);
-		renderNetworkIOAccuracy(body);
+		renderNetworkStatistics(body);
 		renderApiLinks(body);
 		return body;
 	}
@@ -44,16 +42,26 @@ public class IndexHtml extends HtmlResource {
 		append(body, getAccordion("networkSettingsAccordion","Settings","<div id=\"networkSettings\" class=\"x-scrollable\"></div>"));
 	}
 	
-	protected void renderNetworkStats(StringBuilder body) {
-		append(body, getAccordion("networkStatsAccordion","Neural statistics","<div id=\"networkStats\" class=\"x-scrollable\"></div>"));
+	protected void renderNetworkStatistics(StringBuilder body) {
+		StringBuilder content = new StringBuilder();
+		content.append("<table id=\"networkStatistics\" class=\"x-scrollable padded\">");
+		content.append(getStatisticsRow("Neural","networkStats"));
+		content.append(getStatisticsRow("Performance","networkIOStats"));
+		content.append(getStatisticsRow("Accuracy","networkIOAccuracy"));
+		content.append("</table>");
+		append(body, getAccordion("networkStatisticsAccordion","Statistics",content.toString()));
 	}
 	
-	protected void renderNetworkIOStats(StringBuilder body) {
-		append(body, getAccordion("networkIOStatsAccordion","Performance statistics","<div id=\"networkIOStats\" class=\"x-scrollable\"></div>"));
-	}
-	
-	protected void renderNetworkIOAccuracy(StringBuilder body) {
-		append(body, getAccordion("networkIOAccuracyAccordion","Accuracy","<div id=\"networkIOAccuracy\" class=\"x-scrollable\"></div>"));
+	protected StringBuilder getStatisticsRow(String title, String id) {
+		StringBuilder r = new StringBuilder(); 
+		r.append("<tr><td><h3 class='mb-0'>");
+		r.append(title);
+		r.append("</h3>Auto refresh: <input type='checkbox' onclick='");
+		r.append(id);
+		r.append("Loader.toggleAutoRefresh(this);' /><div id='");
+		r.append(id);
+		r.append("'></td></tr>");
+		return r;
 	}
 	
 	protected void renderApiLinks(StringBuilder body) {

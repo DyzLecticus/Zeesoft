@@ -13,9 +13,7 @@ public class NetworkStatsJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkStats.toHtmlTable = (json) => {");
-		append(r, "    var checked = networkStatsLoader.autoRefresh ? \" CHECKED\" : \"\";");
-		append(r, "    var html = \"<p class='mt-0'>Auto refresh <input type='checkbox' onclick='networkStatsLoader.toggleAutoRefresh(this);'\" + checked + \" /></p>\";");
-		append(r, "    html += \"<p>Cells: <b>\" + json.cells + \"</b></p>\";");
+		append(r, "    var html = \"Cells: <b>\" + json.cells + \"</b><br />\";");
 		append(r, "    html += \"<table class='padded'>\";");
 		append(r, "    html += networkStats.toHtmlTableHeader();");
 		append(r, "    html += networkStats.toHtmlTableRow(\"Proximal\", json.proximalStats);");

@@ -13,12 +13,12 @@ public class NetworkIOAccuracyJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkIOAccuracy.toHtmlTable = (json) => {");
-		append(r, "    var checked = networkIOAccuracyLoader.autoRefresh ? \" CHECKED\" : \"\";");
-		append(r, "    var html = \"<p class='mt-0'>Auto refresh <input type='checkbox' onclick='networkIOAccuracyLoader.toggleAutoRefresh(this);'\" + checked + \" /></p>\";");
-		append(r, "    html += \"<p>Network accuracy over the last 100 requests;</p>\";");
+		append(r, "    var html = \"Network accuracy over the last 100 requests<br />\";");
 		append(r, "    html += \"<table class='padded'>\";");
-		append(r, "    html += networkIOAccuracy.toHtmlTableHeader();");
 		append(r, "    for (var i = 0; i < json.accuracies.length; i++) {");
+		append(r, "        if (i==0) {");
+		append(r, "            html += networkIOAccuracy.toHtmlTableHeader();");
+		append(r, "        }");
 		append(r, "        html += networkIOAccuracy.toHtmlTableRow(json.accuracies[i]);");
 		append(r, "        if (json.accuracies.length==2) {");
 		append(r, "            break;");
