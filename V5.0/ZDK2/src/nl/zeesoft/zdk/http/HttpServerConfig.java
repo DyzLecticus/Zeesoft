@@ -8,6 +8,7 @@ public class HttpServerConfig {
 	protected HttpRequestStringConvertor	requestConvertor	= (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
 	protected HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
 	protected HttpRequestHandler			requestHandler		= new HttpRequestHandler();
+	protected boolean						errorLogIO			= false;
 	protected boolean						debugLogHeaders		= false;
 
 	public HttpServerConfig copy() {
@@ -16,6 +17,7 @@ public class HttpServerConfig {
 		r.requestConvertor = this.requestConvertor;
 		r.responseConvertor = this.responseConvertor;
 		r.requestHandler = this.requestHandler;
+		r.errorLogIO = this.errorLogIO;
 		r.debugLogHeaders = this.debugLogHeaders;
 		return r;
 	}
@@ -50,6 +52,14 @@ public class HttpServerConfig {
 
 	public void setRequestHandler(HttpRequestHandler requestHandler) {
 		this.requestHandler = requestHandler;
+	}
+
+	public boolean isErrorLogIO() {
+		return errorLogIO;
+	}
+
+	public void setErrorLogIO(boolean errorLogIO) {
+		this.errorLogIO = errorLogIO;
 	}
 
 	public boolean isDebugLogHeaders() {

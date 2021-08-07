@@ -26,14 +26,16 @@ public class HttpConnectionWriter {
 		writer.flush();
 	}
 
-	public void writeBody(byte[] body, boolean mockException) {
+	public void writeBody(byte[] body, boolean errorLogIO, boolean mockException) {
 		try {
 			if (mockException) {
 				throw new IOException();
 			}
 			socket.getOutputStream().write(body);
 		} catch (IOException ex) {
-			Logger.error(this, "IO exception",ex);
+			if (errorLogIO) {
+				Logger.error(this, "IO exception",ex);
+			}
 		}
 	}
 	

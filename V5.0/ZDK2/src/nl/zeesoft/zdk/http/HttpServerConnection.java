@@ -48,7 +48,7 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 	
 	protected void handleIO() {
 		while(isOpen()) {
-			StringBuilder input = readHead();
+			StringBuilder input = readHead(config.errorLogIO);
 			if (input.length()>0) {
 				handleInput(input);
 			} else {
@@ -62,13 +62,13 @@ public class HttpServerConnection extends HttpConnection implements Runnable {
 		HttpRequest request = config.getRequestConvertor().fromStringBuilder(input);
 		debugLogRequestHeaders(request);
 		if (request.method.equals(HttpRequest.PUT) || request.method.equals(HttpRequest.POST)) {
-			request.body = readBody(request.getContentLength(), false);
+			request.body = readBody(request.getContentLength(), config.errorLogIO, false);
 		}
 		HttpResponse response = config.getRequestHandler().handleRequest(request);
 		response.setDefaultHeaders();
 		debugLogResponseHeaders(response);
 		writer.writeHead(config.getResponseConvertor().toStringBuilder(response));
-		writer.writeBody(response.body, false);
+		writer.writeBody(response.body, config.errorLogIO, false);
 		if (response.isConnectionClose()) {
 			close();
 		}

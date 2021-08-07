@@ -10,12 +10,12 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public abstract class HttpConnection {
-	protected boolean				open	= false;
-	protected Socket				socket	= null;
-	protected BufferedReader 		reader	= null;
-	protected HttpConnectionWriter	writer	= null;
+	protected boolean				open		= false;
+	protected Socket				socket		= null;
+	protected BufferedReader 		reader		= null;
+	protected HttpConnectionWriter	writer		= null;
 	
-	protected synchronized boolean open(Socket	socket) {
+	protected synchronized boolean open(Socket socket) {
 		this.socket = socket;
 		boolean r = createIO(false);
 		open = r;
@@ -71,16 +71,16 @@ public abstract class HttpConnection {
 		return open;
 	}
 	
-	protected StringBuilder readHead() {
+	protected StringBuilder readHead(boolean errorLogIO) {
 		StringBuilder r = new StringBuilder();
 		boolean done = false;
 		while(!done) {
-			done = readLine(r, false);
+			done = readLine(r, errorLogIO, false);
 		}
 		return r;
 	}
 	
-	protected boolean readLine(StringBuilder input, boolean mockException) {
+	protected boolean readLine(StringBuilder input, boolean errorLogIO, boolean mockException) {
 		boolean r = false;
 		try {
 			if (mockException) {
@@ -88,7 +88,7 @@ public abstract class HttpConnection {
 			}
 			r = readLineThrowException(input);
 		} catch (IOException e) {
-			if (isOpen()) {
+			if (isOpen() && errorLogIO) {
 				Logger.error(this, "IO exception", e);
 			}
 			r = true;
@@ -108,7 +108,7 @@ public abstract class HttpConnection {
 		return r;
 	}
 	
-	protected byte[] readBody(int contentLength, boolean mockException) {
+	protected byte[] readBody(int contentLength, boolean errorLogIO, boolean mockException) {
 		byte[] bytes = new byte[contentLength];
 		int c = 0;
 		for (int i = 0; i < contentLength; i++) {
@@ -119,7 +119,9 @@ public abstract class HttpConnection {
 				c = reader.read();
 				bytes[i] = (byte) c;
 			} catch (IOException e) {
-				Logger.error(this, "IO exception", e);
+				if (errorLogIO) {
+					Logger.error(this, "IO exception", e);
+				}
 			}
 		}
 		return bytes;

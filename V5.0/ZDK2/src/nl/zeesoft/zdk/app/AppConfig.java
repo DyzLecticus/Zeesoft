@@ -20,7 +20,8 @@ public class AppConfig {
 		HttpServerConfig r = new HttpServerConfig();
 		if (Logger.isLoggerDebug()) {
 			r.setPort(1234);
-			r.setDebugLogHeaders(Logger.isLoggerDebug());
+			r.setErrorLogIO(true);
+			r.setDebugLogHeaders(true);
 		}
 		AppContextRequestHandler handler = new AppContextRequestHandler(app);
 		handler.initializeContextHandlers();

@@ -30,13 +30,13 @@ public class MockHttpConnection extends HttpConnection {
 	}
 
 	@Override
-	public boolean readLine(StringBuilder input, boolean mockException) {
-		return super.readLine(input, mockException);
+	public boolean readLine(StringBuilder input, boolean errorLogIO, boolean mockException) {
+		return super.readLine(input, errorLogIO, mockException);
 	}
 
 	@Override
-	public byte[] readBody(int contentLength, boolean mockException) {
-		return super.readBody(contentLength, mockException);
+	public byte[] readBody(int contentLength, boolean errorLogIO, boolean mockException) {
+		return super.readBody(contentLength, errorLogIO, mockException);
 	}
 	
 	public void setOpen(boolean open) {

@@ -12,7 +12,8 @@ public class HttpClient extends HttpConnection {
 	protected URL						url					= null;
 	
 	public HttpRequestStringConvertor	requestConvertor	= (HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class);
-	public HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);
+	public HttpResponseStringConvertor	responseConvertor	= (HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class);	
+	public boolean						errorLogIO			= true;
 	
 	public synchronized boolean connect(String urlString) {
 		boolean r = false;
@@ -60,7 +61,7 @@ public class HttpClient extends HttpConnection {
 			request.setDefaultHeaders(url);
 			writer.writeHead(requestConvertor.toStringBuilder(request));
 			if (request.getContentLength()>0) {
-				writer.writeBody(request.body, false);
+				writer.writeBody(request.body, errorLogIO, false);
 			}
 			r = readResponse();
 		}
@@ -69,11 +70,11 @@ public class HttpClient extends HttpConnection {
 	
 	protected HttpResponse readResponse() {
 		HttpResponse r = null;
-		StringBuilder res = readHead();
+		StringBuilder res = readHead(errorLogIO);
 		r = responseConvertor.fromStringBuilder(res);
 		if (r!=null) {
 			if (r.getContentLength()>0) {
-				r.body = readBody(r.getContentLength(), false);
+				r.body = readBody(r.getContentLength(), errorLogIO, false);
 			}
 			if (r.isConnectionClose()) {
 				disconnect();

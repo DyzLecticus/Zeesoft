@@ -41,22 +41,33 @@ public class TestHttpServer {
 		
 		HttpServerConfig config = new HttpServerConfig();
 		config.setPort(1234);
+		config.setErrorLogIO(true);
 		config.setDebugLogHeaders(true);
 		config.setRequestConvertor((HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class));
 		config.setResponseConvertor((HttpResponseStringConvertor) ObjectStringConvertors.getConvertor(HttpResponse.class));
 		config.setRequestHandler(handler);
 		
+		config = config.copy();
+		assert config.getPort() == 1234;
+		assert config.isErrorLogIO();
+		assert config.isDebugLogHeaders();
+		assert config.getRequestHandler() == handler;
+		
 		HttpConnectionWriter writer = new HttpConnectionWriter(null, null);
-		writer.writeBody(null, true);
+		writer.writeBody(null, true, true);
+		writer.writeBody(null, false, true);
 		
 		MockHttpConnection connection = new MockHttpConnection();
 		assert !connection.isOpen();
-		assert connection.readLine(null, true);
-		assert connection.readBody(1, true) != null;
+		assert connection.readLine(null, true, true);
+		assert connection.readLine(null, false, true);
+		assert connection.readBody(1, true, true) != null;
+		assert connection.readBody(1, false, true) != null;
 		assert !connection.createIO(true);
 		assert !connection.destroyReaderAndSocket(true);
 		connection.setOpen(true);
-		assert connection.readLine(null, true);
+		assert connection.readLine(null, true, true);
+		assert connection.readLine(null, false, true);
 		assert connection.isOpen();
 		connection.close();
 		assert connection.isOpen();
