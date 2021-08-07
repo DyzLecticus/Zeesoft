@@ -13,16 +13,22 @@ public class NetworkIOAccuracy {
 	public SortedMap<String, Float>		classifierAverages	= new TreeMap<String, Float>();
 	public float						average				= 0.0F;
 	
+	public NetworkIOAccuracy() {
+		
+	}
+	
 	public NetworkIOAccuracy(NetworkIOAnalyzer analyzer, int max) {
 		int start = 0;
 		int end = analyzer.networkIO.size();
+		int capacity = end;
 		if (max>0) {
+			capacity = max;
 			start = end - max;
 			if (start<0) {
 				start = 0;
 			}
 		}
-		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(analyzer, start, end, max);
+		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(analyzer, start, end, capacity);
 		average = 0.0F;
 		for (Entry<String,HistoricalFloat> entry: acccuracies.entrySet()) {
 			float avg = entry.getValue().getAverage();

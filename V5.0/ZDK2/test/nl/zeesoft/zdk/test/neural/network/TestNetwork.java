@@ -112,6 +112,7 @@ public class TestNetwork {
 		NetworkIOAnalyzer analyzer = new NetworkIOAnalyzer();
 		assert analyzer.getNetworkIO().size() == 0;
 		assert analyzer.getAverageStats().totalNs == 0;
+		assert new NetworkIOAccuracy() != null;
 		
 		io = new NetworkIO("TestInput",0);
 		io.addInput("TestInput2", new Sdr(100));
@@ -217,6 +218,7 @@ public class TestNetwork {
 		assert accuracy.average > 0.5F;
 		assert accuracy.average == average;
 		assert accuracy.toString().length() >= 32;
+		assert analyzer.getAccuracy(0).average == accuracy.average;
 		
 		assert analyzer.getNetworkIO().size() == 17;
 		assert analyzer.getAverageStats(3).recorded == 17;
