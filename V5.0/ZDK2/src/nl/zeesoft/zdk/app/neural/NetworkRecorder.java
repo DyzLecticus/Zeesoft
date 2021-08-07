@@ -3,9 +3,9 @@ package nl.zeesoft.zdk.app.neural;
 import java.util.List;
 
 import nl.zeesoft.zdk.neural.network.NetworkIO;
-import nl.zeesoft.zdk.neural.network.NetworkIOAccuracy;
-import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
-import nl.zeesoft.zdk.neural.network.NetworkIOStats;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAccuracy;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
 
 public class NetworkRecorder {
 	protected NetworkIOAnalyzer		analyzer		= new NetworkIOAnalyzer();

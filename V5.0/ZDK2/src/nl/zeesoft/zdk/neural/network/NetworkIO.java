@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import nl.zeesoft.zdk.function.ExecutorTask;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 
 public class NetworkIO {

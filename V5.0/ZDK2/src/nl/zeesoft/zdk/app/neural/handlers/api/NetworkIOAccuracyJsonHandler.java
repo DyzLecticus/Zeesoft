@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.json.JsonConstructor;
-import nl.zeesoft.zdk.neural.network.NetworkIOAccuracy;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAccuracy;
 
 public class NetworkIOAccuracyJsonHandler extends NeuralAppContextHandler {
 	public static String	PATH	= "/network/io/accuracy.json";

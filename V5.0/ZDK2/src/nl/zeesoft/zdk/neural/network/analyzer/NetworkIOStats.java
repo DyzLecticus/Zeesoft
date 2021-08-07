@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.analyzer;
 
 import java.util.Map.Entry;
 import java.util.SortedMap;

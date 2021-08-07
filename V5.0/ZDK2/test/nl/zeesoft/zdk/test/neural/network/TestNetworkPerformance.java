@@ -7,8 +7,8 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
-import nl.zeesoft.zdk.neural.network.NetworkIOAccuracy;
-import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAccuracy;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 

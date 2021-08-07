@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.neural.network;
+package nl.zeesoft.zdk.neural.network.analyzer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 import nl.zeesoft.zdk.str.StrUtil;

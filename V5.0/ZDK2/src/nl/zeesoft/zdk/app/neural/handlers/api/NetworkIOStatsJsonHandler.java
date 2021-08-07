@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.http.HttpRequest;
 import nl.zeesoft.zdk.http.HttpResponse;
 import nl.zeesoft.zdk.json.JsonConstructor;
-import nl.zeesoft.zdk.neural.network.NetworkIOStats;
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
 
 public class NetworkIOStatsJsonHandler extends NeuralAppContextHandler {
 	public static String	PATH	= "/network/io/stats.json";

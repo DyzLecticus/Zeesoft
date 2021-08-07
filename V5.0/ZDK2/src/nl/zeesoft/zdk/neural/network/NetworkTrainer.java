@@ -3,6 +3,8 @@ package nl.zeesoft.zdk.neural.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
+
 public class NetworkTrainer {
 	public Network				network					= null;
 	public List<NetworkIO>		trainingSet				= new ArrayList<NetworkIO>();
