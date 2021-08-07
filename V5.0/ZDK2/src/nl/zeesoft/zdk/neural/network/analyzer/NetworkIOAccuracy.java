@@ -10,6 +10,7 @@ public class NetworkIOAccuracy {
 	
 	protected IOAccuracyCalculator		calculator		= new IOAccuracyCalculator();
 	protected IOAccuracyRmseCalculator	rmseCalculator	= new IOAccuracyRmseCalculator();
+	protected IOAccuracyMapeCalculator	mapeCalculator	= new IOAccuracyMapeCalculator();
 	
 	public NetworkIOAccuracy() {
 		
@@ -28,6 +29,7 @@ public class NetworkIOAccuracy {
 		}
 		calculator.calculateAverageAccuracies(analyzer, start, end, capacity, this);
 		rmseCalculator.calculateAverageRmses(analyzer, start, end, this);
+		mapeCalculator.calculateAverageMapes(analyzer, start, end, this);
 	}
 	
 	@Override

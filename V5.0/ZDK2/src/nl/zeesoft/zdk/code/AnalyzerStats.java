@@ -2,7 +2,7 @@ package nl.zeesoft.zdk.code;
 
 import java.util.List;
 
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.MathUtil;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class AnalyzerStats {
@@ -15,7 +15,7 @@ public class AnalyzerStats {
 		this.total = total;
 		this.totalValue = totalValue;
 		avg = (float)totalValue / (float)values.size();
-		stdDev = Util.getStandardDeviation(values);
+		stdDev = MathUtil.getStandardDeviation(values);
 	}
 	
 	public int getListMax(float factor, int absMax) {

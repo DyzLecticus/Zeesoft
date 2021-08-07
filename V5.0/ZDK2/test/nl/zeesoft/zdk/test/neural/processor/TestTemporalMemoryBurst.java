@@ -29,7 +29,7 @@ public class TestTemporalMemoryBurst {
 
 		tm.initialize(config);
 		
-		tm.setNumberOfWorkers(10);
+		tm.setNumberOfWorkers(1);
 		
 		List<Sdr> inputs = getInputSdrs();
 		List<Sdr> outputs = new ArrayList<Sdr>();

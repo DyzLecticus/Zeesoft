@@ -35,6 +35,7 @@ public class NetworkIOAccuracyJs extends Resource {
 		append(r, "    html += \"<th></th>\";");
 		append(r, "    html += \"<th align='right'>Accuracy</th>\";");
 		append(r, "    html += \"<th align='right'>RMSE</th>\";");
+		append(r, "    html += \"<th align='right'>MAPE</th>\";");
 		append(r, "    html += \"<tr>\";");
 		append(r, "    return html;");
 		append(r, "};");
@@ -44,8 +45,9 @@ public class NetworkIOAccuracyJs extends Resource {
 		append(r, "networkIOAccuracy.toHtmlTableRow = (ioAccuracy) => {");
 		append(r, "    var html = \"<tr>\";");
 		append(r, "    html += \"<td>\" + ioAccuracy.name + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(ioAccuracy.accuracy, 3) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(ioAccuracy.accuracy, 2) + \"</td>\";");
 		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(ioAccuracy.rootMeanSquaredError, 3) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(ioAccuracy.meanAveragePercentageError, 2) + \"</td>\";");
 		append(r, "    html += \"<tr>\";");
 		append(r, "    return html;");
 		append(r, "};");

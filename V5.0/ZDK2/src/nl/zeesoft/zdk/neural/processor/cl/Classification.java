@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.MathUtil;
 
 public class Classification {
 	public int						step				= 0;
@@ -32,7 +32,7 @@ public class Classification {
 		for (Integer count: valueCounts.values()) {
 			values.add((float) count);
 		}
-		return Util.getStandardDeviation(values);
+		return MathUtil.getStandardDeviation(values);
 	}
 }
 

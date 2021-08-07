@@ -60,6 +60,8 @@ public class ZdkTests {
 		TestStrUtil.main(args);
 		Console.log("Test ArrUtil ...");
 		TestArrUtil.main(args);
+		Console.log("Test MathUtil ...");
+		TestMathUtil.main(args);
 		Console.log("Test Instantiator ...");
 		TestInstantiator.main(args);
 		Console.log("Test Reflector ...");

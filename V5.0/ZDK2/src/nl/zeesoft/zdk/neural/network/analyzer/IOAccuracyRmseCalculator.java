@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.MathUtil;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
@@ -16,7 +17,7 @@ public class IOAccuracyRmseCalculator {
 		SortedMap<String,List<Float>> absoluteErrors = getAbsoluteErrors(analyzer, start, end);
 		float averageRmse = 0.0F;
 		for (Entry<String,List<Float>> entry: absoluteErrors.entrySet()) {
-			float rmse = Util.getRootMeanSquaredError(entry.getValue());
+			float rmse = MathUtil.getRootMeanSquaredError(entry.getValue());
 			averageRmse += rmse;
 			IOAccuracy acc = accuracy.getOrCreateIOAccuracy(entry.getKey());
 			acc.rootMeanSquaredError = rmse;

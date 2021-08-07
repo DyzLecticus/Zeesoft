@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.MathUtil;
 
 public class Position extends XYZ implements Comparable<Position> {
 	public Position() {
@@ -57,7 +57,7 @@ public class Position extends XYZ implements Comparable<Position> {
 		} else if (len2==0) {
 			r = len1;
 		} else {
-			r = Util.getHypotenuse(len1, len2);
+			r = MathUtil.getHypotenuse(len1, len2);
 		}
 		if (other.z!=z) {
 			r = addDepthDistance(r, other);
@@ -93,7 +93,7 @@ public class Position extends XYZ implements Comparable<Position> {
 		if (len1==0) {
 			r = len2;
 		} else {
-			r = Util.getHypotenuse(len1, len2);
+			r = MathUtil.getHypotenuse(len1, len2);
 		}
 		return r;
 	}
