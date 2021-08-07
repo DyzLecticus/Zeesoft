@@ -73,12 +73,21 @@ public class TestUtil {
 		
 		List<Float> values = new ArrayList<Float>();
 		assert Util.getStandardDeviation(values) == 0F;
+		assert Util.getRootMeanSquaredError(values) == 0F;
 		values.add(1F);
 		assert Util.getStandardDeviation(values) == 0F;
+		assert Util.getRootMeanSquaredError(values) == 1F;
 		values.add(1F);
 		assert Util.getStandardDeviation(values) == 0F;
+		assert Util.getRootMeanSquaredError(values) == 1F;
 		values.add(2F);
 		assert Util.getStandardDeviation(values) == 0.57735026F;
+		assert Util.getRootMeanSquaredError(values) == 1.4142135F;
+		
+		assert Util.getFloatValue(1F) == 1F;
+		assert Util.getFloatValue(1) == 1F;
+		assert Util.getFloatValue(1L) == 1F;
+		assert Util.getFloatValue(1D) == 1F;
 		
 		assert Util.parseInt("Qwer") == null;
 		assert Util.parseInt("5") == 5;

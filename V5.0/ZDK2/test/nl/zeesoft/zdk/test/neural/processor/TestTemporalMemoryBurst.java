@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
@@ -14,6 +15,8 @@ public class TestTemporalMemoryBurst {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		Rand.reset(0);
+		
 		testBurst(50);
 	}
 	

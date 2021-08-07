@@ -70,12 +70,26 @@ public class Util {
 			for (Float value: values) {
 				sum += value;
 			}
-			float dev = 0.0F;
 			float mean = sum / size;
+			float dev = 0.0F;
 			for (Float value: values) {
 				dev += Math.pow(value - mean, 2);
 			}
 			r = (float) Math.sqrt(dev/(size - 1));
+		}
+		return r;
+	}
+	
+	public static float getRootMeanSquaredError(List<Float> values) {
+		float r = 0.0F;
+		if (values.size()>0) {
+		    float square = 0;
+		    float mean = 0;
+			for (Float value: values) {
+				square += Math.pow(value, 2);
+			}
+		    mean = (square / (float)values.size());
+		    r = (float)Math.sqrt(mean);
 		}
 		return r;
 	}
@@ -116,6 +130,20 @@ public class Util {
 			r = Double.parseDouble(str);
 		} catch(NumberFormatException ex) {
 			// ignore
+		}
+		return r;
+	}
+	
+	public static float getFloatValue(Object value) {
+		float r = 0.0F;
+		if (value instanceof Float) {
+			r = (Float) value;
+		} else if (value instanceof Integer) {
+			r = ((Integer) value).floatValue();
+		} else if (value instanceof Long) {
+			r = ((Long) value).floatValue();
+		} else if (value instanceof Double) {
+			r = ((Double) value).floatValue();
 		}
 		return r;
 	}

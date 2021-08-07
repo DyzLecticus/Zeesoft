@@ -215,15 +215,25 @@ public class TestNetwork {
 		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
 		assert accuracy != null;
 		average = accuracy.classifierAverages.get("TestClassifier");
-		assert accuracy.average > 0.5F;
+		assert accuracy.average == 0.6666667F;
 		assert accuracy.average == average;
+		assert accuracy.averageRmse == 28.580296F;
 		assert accuracy.toString().length() >= 32;
 		assert analyzer.getAccuracy(0).average == accuracy.average;
-		
+
+		accuracy = analyzer.getAccuracy(10);
+		assert accuracy != null;
+		average = accuracy.classifierAverages.get("TestClassifier");
+		assert accuracy.average == 0.7F;
+		assert accuracy.averageRmse == 33.001682F;
+
 		assert analyzer.getNetworkIO().size() == 17;
 		assert analyzer.getAverageStats(3).recorded == 17;
 		assert analyzer.getAverageStats(3).totalNs > 0;
 		assert analyzer.getAverageStats(-1).totalNs > 0;
 		assert analyzer.getAverageStats(3).totalNs != analyzer.getAverageStats(-1).totalNs;
+		
+		analyzer.clear();
+		assert analyzer.getNetworkIO().size() == 0;
 	}
 }

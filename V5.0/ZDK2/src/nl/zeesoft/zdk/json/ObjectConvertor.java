@@ -12,10 +12,8 @@ public class ObjectConvertor {
 				r = ((Integer)value).longValue();
 			} else if (cls == Long.class && value.getClass() == Double.class) {
 				r = ((Double)value).longValue();
-			} else if (cls == Float.class && value.getClass() == Double.class) {
-				r = new Float((Double)value);
-			} else if (cls == Float.class && value.getClass() == Integer.class) {
-				r = ((Integer)value).floatValue();
+			} else if (cls == Float.class && (value.getClass() == Double.class || value.getClass() == Integer.class)) {
+				r = Util.getFloatValue(value);
 			} else if (cls == Double.class && value.getClass() == Integer.class) {
 				r = ((Integer)value).doubleValue();
 			} else if (cls == Byte.class && value.getClass() == Integer.class) {
