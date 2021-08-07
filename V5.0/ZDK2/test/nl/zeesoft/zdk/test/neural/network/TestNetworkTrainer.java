@@ -39,16 +39,16 @@ public class TestNetworkTrainer {
 		trainer.minimumAverageAccuracy = 0F;
 		trainer.trainNetwork();
 		assert trainer.processed == 120;
-		assert trainer.analyzer.getAccuracy().average >= 0.99F;
+		assert trainer.analyzer.getAccuracy().getAverage().accuracy >= 0.99F;
 
 		trainer = testConfig(config);
 		assert trainer.processed == 241;
-		assert trainer.analyzer.getAccuracy().average == 1.0F;
+		assert trainer.analyzer.getAccuracy().getAverage().accuracy == 1.0F;
 
 		factory.addTemporalMemoryMerger(config, "TemporalMemory");
 		trainer = testConfig(config);
 		assert trainer.processed == 244;
-		assert trainer.analyzer.getAccuracy().average == 1.0F;
+		assert trainer.analyzer.getAccuracy().getAverage().accuracy == 1.0F;
 	}
 	
 	public static List<NetworkIO> getTrainingSet() {

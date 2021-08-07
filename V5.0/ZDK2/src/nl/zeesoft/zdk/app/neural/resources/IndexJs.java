@@ -14,6 +14,7 @@ public class IndexJs extends Resource {
 		renderOnNetworkSettingsChanged(r);
 		renderOnNetworkStatsChanged(r);
 		renderOnNetworkIOStatsChanged(r);
+		renderOnNetworkIOAccuracyChanged(r);
 	}
 	
 	protected void renderLoadApp(StringBuilder r) {
@@ -39,6 +40,8 @@ public class IndexJs extends Resource {
 		append(r, "        onNetworkStatsChanged(newValue);");
 		append(r, "    } else if (key===\"networkIOStats\") {");
 		append(r, "        onNetworkIOStatsChanged(newValue);");
+		append(r, "    } else if (key===\"networkIOAccuracy\") {");
+		append(r, "        onNetworkIOAccuracyChanged(newValue);");
 		append(r, "    }");
 		append(r, "});");
 	}
@@ -73,6 +76,12 @@ public class IndexJs extends Resource {
 	protected void renderOnNetworkIOStatsChanged(StringBuilder r) {
 		append(r, "var onNetworkIOStatsChanged = (newValue) => {");
 		append(r, "    dom.setInnerHTML(\"networkIOStats\", networkIOStats.toHtmlTable(newValue));");
+		append(r, "};");
+	}
+	
+	protected void renderOnNetworkIOAccuracyChanged(StringBuilder r) {
+		append(r, "var onNetworkIOAccuracyChanged = (newValue) => {");
+		append(r, "    dom.setInnerHTML(\"networkIOAccuracy\", networkIOAccuracy.toHtmlTable(newValue));");
 		append(r, "};");
 	}
 }

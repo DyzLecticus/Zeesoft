@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.analyzer.IOAccuracy;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAccuracy;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
@@ -182,8 +183,8 @@ public class TestNetwork {
 		ioStats.nsPerLayer.put(0, 1000000L);
 		assert ioStats.toString().equals("Total: 1.0 ms\nLayer 1: 1.0 ms");
 		
-		float average = analyzer.getAccuracy().classifierAverages.get("TestClassifier");
-		assert average == 0F;
+		IOAccuracy ioAcc = analyzer.getAccuracy().getIOAccuracy("TestClassifier");
+		assert ioAcc.accuracy == 0F;
 		
 		assert !network.reset(0);
 		ZdkTests.sleep(100);
@@ -214,18 +215,18 @@ public class TestNetwork {
 		assert network.getPreviousIO().getProcessorIO("TestEncoder").inputs.size() == 0;
 		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
 		assert accuracy != null;
-		average = accuracy.classifierAverages.get("TestClassifier");
-		assert accuracy.average == 0.6666667F;
-		assert accuracy.average == average;
-		assert accuracy.averageRmse == 28.580296F;
-		assert accuracy.toString().length() >= 32;
-		assert analyzer.getAccuracy(0).average == accuracy.average;
+		ioAcc = accuracy.getIOAccuracy("TestClassifier");
+		assert accuracy.getAverage().accuracy == 0.6666667F;
+		assert accuracy.getAverage().accuracy == ioAcc.accuracy;
+		assert accuracy.getAverage().rootMeanSquaredError == 28.580296F;
+		assert accuracy.toString().length() == 68;
+		assert analyzer.getAccuracy(0).getAverage().accuracy == accuracy.getAverage().accuracy;
 
 		accuracy = analyzer.getAccuracy(10);
 		assert accuracy != null;
-		average = accuracy.classifierAverages.get("TestClassifier");
-		assert accuracy.average == 0.7F;
-		assert accuracy.averageRmse == 33.001682F;
+		ioAcc = accuracy.getIOAccuracy("TestClassifier");
+		assert ioAcc.accuracy == 0.7F;
+		assert ioAcc.rootMeanSquaredError == 33.001682F;
 
 		assert analyzer.getNetworkIO().size() == 17;
 		assert analyzer.getAverageStats(3).recorded == 17;

@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.analyzer.IOAccuracy;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAccuracy;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
@@ -82,9 +83,9 @@ public class TestNetworkPerformance {
 		long totalMs = System.currentTimeMillis() - started;
 		
 		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
-		assert accuracy.average >= 0.975F;
-		for (Float acc: accuracy.classifierAverages.values()) {
-			assert acc >= 0.95F;
+		assert accuracy.getAverage().accuracy >= 0.975F;
+		for (IOAccuracy acc: accuracy.accuracies) {
+			assert acc.accuracy >= 0.95F;
 		}
 		
 		return totalMs;

@@ -31,6 +31,7 @@ public class IndexHtml extends HtmlResource {
 		renderNetworkSettings(body);
 		renderNetworkStats(body);
 		renderNetworkIOStats(body);
+		renderNetworkIOAccuracy(body);
 		renderApiLinks(body);
 		return body;
 	}
@@ -49,6 +50,10 @@ public class IndexHtml extends HtmlResource {
 	
 	protected void renderNetworkIOStats(StringBuilder body) {
 		append(body, getAccordion("networkIOStatsAccordion","Performance statistics","<div id=\"networkIOStats\" class=\"x-scrollable\"></div>"));
+	}
+	
+	protected void renderNetworkIOAccuracy(StringBuilder body) {
+		append(body, getAccordion("networkIOAccuracyAccordion","Accuracy","<div id=\"networkIOAccuracy\" class=\"x-scrollable\"></div>"));
 	}
 	
 	protected void renderApiLinks(StringBuilder body) {

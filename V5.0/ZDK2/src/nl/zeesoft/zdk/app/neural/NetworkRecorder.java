@@ -8,10 +8,10 @@ import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
 
 public class NetworkRecorder {
-	protected NetworkIOAnalyzer		analyzer		= new NetworkIOAnalyzer();
+	protected NetworkIOAnalyzer		analyzer	= new NetworkIOAnalyzer();
 	
 	public synchronized void reset() {
-		analyzer = new NetworkIOAnalyzer();
+		analyzer.clear();
 	}
 	
 	public synchronized List<NetworkIO> getNetworkIO() {

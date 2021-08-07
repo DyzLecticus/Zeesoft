@@ -21,6 +21,7 @@ public class ApiJs extends Resource {
 		append(r, (new NetworkSettingsJs()).render());
 		append(r, (new NetworkStatsJs()).render());
 		append(r, (new NetworkIOStatsJs()).render());
+		append(r, (new NetworkIOAccuracyJs()).render());
 		append(r, (new NetworkIOJs()).render());
 		append(r, (new NetworkIOHistJs()).render());
 	}
