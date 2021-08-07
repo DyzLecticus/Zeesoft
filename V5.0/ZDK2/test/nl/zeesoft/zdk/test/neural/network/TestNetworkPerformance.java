@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.test.neural.network;
 import java.util.List;
 
 import nl.zeesoft.zdk.Console;
-import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.network.Network;
@@ -29,14 +28,14 @@ public class TestNetworkPerformance {
 		NetworkIOAnalyzer analyzerPar = new NetworkIOAnalyzer();
 		
 		for (int i = 0; i < 3; i++) {
-			analyzerSeq.clearAccuracy();
+			analyzerSeq.clear();
 			Network network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
 			assert network.reset();
 			singleThreadMs += testNetworkPerformance(network, analyzerSeq);
 			
-			analyzerPar.clearAccuracy();
+			analyzerPar.clear();
 			network = new Network();
 			Rand.reset(0);
 			assert network.initialize(config);
@@ -83,9 +82,9 @@ public class TestNetworkPerformance {
 		long totalMs = System.currentTimeMillis() - started;
 		
 		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
-		assert accuracy.getAverage() >= 0.975F;
-		for (HistoricalFloat acc: accuracy.getAccuracies().values()) {
-			assert acc.getAverage() >= 0.95F;
+		assert accuracy.average >= 0.975F;
+		for (Float acc: accuracy.classifierAverages.values()) {
+			assert acc >= 0.95F;
 		}
 		
 		return totalMs;

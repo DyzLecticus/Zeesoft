@@ -41,7 +41,7 @@ public class NetworkTrainer {
 		analyzer.add(io);
 		processed++;
 		if ((processed>=maximumIO) ||
-			(minimumAverageAccuracy>0F && analyzer.getAccuracy().getAverage()>=minimumAverageAccuracy)
+			(minimumAverageAccuracy>0F && analyzer.getAccuracy().average>=minimumAverageAccuracy)
 			) {
 			r = true;
 		}

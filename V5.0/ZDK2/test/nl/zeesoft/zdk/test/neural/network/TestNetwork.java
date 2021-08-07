@@ -3,13 +3,13 @@ package nl.zeesoft.zdk.test.neural.network;
 import java.util.List;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
+import nl.zeesoft.zdk.neural.network.NetworkIOAccuracy;
 import nl.zeesoft.zdk.neural.network.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.NetworkIOStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
@@ -181,9 +181,8 @@ public class TestNetwork {
 		ioStats.nsPerLayer.put(0, 1000000L);
 		assert ioStats.toString().equals("Total: 1.0 ms\nLayer 1: 1.0 ms");
 		
-		HistoricalFloat hist = analyzer.getAccuracy().getAccuracies().get("TestClassifier");
-		assert hist.floats.size() == 1;
-		assert hist.getAverage() == 0F;
+		float average = analyzer.getAccuracy().classifierAverages.get("TestClassifier");
+		assert average == 0F;
 		
 		assert !network.reset(0);
 		ZdkTests.sleep(100);
@@ -212,18 +211,12 @@ public class TestNetwork {
 			analyzer.add(io);
 		}
 		assert network.getPreviousIO().getProcessorIO("TestEncoder").inputs.size() == 0;
-		hist = analyzer.getAccuracy().getAccuracies().get("TestClassifier");
-		assert hist != null;
-		assert hist.floats.size() == 13;
-		assert hist.getAverage() > 0.5F;
-		assert analyzer.getAccuracy().getAverage() == hist.getAverage();
-		assert analyzer.getAccuracy().toString().length() >= 32;
-		analyzer.setAccuracyCapacity(10);
-		assert hist.floats.size() == 10;
-		analyzer.clearAccuracy();
-		assert analyzer.getAccuracy().getAverage() == 0F;
-		assert analyzer.getAccuracy().getAccuracies().get("TestClassifier") == null;
-		assert analyzer.getAccuracy().toString().length() == 12;
+		NetworkIOAccuracy accuracy = analyzer.getAccuracy();
+		assert accuracy != null;
+		average = accuracy.classifierAverages.get("TestClassifier");
+		assert accuracy.average > 0.5F;
+		assert accuracy.average == average;
+		assert accuracy.toString().length() >= 32;
 		
 		assert analyzer.getNetworkIO().size() == 17;
 		assert analyzer.getAverageStats(3).recorded == 17;

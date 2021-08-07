@@ -5,40 +5,80 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import nl.zeesoft.zdk.HistoricalFloat;
+import nl.zeesoft.zdk.neural.processor.ProcessorIO;
+import nl.zeesoft.zdk.neural.processor.cl.Classification;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class NetworkIOAccuracy {
-	protected SortedMap<String,HistoricalFloat>		accuracies	= null;
+	public SortedMap<String, Float>		classifierAverages	= new TreeMap<String, Float>();
+	public float						average				= 0.0F;
 	
-	protected NetworkIOAccuracy(NetworkIOAnalyzer analyzer) {
-		this.accuracies = new TreeMap<String,HistoricalFloat>(analyzer.accuracies);
-	}
-	
-	public SortedMap<String,HistoricalFloat> getAccuracies() {
-		return accuracies;
-	}
-	
-	public float getAverage() {
-		float r = 0.0F;
-		for (HistoricalFloat accuracy: accuracies.values()) {
-			r += accuracy.getAverage();
+	public NetworkIOAccuracy(NetworkIOAnalyzer analyzer, int max) {
+		int start = 0;
+		int end = analyzer.networkIO.size();
+		if (max>0) {
+			start = end - max;
+			if (start<0) {
+				start = 0;
+			}
 		}
-		if (accuracies.size()>0) {
-			r = r / (float)accuracies.size();
+		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(analyzer, start, end, max);
+		average = 0.0F;
+		for (Entry<String,HistoricalFloat> entry: acccuracies.entrySet()) {
+			float avg = entry.getValue().getAverage();
+			average += avg;
+			classifierAverages.put(entry.getKey(), avg);
 		}
-		return r;
+		if (acccuracies.size()>0) {
+			average = average / acccuracies.size();
+		}
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder r = new StringBuilder();
 		StrUtil.appendLine(r, "Average: ");
-		r.append(getAverage());
-		for (Entry<String,HistoricalFloat> entry: accuracies.entrySet()) {
+		r.append(average);
+		for (Entry<String,Float> entry: classifierAverages.entrySet()) {
 			StrUtil.appendLine(r, entry.getKey());
 			r.append(": ");
-			r.append(entry.getValue().getAverage());
+			r.append(entry.getValue());
 		}
 		return r.toString();
+	}
+	
+	protected SortedMap<String,HistoricalFloat> getClassifierAccuracies(NetworkIOAnalyzer analyzer, int start, int end, int capacity) {
+		SortedMap<String,HistoricalFloat> r = new TreeMap<String,HistoricalFloat>();
+		for (int i = start; i < end; i++) {
+			NetworkIO io = analyzer.networkIO.get(i);
+			for (String name: io.getProcessorNames()) {
+				ProcessorIO pio = io.getProcessorIO(name);
+				if (pio.outputValue instanceof Classification) {
+					Classification c = (Classification)pio.outputValue;
+					Classification p = analyzer.getPrediction(i - c.step, name);
+					float accuracy = determineAccuracy(c.value, p);
+					logAccuracy(r, name, capacity, accuracy);
+				}
+			}
+		}
+		return r;
+	}
+	
+	protected float determineAccuracy(Object inputValue, Classification prediction) {
+		float accuracy = 0.0F;
+		if (prediction!=null && prediction.getMostCountedValues().size()==1 && prediction.getMostCountedValues().get(0).equals(inputValue)) {
+			accuracy = 1.0F;
+		}
+		return accuracy;
+	}
+	
+	protected void logAccuracy(SortedMap<String,HistoricalFloat> inputAccuracies, String name, int capacity, float accuracy) {
+		HistoricalFloat inputAccuracy = inputAccuracies.get(name);
+		if (inputAccuracy==null) {
+			inputAccuracy = new HistoricalFloat();
+			inputAccuracy.capacity = capacity;
+			inputAccuracies.put(name, inputAccuracy);
+		}
+		inputAccuracy.push(accuracy);
 	}
 }

@@ -47,7 +47,6 @@ public class ClBits {
 	public Classification generatePrediction(Sdr input, Object value) {
 		Classification r = new Classification();
 		HashMap<Object,Integer> valueCounts = getValueCounts(input);
-		r.name = config.valueName;
 		r.step = config.predictStep;
 		r.valueCounts = valueCounts;
 		r.value = value;

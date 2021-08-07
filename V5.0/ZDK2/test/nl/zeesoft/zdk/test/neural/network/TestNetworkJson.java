@@ -26,7 +26,6 @@ public class TestNetworkJson {
 		Logger.setLoggerDebug(true);
 		
 		Classification cl = new Classification();
-		cl.name = "Pizza";
 		cl.step = 3;
 		cl.value = 0.0F;
 		cl.valueCounts.put(0.3F, 5);

@@ -84,7 +84,6 @@ public class TestClassifier {
 		assert cl.bits.bits.size() == 0;
 		assert io1.outputValue instanceof Classification;
 		classification = ((Classification)io1.outputValue);
-		assert classification.name.equals(config.valueName);
 		assert classification.step == config.predictStep;
 		assert classification.valueCounts.size() == 0;
 		assert classification.value.equals(1);
@@ -94,7 +93,6 @@ public class TestClassifier {
 		assert cl.bits.bits.size() == 4;
 		assert io2.outputValue instanceof Classification;
 		classification = ((Classification)io2.outputValue);
-		assert classification.name.equals(config.valueName);
 		assert classification.step == config.predictStep;
 		assert classification.valueCounts.size() == 1;
 		assert classification.value.equals(2);

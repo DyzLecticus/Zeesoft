@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import nl.zeesoft.zdk.Util;
 
 public class Classification {
-	public String					name				= "";
 	public int						step				= 0;
 	public HashMap<Object,Integer>	valueCounts			= new HashMap<Object,Integer>();
 	public Object					value				= null;

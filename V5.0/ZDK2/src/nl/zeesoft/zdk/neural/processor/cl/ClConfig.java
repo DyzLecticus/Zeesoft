@@ -7,7 +7,6 @@ import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 public class ClConfig implements ConfigurableIO {
 	public Size		size			= new Size(48,48,16);
 	public int		maxOnBits		= 256;
-	public String	valueName		= "value";
 	public int		predictStep		= 1;
 	public int		maxCount		= 512;
 	
@@ -15,7 +14,6 @@ public class ClConfig implements ConfigurableIO {
 		ClConfig r = new ClConfig();
 		r.size = size.copy();
 		r.maxOnBits = maxOnBits;
-		r.valueName = valueName;
 		r.predictStep = predictStep;
 		r.maxCount = maxCount;
 		return r;

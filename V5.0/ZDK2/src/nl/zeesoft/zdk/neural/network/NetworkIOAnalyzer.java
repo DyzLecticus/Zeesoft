@@ -2,35 +2,16 @@ package nl.zeesoft.zdk.neural.network;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
-import nl.zeesoft.zdk.HistoricalFloat;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 public class NetworkIOAnalyzer {
-	protected List<NetworkIO>						networkIO 			= new ArrayList<NetworkIO>();
-	protected SortedMap<String,HistoricalFloat>		accuracies			= new TreeMap<String,HistoricalFloat>();
-	protected int									accuracyCapacity	= 100;
-	
-	public void setAccuracyCapacity(int accuracyCapacity) {
-		this.accuracyCapacity = accuracyCapacity;
-		for (HistoricalFloat accuracy: accuracies.values()) {
-			accuracy.capacity = accuracyCapacity;
-			accuracy.applyCapacity();
-		}
-	}
+	protected List<NetworkIO>	networkIO	= new ArrayList<NetworkIO>();
 	
 	public void add(NetworkIO io) {
-		int index = networkIO.size();
 		networkIO.add(io);
-		for (String name: io.getProcessorNames()) {
-			ProcessorIO pio = io.getProcessorIO(name);
-			if (pio.outputValue instanceof Classification) {
-				checkPrediction(index, name, (Classification) pio.outputValue);
-			}
-		}
 	}
 	
 	public List<NetworkIO> getNetworkIO() {
@@ -58,23 +39,16 @@ public class NetworkIOAnalyzer {
 		return r;
 	}
 	
-	public void clearAccuracy() {
-		accuracies.clear();
+	public void clear() {
+		networkIO.clear();;
 	}
 	
 	public NetworkIOAccuracy getAccuracy() {
-		return new NetworkIOAccuracy(this);
+		return getAccuracy(100);
 	}
 	
-	protected void checkPrediction(int index, String name, Classification cls) {
-		Classification prediction = getPrediction(index - cls.step, name);
-		if (prediction!=null) {
-			float accuracy = 0F;
-			if (valueWasPredicted(prediction, cls.value)) {
-				accuracy = 1F;
-			}
-			logAccuracy(name, accuracy);
-		}
+	public NetworkIOAccuracy getAccuracy(int max) {
+		return new NetworkIOAccuracy(this, max);
 	}
 	
 	protected Classification getPrediction(int pIndex, String name) {
@@ -87,29 +61,6 @@ public class NetworkIOAnalyzer {
 			}
 		}
 		return r;
-	}
-	
-	protected boolean valueWasPredicted(Classification prediction, Object value) {
-		boolean r = false;
-		List<Object> mostCountedValues = prediction.getMostCountedValues();
-		if (mostCountedValues.size()==1 && mostCountedValues.get(0).equals(value)) {
-			r = predictedValueWasWithinRange(value, mostCountedValues.get(0));
-		}
-		return r;
-	}
-	
-	protected boolean predictedValueWasWithinRange(Object value, Object predictedValue) {
-		return predictedValue.equals(value);
-	}
-	
-	protected void logAccuracy(String name, float accuracy) {
-		HistoricalFloat hist = accuracies.get(name);
-		if (hist==null) {
-			hist = new HistoricalFloat();
-			hist.capacity = accuracyCapacity;
-			accuracies.put(name, hist);
-		}
-		hist.push(accuracy);
 	}
 	
 	protected void addStats(NetworkIOStats base, NetworkIOStats add) {
