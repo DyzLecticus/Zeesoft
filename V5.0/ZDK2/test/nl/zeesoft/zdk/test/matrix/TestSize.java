@@ -38,6 +38,7 @@ public class TestSize {
 		assert size.x == 2;
 		assert size.y == 3;
 		assert size.z == 4;
+		assert size.surface().equals(new Size(2,3,1));
 
 		size = new Size(2,3);
 		assert size.getIndexForPosition(new Position(0,0)) == 0;

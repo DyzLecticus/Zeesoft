@@ -45,20 +45,24 @@ public class IndexHtml extends HtmlResource {
 	protected void renderNetworkStatistics(StringBuilder body) {
 		StringBuilder content = new StringBuilder();
 		content.append("<table id=\"networkStatistics\" class=\"x-scrollable padded\">");
-		content.append(getStatisticsRow("Neural","networkStats"));
-		content.append(getStatisticsRow("Performance","networkIOStats"));
-		content.append(getStatisticsRow("Accuracy","networkIOAccuracy"));
+		content.append(getStatisticsRow("Neural","networkStats",false));
+		content.append(getStatisticsRow("Performance","networkIOStats",true));
+		content.append(getStatisticsRow("Accuracy","networkIOAccuracy",true));
 		content.append("</table>");
 		append(body, getAccordion("networkStatisticsAccordion","Statistics",content.toString()));
 	}
 	
-	protected StringBuilder getStatisticsRow(String title, String id) {
+	protected StringBuilder getStatisticsRow(String title, String id, boolean autoRefreshChecked) {
 		StringBuilder r = new StringBuilder(); 
 		r.append("<tr><td><h3 class='mb-0'>");
 		r.append(title);
 		r.append("</h3>Auto refresh: <input type='checkbox' onclick='");
 		r.append(id);
-		r.append("Loader.toggleAutoRefresh(this);' /><div id='");
+		r.append("Loader.toggleAutoRefresh(this);' ");
+		if (autoRefreshChecked) {
+			r.append("CHECKED ");
+		}
+		r.append("/><div id='");
 		r.append(id);
 		r.append("'></td></tr>");
 		return r;

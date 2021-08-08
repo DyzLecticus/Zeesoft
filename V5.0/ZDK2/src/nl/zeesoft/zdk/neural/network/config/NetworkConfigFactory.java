@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -10,8 +11,8 @@ import nl.zeesoft.zdk.neural.processor.se.SeConfig;
 
 public class NetworkConfigFactory {
 	public SeConfig		encoder				= new SeConfig();
-	public Size			size				= new Size(48,48,16);
-	public int			onBits				= 46;
+	public Size			size				= Cells.getDefaultSize();
+	public int			onBits				= Cells.getDefaultOnBits();
 	public int			activationThreshold	= 13;
 	public int			matchingThreshold	= 10;
 	public int			maxApicalOnBits		= 256;

@@ -1,14 +1,15 @@
 package nl.zeesoft.zdk.neural.processor.cl;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class ClConfig implements ConfigurableIO {
-	public Size		size			= new Size(48,48,16);
-	public int		maxOnBits		= 256;
+	public Size		size			= Cells.getDefaultSize();
+	public int		maxOnBits		= Cells.getDefaultOnBits() * Cells.getDefaultSize().z;
 	public int		predictStep		= 1;
-	public int		maxCount		= 512;
+	public int		maxCount		= 32;
 	
 	public ClConfig copy() {
 		ClConfig r = new ClConfig();

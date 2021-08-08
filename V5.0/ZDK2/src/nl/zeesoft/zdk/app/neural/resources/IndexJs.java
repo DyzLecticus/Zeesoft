@@ -25,6 +25,8 @@ public class IndexJs extends Resource {
 		append(r, "        });");
 		append(r, "    }");
 		append(r, "    loadApiObjects();");
+		append(r, "    networkIOStatsLoader.toggleAutoRefresh(true);");
+		append(r, "    networkIOAccuracyLoader.toggleAutoRefresh(true);");
 		append(r, "};");
 	}
 	

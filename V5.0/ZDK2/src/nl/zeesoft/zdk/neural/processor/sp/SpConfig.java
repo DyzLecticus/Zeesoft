@@ -1,13 +1,14 @@
 package nl.zeesoft.zdk.neural.processor.sp;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class SpConfig implements ConfigurableIO {
 	public Size		inputSize					= new Size(16,16);
-	public Size		outputSize					= new Size(48,48);
-	public int		outputOnBits				= 46;
+	public Size		outputSize					= Cells.getDefaultSize().surface();
+	public int		outputOnBits				= Cells.getDefaultOnBits();
 
 	public float	permanenceThreshold			= 0.1F;
 	public float	permanenceIncrement			= 0.05F;

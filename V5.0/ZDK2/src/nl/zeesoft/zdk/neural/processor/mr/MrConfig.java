@@ -1,11 +1,12 @@
 package nl.zeesoft.zdk.neural.processor.mr;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class MrConfig implements ConfigurableIO {
-	public Size		size			= new Size(48,48,16);
+	public Size		size			= Cells.getDefaultSize();
 
 	public boolean	concatenate		= false;
 	public int		maxOnBits		= 256;

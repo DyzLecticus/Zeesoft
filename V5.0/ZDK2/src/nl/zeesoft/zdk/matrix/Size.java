@@ -34,6 +34,10 @@ public class Size extends XYZ {
 		return new Size(x, y, z);
 	}
 	
+	public Size surface() {
+		return new Size(x, y);
+	}
+	
 	public int volume() {
 		return x * y * z;
 	}

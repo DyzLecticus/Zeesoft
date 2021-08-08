@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -41,7 +40,7 @@ public class HotGymConfigFactory {
 	protected static int addHotGymValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
 		seConfig.encoder.onBits = 16;
-		seConfig.encoder.encodeLength = 1007;
+		seConfig.encoder.encodeLength = 1015;
 		seConfig.encoder.maxValue = 100F;
 		seConfig.encoder.resolution = 0.1F;
 		config.addLink("Value", "ValueEncoder");
@@ -52,7 +51,6 @@ public class HotGymConfigFactory {
 		MergerConfig mrConfig = config.addMerger(1, "Merger");
 		mrConfig.config.concatenate = true;
 		mrConfig.config.size = new Size(length);
-		mrConfig.config.maxOnBits = 96;
 		config.addLink("DateTimeEncoder", DateTimeEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 0);
 		config.addLink("ValueEncoder", ScalarEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 1);
 	}
@@ -66,13 +64,17 @@ public class HotGymConfigFactory {
 	
 	protected static void addHotGymTemporalMemory(NetworkConfig config) {
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
-		tmc.config.segmentCreationSubsample = 1F;
+		tmc.config.segmentCreationSubsample = 0.9F;
+		tmc.config.maxNewSynapseCount = 20;
+		tmc.config.activationThreshold = 14;
+		tmc.config.matchingThreshold = 11;
+		tmc.config.maxSegmentsPerCell = 128;
+		tmc.config.maxSynapsesPerSegment = 32;
 		config.addLink("SpatialPooler", "TemporalMemory");
 	}
 	
 	protected static void addHotGymClassifier(NetworkConfig config) {
-		ClassifierConfig clc = config.addClassifier(4, "Classifier");
-		clc.config.maxOnBits = 512;
+		config.addClassifier(4, "Classifier");
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

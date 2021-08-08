@@ -39,6 +39,7 @@ public class TestExecutor {
 		executor.setWorkers(2);
 		assert executor.getWorkers() == 2;
 		task = executor.execute(self, fll, 200);
+		assert task!=null;
 		returnValues = task.getReturnValues();
 		assert returnValues.size() == 5;
 		assert (boolean)returnValues.get(0);

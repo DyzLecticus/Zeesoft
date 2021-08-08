@@ -3,7 +3,7 @@ package nl.zeesoft.zdk.neural.model;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class CellConfig {
-	public Size		size						= new Size(48,48,16);
+	public Size		size						= Cells.getDefaultSize();
 	
 	public int		maxSegmentsPerCell			= 256;
 	public int		maxSynapsesPerSegment		= 256;
@@ -15,8 +15,8 @@ public class CellConfig {
 	
 	public float	segmentCreationSubsample	= 0.9F;
 	
-	public float	distalSegmentDecrement		= 0.2F;
-	public float	apicalSegmentDecrement		= 0.2F;
+	public float	distalSegmentDecrement		= 0.04F * permanenceIncrement;
+	public float	apicalSegmentDecrement		= 0.04F * permanenceIncrement;
 
 	public float	distalPotentialRadius		= 0;
 	public float	apicalPotentialRadius		= 0;

@@ -164,7 +164,7 @@ public class TestTemporalMemory {
 		Synapse synapse = segments.get(0).synapses.get(segments.get(0).synapses.firstKey());
 		assert synapse.permanence == 0.21F;
 		tm.cells.adaptColumn(new Position(0,0),false);
-		assert synapse.permanence == 0.00999999F;
+		assert synapse.permanence == 0.206F;
 	}
 	
 	protected static ProcessorIO getIO(int index) {

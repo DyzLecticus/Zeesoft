@@ -8,9 +8,12 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.function.Function;
 import nl.zeesoft.zdk.matrix.Matrix;
 import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.matrix.Size;
 
 public class Cells extends Matrix {
-	public CellConfig	config	= null;
+	private static Size		DEFAULT_SIZE	= new Size(48,48,16);
+	
+	public CellConfig		config			= null;
 	
 	protected Cells(Object caller, Matrix matrix) {
 		initialize(matrix.size);
@@ -21,6 +24,14 @@ public class Cells extends Matrix {
 		this.config = config;
 		initialize(config.size);
 		applyFunction(caller,getInitializeFunction());
+	}
+	
+	public static Size getDefaultSize() {
+		return DEFAULT_SIZE.copy();
+	}
+	
+	public static int getDefaultOnBits() {
+		return (DEFAULT_SIZE.surface().volume() * 2) / 100;
 	}
 	
 	public void setConfig(Object caller, CellConfig config) {

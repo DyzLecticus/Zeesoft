@@ -28,6 +28,19 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	
 	public Executor				executor					= new Executor();
 
+	/*
+	@JsonTransient
+	public int					processed					= 0;
+	@JsonTransient
+	public long					time1						= 0;
+	@JsonTransient
+	public long					time2						= 0;
+	@JsonTransient
+	public long					time3						= 0;
+	@JsonTransient
+	public long					time4						= 0;
+	*/
+	
 	@Override
 	public void setNumberOfWorkers(int workers) {
 		executor.setWorkers(workers);
@@ -66,16 +79,33 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	
 	@Override
 	protected void processValidIO(ProcessorIO io) {
+		//long s = System.nanoTime();
 		cells.cycleState(getNewActiveApicalCellPositions(io));
+		//time1 += System.nanoTime() - s;
+
+		//s = System.nanoTime();
 		columns.activate(this, getNewActiveColumnPositions(io), io.timeoutMs);
+		//time2 += System.nanoTime() - s;
+
 		if (learn) {
+			//s = System.nanoTime();
 			columns.adapt(this, io.timeoutMs);
+			//time3 += System.nanoTime() - s;
 		}
+		
+		//s = System.nanoTime();
 		cells.predictActiveCells(this, io.timeoutMs);
+		//time4 += System.nanoTime() - s;
+		
 		addOutput(io, cells.activeCellPositions);
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);
 		addOutput(io, cells.winnerCellPositions);
+		
+		//processed++;
+		//if (processed % 100 == 0) {
+		//	Console.log(time1 / processed + " " + time2 / processed + " " + time3 / processed + " " + time4 / processed);
+		//}
 	}
 
 	@Override
