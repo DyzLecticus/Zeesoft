@@ -31,17 +31,6 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	public Executor				executor					= new Executor();
 	
 	public int					processed					= 0;
-
-	/*
-	@JsonTransient
-	public long					time1						= 0;
-	@JsonTransient
-	public long					time2						= 0;
-	@JsonTransient
-	public long					time3						= 0;
-	@JsonTransient
-	public long					time4						= 0;
-	*/
 	
 	@Override
 	public void setNumberOfWorkers(int workers) {

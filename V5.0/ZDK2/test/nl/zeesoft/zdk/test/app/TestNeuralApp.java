@@ -269,9 +269,15 @@ public class TestNeuralApp {
 		body = testHeadGetRequest(requestHandler, SdrPngHandler.PATH + "?4,2", "image/png");
 		assert body.length() == 92;
 		request = new HttpRequest("GET",SdrPngHandler.PATH);
+		request.query.append("sdr=4,2");
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		body = response.getBody();
+		assert body.length() == 92;
+		request = new HttpRequest("GET",SdrPngHandler.PATH);
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
-
+		
 		// Network state
 		body = testHeadGetRequest(requestHandler, NetworkStateTextHandler.PATH, "text/plain");
 		assert body.toString().equals(NetworkStateManager.READY);
@@ -384,6 +390,12 @@ public class TestNeuralApp {
 
 		// Network IO accuracy
 		body = testHeadGetRequest(requestHandler, NetworkIOAccuracyJsonHandler.PATH, "application/json");
+		
+		request = new HttpRequest("GET",NetworkIOAccuracyJsonHandler.PATH);
+		request.query.append("max=100");
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		StrUtil.equals(response.getBody(),body);
 	}
 	
 	private static NetworkConfig getSimpleNetworkConfig() {

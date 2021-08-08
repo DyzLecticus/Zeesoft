@@ -42,14 +42,14 @@ public class CellPruner {
 		return function;
 	}
 
-	public int pruneCell(Cell cell) {
+	protected int pruneCell(Cell cell) {
 		return
 			pruneCellSegments(cell.proximalSegments) +
 			pruneCellSegments(cell.distalSegments) +
 			pruneCellSegments(cell.apicalSegments);
 	}
 	
-	public int pruneCellSegments(CellSegments cellSegments) {
+	protected int pruneCellSegments(CellSegments cellSegments) {
 		return pruneSynapses(cellSegments) + pruneSegments(cellSegments);
 	}
 	

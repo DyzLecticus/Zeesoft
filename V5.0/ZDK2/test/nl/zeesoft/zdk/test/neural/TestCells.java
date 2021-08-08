@@ -9,6 +9,7 @@ import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.model.Cell;
 import nl.zeesoft.zdk.neural.model.CellConfig;
+import nl.zeesoft.zdk.neural.model.CellPruner;
 import nl.zeesoft.zdk.neural.model.CellSegments;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.model.Cells;
@@ -185,5 +186,20 @@ public class TestCells {
 		
 		stats = new CellStats();
 		assert stats.toString().length() == 8;
+
+		// Test pruner
+		cells.config.pruneSample = 1.0F;
+		segment1 = cell.distalSegments.get(0);
+		segment1.synapses.get(segment1.synapses.firstKey()).permanence = 0.4F;
+		CellPruner pruner = new CellPruner();
+		pruner.prune(cells);
+		stats = new CellStats();
+		stats.addModelCells(self, cells, true);
+		assert stats.proximalStats.segments == 0;
+		assert stats.proximalStats.synapses == 0;
+		assert stats.distalStats.segments == 1;
+		assert stats.distalStats.synapses == 1;
+		assert stats.apicalStats.segments == 0;
+		assert stats.apicalStats.synapses == 0;
 	}
 }
