@@ -20,6 +20,7 @@ public class CellPruner {
 	}
 	
 	public ExecutorTask prune(Cells cells, Executor executor, Object caller, int timeoutMs) {
+		prunedSynapses.set(0);
 		MatrixExecutor exec = new MatrixExecutor(cells, executor) {
 			@Override
 			protected Function getFunctionForWorker() {
@@ -59,7 +60,7 @@ public class CellPruner {
 			List<Synapse> list = new ArrayList<Synapse>(segment.synapses.values());
 			for (Synapse synapse: list) {
 				if (synapse.permanence < cellSegments.config.pruneMinPermanence &&
-					Rand.getRandomFloat(0, 1) <= cellSegments.config.pruneSample
+					(cellSegments.config.pruneSample == 1F || Rand.getRandomFloat(0, 1) <= cellSegments.config.pruneSample)
 					) {
 					segment.removeSynapse(synapse);
 					r++;

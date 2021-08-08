@@ -30,6 +30,7 @@ public class TestTemporalMemory {
 		config.segmentCreationSubsample = 1F;
 		config.activationThreshold = 2;
 		config.matchingThreshold = 1;
+		config.prunePeriod = 0;
 		
 		InputOutputConfig ioConfig = config.getInputOutputConfig();
 		assert ioConfig.inputs.size() == 2;
@@ -50,6 +51,7 @@ public class TestTemporalMemory {
 		tm.processIO(io);
 		assert io.error.length() > 0;
 		assert io.error.equals("TemporalMemory is not initialized");
+		assert io.outputs.size() == 0;
 
 		tm.initialize(config);
 		assert tm.cells.size.volume() == 400;
@@ -88,10 +90,13 @@ public class TestTemporalMemory {
 		io = new ProcessorIO(new Sdr(100));
 		tm.processIO(io);
 		assert io.error.length() == 0;
+		assert io.outputs.size() == 4;
+		assert (int)io.outputValue == 0;
 
 		io = new ProcessorIO(new Sdr(100), new Sdr(400));
 		tm.processIO(io);
 		assert io.error.length() == 0;
+		assert (int)io.outputValue == 0;
 
 		tm.reset();
 		assert tm.cells.size.volume() == 400;

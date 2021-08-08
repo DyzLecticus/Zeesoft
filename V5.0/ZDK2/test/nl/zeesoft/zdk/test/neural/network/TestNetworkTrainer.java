@@ -42,12 +42,12 @@ public class TestNetworkTrainer {
 		assert trainer.analyzer.getAccuracy().getAverage().accuracy >= 0.99F;
 
 		trainer = testConfig(config);
-		assert trainer.processed == 298;
+		assert trainer.processed > 200 && trainer.processed < 360;
 		assert trainer.analyzer.getAccuracy().getAverage().accuracy == 1.0F;
 
 		factory.addTemporalMemoryMerger(config, "TemporalMemory");
 		trainer = testConfig(config);
-		assert trainer.processed == 241;
+		assert trainer.processed > 200 && trainer.processed < 360;
 		assert trainer.analyzer.getAccuracy().getAverage().accuracy == 1.0F;
 	}
 	

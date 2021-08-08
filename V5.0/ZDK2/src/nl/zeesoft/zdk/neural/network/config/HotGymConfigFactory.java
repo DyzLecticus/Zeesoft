@@ -31,6 +31,7 @@ public class HotGymConfigFactory {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
 		deConfig.encoder.setOnBitsPerEncoder(16);
 		deConfig.encoder.includeMonth = false;
+		deConfig.encoder.includeDate = false;
 		deConfig.encoder.includeMinute = false;
 		deConfig.encoder.includeSecond = false;
 		config.addLink("DateTime", "DateTimeEncoder");

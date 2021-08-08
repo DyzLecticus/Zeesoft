@@ -77,7 +77,7 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 		}
 		cells.predictActiveCells(this, io.timeoutMs);
 		processed++;
-		if (learn && config.prunePeriod>=0 && processed % config.prunePeriod == 0) {
+		if (learn && config.prunePeriod>0 && processed % config.prunePeriod == 0) {
 			pruner.prune(cells, executor, this, io.timeoutMs);
 		}
 		addOutputs(io);
@@ -122,7 +122,7 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	}
 	
 	protected void addOutputs(ProcessorIO io) {
-		io.outputValue = pruner.prunedSynapses;
+		io.outputValue = pruner.prunedSynapses.get();
 		addOutput(io, cells.activeCellPositions);
 		addOutput(io, columns.getPositionsForValue(this, true));
 		addOutput(io, cells.predictiveCellPositions);

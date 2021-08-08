@@ -26,7 +26,7 @@ public class CellConfig {
 	public int		maxNewSynapseCount			= 20;
 	
 	public float	pruneMinPermanence			= initialPermanence + (permanenceIncrement / 2F);
-	public float	pruneSample					= 0.05F;
+	public float	pruneSample					= 0.1F;
 	
 	public void copyFrom(CellConfig other) {
 		this.size = other.size.copy();
