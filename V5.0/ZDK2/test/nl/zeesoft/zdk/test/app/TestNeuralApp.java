@@ -137,7 +137,7 @@ public class TestNeuralApp {
 		app.getNetworkRecorder().add(io);
 		assert app.getNetworkRecorder().getNetworkIO().size() == 1;
 		assert app.getNetworkRecorder().getAverageStats().totalNs == 0;
-		assert app.getNetworkRecorder().getAccuracy().getAverage().accuracy == 0F;
+		assert app.getNetworkRecorder().getAccuracy(100).getAverage().accuracy == 0F;
 		app.getNetworkRecorder().reset();
 		assert app.getNetworkRecorder().getNetworkIO().size() == 0;
 		

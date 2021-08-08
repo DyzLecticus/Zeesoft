@@ -1,14 +1,16 @@
 package nl.zeesoft.zdk.neural.network.analyzer;
 
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.HistoricalFloat;
+import nl.zeesoft.zdk.json.JsonTransient;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
+@JsonTransient
 public class IOAccuracyCalculator {
 	protected void calculateAverageAccuracies(NetworkIOAnalyzer analyzer, int start, int end, int capacity, NetworkIOAccuracy accuracy) {
 		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(analyzer, start, end, capacity);

@@ -84,8 +84,8 @@ public class IndexHtml extends HtmlResource {
 		append(body, renderLinkListItem(NetworkSettingsJsonHandler.PATH, "Network settings", "_blank"));
 		append(body, renderLinkListItem(NetworkStatsJsonHandler.PATH, "Network neural statistics", "_blank"));
 		append(body, renderLinkListItem(NetworkIOStatsJsonHandler.PATH, "Network performance statistics", "_blank"));
-		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH, "Network accuracy", "_blank"));
+		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH + "?max=1000", "Network accuracy", "_blank"));
 		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O", "_blank"));
-		append(body, renderLinkListItem(SdrPngHandler.PATH + "?100,7,8,9,10,11,12,58,59,60,61,62,63", "SDR image rendering", "_blank"));
+		append(body, renderLinkListItem(SdrPngHandler.PATH + "?sdr=100,7,8,9,10,11,12,58,59,60,61,62,63", "SDR image rendering", "_blank"));
 	}
 }

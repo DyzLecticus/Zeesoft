@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class NetworkIOAccuracy {
+	public int							total			= 0;
 	public List<IOAccuracy>				accuracies		= new ArrayList<IOAccuracy>();
 	
 	protected IOAccuracyCalculator		calculator		= new IOAccuracyCalculator();
@@ -27,6 +28,7 @@ public class NetworkIOAccuracy {
 				start = 0;
 			}
 		}
+		total = end - start;
 		calculator.calculateAverageAccuracies(analyzer, start, end, capacity, this);
 		rmseCalculator.calculateAverageRmses(analyzer, start, end, this);
 		mapeCalculator.calculateAverageMapes(analyzer, start, end, this);

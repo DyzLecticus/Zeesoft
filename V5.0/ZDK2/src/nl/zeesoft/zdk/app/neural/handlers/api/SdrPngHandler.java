@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrPanel;
 import nl.zeesoft.zdk.neural.SdrStringConvertor;
 import nl.zeesoft.zdk.str.ObjectStringConvertors;
+import nl.zeesoft.zdk.str.StrUtil;
 
 public class SdrPngHandler extends NeuralAppContextHandler {
 	public static String	PATH	= "/sdr/image.png";
@@ -22,8 +23,7 @@ public class SdrPngHandler extends NeuralAppContextHandler {
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		response.setContentType("image/png");
 		if (request.method.equals(HttpRequest.GET)) {
-			SdrStringConvertor convertor = (SdrStringConvertor) ObjectStringConvertors.getConvertor(Sdr.class);
-			Sdr sdr = convertor.fromStringBuilder(request.query);
+			Sdr sdr = parseSdrFromQueryString(request);
 			if (sdr!=null) {
 				SdrPanel panel = new SdrPanel(sdr);
 				panel.render();
@@ -32,5 +32,14 @@ public class SdrPngHandler extends NeuralAppContextHandler {
 				response.setBadRequest();
 			}
 		}
+	}
+	
+	protected Sdr parseSdrFromQueryString(HttpRequest request) {
+		StringBuilder str = new StringBuilder(request.query);
+		if (StrUtil.startsWith(str, "sdr=")) {
+			str = StrUtil.substring(str, 4, str.length());
+		}
+		SdrStringConvertor convertor = (SdrStringConvertor) ObjectStringConvertors.getConvertor(Sdr.class);
+		return convertor.fromStringBuilder(str);
 	}
 }

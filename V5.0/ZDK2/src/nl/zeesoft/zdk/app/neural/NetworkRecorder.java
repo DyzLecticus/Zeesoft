@@ -18,8 +18,8 @@ public class NetworkRecorder {
 		return analyzer.getNetworkIO();
 	}
 	
-	public synchronized NetworkIOAccuracy getAccuracy() {
-		return analyzer.getAccuracy();
+	public synchronized NetworkIOAccuracy getAccuracy(int max) {
+		return analyzer.getAccuracy(max);
 	}
 	
 	public synchronized NetworkIOStats getAverageStats() {

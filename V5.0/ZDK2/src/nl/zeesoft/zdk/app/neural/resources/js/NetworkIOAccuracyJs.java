@@ -13,7 +13,7 @@ public class NetworkIOAccuracyJs extends Resource {
 
 	protected void renderToHtmlTable(StringBuilder r) {
 		append(r, "networkIOAccuracy.toHtmlTable = (json) => {");
-		append(r, "    var html = \"Network accuracy over the last 100 requests<br />\";");
+		append(r, "    var html = \"Network accuracy over the last <b>\" + json.total + \"</b> requests<br />\";");
 		append(r, "    html += \"<table class='padded'>\";");
 		append(r, "    for (var i = 0; i < json.accuracies.length; i++) {");
 		append(r, "        if (i==0) {");

@@ -8,10 +8,12 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.MathUtil;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.json.JsonTransient;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
+@JsonTransient
 public class IOAccuracyRmseCalculator {
 	protected void calculateAverageRmses(NetworkIOAnalyzer analyzer, int start, int end, NetworkIOAccuracy accuracy) {
 		SortedMap<String,List<Float>> absoluteErrors = getAbsoluteErrors(analyzer, start, end);

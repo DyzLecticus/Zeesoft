@@ -24,9 +24,9 @@ public class IndexJs extends Resource {
 		append(r, "            console.log(key + \" was \" + oldValue + \" is \" + newValue);");
 		append(r, "        });");
 		append(r, "    }");
+		append(r, "    networkIOStatsLoader.autoRefresh = true;");
+		append(r, "    networkIOAccuracyLoader.autoRefresh = true;");
 		append(r, "    loadApiObjects();");
-		append(r, "    networkIOStatsLoader.toggleAutoRefresh(true);");
-		append(r, "    networkIOAccuracyLoader.toggleAutoRefresh(true);");
 		append(r, "};");
 	}
 	
