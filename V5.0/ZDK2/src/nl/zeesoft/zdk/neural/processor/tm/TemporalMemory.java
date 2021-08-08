@@ -6,6 +6,7 @@ import java.util.List;
 import nl.zeesoft.zdk.function.Executor;
 import nl.zeesoft.zdk.json.Finalizable;
 import nl.zeesoft.zdk.matrix.Position;
+import nl.zeesoft.zdk.neural.model.CellPruner;
 import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.processor.CellsProcessor;
 import nl.zeesoft.zdk.neural.processor.ExecutorProcessor;
@@ -25,12 +26,13 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	public TmConfig				config						= null;
 	public TmColumns			columns						= null;
 	public TmCells				cells						= null;
+	public CellPruner			pruner						= new CellPruner();
 	
 	public Executor				executor					= new Executor();
+	
+	public int					processed					= 0;
 
 	/*
-	@JsonTransient
-	public int					processed					= 0;
 	@JsonTransient
 	public long					time1						= 0;
 	@JsonTransient
@@ -79,33 +81,17 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	
 	@Override
 	protected void processValidIO(ProcessorIO io) {
-		//long s = System.nanoTime();
 		cells.cycleState(getNewActiveApicalCellPositions(io));
-		//time1 += System.nanoTime() - s;
-
-		//s = System.nanoTime();
 		columns.activate(this, getNewActiveColumnPositions(io), io.timeoutMs);
-		//time2 += System.nanoTime() - s;
-
 		if (learn) {
-			//s = System.nanoTime();
 			columns.adapt(this, io.timeoutMs);
-			//time3 += System.nanoTime() - s;
 		}
-		
-		//s = System.nanoTime();
 		cells.predictActiveCells(this, io.timeoutMs);
-		//time4 += System.nanoTime() - s;
-		
-		addOutput(io, cells.activeCellPositions);
-		addOutput(io, columns.getPositionsForValue(this, true));
-		addOutput(io, cells.predictiveCellPositions);
-		addOutput(io, cells.winnerCellPositions);
-		
-		//processed++;
-		//if (processed % 100 == 0) {
-		//	Console.log(time1 / processed + " " + time2 / processed + " " + time3 / processed + " " + time4 / processed);
-		//}
+		processed++;
+		if (learn && config.prunePeriod>=0 && processed % config.prunePeriod == 0) {
+			pruner.prune(cells, executor, this, io.timeoutMs);
+		}
+		addOutputs(io);
 	}
 
 	@Override
@@ -144,5 +130,13 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 		columns.config = config;
 		columns.cells = cells;
 		columns.executor = executor;
+	}
+	
+	protected void addOutputs(ProcessorIO io) {
+		io.outputValue = pruner.prunedSynapses;
+		addOutput(io, cells.activeCellPositions);
+		addOutput(io, columns.getPositionsForValue(this, true));
+		addOutput(io, cells.predictiveCellPositions);
+		addOutput(io, cells.winnerCellPositions);
 	}
 }

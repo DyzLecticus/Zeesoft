@@ -6,9 +6,12 @@ import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class TmConfig extends CellConfig implements ConfigurableIO {
+	public int	prunePeriod		= 24;
+	
 	public TmConfig copy() {
 		TmConfig r = new TmConfig();
 		r.copyFrom(this);
+		r.prunePeriod = this.prunePeriod;
 		return r;
 	}
 	

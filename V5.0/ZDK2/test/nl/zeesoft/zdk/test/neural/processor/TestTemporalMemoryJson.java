@@ -57,7 +57,7 @@ public class TestTemporalMemoryJson {
 		assert tmcesc.fromStringBuilder(new StringBuilder()) == null;
 
 		Json json = JsonConstructor.fromObjectUseConvertors(tm);
-		assert json.root.children.size() == 5;
+		assert json.root.children.size() == 6;
 		
 		TemporalMemory tm2 = (TemporalMemory) ObjectConstructor.fromJson(json);
 		Json json2 = JsonConstructor.fromObjectUseConvertors(tm2);

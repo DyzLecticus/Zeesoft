@@ -25,6 +25,9 @@ public class CellConfig {
 	public int		matchingThreshold			= 10;
 	public int		maxNewSynapseCount			= 20;
 	
+	public float	pruneMinPermanence			= initialPermanence + (permanenceIncrement / 2F);
+	public float	pruneSample					= 0.05F;
+	
 	public void copyFrom(CellConfig other) {
 		this.size = other.size.copy();
 		
@@ -47,5 +50,8 @@ public class CellConfig {
 		this.activationThreshold = other.activationThreshold;
 		this.matchingThreshold = other.matchingThreshold;
 		this.maxNewSynapseCount = other.maxNewSynapseCount;
+		
+		this.pruneMinPermanence = other.pruneMinPermanence;
+		this.pruneSample = other.pruneSample;
 	}
 }
