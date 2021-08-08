@@ -144,7 +144,7 @@ public class TestCells {
 		segment2.synapses.get(segment2.synapses.firstKey()).permanence = 0;
 		
 		CellStats stats = new CellStats();
-		stats.addModelCells(self, cells);
+		stats.addModelCells(self, cells, true);
 		assert stats.cells == 64;
 		assert stats.proximalStats.segments == 1;
 		assert stats.proximalStats.synapses == 1;
@@ -158,7 +158,7 @@ public class TestCells {
 		
 		stats = new CellStats();
 		cells.config.permanenceThreshold = 0.1F;
-		stats.addModelCells(self, cells);
+		stats.addModelCells(self, cells, true);
 		assert stats.cells == 64;
 		assert stats.proximalStats.segments == 1;
 		assert stats.proximalStats.synapses == 1;

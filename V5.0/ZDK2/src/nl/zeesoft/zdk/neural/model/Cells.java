@@ -11,7 +11,7 @@ import nl.zeesoft.zdk.matrix.Position;
 import nl.zeesoft.zdk.matrix.Size;
 
 public class Cells extends Matrix {
-	private static Size		DEFAULT_SIZE	= new Size(48,48,16);
+	private static Size		DEFAULT_SIZE	= new Size(45,45,16);
 	
 	public CellConfig		config			= null;
 	

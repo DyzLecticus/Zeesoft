@@ -42,7 +42,7 @@ public class TestNetworkConfig {
 		pc.inputLinks.clear();
 		config.addLink("TestTemporalMemory", 1, "TestSpatialPooler", 0);
 		err = config.test();
-		assert err.toString().equals("TestSpatialPooler: link from TestTemporalMemory/1 output volume is greater than input volume  (2304 > 256)");
+		assert err.toString().startsWith("TestSpatialPooler: link from TestTemporalMemory/1 output volume is greater than input volume");
 
 		pc.inputLinks.clear();
 		err = config.test();

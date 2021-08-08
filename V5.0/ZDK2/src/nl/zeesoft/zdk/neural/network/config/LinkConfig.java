@@ -32,7 +32,7 @@ public class LinkConfig {
 			int maxVolume = toConfig.inputs.get(toInput).maxVolume;
 			if (outVolume>maxVolume) {
 				r = toName + ": link from " + fromName + "/" + fromOutput +
-					" output volume is greater than input volume " +
+					" output volume is greater than input volume" +
 					" (" + outVolume + " > " + maxVolume + ")";
 			}
 		}

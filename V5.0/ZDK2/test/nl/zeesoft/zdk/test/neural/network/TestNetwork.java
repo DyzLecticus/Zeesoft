@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Rand;
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.model.CellStats;
+import nl.zeesoft.zdk.neural.model.Cells;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.network.analyzer.IOAccuracy;
@@ -65,7 +66,7 @@ public class TestNetwork {
 		assert network.getProcessors("Merger").size() == 2;
 
 		stats = network.getCellStats();
-		assert stats.cells == 39168;
+		assert stats.cells == Cells.getDefaultSize().volume();
 		assert stats.proximalStats.segments == 0;
 		assert stats.distalStats.segments == 0;
 		assert stats.apicalStats.segments == 0;
@@ -137,8 +138,6 @@ public class TestNetwork {
 		assert io.getErrors().size() == 0;
 		assert io.getProcessorIO("TestClassifier").outputValue != null;
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
-		cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
-		assert cl.valueCounts.size() == 1;
 		
 		ioStats = io.getStats();
 		totalNs += ioStats.totalNs;
@@ -156,8 +155,8 @@ public class TestNetwork {
 		ZdkTests.sleep(10);
 
 		stats = network.getCellStats();
-		assert stats.cells == 39168;
-		assert stats.proximalStats.segments == 2304;
+		assert stats.cells == Cells.getDefaultSize().volume();
+		assert stats.proximalStats.segments == Cells.getDefaultSize().surface().volume();
 		assert stats.proximalStats.synapses > 10000;
 		assert stats.proximalStats.activeSynapses > 10000;
 		assert stats.distalStats.segments > 25;

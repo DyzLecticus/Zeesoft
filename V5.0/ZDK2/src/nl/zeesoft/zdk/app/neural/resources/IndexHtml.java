@@ -46,7 +46,9 @@ public class IndexHtml extends HtmlResource {
 		StringBuilder content = new StringBuilder();
 		content.append("<table id=\"networkStatistics\" class=\"x-scrollable padded\">");
 		content.append(getStatisticsRow("Neural","networkStats",false));
+		content.append("<tr><td>&nbsp;</td></tr>");
 		content.append(getStatisticsRow("Performance","networkIOStats",true));
+		content.append("<tr><td>&nbsp;</td></tr>");
 		content.append(getStatisticsRow("Accuracy","networkIOAccuracy",true));
 		content.append("</table>");
 		append(body, getAccordion("networkStatisticsAccordion","Statistics",content.toString()));

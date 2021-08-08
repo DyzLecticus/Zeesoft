@@ -15,7 +15,7 @@ public class CellStats {
 	}
 	
 	public CellStats(CellsProcessor cp) {
-		addModelCells(this,cp.getCells());
+		addModelCells(this,cp.getCells(),cp.isCellModel());
 	}
 	
 	public void addStats(CellStats s) {
@@ -25,19 +25,21 @@ public class CellStats {
 		this.apicalStats.addStats(s.apicalStats);
 	}
 	
-	public void addModelCells(Object caller, Cells modelCells) {
+	public void addModelCells(Object caller, Cells modelCells, boolean isCellModel) {
 		Function function = new Function() {
 			@Override
 			protected Object exec() {
-				addCell((Cell) param2, modelCells.config.permanenceThreshold);
+				addCell((Cell) param2, modelCells.config.permanenceThreshold, isCellModel);
 				return param2;
 			}
 		};
 		modelCells.applyFunction(caller, function);
 	}
 	
-	public void addCell(Cell cell, float permanenceThreshold) {
-		cells++;
+	public void addCell(Cell cell, float permanenceThreshold, boolean isCellModel) {
+		if (isCellModel) {
+			cells++;
+		}
 		proximalStats.addSegments(cell.proximalSegments.segments, permanenceThreshold);
 		distalStats.addSegments(cell.distalSegments.segments, permanenceThreshold);
 		apicalStats.addSegments(cell.apicalSegments.segments, permanenceThreshold);

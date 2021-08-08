@@ -112,6 +112,11 @@ public class TemporalMemory extends LearningProcessor implements CellsProcessor,
 	public Cells getCells() {
 		return cells;
 	}
+
+	@Override
+	public boolean isCellModel() {
+		return true;
+	}
 	
 	@Override
 	protected boolean isInitialized(ProcessorIO io) {

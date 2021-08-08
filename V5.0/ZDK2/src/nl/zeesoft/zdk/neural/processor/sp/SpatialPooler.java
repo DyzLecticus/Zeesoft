@@ -77,6 +77,11 @@ public class SpatialPooler extends LearningProcessor implements CellsProcessor, 
 	}
 
 	@Override
+	public boolean isCellModel() {
+		return false;
+	}
+
+	@Override
 	protected void processValidIO(ProcessorIO io) {
 		List<Position> activeInputPositions = io.inputs.get(0).getOnPositions(config.inputSize);
 		activations.activate(this, activeInputPositions, io.timeoutMs);

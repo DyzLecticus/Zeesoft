@@ -4,4 +4,5 @@ import nl.zeesoft.zdk.neural.model.Cells;
 
 public interface CellsProcessor {
 	public Cells getCells();
+	public boolean isCellModel();
 }

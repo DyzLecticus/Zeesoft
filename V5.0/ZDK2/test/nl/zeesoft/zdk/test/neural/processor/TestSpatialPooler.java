@@ -97,7 +97,7 @@ public class TestSpatialPooler {
 		sp.initialize(config);
 		sp.config.potentialRadius = 16;
 		CellStats stats = new CellStats(sp);
-		assert stats.cells == 100;
+		assert stats.cells == 0;
 		assert stats.proximalStats.segments == 0;
 		
 		sp.reset();
@@ -166,7 +166,7 @@ public class TestSpatialPooler {
 		assert (float)sp.boostFactors.data[0][0][0] != 1.00001F;
 		
 		stats = new CellStats(sp);
-		assert stats.cells == 100;
+		assert stats.cells == 0;
 		assert stats.proximalStats.segments == 100;
 		assert stats.proximalStats.synapses > 1000;
 		assert stats.proximalStats.activeSynapses > 1000;
