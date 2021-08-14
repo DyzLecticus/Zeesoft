@@ -1,20 +1,23 @@
 package nl.zeesoft.zdk.test.app;
 
+import java.awt.event.ActionEvent;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.swing.JFrame;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
+import nl.zeesoft.zdk.app.AppActionHandler;
 import nl.zeesoft.zdk.app.AppConfig;
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.AppStateManager;
 import nl.zeesoft.zdk.app.AppStateTextHandler;
+import nl.zeesoft.zdk.app.AppTrayIcon;
+import nl.zeesoft.zdk.app.neural.NetworkManager;
 import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
@@ -48,9 +51,7 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestNeuralApp {
-	private static TestNeuralApp					self			= new TestNeuralApp();
-	
-	private static CopyOnWriteArrayList<Integer>	responseCodes	= new CopyOnWriteArrayList<Integer>(); 
+	private static TestNeuralApp	self	= new TestNeuralApp();
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
@@ -86,11 +87,43 @@ public class TestNeuralApp {
 		assert networkStateManager.ifSetState(NetworkStateManager.READY);
 		
 		HtmlResource html = new HtmlResource();
-		assert html.render().length() == 199;
+		assert html.render().length() == 207;
 		assert HtmlResource.renderLinkListItem("A","B").toString().equals("<li><a href=\"A\">B</a></li>");
 		
-		NeuralAppConfig config = new NeuralAppConfig();
+		NeuralAppConfig config = new NeuralAppConfig() {
+			@Override
+			protected NetworkManager getNewNetworkManager() {
+				super.getNewNetworkManager();
+				return new MockNetworkManager2();
+			}
+			
+		};
+		config.port = 9876;
+		config.destroyMessageMs = 0;
+				
 		NeuralApp app = new NeuralApp(config);
+		assert app.getName().equals("Zeesoft NeuralServer");
+		assert app.getSelfUrl().equals("http://127.0.0.1:9876/");
+		assert app.getTrayIcon() == null;
+		assert !JFrame.isDefaultLookAndFeelDecorated();
+		AppTrayIcon.setSystemLookAndFeel(true);
+		assert JFrame.isDefaultLookAndFeelDecorated();
+		
+		AppActionHandler actionHandler = config.getNewAppActionHandler();
+		actionHandler.initialize(app);
+		
+		actionHandler.actionPerformed(new ActionEvent(self, 0, AppActionHandler.QUIT));
+		actionHandler.confirmQuit = false;
+		actionHandler.actionPerformed(new ActionEvent(self, 0, AppActionHandler.QUIT));
+
+		actionHandler.actionPerformed(new ActionEvent(self, 0, AppActionHandler.OPEN));
+		actionHandler.openDesktopBrowser = false;
+		actionHandler.actionPerformed(new ActionEvent(self, 0, AppActionHandler.OPEN));
+		actionHandler.openMacBrowser = false;
+		actionHandler.actionPerformed(new ActionEvent(self, 0, AppActionHandler.OPEN));
+
+		actionHandler.actionPerformed(new ActionEvent(self, 0, ""));
+
 		NetworkConfig networkConfig = new NetworkConfig();
 		app.getNetworkManager().setConfig(networkConfig);
 		assert app.getNetworkManager().getConfig() == networkConfig;
@@ -143,6 +176,7 @@ public class TestNeuralApp {
 		
 		// Test context handlers
 		HttpServerConfig serverConfig = config.loadHttpServerConfig(app);
+		assert serverConfig.getPort() == 9876;
 		AppContextRequestHandler requestHandler = (AppContextRequestHandler) serverConfig.getRequestHandler();
 		HttpRequest request = new HttpRequest(HttpRequest.GET,IndexHtmlHandler.PATH);
 		HttpResponse response = new HttpResponse();
@@ -175,69 +209,65 @@ public class TestNeuralApp {
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() > 0;
 		
-		// TODO: Remove try / catch
-		try {
-			// Test app
-			assert app.start();
-			assert app.getState().equals(AppStateManager.STARTED);
-			assert app.isStarted();
-			assert app.getNetworkManager() != null;
-			assert app.getNetworkManager().isReady();
-			assert indexHandler.getServer().isOpen();
-			assert !app.start();
+		// Test app
+		assert app.start();
+		assert app.getState().equals(AppStateManager.STARTED);
+		assert app.isStarted();
+		assert app.getTrayIcon() != null;
+		assert app.getTrayIcon().getPopupMenu() != null;
+		assert app.getNetworkManager() != null;
+		assert app.getNetworkManager().isReady();
+		assert indexHandler.getServer().isOpen();
+		assert !app.start();
 
-			NetworkSettings settings = new NetworkSettings();
-			assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
-			assert settings.processorWorkers.size() == 2;
+		NetworkSettings settings = new NetworkSettings();
+		assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
+		assert settings.processorWorkers.size() == 2;
 
-			testRequests(requestHandler);
+		testRequests(requestHandler, (MockNetworkManager2) app.getNetworkManager());
 
-			settings = new NetworkSettings();
-			assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
-			assert settings.processorWorkers.size() == 1;
+		settings = new NetworkSettings();
+		assert app.getNetworkManager().setProcessorLearningAndWorkers(settings);
+		assert settings.processorWorkers.size() == 1;
 
-			settings = new NetworkSettings();
-			assert app.getNetworkManager().getWorkers() == 3;
-			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
-			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
-			settings.configure(app.getNetworkManager());
-			assert app.getNetworkManager().getWorkers() == 3;
-			assert app.getNetworkManager().getInitTimeoutMs() == 10101;
-			assert app.getNetworkManager().getResetTimeoutMs() == 10102;
-			settings.processorWorkers.put("qwer", 1);
-			assert settings.configure(app.getNetworkManager());
+		settings = new NetworkSettings();
+		assert app.getNetworkManager().getWorkers() == 3;
+		assert app.getNetworkManager().getInitTimeoutMs() == 10101;
+		assert app.getNetworkManager().getResetTimeoutMs() == 10102;
+		settings.configure(app.getNetworkManager());
+		assert app.getNetworkManager().getWorkers() == 3;
+		assert app.getNetworkManager().getInitTimeoutMs() == 10101;
+		assert app.getNetworkManager().getResetTimeoutMs() == 10102;
+		settings.processorWorkers.put("qwer", 1);
+		assert settings.configure(app.getNetworkManager());
 
-			AppConfig testConfig = new AppConfig(); 
-			App testApp = new App(testConfig);
-			assert !testApp.start();
-			assert testApp.getState().equals(AppStateManager.STOPPED);
-			
-			assert app.stop();
-			assert !indexHandler.getServer().isOpen();
-			assert !app.isStarted();
-			assert !app.stop();
-			
-			networkConfig = getSimpleNetworkConfig();
-			MockNeuralApp mockApp = new MockNeuralApp(config);
-			NetworkConfigJsonHandler configJsonHandler = new NetworkConfigJsonHandler(mockApp);
-			request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
-			request.setBody(JsonConstructor.fromObject(networkConfig));
-			response = new HttpResponse();
-			configJsonHandler.handleRequest(request, response);
-			assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
-			assert !((MockNetworkManager)mockApp.getNetworkManager()).initializeNetwork();
-			
-			Util.sleep(100);
-			Logger.debug(self, "Test success!");
-		} catch(AssertionError e) {
-			e.printStackTrace();
-			if (app.isStarted()) {
-				app.stop();
-			}
-		}
+		AppConfig testConfig = new AppConfig(); 
+		testConfig.port = 9876;
+		testConfig.destroyMessageMs = 0;
+		App testApp = new App(testConfig);
+		assert !testApp.start();
+		assert testApp.getState().equals(AppStateManager.STOPPED);
+		
+		assert app.stop();
+		assert !indexHandler.getServer().isOpen();
+		assert !app.isStarted();
+		assert !app.stop();
+		
+		networkConfig = getSimpleNetworkConfig();
+		MockNeuralApp mockApp = new MockNeuralApp(config);
+		NetworkConfigJsonHandler configJsonHandler = new NetworkConfigJsonHandler(mockApp);
+		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(networkConfig));
+		response = new HttpResponse();
+		configJsonHandler.handleRequest(request, response);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		assert !((MockNetworkManager)mockApp.getNetworkManager()).initializeNetwork();
+		
+		Util.sleep(100);
+		Logger.debug(self, "Test success!");
 	}
 	
-	private static void testRequests(HttpRequestHandler requestHandler) {
+	private static void testRequests(HttpRequestHandler requestHandler, MockNetworkManager2 mockNetworkManager) {
 		HttpRequest request = null;
 		HttpResponse response = null;
 		
@@ -290,7 +320,12 @@ public class TestNeuralApp {
 		NetworkIO io = (NetworkIO) ObjectConstructor.fromJson(new Json(body));
 		assert (float)io.getInput("Value") == 0F;
 		assert (long)io.getInput("DateTime") == 0L;
+
+		response = testPostRequest(requestHandler, NetworkIOJsonHandler.PATH, new Json());
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
+		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
 		
+		// Network config
 		response = testPostRequest(requestHandler, NetworkConfigJsonHandler.PATH, new Json());
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.config.NetworkConfig from JSON");
@@ -303,41 +338,34 @@ public class TestNeuralApp {
 		);
 
 		networkConfig = getSimpleNetworkConfig();
-
-		HttpRequest request2 = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
-		request2.setBody(JsonConstructor.fromObject(new NetworkIO()));
-		HttpRequest request3 = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
-		HttpRequest request4 = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
-		NetworkSettings settings = new NetworkSettings();
-		settings.processorLearning.put("Pooler", false);
-		request4.setBody(JsonConstructor.fromObject(settings));
-		HttpRequest request5 = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
-
 		request = new HttpRequest(HttpRequest.POST,NetworkConfigJsonHandler.PATH);
 		request.setBody(JsonConstructor.fromObject(networkConfig));
-		List<Thread> tests = new ArrayList<Thread>();
-		tests.add(getRequestAssertUnavailableThread(requestHandler, request));
-		tests.add(getRequestAssertUnavailableThread(requestHandler, request2));
-		tests.add(getRequestAssertUnavailableThread(requestHandler, request3));
-		tests.add(getRequestAssertUnavailableThread(requestHandler, request4));
-		tests.add(getRequestAssertUnavailableThread(requestHandler, request5));
-		for (Thread test: tests) {
-			test.start();
-		}
-		for (int i = 0; i < 20; i++) {
-			response = requestHandler.handleRequest(request);
-		}
+		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() == 0;
-		assert responseCodes.size() == 5;
-		for(Integer code: responseCodes) {
-			assert code == HttpURLConnection.HTTP_UNAVAILABLE;
-		}
-		
-		response = testPostRequest(requestHandler, NetworkIOJsonHandler.PATH, new Json());
-		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
-		assert response.getBody().toString().equals("Failed to parse nl.zeesoft.zdk.neural.network.NetworkIO from JSON");
 
+		// Test unavailable
+		mockNetworkManager.setProcessing();
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		request = new HttpRequest(HttpRequest.POST,NetworkIOJsonHandler.PATH);
+		request.setBody(JsonConstructor.fromObject(new NetworkIO()));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		request = new HttpRequest(HttpRequest.GET,NetworkSettingsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		request = new HttpRequest(HttpRequest.POST,NetworkSettingsJsonHandler.PATH);
+		NetworkSettings settings = new NetworkSettings();
+		settings.processorLearning.put("Pooler", false);
+		request.setBody(JsonConstructor.fromObject(settings));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		request = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		mockNetworkManager.unsetProcessing();
+		
 		// Network settings
 		body = testHeadGetRequest(requestHandler, NetworkSettingsJsonHandler.PATH, "application/json");
 
@@ -406,20 +434,6 @@ public class TestNeuralApp {
 		r.addSpatialPooler("Pooler");
 		r.addLink("Encoder", "Pooler");
 		return r;
-	}
-	
-	private static Thread getRequestAssertUnavailableThread(HttpRequestHandler handler, HttpRequest request) {
-		return new Thread() {
-			@Override
-			public void run() {
-				Util.sleep(50);
-				HttpResponse response = handler.handleRequest(request);
-				if (response.code!=HttpURLConnection.HTTP_UNAVAILABLE) {
-					Console.err(request.method + " " + request.path + " = " + response.code);
-				}
-				responseCodes.add(response.code);
-			}
-		};
 	}
 	
 	private static StringBuilder testHeadGetRequest(HttpRequestHandler requestHandler, String path, String expectedContentType) {

@@ -26,7 +26,7 @@ public class IndexHtml extends HtmlResource {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Zeesoft NeuralServer</h1>");
 		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
-		append(body, "<p>Network state: <b><span id=\"networkStateText\" /></b></p>");
+		append(body, "<p>Network state: <b><span id=\"networkStateText\"></span></b></p>");
 		renderNetworkConfig(body);
 		renderNetworkSettings(body);
 		renderNetworkStatistics(body);
@@ -58,7 +58,9 @@ public class IndexHtml extends HtmlResource {
 		StringBuilder r = new StringBuilder(); 
 		r.append("<tr><td><h3 class='mb-0'>");
 		r.append(title);
-		r.append("</h3>Auto refresh: <input type='checkbox' onclick='");
+		r.append("</h3><input type='button' value='Refresh' onclick='");
+		r.append(id);
+		r.append("Loader.refresh(this);' /><input type='checkbox' onclick='");
 		r.append(id);
 		r.append("Loader.toggleAutoRefresh(this);' ");
 		if (autoRefreshChecked) {
@@ -66,7 +68,7 @@ public class IndexHtml extends HtmlResource {
 		}
 		r.append("/><div id='");
 		r.append(id);
-		r.append("'></td></tr>");
+		r.append("'></div></td></tr>");
 		return r;
 	}
 	

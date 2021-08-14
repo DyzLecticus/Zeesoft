@@ -9,6 +9,7 @@ public class NeuralAppConfig extends AppConfig {
 	protected NetworkRecorder	networkRecorder	= null;
 
 	public NeuralAppConfig() {
+		name = "Zeesoft NeuralServer";
 		networkManager = getNewNetworkManager();
 		networkRecorder = getNewNetworkRecorder();
 	}

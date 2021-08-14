@@ -6,6 +6,7 @@ public class IndexCss extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		renderBody(r);
+		renderInput(r);
 		renderLists(r);
 		renderHidden(r);
 		renderClickable(r);
@@ -23,12 +24,19 @@ public class IndexCss extends Resource {
 		append(r, "    font-size: 1em;");
 		append(r, "    background-color: #DEDEDE;");
 		append(r, "}");
+		append(r, "td {");
+		append(r, "    vertical-align: top;");
+		append(r, "}");
+	}
+
+	protected void renderInput(StringBuilder r) {
 		append(r, "input, select {");
 		append(r, "    font-family: inherit;");
 		append(r, "    font-size: 1em;");
 		append(r, "}");
-		append(r, "td {");
-		append(r, "    vertical-align: top;");
+		append(r, "input[type=\"button\"] {");
+		append(r, "    margin-top: 0.25em;");
+		append(r, "    margin-bottom: 0.25em;");
 		append(r, "}");
 	}
 

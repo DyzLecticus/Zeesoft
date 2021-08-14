@@ -9,6 +9,7 @@ public class ObjectLoaderJs extends Resource {
 		renderExecuteAndPublish(r);
 		renderParseResponse(r);
 		renderToggleRefresh(r);
+		renderExecuteRefresh(r);
 	}
 
 	protected void renderObjectLoaderObject(StringBuilder r) {
@@ -19,17 +20,20 @@ public class ObjectLoaderJs extends Resource {
 		append(r, "    this.autoRefresh = false;");
 		append(r, "    this.autoRefreshing = false;");
 		append(r, "    this.autoRefreshMs = 10000;");
-		append(r, "    this.execute = () => {");
-		append(r, "        ObjectLoader.executeAndPublish(that);");
+		append(r, "    this.execute = (callback) => {");
+		append(r, "        ObjectLoader.executeAndPublish(that, callback);");
 		append(r, "    };");
 		append(r, "    this.toggleAutoRefresh = (input) => {");
 		append(r, "        ObjectLoader.toggleRefresh(that, input);");
+		append(r, "    };");
+		append(r, "    this.refresh = (input) => {");
+		append(r, "        ObjectLoader.executeRefresh(that, input);");
 		append(r, "    };");
 		append(r, "};");
 	}
 
 	protected void renderExecuteAndPublish(StringBuilder r) {
-		append(r, "ObjectLoader.executeAndPublish = (loader) => {");
+		append(r, "ObjectLoader.executeAndPublish = (loader, callback) => {");
 		append(r, "    loader.request.execute((xhr) => {");
 		append(r, "        changePublisher.setValue(loader.key, ObjectLoader.parseResponse(xhr));");
 		append(r, "        setTimeout(() => {");
@@ -39,6 +43,9 @@ public class ObjectLoaderJs extends Resource {
 		append(r, "                loader.autoRefreshing = false;");
 		append(r, "            }");
 		append(r, "        }, loader.autoRefreshMs);");
+		append(r, "        if (callback) {");
+		append(r, "            callback(xhr);");
+		append(r, "        }");
 		append(r, "    });");
 		append(r, "};");
 	}
@@ -62,6 +69,15 @@ public class ObjectLoaderJs extends Resource {
 		append(r, "            loader.autoRefreshing = true;");
 		append(r, "            loader.execute();");
 		append(r, "        }");
+		append(r, "    }");
+		append(r, "};");
+	}
+	
+	protected void renderExecuteRefresh(StringBuilder r) {
+		append(r, "ObjectLoader.executeRefresh = (loader, input) => {");
+		append(r, "    if (!input.disabled) {");
+		append(r, "        input.disabled = true;");
+		append(r, "        loader.execute((xhr) => { input.disabled = false });");
 		append(r, "    }");
 		append(r, "};");
 	}

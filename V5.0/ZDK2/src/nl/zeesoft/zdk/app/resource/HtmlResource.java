@@ -16,6 +16,7 @@ public class HtmlResource extends Resource {
 
 	@Override
 	protected void render(StringBuilder r) {
+		append(r, "<!DOCTYPE html>");
 		append(r, "<html>");
 		append(r, "<head>");
 		renderHeadContent(r);
@@ -36,7 +37,6 @@ public class HtmlResource extends Resource {
 		for (String href: styleFiles) {
 			append(r, "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + href + "\">");
 		}
-		append(r, "</head>");
 	}
 
 	protected void renderBodyStartTag(StringBuilder r) {
