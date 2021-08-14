@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.app.neural.resources;
 
 import nl.zeesoft.zdk.app.AppStateTextHandler;
+import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
@@ -25,7 +26,8 @@ public class IndexHtml extends HtmlResource {
 	protected StringBuilder renderBody() {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Zeesoft NeuralServer</h1>");
-		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
+		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API. ");
+		append(body, "The default configuration can be trained using the <a href='" + DemoTrainerHtmlHandler.PATH + "' target='_blank'>demo trainer</a>.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\"></span></b></p>");
 		renderNetworkConfig(body);
 		renderNetworkSettings(body);

@@ -23,8 +23,8 @@ import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
-import nl.zeesoft.zdk.app.neural.handlers.HotGymHtmlHandler;
-import nl.zeesoft.zdk.app.neural.handlers.HotGymJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -294,11 +294,11 @@ public class TestNeuralApp {
 		// App index css
 		body = testHeadGetRequest(requestHandler, IndexCssHandler.PATH, "text/css");
 
-		// App hot-gym html
-		body = testHeadGetRequest(requestHandler, HotGymHtmlHandler.PATH, "text/html");
+		// App demo trainer html
+		body = testHeadGetRequest(requestHandler, DemoTrainerHtmlHandler.PATH, "text/html");
 
-		// App hot-gym js
-		body = testHeadGetRequest(requestHandler, HotGymJsHandler.PATH, "application/javascript");
+		// App demo trainer js
+		body = testHeadGetRequest(requestHandler, DemoTrainerJsHandler.PATH, "application/javascript");
 
 		// Sdr png image
 		body = testHeadGetRequest(requestHandler, SdrPngHandler.PATH + "?4,2", "image/png");

@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.http.HttpServerConfig;
 public class AppConfig {
 	public String				name				= "[AppConfig.name]";
 	public int					port				= 1234;
-	public int					destroyMessageMs	= 3000;
+	public int					destroyMessageMs	= 5000;
 	
 	public HttpServerConfig loadHttpServerConfig(App app) {
 		return getNewHttpServerConfig(app);
@@ -46,7 +46,7 @@ public class AppConfig {
 	}
 	
 	public String getWelcomeMessage() {
-		return "Click here for options";
+		return "Click on this icon for options";
 	}
 	
 	public String getGoodbyeMessage() {

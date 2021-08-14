@@ -10,8 +10,8 @@ import nl.zeesoft.zdk.neural.processor.cl.Classifier;
 import nl.zeesoft.zdk.neural.processor.de.DateTimeEncoder;
 import nl.zeesoft.zdk.neural.processor.se.ScalarEncoder;
 
-public class HotGymConfigFactory {
-	public static NetworkConfig getNewHotGymNetworkConfig() {
+public class DateTimeValueConfigFactory {
+	public static NetworkConfig getNewDateTimeValueConfig() {
 		NetworkConfig r = new NetworkConfig();
 		r.addInput("DateTime");
 		r.addInput("Value");
@@ -22,11 +22,11 @@ public class HotGymConfigFactory {
 		addHotGymClassifier(r);
 		return r;
 	}
-	
+
 	protected static int addHotGymEncoders(NetworkConfig config) {
 		return addHotGymDateTimeEncoder(config) + addHotGymValueEncoder(config);
 	}
-	
+
 	protected static int addHotGymDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
 		deConfig.encoder.setOnBitsPerEncoder(16);
@@ -37,7 +37,7 @@ public class HotGymConfigFactory {
 		config.addLink("DateTime", "DateTimeEncoder");
 		return deConfig.encoder.getEncodeLength();
 	}
-	
+
 	protected static int addHotGymValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
 		seConfig.encoder.onBits = 16;
@@ -47,7 +47,7 @@ public class HotGymConfigFactory {
 		config.addLink("Value", "ValueEncoder");
 		return seConfig.encoder.encodeLength;
 	}
-	
+
 	protected static void addHotGymMerger(NetworkConfig config, int length) {
 		MergerConfig mrConfig = config.addMerger(1, "Merger");
 		mrConfig.config.concatenate = true;
@@ -55,14 +55,14 @@ public class HotGymConfigFactory {
 		config.addLink("DateTimeEncoder", DateTimeEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 0);
 		config.addLink("ValueEncoder", ScalarEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 1);
 	}
-	
+
 	protected static void addHotGymSpatialPooler(NetworkConfig config, int length) {
 		SpatialPoolerConfig spc = config.addSpatialPooler(2, "SpatialPooler");
 		spc.config.inputSize = new Size(length);
 		spc.config.boostFactorPeriod = 1000;
 		config.addLink("Merger", "SpatialPooler");
 	}
-	
+
 	protected static void addHotGymTemporalMemory(NetworkConfig config) {
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
 		tmc.config.segmentCreationSubsample = 0.9F;
@@ -73,7 +73,7 @@ public class HotGymConfigFactory {
 		tmc.config.maxSynapsesPerSegment = 32;
 		config.addLink("SpatialPooler", "TemporalMemory");
 	}
-	
+
 	protected static void addHotGymClassifier(NetworkConfig config) {
 		config.addClassifier(4, "Classifier");
 		config.addLink("TemporalMemory", "Classifier");

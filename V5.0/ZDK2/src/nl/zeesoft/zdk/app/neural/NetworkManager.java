@@ -8,7 +8,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.neural.model.CellStats;
 import nl.zeesoft.zdk.neural.network.Network;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
-import nl.zeesoft.zdk.neural.network.config.HotGymConfigFactory;
+import nl.zeesoft.zdk.neural.network.config.DateTimeValueConfigFactory;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 
 public class NetworkManager extends NetworkManagerSettings {
@@ -156,7 +156,7 @@ public class NetworkManager extends NetworkManagerSettings {
 	protected NetworkConfig loadNetworkConfig() {
 		getProcessorWorkers().put("SpatialPooler", getWorkers());
 		getProcessorWorkers().put("TemporalMemory", getWorkers());
-		return HotGymConfigFactory.getNewHotGymNetworkConfig();
+		return DateTimeValueConfigFactory.getNewDateTimeValueConfig();
 	}
 	
 	protected boolean loadNetwork(Network network) {

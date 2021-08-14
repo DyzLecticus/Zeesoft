@@ -6,7 +6,7 @@ import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.matrix.Size;
 import nl.zeesoft.zdk.neural.encoder.ScalarSdrEncoderTester;
-import nl.zeesoft.zdk.neural.network.config.HotGymConfigFactory;
+import nl.zeesoft.zdk.neural.network.config.DateTimeValueConfigFactory;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
@@ -47,8 +47,8 @@ public class TestNetworkConfigFactory {
 		assert tester.testMinimalOverlap(factory.encoder).length()==0;
 		testSimpleConfig(factory, 100, 1024, new Size(16,16,4));
 		
-		assert new HotGymConfigFactory() != null;
-		config = HotGymConfigFactory.getNewHotGymNetworkConfig();
+		assert new DateTimeValueConfigFactory() != null;
+		config = DateTimeValueConfigFactory.getNewDateTimeValueConfig();
 		assert config.test().length() == 0;
 		
 		Json json = JsonConstructor.fromObject(config);

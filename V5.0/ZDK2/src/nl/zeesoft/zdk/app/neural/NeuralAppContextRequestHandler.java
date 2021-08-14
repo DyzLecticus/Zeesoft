@@ -2,8 +2,8 @@ package nl.zeesoft.zdk.app.neural;
 
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
 import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
-import nl.zeesoft.zdk.app.neural.handlers.HotGymHtmlHandler;
-import nl.zeesoft.zdk.app.neural.handlers.HotGymJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -28,8 +28,8 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		put(new FaviconIcoHandler((NeuralApp)app));
 		put(new IndexJsHandler((NeuralApp)app));
 		put(new IndexCssHandler((NeuralApp)app));
-		put(new HotGymHtmlHandler((NeuralApp)app));
-		put(new HotGymJsHandler((NeuralApp)app));
+		put(new DemoTrainerHtmlHandler((NeuralApp)app));
+		put(new DemoTrainerJsHandler((NeuralApp)app));
 		initializeNetworkContextHandlers();
 	}
 	
