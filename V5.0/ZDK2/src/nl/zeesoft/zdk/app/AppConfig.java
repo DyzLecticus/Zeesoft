@@ -16,7 +16,7 @@ public class AppConfig {
 		AppActionHandler actionHandler = getNewAppActionHandler();
 		actionHandler.initialize(app);
 		AppTrayIcon r = new AppTrayIcon();
-		r.initialize(actionHandler, name);
+		r.initialize(actionHandler, name, false);
 		return r;
 	}
 

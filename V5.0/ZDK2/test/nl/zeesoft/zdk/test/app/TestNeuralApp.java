@@ -214,7 +214,7 @@ public class TestNeuralApp {
 		assert app.getState().equals(AppStateManager.STARTED);
 		assert app.isStarted();
 		assert app.getTrayIcon() != null;
-		assert app.getTrayIcon().getPopupMenu() != null;
+		assert app.getTrayIcon().getPopupMenu() != null;		
 		assert app.getNetworkManager() != null;
 		assert app.getNetworkManager().isReady();
 		assert indexHandler.getServer().isOpen();
@@ -248,6 +248,11 @@ public class TestNeuralApp {
 		assert !testApp.start();
 		assert testApp.getState().equals(AppStateManager.STOPPED);
 		
+		app.getTrayIcon().destroy();
+		assert app.getTrayIcon().getPopupMenu() == null;
+		app.getTrayIcon().destroy();
+		assert app.getTrayIcon().initialize(new AppActionHandler(), "Pizza", true) == false;
+
 		assert app.stop();
 		assert !indexHandler.getServer().isOpen();
 		assert !app.isStarted();

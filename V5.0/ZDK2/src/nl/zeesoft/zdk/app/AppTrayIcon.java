@@ -17,17 +17,19 @@ public class AppTrayIcon {
 	private SystemTray	tray	= null;
 	private TrayIcon	icon	= null;
 
-	public void initialize(ActionListener listener,String appName) {
+	public boolean initialize(ActionListener listener,String appName, boolean mockException) {
+		boolean r = false;
 		if (SystemTray.isSupported()) {
 			setSystemLookAndFeel(false);
 			createTrayIcon(appName);
-			try {
-				tray.add(icon);
+			r = addTrayIcon(mockException);
+			if (r) {
 				initializePopupMenu(listener);
-			} catch (AWTException e) {
-				e.printStackTrace();
+			} else {
+				destroy();
 			}
 		}
+		return r;
 	}
 	
 	public PopupMenu getPopupMenu() {
@@ -64,8 +66,22 @@ public class AppTrayIcon {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 	}
 
+	protected boolean addTrayIcon(boolean mockException) {
+		boolean r = false;
+		try {
+			if (mockException) {
+				throw new AWTException("Mock exception");
+			}
+			tray = SystemTray.getSystemTray();
+			tray.add(icon);
+			r = true;
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		return r;
+	}
+	
 	protected void createTrayIcon(String appName) {
-		tray = SystemTray.getSystemTray();
 		TextIcon textIcon = new TextIcon();
 		textIcon.renderPanel();
 		icon = new TrayIcon(textIcon.getBufferedImage());
