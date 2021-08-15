@@ -6,13 +6,13 @@ public class IndexCss extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		renderBody(r);
+		renderHeaders(r);
 		renderInput(r);
 		renderLists(r);
 		renderHidden(r);
 		renderClickable(r);
 		renderXScrollable(r);
 		renderMarginPaddingZero(r);
-		renderAccordionTitle(r);
 		renderTablePadding(r);
 		renderSdrTable(r);
 		renderBgColors(r);
@@ -24,8 +24,16 @@ public class IndexCss extends Resource {
 		append(r, "    font-size: 1em;");
 		append(r, "    background-color: #DEDEDE;");
 		append(r, "}");
-		append(r, "td {");
-		append(r, "    vertical-align: top;");
+	}
+
+	protected void renderHeaders(StringBuilder r) {
+		append(r, "h1, h2 {");
+		append(r, "    margin-block-start: 0.25em;");
+		append(r, "    margin-block-end: 0.25em;");
+		append(r, "    padding-bottom: 0.25em;");
+		append(r, "}");
+		append(r, "h1 {");
+		append(r, "    margin-block-end: 0.25em;");
 		append(r, "}");
 	}
 
@@ -89,13 +97,6 @@ public class IndexCss extends Resource {
 		append(r,"." + t + "r-0 { " + type + "-right: 0 }");
 	}
 	
-	protected void renderAccordionTitle(StringBuilder r) {
-		append(r, ".accordion-title {");
-		append(r, "    padding-top: 0.5em;");
-		append(r, "    padding-bottom: 0.5em;");
-		append(r, "}");
-	}
-	
 	protected void renderTablePadding(StringBuilder r) {
 		append(r, "table.padded tr td {");
 		append(r, "    padding-left: 0.5em;");
@@ -104,6 +105,9 @@ public class IndexCss extends Resource {
 		append(r, "table.padded tr th {");
 		append(r, "    padding-left: 0.5em;");
 		append(r, "    padding-right: 0.5em;");
+		append(r, "}");
+		append(r, "td {");
+		append(r, "    vertical-align: top;");
 		append(r, "}");
 	}
 

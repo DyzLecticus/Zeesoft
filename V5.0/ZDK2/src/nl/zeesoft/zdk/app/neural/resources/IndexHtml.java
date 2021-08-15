@@ -20,7 +20,7 @@ public class IndexHtml extends HtmlResource {
 	public IndexHtml(int port) {
 		this.port = port;
 		this.title = "NeuralServer";
-		onload = "loadApp(true);";
+		onload = "loadApp(false);";
 		scriptFiles.add(IndexJsHandler.PATH);
 		styleFiles.add(IndexCssHandler.PATH);
 	}

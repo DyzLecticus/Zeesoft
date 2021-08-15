@@ -19,13 +19,17 @@ public class ApiObjectLoadersJs extends Resource {
 	protected void renderObjectLoaders(StringBuilder r) {
 		append(r, renderLoader("appState", AppStateTextHandler.PATH));
 		append(r, renderLoader("networkState", NetworkStateTextHandler.PATH));
+		append(r, "networkStateLoader.autoRefreshMs = 250;");
+		append(r, "networkStateLoader.autoRefresh = true;");
 		append(r, renderLoader("networkConfig", NetworkConfigJsonHandler.PATH));
 		append(r, renderLoader("networkSettings", NetworkSettingsJsonHandler.PATH));
 		append(r, renderLoader("networkStats", NetworkStatsJsonHandler.PATH));
 		append(r, "networkStatsLoader.autoRefreshMs = 30000;");
 		append(r, renderLoader("networkIOStats", NetworkIOStatsJsonHandler.PATH));
+		append(r, "networkIOStatsLoader.autoRefresh = true;");
 		append(r, renderLoader("networkIOAccuracy", NetworkIOAccuracyJsonHandler.PATH));
 		append(r, "networkIOAccuracyLoader.autoRefreshMs = 30000;");
+		append(r, "networkIOAccuracyLoader.autoRefresh = true;");
 	}
 	
 	protected void renderLoadApiObjects(StringBuilder r) {

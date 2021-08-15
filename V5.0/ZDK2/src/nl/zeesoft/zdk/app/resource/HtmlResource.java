@@ -104,7 +104,7 @@ public class HtmlResource extends Resource {
 		String onclick = "dom.toggleVisible('" + id + "', true); changePublisher.setValue('" + id + ":visible', dom.isVisible('" + id + "'));";
 		StringBuilder r = new StringBuilder();
 		r.append("<div onclick=\"" + onclick + "\" class=\"clickable\">");
-		r.append("<h2 class='accordion-title mt-0 mb-0'>" + title + "</h2>");
+		r.append("<h2 class='mt-0 mb-0'>" + title + "</h2>");
 		r.append("</div>");
 		r.append("<div id=\"" + id + "\" class=\"hidden\">");
 		return r;

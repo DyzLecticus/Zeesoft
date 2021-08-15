@@ -152,6 +152,7 @@ public class DemoTrainerJs extends Resource {
 		append(r, "        demoTrainer.trainNetworkRequest();");
 		append(r, "    } else {");
 		append(r, "        if (!demoTrainer.pauze) {");
+		append(r, "            demoTrainer.updateStateText();");
 		append(r, "            dom.setDisabled(\"pauzeNetworkTrainingButton\", true);");
 		append(r, "        }");
 		append(r, "        dom.setDisabled(\"trainNetworkButton\", false);");
