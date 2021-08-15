@@ -100,7 +100,7 @@ public class TestNeuralApp {
 		};
 		config.port = 9876;
 		config.destroyMessageMs = 0;
-				
+						
 		NeuralApp app = new NeuralApp(config);
 		assert app.getName().equals("Zeesoft NeuralServer");
 		assert app.getSelfUrl().equals("http://127.0.0.1:9876/");
@@ -208,7 +208,8 @@ public class TestNeuralApp {
 		indexHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		assert response.getBody().length() > 0;
-		
+		assert StrUtil.indexOf(response.getBody(), "href=\"" + DemoTrainerHtmlHandler.PATH + "\"", 0) >= 0;
+
 		// Test app
 		assert app.start();
 		assert app.getState().equals(AppStateManager.STARTED);
@@ -267,6 +268,16 @@ public class TestNeuralApp {
 		configJsonHandler.handleRequest(request, response);
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 		assert !((MockNetworkManager)mockApp.getNetworkManager()).initializeNetwork();
+		
+		config = new NeuralAppConfig();
+		config.port = 80;
+		app = new NeuralApp(config);
+		serverConfig = config.getNewHttpServerConfig(app);
+		indexHandler = (IndexHtmlHandler)((AppContextRequestHandler) serverConfig.getRequestHandler()).get(IndexHtmlHandler.PATH);
+		request = new HttpRequest(HttpRequest.GET, IndexHtmlHandler.PATH);
+		response = new HttpResponse();
+		indexHandler.handleRequest(request, response);
+		assert StrUtil.indexOf(response.getBody(), "href=\"" + DemoTrainerHtmlHandler.PATH + "\"", 0) == -1;
 		
 		Util.sleep(100);
 		Logger.debug(self, "Test success!");

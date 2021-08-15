@@ -104,7 +104,7 @@ public class NetworkIOJs extends Resource {
 		append(r, "networkIO.toHtmlSelect = (json) => {");
 		append(r, "    var processorsByLayer = networkConfig.getProcessorsPerLayer(json);");
 		append(r, "    var { width, height } = networkConfig.getWidthHeight(processorsByLayer);");
-		append(r, "    var html = \"<select class='pb-3' onchange='networkIO.changedSelectedProcessor(this);'>\";");
+		append(r, "    var html = \"Network processor: <select class='pb-3' onchange='networkIO.changedSelectedProcessor(this);'>\";");
 		append(r, "    html += \"<option value='' SELECTED></option>\";");
 		append(r, "    for (var i = 0; i < height; i++) {");
 		append(r, "        for (var j = 0; j < processorsByLayer[i].length; j++) {");

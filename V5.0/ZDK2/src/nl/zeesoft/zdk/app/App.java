@@ -27,6 +27,10 @@ public class App {
 		return config.getSelfUrl();
 	}
 	
+	public int getPort() {
+		return config.port;
+	}
+	
 	public boolean start() {
 		boolean r = state.ifSetState(AppStateManager.STARTING);
 		if (r) {

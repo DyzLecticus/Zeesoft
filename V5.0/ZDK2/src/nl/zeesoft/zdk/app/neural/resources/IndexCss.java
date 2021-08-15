@@ -38,6 +38,10 @@ public class IndexCss extends Resource {
 		append(r, "    margin-top: 0.25em;");
 		append(r, "    margin-bottom: 0.25em;");
 		append(r, "}");
+		append(r, "input[type=\"text\"].long {");
+		append(r, "    width: 80%;");
+		append(r, "    min-width: 20em;");
+		append(r, "}");
 	}
 
 	protected void renderLists(StringBuilder r) {

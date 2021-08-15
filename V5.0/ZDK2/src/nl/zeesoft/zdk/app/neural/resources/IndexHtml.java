@@ -15,8 +15,11 @@ import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.HtmlResource;
 
 public class IndexHtml extends HtmlResource {
-	public IndexHtml() {
-		this.title = "Zeesoft NeuralServer";
+	protected int	port	= 80;
+	
+	public IndexHtml(int port) {
+		this.port = port;
+		this.title = "NeuralServer";
 		onload = "loadApp(true);";
 		scriptFiles.add(IndexJsHandler.PATH);
 		styleFiles.add(IndexCssHandler.PATH);
@@ -27,11 +30,10 @@ public class IndexHtml extends HtmlResource {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Zeesoft NeuralServer</h1>");
 		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API. ");
-		append(body, "The default configuration can be trained using the <a href='" + DemoTrainerHtmlHandler.PATH + "' target='_blank'>demo trainer</a>.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\"></span></b></p>");
-		renderNetworkConfig(body);
-		renderNetworkSettings(body);
 		renderNetworkStatistics(body);
+		renderNetworkSettings(body);
+		renderNetworkConfig(body);
 		renderApiLinks(body);
 		return body;
 	}
@@ -48,9 +50,7 @@ public class IndexHtml extends HtmlResource {
 		StringBuilder content = new StringBuilder();
 		content.append("<table id=\"networkStatistics\" class=\"x-scrollable padded\">");
 		content.append(getStatisticsRow("Neural","networkStats",false));
-		content.append("<tr><td>&nbsp;</td></tr>");
 		content.append(getStatisticsRow("Performance","networkIOStats",true));
-		content.append("<tr><td>&nbsp;</td></tr>");
 		content.append(getStatisticsRow("Accuracy","networkIOAccuracy",true));
 		content.append("</table>");
 		append(body, getAccordion("networkStatisticsAccordion","Statistics",content.toString()));
@@ -58,7 +58,11 @@ public class IndexHtml extends HtmlResource {
 	
 	protected StringBuilder getStatisticsRow(String title, String id, boolean autoRefreshChecked) {
 		StringBuilder r = new StringBuilder(); 
-		r.append("<tr><td><h3 class='mb-0'>");
+		r.append("<tr><td><h3 class='mb-0");
+		if (!autoRefreshChecked) {
+			r.append(" mt-0");
+		}
+		r.append("'>");
 		r.append(title);
 		r.append("</h3><input type='button' value='Refresh' onclick='");
 		r.append(id);
@@ -91,5 +95,8 @@ public class IndexHtml extends HtmlResource {
 		append(body, renderLinkListItem(NetworkIOAccuracyJsonHandler.PATH + "?max=1000", "Network accuracy", "_blank"));
 		append(body, renderLinkListItem(NetworkIOJsonHandler.PATH, "Network I/O", "_blank"));
 		append(body, renderLinkListItem(SdrPngHandler.PATH + "?sdr=100,7,8,9,10,11,12,58,59,60,61,62,63", "SDR image rendering", "_blank"));
+		if (port!=80) {
+			append(body, renderLinkListItem(DemoTrainerHtmlHandler.PATH, "Demo trainer", "_blank"));
+		}
 	}
 }

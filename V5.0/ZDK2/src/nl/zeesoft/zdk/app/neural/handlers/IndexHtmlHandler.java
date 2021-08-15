@@ -11,7 +11,7 @@ public class IndexHtmlHandler extends NeuralAppResourceHandler {
 	public IndexHtmlHandler(NeuralApp app) {
 		super(app);
 		path = PATH;
-		body = (new IndexHtml()).render();
+		body = (new IndexHtml(app.getPort())).render();
 	}
 
 	@Override

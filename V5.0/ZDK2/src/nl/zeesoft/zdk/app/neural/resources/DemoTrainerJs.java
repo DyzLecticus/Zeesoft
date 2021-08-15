@@ -3,13 +3,13 @@ package nl.zeesoft.zdk.app.neural.resources;
 import nl.zeesoft.zdk.app.resource.Resource;
 
 public class DemoTrainerJs extends Resource {
-	protected static String	SOURCE_URL	= "https://raw.githubusercontent.com/numenta/nupic/master/examples/opf/clients/hotgym/prediction/one_gym/rec-center-hourly.csv";
-	
 	@Override
 	protected void render(StringBuilder r) {
 		renderObject(r);
 		renderLoadApp(r);
 		renderLoadData(r);
+		renderExecuteLoadDataRequest(r);
+		renderUpdateStateText(r);
 		renderParseData(r);
 		renderParseDateTime(r);
 		renderTrainNetwork(r);
@@ -29,21 +29,51 @@ public class DemoTrainerJs extends Resource {
 	protected void renderLoadApp(StringBuilder r) {
 		append(r, "demoTrainer.loadApp = () => {");
 		append(r, "    loadApp();");
-		append(r, "    demoTrainer.loadData();");
 		append(r, "    dom.setInnerHTML(\"networkIOHist\", networkIOHist.toHtmlTable());");
 		append(r, "};");
 	}
 	
 	protected void renderLoadData(StringBuilder r) {
-		append(r, "demoTrainer.loadData = () => {");
-		append(r, "    var request = new HttpRequest(\"GET\",\"" + SOURCE_URL +"\");");
+		append(r, "demoTrainer.loadData = (input) => {");
+		append(r, "    if (!input.disabled) {");
+		append(r, "	       var elem = window.document.getElementById(\"loadDataUrl\");");
+		append(r, "	       if (elem && elem.value) {");
+		append(r, "            demoTrainer.data = { inputs: [] };");
+		append(r, "            demoTrainer.trainingIO = 0;");
+		append(r, "            input.disabled = true;");
+		append(r, "            elem.disabled = true;");
+		append(r, "            demoTrainer.executeLoadDataRequest(elem, input);");
+		append(r, "        } else {");
+		append(r, "            alert(\"Please enter a valid source data URL\");");
+		append(r, "        }");
+		append(r, "    }");
+		append(r, "};");
+	}
+	
+	protected void renderExecuteLoadDataRequest(StringBuilder r) {
+		append(r, "demoTrainer.executeLoadDataRequest = (elem, input) => {");
+		append(r, "    var request = new HttpRequest(\"GET\", elem.value);");
 		append(r, "    request.headers = {};");
+		append(r, "    request.errorCallback = (xhr) => {");
+		append(r, "        alert(xhr.status + \" \" + xhr.statusText);");
+		append(r, "        input.disabled = false;");
+		append(r, "        elem.disabled = false;");
+		append(r, "    };");
 		append(r, "    request.execute((xhr) => {");
 		append(r, "        var json = demoTrainer.parseData(xhr.response);");
 		append(r, "        demoTrainer.data = json;");
 		append(r, "        dom.setDisabled(\"trainNetworkButton\", false);");
 		append(r, "        changePublisher.setValue(\"demoTrainerData\", json);");
+		append(r, "        demoTrainer.updateStateText();");
 		append(r, "    });");
+		append(r, "};");
+	}
+	
+	protected void renderUpdateStateText(StringBuilder r) {
+		append(r, "demoTrainer.updateStateText = () => {");
+		append(r, "    var perc = Math.round((demoTrainer.trainingIO / demoTrainer.data.inputs.length) * 100);");
+		append(r, "    var html = demoTrainer.trainingIO + \"&nbsp;/&nbsp;\" + demoTrainer.data.inputs.length + \"&nbsp;(\" + perc + \"%)\";");
+		append(r, "    dom.setInnerHTML(\"networkTrainingStateText\", html);");
 		append(r, "};");
 	}
 	
@@ -84,6 +114,7 @@ public class DemoTrainerJs extends Resource {
 	protected void renderTrainNetwork(StringBuilder r) {
 		append(r, "demoTrainer.trainNetwork = () => {");
 		append(r, "    if (demoTrainer.data.inputs.length>0) {");
+		append(r, "        demoTrainer.trainingIO = 0;");
 		append(r, "        demoTrainer.pauze = false;");
 		append(r, "        dom.setDisabled(\"trainNetworkButton\", true);");
 		append(r, "        dom.setDisabled(\"pauzeNetworkTrainingButton\", false);");
@@ -102,9 +133,7 @@ public class DemoTrainerJs extends Resource {
 	protected void renderTrainNetworkRequest(StringBuilder r) {
 		append(r, "demoTrainer.trainNetworkRequest = () => {");
 		append(r, "    if (demoTrainer.trainingIO % 10 == 0) {");
-		append(r, "        var perc = Math.round((demoTrainer.trainingIO / demoTrainer.data.inputs.length) * 100);");
-		append(r, "        var html = demoTrainer.trainingIO + \" / \" + demoTrainer.data.inputs.length + \" (\" + perc + \"%)\";");
-		append(r, "        dom.setInnerHTML(\"networkTrainingStateText\", html);");
+		append(r, "        demoTrainer.updateStateText();");
 		append(r, "    }");
 		append(r, "    var input = demoTrainer.data.inputs[demoTrainer.trainingIO];");
 		append(r, "    demoTrainer.getNewNetworkIO(input).execute(demoTrainer.handleTrainNetworkResponse);");
@@ -123,8 +152,6 @@ public class DemoTrainerJs extends Resource {
 		append(r, "        demoTrainer.trainNetworkRequest();");
 		append(r, "    } else {");
 		append(r, "        if (!demoTrainer.pauze) {");
-		append(r, "            demoTrainer.trainingIO = 0;");
-		append(r, "            dom.setInnerHTML(\"networkTrainingStateText\",\"\");");
 		append(r, "            dom.setDisabled(\"pauzeNetworkTrainingButton\", true);");
 		append(r, "        }");
 		append(r, "        dom.setDisabled(\"trainNetworkButton\", false);");
