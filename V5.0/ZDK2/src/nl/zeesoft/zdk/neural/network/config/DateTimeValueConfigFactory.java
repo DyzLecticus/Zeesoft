@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -75,8 +74,7 @@ public class DateTimeValueConfigFactory {
 	}
 
 	protected static void addClassifier(NetworkConfig config) {
-		ClassifierConfig clc = config.addClassifier("Classifier");
-		clc.config.alpha = 0.05F;
+		config.addClassifier("Classifier");
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}
