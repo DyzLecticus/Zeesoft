@@ -29,8 +29,7 @@ public class DateTimeValueConfigFactory {
 
 	protected static int addHotGymDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
-		deConfig.encoder.setOnBitsPerEncoder(16);
-		deConfig.encoder.includeMonth = false;
+		deConfig.encoder.setOnBitsPerEncoder(6);
 		deConfig.encoder.includeDate = false;
 		deConfig.encoder.includeMinute = false;
 		deConfig.encoder.includeSecond = false;
@@ -40,8 +39,8 @@ public class DateTimeValueConfigFactory {
 
 	protected static int addHotGymValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
-		seConfig.encoder.onBits = 16;
-		seConfig.encoder.encodeLength = 1015;
+		seConfig.encoder.onBits = 18;
+		seConfig.encoder.encodeLength = 1017;
 		seConfig.encoder.maxValue = 100F;
 		seConfig.encoder.resolution = 0.1F;
 		config.addLink("Value", "ValueEncoder");
@@ -75,7 +74,6 @@ public class DateTimeValueConfigFactory {
 	}
 
 	protected static void addHotGymClassifier(NetworkConfig config) {
-		config.addClassifier(4, "Classifier");
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

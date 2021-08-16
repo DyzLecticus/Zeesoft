@@ -26,6 +26,9 @@ public class SdrPngHandler extends NeuralAppContextHandler {
 			Sdr sdr = parseSdrFromQueryString(request);
 			if (sdr!=null) {
 				SdrPanel panel = new SdrPanel(sdr);
+				if (sdr.length > 8192) {
+					panel.scale = 2;
+				}
 				panel.render();
 				response.body = panel.getByteArray(false);
 			} else {

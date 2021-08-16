@@ -217,7 +217,8 @@ public class TestNetwork {
 		ioAcc = accuracy.getIOAccuracy("TestClassifier");
 		assert accuracy.getAverage().accuracy == 0.6666667F;
 		assert accuracy.getAverage().accuracy == ioAcc.accuracy;
-		assert accuracy.getAverage().rootMeanSquaredError == 28.580296F;
+		assert accuracy.getAverage().rootMeanSquaredError > 28F && accuracy.getAverage().rootMeanSquaredError < 30F;
+		assert ioAcc.meanAveragePercentageError == 0.0F;
 		assert accuracy.toString().length() == 68;
 		assert analyzer.getAccuracy(0).getAverage().accuracy == accuracy.getAverage().accuracy;
 
@@ -225,7 +226,8 @@ public class TestNetwork {
 		assert accuracy != null;
 		ioAcc = accuracy.getIOAccuracy("TestClassifier");
 		assert ioAcc.accuracy == 0.7F;
-		assert ioAcc.rootMeanSquaredError == 33.001682F;
+		assert ioAcc.rootMeanSquaredError > 33F && ioAcc.rootMeanSquaredError < 36F;
+		assert ioAcc.meanAveragePercentageError == 0.0F;
 
 		assert analyzer.getNetworkIO().size() == 17;
 		assert analyzer.getAverageStats(3).recorded == 17;

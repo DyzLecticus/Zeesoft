@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import javax.swing.JFrame;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
@@ -22,9 +21,9 @@ import nl.zeesoft.zdk.app.neural.NetworkStateManager;
 import nl.zeesoft.zdk.app.neural.NeuralApp;
 import nl.zeesoft.zdk.app.neural.NeuralAppConfig;
 import nl.zeesoft.zdk.app.neural.NeuralAppContextHandler;
-import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -320,6 +319,21 @@ public class TestNeuralApp {
 		assert response.code == HttpURLConnection.HTTP_OK;
 		body = response.getBody();
 		assert body.length() == 92;
+
+		request = new HttpRequest("GET",SdrPngHandler.PATH);
+		request.query.append("sdr=8100,0");
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		body = response.getBody();
+		assert body.length() == 1878;
+
+		request = new HttpRequest("GET",SdrPngHandler.PATH);
+		request.query.append("sdr=8200,0");
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		body = response.getBody();
+		assert body.length() == 859;
+
 		request = new HttpRequest("GET",SdrPngHandler.PATH);
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
@@ -468,7 +482,7 @@ public class TestNeuralApp {
 		request.query = new StringBuilder(query);
 		HttpResponse response = requestHandler.handleRequest(request);
 		if (response.code!=HttpURLConnection.HTTP_OK) {
-			Console.err("Response code: " + response.code);
+			Logger.error(self, "Response code: " + response.code);
 		}
 		assert response.code == HttpURLConnection.HTTP_OK;
 		StringBuilder body = response.getBody();

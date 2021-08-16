@@ -15,7 +15,7 @@ public class SpConfig implements ConfigurableIO {
 	public float	permanenceDecrement			= 0.008F;
 	
 	public float	potentialConnections		= 0.85F;
-	public float	potentialRadius				= 16;
+	public float	potentialRadius				= 64;
 	
 	public int		activationHistorySize		= 1000;
 	public int		boostFactorPeriod			= 10;

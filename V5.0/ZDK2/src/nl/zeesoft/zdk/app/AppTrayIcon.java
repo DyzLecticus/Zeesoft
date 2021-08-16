@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.TextIcon;
 
 public class AppTrayIcon {
@@ -76,7 +77,7 @@ public class AppTrayIcon {
 			tray.add(icon);
 			r = true;
 		} catch (AWTException e) {
-			e.printStackTrace();
+			Logger.error(this, "AWT exception", e);
 		}
 		return r;
 	}

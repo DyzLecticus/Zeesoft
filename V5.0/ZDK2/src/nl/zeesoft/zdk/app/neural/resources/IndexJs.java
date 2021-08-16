@@ -24,6 +24,8 @@ public class IndexJs extends Resource {
 		append(r, "            console.log(key + \" was \" + oldValue + \" is \" + newValue);");
 		append(r, "        });");
 		append(r, "    }");
+		append(r, "    networkIOStatsLoader.autoRefresh = true;");
+		append(r, "    networkIOAccuracyLoader.autoRefresh = true;");
 		append(r, "    loadApiObjects();");
 		append(r, "};");
 	}
@@ -31,7 +33,7 @@ public class IndexJs extends Resource {
 	protected void renderChangeListener(StringBuilder r) {
 		append(r, "changePublisher.addListener((key, oldValue, newValue) => {");
 		append(r, "    if (key===\"networkState\") {");
-		append(r, "        onNetworkStateChanged(oldValue, newValue);");
+		append(r, "        onNetworkStateChanged(newValue);");
 		append(r, "    } else if (key===\"networkConfig\") {");
 		append(r, "        onNetworkConfigChanged(newValue);");
 		append(r, "    } else if (key===\"networkSettings\") {");
@@ -47,9 +49,9 @@ public class IndexJs extends Resource {
 	}
 	
 	protected void renderOnNetworkStateChanged(StringBuilder r) {
-		append(r, "var onNetworkStateChanged = (oldValue, newValue) => {");
+		append(r, "var onNetworkStateChanged = (newValue) => {");
 		append(r, "    var elem = document.getElementById(\"networkStateText\");");
-		append(r, "    if (elem!=null && oldValue == newValue) {");
+		append(r, "    if (elem!=null) {");
 		append(r, "        elem.innerHTML = newValue");
 		append(r, "    }");
 		append(r, "};");

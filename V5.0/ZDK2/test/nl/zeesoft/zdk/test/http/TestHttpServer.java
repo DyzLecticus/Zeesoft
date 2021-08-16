@@ -20,7 +20,8 @@ public class TestHttpServer {
 	private static TestHttpServer	self		= new TestHttpServer();
 	
 	private static String			LOCALHOST	= "http://127.0.0.1";
-	private static String			SERVER_URL	= LOCALHOST + ":1234";
+	private static int				PORT		= 9876;
+	private static String			SERVER_URL	= LOCALHOST + ":" + PORT;
 	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
@@ -40,7 +41,7 @@ public class TestHttpServer {
 		assert !testClient.connect(LOCALHOST);
 		
 		HttpServerConfig config = new HttpServerConfig();
-		config.setPort(1234);
+		config.setPort(PORT);
 		config.setErrorLogIO(true);
 		config.setDebugLogHeaders(true);
 		config.setRequestConvertor((HttpRequestStringConvertor) ObjectStringConvertors.getConvertor(HttpRequest.class));
@@ -48,7 +49,7 @@ public class TestHttpServer {
 		config.setRequestHandler(handler);
 		
 		config = config.copy();
-		assert config.getPort() == 1234;
+		assert config.getPort() == PORT;
 		assert config.isErrorLogIO();
 		assert config.isDebugLogHeaders();
 		assert config.getRequestHandler() == handler;

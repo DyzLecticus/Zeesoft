@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClBit {
-	public ClConfig					config			= null;
-	public int						index			= 0;
+	public ClConfig		config	= null;
+	public int			index	= 0;
 	
 	public HashMap<Object,Integer>	valueCounts		= new HashMap<Object,Integer>();
 
@@ -14,7 +14,7 @@ public class ClBit {
 		boolean r = false;
 		Integer count = valueCounts.get(value);
 		if (count==null) {
-			count = new Integer(4);
+			count = new Integer(config.initialCount);
 		}
 		count++;
 		valueCounts.put(value,count);

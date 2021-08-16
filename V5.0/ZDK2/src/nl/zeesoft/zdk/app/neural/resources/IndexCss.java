@@ -53,6 +53,9 @@ public class IndexCss extends Resource {
 	}
 
 	protected void renderLists(StringBuilder r) {
+		append(r, "ul {");
+		append(r, "    padding-left: 1.5em;");
+		append(r, "}");
 		append(r, "ul, ol {");
 		append(r, "    margin-top: 0;");
 		append(r, "    margin-block-start: 0;");

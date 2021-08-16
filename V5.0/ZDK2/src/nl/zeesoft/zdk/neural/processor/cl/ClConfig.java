@@ -9,6 +9,7 @@ public class ClConfig implements ConfigurableIO {
 	public Size		size			= Cells.getDefaultSize();
 	public int		maxOnBits		= Cells.getDefaultOnBits() * Cells.getDefaultSize().z;
 	public int		predictStep		= 1;
+	public int		initialCount	= 4;
 	public int		maxCount		= 512;
 	
 	public ClConfig copy() {
@@ -16,6 +17,7 @@ public class ClConfig implements ConfigurableIO {
 		r.size = size.copy();
 		r.maxOnBits = maxOnBits;
 		r.predictStep = predictStep;
+		r.initialCount = initialCount;
 		r.maxCount = maxCount;
 		return r;
 	}
