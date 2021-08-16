@@ -27,6 +27,20 @@ public class Classification {
 		return mostCountedValues;
 	}
 	
+	public float getValueCountPercentage(Object value) {
+		float r = 0;
+		Integer valCount = valueCounts.get(value);
+		if (valCount!=null) {
+			float vc = valCount.floatValue();
+			float total = 0;
+			for (Integer count: valueCounts.values()) {
+				total += count.floatValue();
+			}
+			r = vc / total;
+		}
+		return r;
+	}
+	
 	public float getStandardDeviation() {
 		List<Float> values = new ArrayList<Float>();
 		for (Integer count: valueCounts.values()) {

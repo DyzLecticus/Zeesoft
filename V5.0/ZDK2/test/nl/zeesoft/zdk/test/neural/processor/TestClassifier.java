@@ -28,11 +28,14 @@ public class TestClassifier {
 
 		Classification classification = new Classification();
 		assert classification.getMostCountedValues().size() == 0;
+		assert classification.getValueCountPercentage(0) == 0F;
 		classification.valueCounts = new HashMap<Object,Integer>();
 		classification.valueCounts.put(1, 10);
 		assert classification.getMostCountedValues().size() == 1;
+		assert classification.getValueCountPercentage(1) == 1.0F;
 		classification.valueCounts.put(0, 20);
 		assert classification.getMostCountedValues().size() == 1;
+		assert classification.getValueCountPercentage(0) == 0.6666667F;
 
 		Classifier cl = new Classifier();
 		assert cl.getInputOutputConfig()!=null;
