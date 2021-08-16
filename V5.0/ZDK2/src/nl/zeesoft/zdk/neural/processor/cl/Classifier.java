@@ -17,6 +17,8 @@ public class Classifier extends LearningProcessor implements Finalizable {
 	public SdrHistory			activationHistory		= new SdrHistory();
 	public ClBits				bits					= null;
 
+	public int					processed				= 0;
+
 	@Override
 	public void finalizeObject() {
 		bits.setConfig(config, activationHistory);
@@ -54,10 +56,11 @@ public class Classifier extends LearningProcessor implements Finalizable {
 		input.subsample(config.maxOnBits);
 		activationHistory.push(input.copy());
 		if (learn) {
-			bits.associateBits(io.inputValue);
+			bits.associateBits(io.inputValue, processed);
 		}
-		io.outputValue = bits.generatePrediction(input, io.inputValue);
+		io.outputValue = bits.generatePrediction(input, io.inputValue, processed);
 		io.outputs.add(input.copy());
+		processed++;
 	}
 	
 	@Override

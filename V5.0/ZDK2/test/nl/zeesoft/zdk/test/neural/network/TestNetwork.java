@@ -204,7 +204,7 @@ public class TestNetwork {
 			if (i==5) {
 				Classification cls = (Classification) io.getProcessorIO("TestClassifier").outputValue;
 				cls.valueCounts.clear();
-				cls.valueCounts.put(99, 1);
+				cls.valueCounts.put(99, 1F);
 			}
 			if (i==1) {
 				io.getProcessorIO("TestClassifier").outputValue = null;

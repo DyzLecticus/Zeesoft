@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -15,19 +16,19 @@ public class DateTimeValueConfigFactory {
 		NetworkConfig r = new NetworkConfig();
 		r.addInput("DateTime");
 		r.addInput("Value");
-		int length = addHotGymEncoders(r);
-		addHotGymMerger(r, length);
-		addHotGymSpatialPooler(r, length);
-		addHotGymTemporalMemory(r);
-		addHotGymClassifier(r);
+		int length = addEncoders(r);
+		addMerger(r, length);
+		addSpatialPooler(r, length);
+		addTemporalMemory(r);
+		addClassifier(r);
 		return r;
 	}
 
-	protected static int addHotGymEncoders(NetworkConfig config) {
-		return addHotGymDateTimeEncoder(config) + addHotGymValueEncoder(config);
+	protected static int addEncoders(NetworkConfig config) {
+		return addDateTimeEncoder(config) + addValueEncoder(config);
 	}
 
-	protected static int addHotGymDateTimeEncoder(NetworkConfig config) {
+	protected static int addDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
 		deConfig.encoder.setOnBitsPerEncoder(6);
 		deConfig.encoder.includeDate = false;
@@ -37,7 +38,7 @@ public class DateTimeValueConfigFactory {
 		return deConfig.encoder.getEncodeLength();
 	}
 
-	protected static int addHotGymValueEncoder(NetworkConfig config) {
+	protected static int addValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
 		seConfig.encoder.onBits = 18;
 		seConfig.encoder.encodeLength = 1017;
@@ -47,7 +48,7 @@ public class DateTimeValueConfigFactory {
 		return seConfig.encoder.encodeLength;
 	}
 
-	protected static void addHotGymMerger(NetworkConfig config, int length) {
+	protected static void addMerger(NetworkConfig config, int length) {
 		MergerConfig mrConfig = config.addMerger(1, "Merger");
 		mrConfig.config.concatenate = true;
 		mrConfig.config.size = new Size(length);
@@ -55,14 +56,14 @@ public class DateTimeValueConfigFactory {
 		config.addLink("ValueEncoder", ScalarEncoder.ENCODED_SENSOR_OUTPUT, "Merger", 1);
 	}
 
-	protected static void addHotGymSpatialPooler(NetworkConfig config, int length) {
+	protected static void addSpatialPooler(NetworkConfig config, int length) {
 		SpatialPoolerConfig spc = config.addSpatialPooler(2, "SpatialPooler");
 		spc.config.inputSize = new Size(length);
 		spc.config.boostFactorPeriod = 1000;
 		config.addLink("Merger", "SpatialPooler");
 	}
 
-	protected static void addHotGymTemporalMemory(NetworkConfig config) {
+	protected static void addTemporalMemory(NetworkConfig config) {
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
 		tmc.config.segmentCreationSubsample = 0.9F;
 		tmc.config.maxNewSynapseCount = 20;
@@ -73,7 +74,9 @@ public class DateTimeValueConfigFactory {
 		config.addLink("SpatialPooler", "TemporalMemory");
 	}
 
-	protected static void addHotGymClassifier(NetworkConfig config) {
+	protected static void addClassifier(NetworkConfig config) {
+		ClassifierConfig clc = config.addClassifier("Classifier");
+		clc.config.alpha = 0.05F;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

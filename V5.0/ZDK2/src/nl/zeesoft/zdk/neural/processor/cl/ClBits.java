@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.neural.processor.cl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.neural.Sdr;
 import nl.zeesoft.zdk.neural.SdrHistory;
@@ -28,12 +29,12 @@ public class ClBits {
 		bits.clear();
 	}
 	
-	public boolean associateBits(Object value) {
+	public boolean associateBits(Object value, int processed) {
 		boolean divide = false;
 		if (value!=null && activationHistory.sdrs.size() > config.predictStep) {
 			Sdr associateSDR = activationHistory.sdrs.get(config.predictStep);
 			for (Integer onBit: associateSDR.onBits) {
-				if (associateOnBit(onBit, value)) {
+				if (associateOnBit(onBit, value, processed)) {
 					divide = true;
 				}
 			}
@@ -44,16 +45,15 @@ public class ClBits {
 		return divide;
 	}
 
-	public Classification generatePrediction(Sdr input, Object value) {
+	public Classification generatePrediction(Sdr input, Object value, int processed) {
 		Classification r = new Classification();
-		HashMap<Object,Integer> valueCounts = getValueCounts(input);
 		r.step = config.predictStep;
-		r.valueCounts = valueCounts;
+		r.valueCounts = getValueCounts(input, processed);
 		r.value = value;
 		return r;
 	}
 	
-	protected boolean associateOnBit(Integer onBit, Object value) {
+	protected boolean associateOnBit(Integer onBit, Object value, int processed) {
 		boolean r = false;
 		ClBit bit = bits.get(onBit);
 		if (bit==null) {
@@ -62,7 +62,7 @@ public class ClBits {
 			bit.index = onBit;
 			bits.put(onBit,bit);
 		}
-		if (bit.associate(value)) {
+		if (bit.associate(value, processed)) {
 			r = true;
 		}
 		return r;
@@ -81,23 +81,30 @@ public class ClBits {
 		}
 	}
 	
-	protected HashMap<Object,Integer> getValueCounts(Sdr input) {
-		HashMap<Object,Integer> r = new HashMap<Object,Integer>();
+	protected HashMap<Object,Float> getValueCounts(Sdr input, int processed) {
+		HashMap<Object,Float> r = new HashMap<Object,Float>();
 		if (bits.size()>0) {
 			for (Integer onBit: input.onBits) {
 				ClBit bit = bits.get(onBit);
 				if (bit!=null) {
-					for (Object value: bit.valueCounts.keySet()) {
-						Integer count = r.get(value);
-						if (count==null) {
-							count = new Integer(0);
-						}
-						count += bit.valueCounts.get(value);
-						r.put(value,count);
+					for (Entry<Object,ValueCount> entry: bit.valueCounts.entrySet()) {
+						countBitValue(r, entry.getKey(), entry.getValue(), processed);
 					}
 				}
 			}
 		}
 		return r;
+	}
+	
+	protected void countBitValue(HashMap<Object,Float> results, Object value, ValueCount vc, int processed) {
+		float factor = 1.0F - (((float)(processed - vc.lastProcessed)) * config.alpha);
+		if (factor > 0.0F) {
+			Float count = results.get(value);
+			if (count==null) {
+				count = new Float(0);
+			}
+			count += ((float)vc.count) * factor;
+			results.put(value,count);
+		}
 	}
 }

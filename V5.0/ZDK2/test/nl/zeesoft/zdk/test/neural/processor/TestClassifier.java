@@ -29,11 +29,11 @@ public class TestClassifier {
 		Classification classification = new Classification();
 		assert classification.getMostCountedValues().size() == 0;
 		assert classification.getValueCountPercentage(0) == 0F;
-		classification.valueCounts = new HashMap<Object,Integer>();
-		classification.valueCounts.put(1, 10);
+		classification.valueCounts = new HashMap<Object,Float>();
+		classification.valueCounts.put(1, 10F);
 		assert classification.getMostCountedValues().size() == 1;
 		assert classification.getValueCountPercentage(1) == 1.0F;
-		classification.valueCounts.put(0, 20);
+		classification.valueCounts.put(0, 20F);
 		assert classification.getMostCountedValues().size() == 1;
 		assert classification.getValueCountPercentage(0) == 0.6666667F;
 
@@ -109,7 +109,7 @@ public class TestClassifier {
 		assert classification.valueCounts.get(1) == 5;
 		assert classification.getMostCountedValues().size() == 1;
 		assert (int)classification.getMostCountedValues().get(0) == 2;
-		assert classification.getStandardDeviation() == 10.606602F;
+		assert classification.getStandardDeviation() == 10.59246F;
 		assert classification.value.equals(1);
 
 		io2.outputs.clear();
@@ -124,14 +124,14 @@ public class TestClassifier {
 		assert classification.valueCounts.get(1) == 3;
 		assert classification.getMostCountedValues().size() == 1;
 		assert (int)classification.getMostCountedValues().get(0) == 2;
-		assert classification.getStandardDeviation() == 6.363961F;
+		assert classification.getStandardDeviation() == 6.3554754F;
 		assert classification.value.equals(1);
 
 		cl.setLearn(false);
 		io1.outputs.clear();
 		cl.processIO(io1);
 		classification = ((Classification)io1.outputValue);
-		assert classification.getStandardDeviation() == 6.363961F;
+		assert classification.getStandardDeviation() == 6.349112F;
 
 		cl.setLearn(true);
 		for (int i = 0; i < 10; i++) {

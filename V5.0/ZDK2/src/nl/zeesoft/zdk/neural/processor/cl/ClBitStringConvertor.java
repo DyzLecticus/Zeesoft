@@ -48,7 +48,7 @@ public class ClBitStringConvertor extends ObjectStringConvertor {
 	protected void appendData(StringBuilder str, ClBit bit) {
 		str.append(bit.index);
 		boolean first = true;
-		for (Entry<Object,Integer> entry: bit.valueCounts.entrySet()) {
+		for (Entry<Object,ValueCount> entry: bit.valueCounts.entrySet()) {
 			if (first) {
 				first = false;
 				str.append(dataSeparator);
@@ -58,19 +58,23 @@ public class ClBitStringConvertor extends ObjectStringConvertor {
 		}
 	}
 	
-	protected void appendData(StringBuilder str, Object value, Integer count) {
+	protected void appendData(StringBuilder str, Object value, ValueCount vc) {
 		str.append(dataSeparator);
 		str.append(value);
 		str.append(valueSeparator);
-		str.append(count);
+		str.append(vc.count);
+		str.append(valueSeparator);
+		str.append(vc.lastProcessed);
 	}
 	
 	protected void parseValueCounts(ClBit bit, Class<?> dataType, List<StringBuilder> data) {
 		for (StringBuilder dat: data) {
 			List<StringBuilder> keyVal = StrUtil.split(dat, valueSeparator); 
 			Object value = getObjectForStringBuilder(dataType, keyVal.get(0));
-			int count = Util.parseInt(keyVal.get(1).toString());
-			bit.valueCounts.put(value, count);
+			ValueCount vc = new ValueCount();
+			vc.count = Util.parseInt(keyVal.get(1).toString());
+			vc.lastProcessed = Util.parseInt(keyVal.get(2).toString());
+			bit.valueCounts.put(value, vc);
 		}
 	}
 }

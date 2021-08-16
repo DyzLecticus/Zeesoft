@@ -9,13 +9,13 @@ import nl.zeesoft.zdk.MathUtil;
 
 public class Classification {
 	public int						step				= 0;
-	public HashMap<Object,Integer>	valueCounts			= new HashMap<Object,Integer>();
+	public HashMap<Object,Float>	valueCounts			= new HashMap<Object,Float>();
 	public Object					value				= null;
 	
 	public List<Object> getMostCountedValues() {
 		List<Object> mostCountedValues = new ArrayList<Object>();
-		int maxValueCounts = 0;
-		for (Entry<Object,Integer> entry: valueCounts.entrySet()) {
+		Float maxValueCounts = 0F;
+		for (Entry<Object,Float> entry: valueCounts.entrySet()) {
 			if (entry.getValue() > maxValueCounts) {
 				maxValueCounts = entry.getValue();
 				mostCountedValues.clear();
@@ -29,12 +29,11 @@ public class Classification {
 	
 	public float getValueCountPercentage(Object value) {
 		float r = 0;
-		Integer valCount = valueCounts.get(value);
-		if (valCount!=null) {
-			float vc = valCount.floatValue();
+		Float vc = valueCounts.get(value);
+		if (vc!=null) {
 			float total = 0;
-			for (Integer count: valueCounts.values()) {
-				total += count.floatValue();
+			for (Float count: valueCounts.values()) {
+				total += count;
 			}
 			r = vc / total;
 		}
@@ -43,8 +42,8 @@ public class Classification {
 	
 	public float getStandardDeviation() {
 		List<Float> values = new ArrayList<Float>();
-		for (Integer count: valueCounts.values()) {
-			values.add((float) count);
+		for (Float count: valueCounts.values()) {
+			values.add(count);
 		}
 		return MathUtil.getStandardDeviation(values);
 	}

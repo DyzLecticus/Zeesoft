@@ -114,7 +114,9 @@ public class DemoTrainerJs extends Resource {
 	protected void renderTrainNetwork(StringBuilder r) {
 		append(r, "demoTrainer.trainNetwork = () => {");
 		append(r, "    if (demoTrainer.data.inputs.length>0) {");
-		append(r, "        demoTrainer.trainingIO = 0;");
+		append(r, "        if (!demoTrainer.pauze) {");
+		append(r, "            demoTrainer.trainingIO = 0;");
+		append(r, "        }");
 		append(r, "        demoTrainer.pauze = false;");
 		append(r, "        dom.setDisabled(\"trainNetworkButton\", true);");
 		append(r, "        dom.setDisabled(\"pauzeNetworkTrainingButton\", false);");

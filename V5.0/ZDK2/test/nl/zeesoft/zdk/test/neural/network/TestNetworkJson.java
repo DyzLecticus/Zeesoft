@@ -28,8 +28,8 @@ public class TestNetworkJson {
 		Classification cl = new Classification();
 		cl.step = 3;
 		cl.value = 0.0F;
-		cl.valueCounts.put(0.3F, 5);
-		cl.valueCounts.put(0.5F, 7);
+		cl.valueCounts.put(0.3F, 5F);
+		cl.valueCounts.put(0.5F, 7F);
 				
 		ProcessorIO pio = new ProcessorIO();
 		pio.inputValue = 1.0F;

@@ -59,7 +59,7 @@ public class TestClassifierJson {
 		assert bits.bits.size() == 0;
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(cl);
-		assert json.root.children.size() == 5;
+		assert json.root.children.size() == 6;
 		
 		Classifier cl2 = (Classifier) ObjectConstructor.fromJson(json);
 		Json json2 = JsonConstructor.fromObjectUseConvertors(cl2);
