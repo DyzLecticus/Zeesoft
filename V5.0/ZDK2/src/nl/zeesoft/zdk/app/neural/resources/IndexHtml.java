@@ -57,22 +57,23 @@ public class IndexHtml extends HtmlResource {
 	}
 	
 	protected StringBuilder getStatisticsRow(String title, String id, boolean autoRefreshChecked) {
-		StringBuilder r = new StringBuilder(); 
+		StringBuilder r = new StringBuilder();
 		r.append("<tr><td><h3 class='mb-0");
 		if (!autoRefreshChecked) {
 			r.append(" mt-0");
 		}
-		r.append("'>");
+		r.append("' style='display:inline-block;' >");
 		r.append(title);
-		r.append("</h3><input type='button' value='Refresh' onclick='");
+		r.append("</h3>&nbsp;<input type='button' value='Refresh' onclick='");
 		r.append(id);
-		r.append("Loader.refresh(this);' /><input type='checkbox' onclick='");
+		r.append("Loader.refresh(this);' class='text-small' /><input type='checkbox' onclick='");
 		r.append(id);
 		r.append("Loader.toggleAutoRefresh(this);' ");
 		if (autoRefreshChecked) {
 			r.append("CHECKED ");
 		}
-		r.append("/><div id='");
+		r.append("/></td></tr>");
+		r.append("<tr><td><div id='");
 		r.append(id);
 		r.append("'></div></td></tr>");
 		return r;

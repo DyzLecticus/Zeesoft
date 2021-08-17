@@ -140,8 +140,8 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "networkIOHist.clearHtmlTableRows = () => {");
 		append(r, "    var table = window.document.getElementById(\"networkIOHistTable\");");
 		append(r, "    if (table) {");
-		append(r, "        while (table.firstChild) {");
-		append(r, "            table.removeChild(table.firstChild);");
+		append(r, "        while (table.firstChild.nextElementSibling) {");
+		append(r, "            table.removeChild(table.firstChild.nextElementSibling);");
 		append(r, "        }");
 		append(r, "    }");
 		append(r, "};");

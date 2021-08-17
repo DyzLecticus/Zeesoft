@@ -24,6 +24,9 @@ public class IndexCss extends Resource {
 		append(r, "    font-size: 1em;");
 		append(r, "    background-color: #DEDEDE;");
 		append(r, "}");
+		append(r, ".text-small {");
+		append(r, "    font-size: 0.8em;");
+		append(r, "}");
 	}
 
 	protected void renderHeaders(StringBuilder r) {
@@ -45,6 +48,11 @@ public class IndexCss extends Resource {
 		append(r, "input[type=\"button\"] {");
 		append(r, "    margin-top: 0.25em;");
 		append(r, "    margin-bottom: 0.25em;");
+		append(r, "}");
+		append(r, "input[type=\"button\"].text-small {");
+		append(r, "    margin-top: 0;");
+		append(r, "    margin-bottom: 0;");
+		append(r, "    padding: 1px;");
 		append(r, "}");
 		append(r, "input[type=\"text\"].long {");
 		append(r, "    width: 80%;");
