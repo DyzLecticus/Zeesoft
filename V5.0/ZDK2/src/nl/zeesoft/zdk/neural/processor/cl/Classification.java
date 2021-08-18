@@ -35,16 +35,23 @@ public class Classification {
 		}
 	}
 	
-	public void determineAveragePredictedValue(int top) {
+	public void determineAveragePredictedValue(int top, float stdDevFactor) {
 		List<ValueLikelyhood> list = getMostLikelyValues(top);
 		if (list.size()>0) {
-			float totalValue = 0F;
+			float minLikelyhood = list.get(0).likelyhood - (getStandardDeviation() * stdDevFactor);
 			float totalLikelyhood = 0F;
 			for (ValueLikelyhood vl: list) {
-				totalValue += Util.getFloatValue(vl.value);
-				totalLikelyhood += vl.likelyhood;
+				if (vl.likelyhood>=minLikelyhood) {
+					totalLikelyhood += vl.likelyhood;
+				}
 			}
-			averagePrediction = new ValueLikelyhood(totalValue / (float)list.size(), totalLikelyhood);
+			float weightedAverage = 0F;
+			for (ValueLikelyhood vl: list) {
+				if (vl.likelyhood>=minLikelyhood) {
+					weightedAverage += (vl.likelyhood / totalLikelyhood) * Util.getFloatValue(vl.value);
+				}
+			}
+			averagePrediction = new ValueLikelyhood(weightedAverage, totalLikelyhood);
 		}
 	}
 	

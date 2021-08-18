@@ -6,12 +6,13 @@ import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 
 public class ClConfig implements ConfigurableIO {
-	public Size		size				= Cells.getDefaultSize();
-	public int		maxOnBits			= Cells.getDefaultOnBits() * Cells.getDefaultSize().z;
-	public int		predictStep			= 1;
-	public float	alpha				= 0.001F;
-	public int		initialCount		= 5;
-	public int		avgPredictionTop	= 3;
+	public Size		size						= Cells.getDefaultSize();
+	public int		maxOnBits					= Cells.getDefaultOnBits() * Cells.getDefaultSize().z;
+	public int		predictStep					= 1;
+	public float	alpha						= 0.001F;
+	public int		initialCount				= 5;
+	public int		avgPredictionTop			= 5;
+	public float	avgPredictionStdDevFactor	= 2.0F;
 	
 	public ClConfig copy() {
 		ClConfig r = new ClConfig();
@@ -21,6 +22,7 @@ public class ClConfig implements ConfigurableIO {
 		r.alpha = alpha;
 		r.initialCount = initialCount;
 		r.avgPredictionTop = avgPredictionTop;
+		r.avgPredictionStdDevFactor = avgPredictionStdDevFactor;
 		return r;
 	}
 	

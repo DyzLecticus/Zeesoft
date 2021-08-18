@@ -45,7 +45,7 @@ public class ClBits {
 		r.valueLikelyhoods = getValueLikelyhoods(input, processed);
 		r.value = value;
 		r.determinePredictedValue();
-		r.determineAveragePredictedValue(config.avgPredictionTop);
+		r.determineAveragePredictedValue(config.avgPredictionTop, config.avgPredictionStdDevFactor);
 		return r;
 	}
 	

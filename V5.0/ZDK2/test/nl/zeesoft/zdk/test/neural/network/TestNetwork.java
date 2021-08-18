@@ -207,7 +207,7 @@ public class TestNetwork {
 				cls.valueLikelyhoods.clear();
 				cls.valueLikelyhoods.add(new ValueLikelyhood(99, 1F));
 				cls.determinePredictedValue();
-				cls.determineAveragePredictedValue(3);
+				cls.determineAveragePredictedValue(3,1F);
 			}
 			if (i==1) {
 				io.getProcessorIO("TestClassifier").outputValue = null;
@@ -221,7 +221,7 @@ public class TestNetwork {
 		assert accuracy.getAverage().accuracy == 0.6666667F;
 		assert accuracy.getAverage().accuracy == ioAcc.accuracy;
 		assert accuracy.getAverage().rootMeanSquaredError > 28F && accuracy.getAverage().rootMeanSquaredError < 30F;
-		assert accuracy.getAverage().meanAveragePercentageError > 0.2F && accuracy.getAverage().meanAveragePercentageError < 0.3F;
+		assert accuracy.getAverage().meanAveragePercentageError == 0.0F;
 		assert accuracy.toString().length() == 68;
 		assert analyzer.getAccuracy(0, false).getAverage().accuracy == accuracy.getAverage().accuracy;
 

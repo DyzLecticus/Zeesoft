@@ -77,7 +77,7 @@ public class DateTimeValueConfigFactory {
 
 	protected static void addClassifier(NetworkConfig config) {
 		ClassifierConfig clc = config.addClassifier("Classifier");
-		clc.config.initialCount = 1;
+		clc.config.initialCount = 5;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

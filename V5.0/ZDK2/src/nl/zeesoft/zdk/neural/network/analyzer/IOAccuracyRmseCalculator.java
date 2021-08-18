@@ -54,7 +54,7 @@ public class IOAccuracyRmseCalculator {
 		float input = Util.getFloatValue(inputValue);
 		float error = input;
 		ValueLikelyhood vl = prediction.prediction;
-		if (useAvgPrediction && prediction.averagePrediction!=null) {
+		if ((vl==null || !vl.value.equals(inputValue)) && useAvgPrediction && prediction.averagePrediction!=null) {
 			vl = prediction.averagePrediction;
 		}
 		if (vl!=null) {
