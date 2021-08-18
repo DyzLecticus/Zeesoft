@@ -1,49 +1,57 @@
 package nl.zeesoft.zdk.neural.processor.cl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import nl.zeesoft.zdk.MathUtil;
+import nl.zeesoft.zdk.Util;
 
 public class Classification {
 	public int						step				= 0;
-	public HashMap<Object,Float>	valueCounts			= new HashMap<Object,Float>();
+	public List<ValueLikelyhood>	valueLikelyhoods	= new ArrayList<ValueLikelyhood>();
 	public Object					value				= null;
-	
-	public List<Object> getMostCountedValues() {
-		List<Object> mostCountedValues = new ArrayList<Object>();
-		Float maxValueCounts = 0F;
-		for (Entry<Object,Float> entry: valueCounts.entrySet()) {
-			if (entry.getValue() > maxValueCounts) {
-				maxValueCounts = entry.getValue();
-				mostCountedValues.clear();
+	public ValueLikelyhood			prediction			= null;
+	public ValueLikelyhood			averagePrediction	= null;
+
+	public List<ValueLikelyhood> getMostLikelyValues(int top) {
+		List<ValueLikelyhood> r = new ArrayList<ValueLikelyhood>();
+		for (int i = 0; i < top; i++) {
+			if (i<valueLikelyhoods.size()) {
+				r.add(valueLikelyhoods.get(i));
+			} else {
+				break;
 			}
-			if (entry.getValue() == maxValueCounts) {
-				mostCountedValues.add(entry.getKey());
-			}
-		}
-		return mostCountedValues;
-	}
-	
-	public float getValueCountPercentage(Object value) {
-		float r = 0;
-		Float vc = valueCounts.get(value);
-		if (vc!=null) {
-			float total = 0;
-			for (Float count: valueCounts.values()) {
-				total += count;
-			}
-			r = vc / total;
 		}
 		return r;
 	}
 	
+	public void determinePredictedValue() {
+		if (valueLikelyhoods.size()==1) {
+			prediction = valueLikelyhoods.get(0);
+		} else if (valueLikelyhoods.size()>1) {
+			if (valueLikelyhoods.get(0).likelyhood > valueLikelyhoods.get(1).likelyhood) {
+				prediction = valueLikelyhoods.get(0);
+			}
+		}
+	}
+	
+	public void determineAveragePredictedValue(int top) {
+		List<ValueLikelyhood> list = getMostLikelyValues(top);
+		if (list.size()>0) {
+			float totalValue = 0F;
+			float totalLikelyhood = 0F;
+			for (ValueLikelyhood vl: list) {
+				totalValue += Util.getFloatValue(vl.value);
+				totalLikelyhood += vl.likelyhood;
+			}
+			averagePrediction = new ValueLikelyhood(totalValue / (float)list.size(), totalLikelyhood);
+		}
+	}
+	
 	public float getStandardDeviation() {
 		List<Float> values = new ArrayList<Float>();
-		for (Float count: valueCounts.values()) {
-			values.add(count);
+		for (ValueLikelyhood vl: valueLikelyhoods) {
+			values.add(vl.likelyhood);
 		}
 		return MathUtil.getStandardDeviation(values);
 	}

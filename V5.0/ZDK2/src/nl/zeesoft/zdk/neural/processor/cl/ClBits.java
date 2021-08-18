@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.processor.cl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -29,32 +30,26 @@ public class ClBits {
 		bits.clear();
 	}
 	
-	public boolean associateBits(Object value, int processed) {
-		boolean divide = false;
+	public void associateBits(Object value, int processed) {
 		if (value!=null && activationHistory.sdrs.size() > config.predictStep) {
 			Sdr associateSDR = activationHistory.sdrs.get(config.predictStep);
 			for (Integer onBit: associateSDR.onBits) {
-				if (associateOnBit(onBit, value, processed)) {
-					divide = true;
-				}
-			}
-			if (divide) {
-				divideBits();
+				associateOnBit(onBit, value, processed);
 			}
 		}
-		return divide;
 	}
 
 	public Classification generatePrediction(Sdr input, Object value, int processed) {
 		Classification r = new Classification();
 		r.step = config.predictStep;
-		r.valueCounts = getValueCounts(input, processed);
+		r.valueLikelyhoods = getValueLikelyhoods(input, processed);
 		r.value = value;
+		r.determinePredictedValue();
+		r.determineAveragePredictedValue(config.avgPredictionTop);
 		return r;
 	}
 	
-	protected boolean associateOnBit(Integer onBit, Object value, int processed) {
-		boolean r = false;
+	protected void associateOnBit(Integer onBit, Object value, int processed) {
 		ClBit bit = bits.get(onBit);
 		if (bit==null) {
 			bit = new ClBit();
@@ -62,34 +57,32 @@ public class ClBits {
 			bit.index = onBit;
 			bits.put(onBit,bit);
 		}
-		if (bit.associate(value, processed)) {
-			r = true;
-		}
-		return r;
+		bit.associate(value, processed);
 	}
 	
-	protected void divideBits() {
-		List<Integer> remove = new ArrayList<Integer>();
-		for (ClBit bit: bits.values()) {
-			bit.divideValueCountsBy(2);
-			if (bit.valueCounts.size()==0) {
-				remove.add(bit.index);
+	protected List<ValueLikelyhood> getValueLikelyhoods(Sdr input, int processed) {
+		List<ValueLikelyhood> r = new ArrayList<ValueLikelyhood>();
+		if (bits.size()>0) {
+			HashMap<Object,Float> valueCounts = getValueCounts(input, processed);
+			float total = 0F;
+			for (Float count: valueCounts.values()) {
+				total += count;
+			}
+			for (Entry<Object,Float> entry: valueCounts.entrySet()) {
+				r.add(new ValueLikelyhood(entry.getKey(), entry.getValue() / total));
 			}
 		}
-		for (Integer index: remove) {
-			bits.remove(index);
-		}
+		Collections.sort(r);
+		return r;
 	}
 	
 	protected HashMap<Object,Float> getValueCounts(Sdr input, int processed) {
 		HashMap<Object,Float> r = new HashMap<Object,Float>();
-		if (bits.size()>0) {
-			for (Integer onBit: input.onBits) {
-				ClBit bit = bits.get(onBit);
-				if (bit!=null) {
-					for (Entry<Object,ValueCount> entry: bit.valueCounts.entrySet()) {
-						countBitValue(r, entry.getKey(), entry.getValue(), processed);
-					}
+		for (Integer onBit: input.onBits) {
+			ClBit bit = bits.get(onBit);
+			if (bit!=null) {
+				for (Entry<Object,ValueCount> entry: bit.valueCounts.entrySet()) {
+					countBitValue(r, entry.getKey(), entry.getValue(), processed);
 				}
 			}
 		}

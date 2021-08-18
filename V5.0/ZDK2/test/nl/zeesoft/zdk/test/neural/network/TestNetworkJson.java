@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfigFactory;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
+import nl.zeesoft.zdk.neural.processor.cl.ValueLikelyhood;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestNetworkJson {
@@ -28,8 +29,10 @@ public class TestNetworkJson {
 		Classification cl = new Classification();
 		cl.step = 3;
 		cl.value = 0.0F;
-		cl.valueCounts.put(0.3F, 5F);
-		cl.valueCounts.put(0.5F, 7F);
+		cl.valueLikelyhoods.add(new ValueLikelyhood(0.5F, 0.6F));
+		cl.valueLikelyhoods.add(new ValueLikelyhood(0.3F, 0.4F));
+		cl.prediction = cl.valueLikelyhoods.get(0);
+		cl.averagePrediction = new ValueLikelyhood(0.4F, 1.0F);
 				
 		ProcessorIO pio = new ProcessorIO();
 		pio.inputValue = 1.0F;

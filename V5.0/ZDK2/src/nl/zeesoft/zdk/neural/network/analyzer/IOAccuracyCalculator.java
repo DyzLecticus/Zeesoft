@@ -12,31 +12,31 @@ import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 @JsonTransient
 public class IOAccuracyCalculator {
-	protected void calculateAverageAccuracies(NetworkIOAnalyzer analyzer, int start, int end, int capacity, NetworkIOAccuracy accuracy) {
-		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(analyzer, start, end, capacity);
+	protected void calculateAverageAccuracies(IOAccuracyCalc calc, int capacity) {
+		SortedMap<String,HistoricalFloat> acccuracies = getClassifierAccuracies(calc, capacity);
 		float average = 0.0F;
 		for (Entry<String,HistoricalFloat> entry: acccuracies.entrySet()) {
 			float avg = entry.getValue().getAverage();
 			average += avg;
-			IOAccuracy acc = accuracy.getOrCreateIOAccuracy(entry.getKey());
+			IOAccuracy acc = calc.accuracy.getOrCreateIOAccuracy(entry.getKey());
 			acc.accuracy = avg;
 		}
 		if (acccuracies.size()>0) {
 			average = average / acccuracies.size();
-			accuracy.getAverage().accuracy = average;
+			calc.accuracy.getAverage().accuracy = average;
 		}
 	}
 	
-	protected SortedMap<String,HistoricalFloat> getClassifierAccuracies(NetworkIOAnalyzer analyzer, int start, int end, int capacity) {
+	protected SortedMap<String,HistoricalFloat> getClassifierAccuracies(IOAccuracyCalc calc, int capacity) {
 		SortedMap<String,HistoricalFloat> r = new TreeMap<String,HistoricalFloat>();
-		for (int i = start; i < end; i++) {
-			NetworkIO io = analyzer.networkIO.get(i);
+		for (int i = calc.start; i < calc.end; i++) {
+			NetworkIO io = calc.analyzer.networkIO.get(i);
 			for (String name: io.getProcessorNames()) {
 				ProcessorIO pio = io.getProcessorIO(name);
 				if (pio.outputValue instanceof Classification) {
 					Classification c = (Classification)pio.outputValue;
-					Classification p = analyzer.getPrediction(i - c.step, name);
-					float accuracy = determineAccuracy(c.value, p);
+					Classification p = calc.analyzer.getPrediction(i - c.step, name);
+					float accuracy = determineAccuracy(c.value, p, calc.useAvgPrediction);
 					logAccuracy(r, name, capacity, accuracy);
 				}
 			}
@@ -44,9 +44,14 @@ public class IOAccuracyCalculator {
 		return r;
 	}
 	
-	protected float determineAccuracy(Object inputValue, Classification prediction) {
+	protected float determineAccuracy(Object inputValue, Classification prediction, boolean useAvgPrediction) {
 		float accuracy = 0.0F;
-		if (prediction!=null && prediction.getMostCountedValues().size()==1 && prediction.getMostCountedValues().get(0).equals(inputValue)) {
+		if (prediction!=null && 
+			(
+				(prediction.prediction!=null && prediction.prediction.value.equals(inputValue)) ||
+				(useAvgPrediction && prediction.averagePrediction != null && prediction.averagePrediction.value.equals(inputValue))
+			)
+			) {
 			accuracy = 1.0F;
 		}
 		return accuracy;

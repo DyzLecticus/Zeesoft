@@ -12,35 +12,36 @@ import nl.zeesoft.zdk.json.JsonTransient;
 import nl.zeesoft.zdk.neural.network.NetworkIO;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
+import nl.zeesoft.zdk.neural.processor.cl.ValueLikelyhood;
 
 @JsonTransient
 public class IOAccuracyRmseCalculator {
-	protected void calculateAverageRmses(NetworkIOAnalyzer analyzer, int start, int end, NetworkIOAccuracy accuracy) {
-		SortedMap<String,List<Float>> absoluteErrors = getAbsoluteErrors(analyzer, start, end);
+	protected void calculateAverageRmses(IOAccuracyCalc calc) {
+		SortedMap<String,List<Float>> absoluteErrors = getAbsoluteErrors(calc);
 		float averageRmse = 0.0F;
 		for (Entry<String,List<Float>> entry: absoluteErrors.entrySet()) {
 			float rmse = MathUtil.getRootMeanSquaredError(entry.getValue());
 			averageRmse += rmse;
-			IOAccuracy acc = accuracy.getOrCreateIOAccuracy(entry.getKey());
+			IOAccuracy acc = calc.accuracy.getOrCreateIOAccuracy(entry.getKey());
 			acc.rootMeanSquaredError = rmse;
 		}
 		if (absoluteErrors.size()>0) {
 			averageRmse = averageRmse / absoluteErrors.size();
-			accuracy.getAverage().rootMeanSquaredError = averageRmse;
+			calc.accuracy.getAverage().rootMeanSquaredError = averageRmse;
 		}
 	}
 
-	protected static SortedMap<String,List<Float>> getAbsoluteErrors(NetworkIOAnalyzer analyzer, int start, int end) {
+	protected static SortedMap<String,List<Float>> getAbsoluteErrors(IOAccuracyCalc calc) {
 		SortedMap<String,List<Float>> r = new TreeMap<String,List<Float>>();
-		for (int i = start; i < end; i++) {
-			NetworkIO io = analyzer.networkIO.get(i);
+		for (int i = calc.start; i < calc.end; i++) {
+			NetworkIO io = calc.analyzer.networkIO.get(i);
 			for (String name: io.getProcessorNames()) {
 				ProcessorIO pio = io.getProcessorIO(name);
 				if (pio.outputValue instanceof Classification) {
 					Classification c = (Classification)pio.outputValue;
-					Classification p = analyzer.getPrediction(i - c.step, name);
-					if (p!=null && p.getMostCountedValues().size()==1) {
-						float error = determineError(c.value, p.getMostCountedValues().get(0));
+					Classification p = calc.analyzer.getPrediction(i - c.step, name);
+					if (p!=null && (p.prediction!=null || (calc.useAvgPrediction && p.averagePrediction!=null))) {
+						float error = determineError(c.value, p, calc.useAvgPrediction);
 						logError(r, name, error);
 					}
 				}
@@ -49,12 +50,19 @@ public class IOAccuracyRmseCalculator {
 		return r;
 	}
 	
-	protected static float determineError(Object inputValue, Object predictedValue) {
+	protected static float determineError(Object inputValue, Classification prediction, boolean useAvgPrediction) {
 		float input = Util.getFloatValue(inputValue);
-		float predicted = Util.getFloatValue(predictedValue);
-		float error = input - predicted;
-		if (error < 0) {
-			error = error * -1.0F;
+		float error = input;
+		ValueLikelyhood vl = prediction.prediction;
+		if (useAvgPrediction && prediction.averagePrediction!=null) {
+			vl = prediction.averagePrediction;
+		}
+		if (vl!=null) {
+			float predicted = Util.getFloatValue(vl.value);
+			error = input - predicted;
+			if (error < 0F) {
+				error = error * -1.0F;
+			}
 		}
 		return error;
 	}

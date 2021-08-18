@@ -15,33 +15,33 @@ import nl.zeesoft.zdk.neural.processor.cl.Classification;
 
 @JsonTransient
 public class IOAccuracyMapeCalculator {
-	protected void calculateAverageMapes(NetworkIOAnalyzer analyzer, int start, int end, NetworkIOAccuracy accuracy) {
-		SortedMap<String,List<Float>> inputValues = getInputValues(analyzer, start, end);
-		SortedMap<String,List<Float>> absoluteErrors = IOAccuracyRmseCalculator.getAbsoluteErrors(analyzer, start, end);
+	protected void calculateAverageMapes(IOAccuracyCalc calc) {
+		SortedMap<String,List<Float>> inputValues = getInputValues(calc);
+		SortedMap<String,List<Float>> absoluteErrors = IOAccuracyRmseCalculator.getAbsoluteErrors(calc);
 		float averageMape = 0.0F;
 		for (Entry<String,List<Float>> entry: inputValues.entrySet()) {
 			List<Float> errors = absoluteErrors.get(entry.getKey());
 			float mape = MathUtil.getMeanAveragePercentageError(entry.getValue(), errors);
 			averageMape += mape;
-			IOAccuracy acc = accuracy.getOrCreateIOAccuracy(entry.getKey());
+			IOAccuracy acc = calc.accuracy.getOrCreateIOAccuracy(entry.getKey());
 			acc.meanAveragePercentageError = mape;
 		}
 		if (absoluteErrors.size()>0) {
 			averageMape = averageMape / absoluteErrors.size();
-			accuracy.getAverage().meanAveragePercentageError = averageMape;
+			calc.accuracy.getAverage().meanAveragePercentageError = averageMape;
 		}
 	}
 
-	protected static SortedMap<String,List<Float>> getInputValues(NetworkIOAnalyzer analyzer, int start, int end) {
+	protected static SortedMap<String,List<Float>> getInputValues(IOAccuracyCalc calc) {
 		SortedMap<String,List<Float>> r = new TreeMap<String,List<Float>>();
-		for (int i = start; i < end; i++) {
-			NetworkIO io = analyzer.networkIO.get(i);
+		for (int i = calc.start; i < calc.end; i++) {
+			NetworkIO io = calc.analyzer.networkIO.get(i);
 			for (String name: io.getProcessorNames()) {
 				ProcessorIO pio = io.getProcessorIO(name);
 				if (pio.outputValue instanceof Classification) {
 					Classification c = (Classification)pio.outputValue;
-					Classification p = analyzer.getPrediction(i - c.step, name);
-					if (p!=null && p.getMostCountedValues().size()==1) {
+					Classification p = calc.analyzer.getPrediction(i - c.step, name);
+					if (p!=null && (p.prediction!=null || (calc.useAvgPrediction && p.averagePrediction!=null))) {
 						logValue(r, name, c.value);
 					}
 				}

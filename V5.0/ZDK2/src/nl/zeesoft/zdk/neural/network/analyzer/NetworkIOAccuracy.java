@@ -17,7 +17,7 @@ public class NetworkIOAccuracy {
 		
 	}
 	
-	public NetworkIOAccuracy(NetworkIOAnalyzer analyzer, int max) {
+	public NetworkIOAccuracy(NetworkIOAnalyzer analyzer, int max, boolean useAvgPrediction) {
 		int start = 0;
 		int end = analyzer.networkIO.size();
 		int capacity = end;
@@ -29,9 +29,10 @@ public class NetworkIOAccuracy {
 			}
 		}
 		total = end - start;
-		calculator.calculateAverageAccuracies(analyzer, start, end, capacity, this);
-		rmseCalculator.calculateAverageRmses(analyzer, start, end, this);
-		mapeCalculator.calculateAverageMapes(analyzer, start, end, this);
+		IOAccuracyCalc calc = new IOAccuracyCalc(this, analyzer, start, end, useAvgPrediction);
+		calculator.calculateAverageAccuracies(calc, capacity);
+		rmseCalculator.calculateAverageRmses(calc);
+		mapeCalculator.calculateAverageMapes(calc);
 	}
 	
 	@Override

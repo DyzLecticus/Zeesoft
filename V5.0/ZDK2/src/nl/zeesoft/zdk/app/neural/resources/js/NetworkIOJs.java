@@ -81,7 +81,7 @@ public class NetworkIOJs extends Resource {
 		append(r, "    for (var i = 0; i < networkIo.json.processorIO.keyValues.length; i++) {");
 		append(r, "        var kv = networkIo.json.processorIO.keyValues[i];");
 		append(r, "        if (kv.key.value == classifierName && kv.value.outputValue.className) {");
-		append(r, "            r = new Classification(kv.value.outputValue);");
+		append(r, "            r = kv.value.outputValue;");
 		append(r, "        }");
 		append(r, "    }");
 		append(r, "    return r;");

@@ -46,6 +46,7 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "    html += \"<th align='left'>DateTime</th>\";");
 		append(r, "    html += \"<th align='right'>Value</th>\";");
 		append(r, "    html += \"<th align='right'>Predicted</th>\";");
+		append(r, "    html += \"<th align='right'>Likelyhood</th>\";");
 		append(r, "    html += \"<th colspan='\" + networkIOHist.graphWidth + \"' align='left'>Graph</th>\";");
 		append(r, "    html += \"</tr>\";");
 		append(r, "    var start = 0;");
@@ -73,11 +74,13 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "networkIOHist.toHtmlTableColumns = (networkIo) => {");
 		append(r, "    var actualValue = networkIo.json.inputs.keyValues[1].value.value;");
 		append(r, "    var predictedValue = '';");
+		append(r, "    var predictedLikelyhood = '';");
 		append(r, "    if (networkIOHist.io.length > 1) {");
 		append(r, "        var prevClassification = networkIOHist.io[networkIOHist.io.length - 2].getClassification(networkIOHist.classifierName);");
-		append(r, "        var predictions = prevClassification ? prevClassification.getPredictions() : [];");
-		append(r, "        if (predictions.length==1) {");
-		append(r, "            predictedValue = predictions[0];");
+		append(r, "        var prediction = prevClassification ? prevClassification.averagePrediction : prevClassification.prediction;");
+		append(r, "        if (prediction) {");
+		append(r, "            predictedValue = prediction.value;");
+		append(r, "            predictedLikelyhood = prediction.likelyhood;");
 		append(r, "        }");
 		append(r, "    }");
 		append(r, "    var dateTime = new Date();");
@@ -85,6 +88,7 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "    var html = \"<td align='left'>\" + dateTime.toISOString() + \"</td>\";");
 		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(actualValue) + \"</td>\";");
 		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(predictedValue) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(predictedLikelyhood,2) + \"</td>\";");
 		append(r, "    html += networkIOHist.toHtmlTableGraphColumns(networkIo, actualValue, predictedValue);");
 		append(r, "    return html;");
 		append(r, "};");

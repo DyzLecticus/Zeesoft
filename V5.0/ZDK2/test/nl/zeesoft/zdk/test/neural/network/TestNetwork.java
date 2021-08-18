@@ -16,6 +16,7 @@ import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOAnalyzer;
 import nl.zeesoft.zdk.neural.network.analyzer.NetworkIOStats;
 import nl.zeesoft.zdk.neural.network.config.NetworkConfig;
 import nl.zeesoft.zdk.neural.processor.cl.Classification;
+import nl.zeesoft.zdk.neural.processor.cl.ValueLikelyhood;
 import nl.zeesoft.zdk.neural.processor.sp.SpatialPooler;
 import nl.zeesoft.zdk.test.ZdkTests;
 
@@ -123,7 +124,7 @@ public class TestNetwork {
 		assert io.getProcessorIO("TestClassifier").outputValue != null;
 		assert io.getProcessorIO("TestClassifier").outputValue instanceof Classification;
 		Classification cl = (Classification) io.getProcessorIO("TestClassifier").outputValue;
-		assert cl.valueCounts.size() == 0;
+		assert cl.valueLikelyhoods.size() == 0;
 
 		NetworkIOStats ioStats = io.getStats();
 		assert ioStats.totalNs > 0;
@@ -203,8 +204,10 @@ public class TestNetwork {
 			network.processIO(io);
 			if (i==5) {
 				Classification cls = (Classification) io.getProcessorIO("TestClassifier").outputValue;
-				cls.valueCounts.clear();
-				cls.valueCounts.put(99, 1F);
+				cls.valueLikelyhoods.clear();
+				cls.valueLikelyhoods.add(new ValueLikelyhood(99, 1F));
+				cls.determinePredictedValue();
+				cls.determineAveragePredictedValue(3);
 			}
 			if (i==1) {
 				io.getProcessorIO("TestClassifier").outputValue = null;
@@ -218,11 +221,11 @@ public class TestNetwork {
 		assert accuracy.getAverage().accuracy == 0.6666667F;
 		assert accuracy.getAverage().accuracy == ioAcc.accuracy;
 		assert accuracy.getAverage().rootMeanSquaredError > 28F && accuracy.getAverage().rootMeanSquaredError < 30F;
-		assert ioAcc.meanAveragePercentageError == 0.0F;
+		assert accuracy.getAverage().meanAveragePercentageError > 0.2F && accuracy.getAverage().meanAveragePercentageError < 0.3F;
 		assert accuracy.toString().length() == 68;
-		assert analyzer.getAccuracy(0).getAverage().accuracy == accuracy.getAverage().accuracy;
+		assert analyzer.getAccuracy(0, false).getAverage().accuracy == accuracy.getAverage().accuracy;
 
-		accuracy = analyzer.getAccuracy(10);
+		accuracy = analyzer.getAccuracy(10, false);
 		assert accuracy != null;
 		ioAcc = accuracy.getIOAccuracy("TestClassifier");
 		assert ioAcc.accuracy == 0.7F;

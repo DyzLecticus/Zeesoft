@@ -45,11 +45,11 @@ public class NetworkIOAnalyzer {
 	}
 	
 	public NetworkIOAccuracy getAccuracy() {
-		return getAccuracy(100);
+		return getAccuracy(100, true);
 	}
 	
-	public NetworkIOAccuracy getAccuracy(int max) {
-		return new NetworkIOAccuracy(this, max);
+	public NetworkIOAccuracy getAccuracy(int max, boolean useAvgPrediction) {
+		return new NetworkIOAccuracy(this, max, useAvgPrediction);
 	}
 	
 	protected Classification getPrediction(int pIndex, String name) {

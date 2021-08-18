@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
 import nl.zeesoft.zdk.neural.network.config.type.ScalarEncoderConfig;
@@ -63,8 +64,9 @@ public class DateTimeValueConfigFactory {
 	}
 
 	protected static void addTemporalMemory(NetworkConfig config) {
+		config.addTemporalMemory(3, "TemporalMemory");
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
-		tmc.config.segmentCreationSubsample = 0.9F;
+		tmc.config.segmentCreationSubsample = 1F;
 		tmc.config.maxNewSynapseCount = 20;
 		tmc.config.activationThreshold = 14;
 		tmc.config.matchingThreshold = 11;
@@ -74,7 +76,8 @@ public class DateTimeValueConfigFactory {
 	}
 
 	protected static void addClassifier(NetworkConfig config) {
-		config.addClassifier("Classifier");
+		ClassifierConfig clc = config.addClassifier("Classifier");
+		clc.config.initialCount = 1;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

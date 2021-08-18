@@ -1,6 +1,6 @@
 package nl.zeesoft.zdk.neural.network.analyzer;
 
-public class IOAccuracy {
+public class IOAccuracy  {
 	public static String	AVERAGE						= "Average";
 	
 	public String			name						= "";
