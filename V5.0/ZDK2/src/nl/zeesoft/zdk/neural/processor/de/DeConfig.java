@@ -1,7 +1,7 @@
 package nl.zeesoft.zdk.neural.processor.de;
 
 import nl.zeesoft.zdk.matrix.Size;
-import nl.zeesoft.zdk.neural.encoder.DateTimeSdrEncoder;
+import nl.zeesoft.zdk.neural.encoder.datetime.DateTimeSdrEncoder;
 import nl.zeesoft.zdk.neural.processor.ConfigurableIO;
 import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
 

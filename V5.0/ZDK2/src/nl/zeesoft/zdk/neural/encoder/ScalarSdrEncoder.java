@@ -14,15 +14,7 @@ public class ScalarSdrEncoder extends AbstractEncoder {
 	public Sdr getEncodedValue(Object value) {
 		Sdr r = new Sdr(encodeLength);
 		float percentage = getCorrectedInputValue(value) / getCorrectedMaxValue();
-		int sBit = (int) (percentage * getBuckets());
-		int eBit = sBit + onBits;
-		for (int bit = sBit; bit < eBit; bit++) {
-			int b = bit;
-			if (bit >= encodeLength) {
-				b = b % encodeLength;
-			}
-			r.setBit(b, true);
-		}
+		setBits(r, percentage);
 		return r;
 	}
 	
@@ -40,6 +32,18 @@ public class ScalarSdrEncoder extends AbstractEncoder {
 		ScalarSdrEncoder r = new ScalarSdrEncoder();
 		r.copyFrom(this);
 		return r;
+	}
+	
+	protected void setBits(Sdr sdr, float percentage) {
+		int sBit = (int) (percentage * getBuckets());
+		int eBit = sBit + onBits;
+		for (int bit = sBit; bit < eBit; bit++) {
+			int b = bit;
+			if (bit >= encodeLength) {
+				b = b % encodeLength;
+			}
+			sdr.setBit(b, true);
+		}
 	}
 	
 	protected float getCorrectedInputValue(Object value) {

@@ -1,6 +1,7 @@
 package nl.zeesoft.zdk.neural.network.config;
 
 import nl.zeesoft.zdk.matrix.Size;
+import nl.zeesoft.zdk.neural.encoder.datetime.DateTimeSdrEncoder;
 import nl.zeesoft.zdk.neural.network.config.type.ClassifierConfig;
 import nl.zeesoft.zdk.neural.network.config.type.DateTimeEncoderConfig;
 import nl.zeesoft.zdk.neural.network.config.type.MergerConfig;
@@ -30,18 +31,17 @@ public class DateTimeValueConfigFactory {
 
 	protected static int addDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
-		deConfig.encoder.setOnBitsPerEncoder(6);
-		deConfig.encoder.includeDate = false;
-		deConfig.encoder.includeMinute = false;
-		deConfig.encoder.includeSecond = false;
+		deConfig.encoder.setOnBitsPerEncoder(16);
+		deConfig.encoder.setScale(120, 2);
+		deConfig.encoder.setEncode(DateTimeSdrEncoder.DAY_OF_WEEK, DateTimeSdrEncoder.HOUR);
 		config.addLink("DateTime", "DateTimeEncoder");
 		return deConfig.encoder.getEncodeLength();
 	}
 
 	protected static int addValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
-		seConfig.encoder.onBits = 18;
-		seConfig.encoder.encodeLength = 1017;
+		seConfig.encoder.onBits = 16;
+		seConfig.encoder.encodeLength = 120;
 		seConfig.encoder.maxValue = 100F;
 		seConfig.encoder.resolution = 0.1F;
 		config.addLink("Value", "ValueEncoder");
@@ -59,13 +59,13 @@ public class DateTimeValueConfigFactory {
 	protected static void addSpatialPooler(NetworkConfig config, int length) {
 		SpatialPoolerConfig spc = config.addSpatialPooler(2, "SpatialPooler");
 		spc.config.inputSize = new Size(length);
-		spc.config.boostFactorPeriod = 1000;
+		spc.config.boostFactorPeriod = 100;
 		config.addLink("Merger", "SpatialPooler");
 	}
 
 	protected static void addTemporalMemory(NetworkConfig config) {
-		config.addTemporalMemory(3, "TemporalMemory");
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
+		tmc.config.size = new Size(45,45,32);
 		tmc.config.segmentCreationSubsample = 1F;
 		tmc.config.maxNewSynapseCount = 20;
 		tmc.config.activationThreshold = 14;
@@ -77,7 +77,12 @@ public class DateTimeValueConfigFactory {
 
 	protected static void addClassifier(NetworkConfig config) {
 		ClassifierConfig clc = config.addClassifier("Classifier");
-		clc.config.initialCount = 5;
+		clc.config.size = new Size(45,45,32);
+		clc.config.maxOnBits = 40 * 32;
+		clc.config.initialCount = 1;
+		clc.config.alpha = 0.005F;
+		clc.config.avgPredictionTop = 10;
+		clc.config.avgPredictionStdDevFactor = 2F;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
 	}

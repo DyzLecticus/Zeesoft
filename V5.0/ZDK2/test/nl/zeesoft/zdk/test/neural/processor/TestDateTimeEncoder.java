@@ -1,18 +1,18 @@
 package nl.zeesoft.zdk.test.neural.processor;
 
 import java.util.Calendar;
+import java.util.Date;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
 import nl.zeesoft.zdk.neural.Sdr;
-import nl.zeesoft.zdk.neural.encoder.DateSdrEncoder;
-import nl.zeesoft.zdk.neural.encoder.DateTimeSdrEncoder;
-import nl.zeesoft.zdk.neural.processor.InputOutputConfig;
+import nl.zeesoft.zdk.neural.encoder.datetime.DateTimeSdrEncoder;
+import nl.zeesoft.zdk.neural.encoder.datetime.DateTimeSdrEncoderTester;
 import nl.zeesoft.zdk.neural.processor.ProcessorIO;
 import nl.zeesoft.zdk.neural.processor.de.DateTimeEncoder;
-import nl.zeesoft.zdk.neural.processor.de.DeConfig;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class TestDateTimeEncoder {
@@ -28,7 +28,65 @@ public class TestDateTimeEncoder {
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
+		
+		DateTimeSdrEncoder encoder = new DateTimeSdrEncoder();
+		DateTimeSdrEncoderTester tester = new DateTimeSdrEncoderTester();
+		StringBuilder str = tester.testMinimalOverlap(encoder);
+		assert str.length() == 0;
+		
+		encoder.setOnBitsPerEncoder(4);
+		str = tester.testMinimalOverlap(encoder);
+		assert str.length() == 135;
+		
+		encoder.setOnBitsPerEncoder(12);
+		encoder.setScale(120, 1);
+		str = tester.testMinimalOverlap(encoder);
+		assert str.length() == 0;
+		
+		str = JsonConstructor.fromObject(encoder).toStringBuilderReadFormat();
+		
+		DateTimeSdrEncoder encoder2 = encoder.copy();
+		assert StrUtil.equals(JsonConstructor.fromObject(encoder2).toStringBuilderReadFormat(),str);
+		
+		encoder2 = (DateTimeSdrEncoder) ObjectConstructor.fromJson(new Json(str));
+		
+		DateTimeEncoder enc = new DateTimeEncoder();
+		encoder = (DateTimeSdrEncoder) enc.encoder;
+		encoder.setOnBitsPerEncoder(12);
+		encoder.setScale(120, 1);
+		
+		ProcessorIO io = new ProcessorIO();
+		enc.processIO(io);
+		assert io.error.length()>0;
+		
+		io = new ProcessorIO();
+		io.inputValue = "Pizza";
+		enc.processIO(io);
+		assert io.error.length()>0;
+		
+		io = new ProcessorIO();
+		io.inputValue = 0L;
+		enc.processIO(io);
+		assert io.error.length()==0;
+		
+		Sdr sdr = io.outputs.get(0);
+		Sdr sdr2 = encoder2.getEncodedValue(0L);
+		
+		assert sdr2.length == encoder2.getEncodeLength();
+		assert sdr2.onBits.size() == encoder2.getOnBits();
+		assert sdr2.getOverlap(sdr) == encoder.getOnBits();
 
+		io = new ProcessorIO();
+		io.inputValue = new Date();
+		enc.processIO(io);
+		assert io.error.length()==0;
+		sdr = io.outputs.get(0);
+		assert sdr.length == encoder.getEncodeLength();
+		assert sdr.onBits.size() == encoder.getOnBits();
+
+		/*
+		assert false;
+		
 		// Date encoder
 		DateSdrEncoder dEnc = new DateSdrEncoder();
 		dEnc.setOnBitsPerEncoder(4);
@@ -103,7 +161,7 @@ public class TestDateTimeEncoder {
 		assert enc.getEncodedValue(cal.getTime()).onBits.size() == 0;
 		
 		DateTimeEncoder de = new DateTimeEncoder();
-		((DeConfig)de.encoder).includeSecond = false;
+		((DeConfig)de.encoder).setEncode(DateTimeSdrEncoder2.SEASON, DateTimeSdrEncoder2.DAY_OF_MONTH, DateTimeSdrEncoder2.DAY_OF_WEEK, DateTimeSdrEncoder2.HOUR, DateTimeSdrEncoder2.MINUTE, DateTimeSdrEncoder2.SECOND);
 		((DeConfig)de.encoder).setOnBitsPerEncoder(8);
 		
 		assert de.getInputOutputConfig()!=null;
@@ -146,6 +204,7 @@ public class TestDateTimeEncoder {
 		de.encoder = null;
 		assert de.getInputOutputConfig() != null;
 		de.encoder = (DeConfig) enc;
+		*/
 	}
 	
 	private static void logSdr(Sdr sdr) {
