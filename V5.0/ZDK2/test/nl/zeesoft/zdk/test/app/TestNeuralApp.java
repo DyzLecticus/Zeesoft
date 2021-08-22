@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import javax.swing.JFrame;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
@@ -35,6 +36,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettings;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.RegularDateTimeValuesCsvHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.HtmlResource;
 import nl.zeesoft.zdk.http.HttpHeader;
@@ -454,6 +456,11 @@ public class TestNeuralApp {
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_OK;
 		StrUtil.equals(response.getBody(),body);
+		
+		// Regular date time values training data
+		body = testHeadGetRequest(requestHandler, RegularDateTimeValuesCsvHandler.PATH, "text/plain");
+		Console.log(body.length());
+		assert body.length() == 91551;
 	}
 	
 	private static NetworkConfig getSimpleNetworkConfig() {

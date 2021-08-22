@@ -11,6 +11,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.RegularDateTimeValuesCsvHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 import nl.zeesoft.zdk.app.resource.HtmlResource;
 
@@ -58,13 +59,32 @@ public class IndexHtml extends HtmlResource {
 	
 	protected StringBuilder getStatisticsRow(String title, String id, boolean autoRefreshChecked) {
 		StringBuilder r = new StringBuilder();
-		r.append("<tr><td><h3 class='mb-0");
+		r.append("<tr><td>");
+		r.append(getStatisticsHeader(title, id, autoRefreshChecked));
+		r.append("&nbsp;");
+		r.append(getAutoRefreshInputs(title, id, autoRefreshChecked));
+		r.append("</td></tr>");
+		r.append("<tr><td><div id='");
+		r.append(id);
+		r.append("'></div></td></tr>");
+		return r;
+	}
+	
+	protected StringBuilder getStatisticsHeader(String title, String id, boolean autoRefreshChecked) {
+		StringBuilder r = new StringBuilder();
+		r.append("<h3 class='mb-0");
 		if (!autoRefreshChecked) {
 			r.append(" mt-0");
 		}
 		r.append("' style='display:inline-block;' >");
 		r.append(title);
-		r.append("</h3>&nbsp;<input type='button' value='Refresh' onclick='");
+		r.append("</h3>");
+		return r;
+	}
+	
+	protected StringBuilder getAutoRefreshInputs(String title, String id, boolean autoRefreshChecked) {
+		StringBuilder r = new StringBuilder();
+		r.append("<input type='button' value='Refresh' onclick='");
 		r.append(id);
 		r.append("Loader.refresh(this);' class='text-small' /><input type='checkbox' onclick='");
 		r.append(id);
@@ -72,10 +92,7 @@ public class IndexHtml extends HtmlResource {
 		if (autoRefreshChecked) {
 			r.append("CHECKED ");
 		}
-		r.append("/></td></tr>");
-		r.append("<tr><td><div id='");
-		r.append(id);
-		r.append("'></div></td></tr>");
+		r.append("/>");
 		return r;
 	}
 	
@@ -98,6 +115,7 @@ public class IndexHtml extends HtmlResource {
 		append(body, renderLinkListItem(SdrPngHandler.PATH + "?sdr=100,11,12,13,14,15,16,17,18,27,36,45,54,63,72,81,82,83,84,85,86,87,88", "SDR image rendering", "_blank"));
 		if (port!=80) {
 			append(body, renderLinkListItem(DemoTrainerHtmlHandler.PATH, "Demo trainer", "_blank"));
+			append(body, renderLinkListItem(RegularDateTimeValuesCsvHandler.PATH, "Regular DateTime/Value training data", "_blank"));
 		}
 	}
 }

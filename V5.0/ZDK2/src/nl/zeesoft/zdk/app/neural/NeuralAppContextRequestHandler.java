@@ -1,9 +1,9 @@
 package nl.zeesoft.zdk.app.neural;
 
 import nl.zeesoft.zdk.app.AppContextRequestHandler;
-import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
@@ -14,6 +14,7 @@ import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOStatsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkSettingsJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkStatsJsonHandler;
+import nl.zeesoft.zdk.app.neural.handlers.api.RegularDateTimeValuesCsvHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.SdrPngHandler;
 
 public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
@@ -44,5 +45,6 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		
 		put(new NetworkIOJsonHandler((NeuralApp)app));
 		put(new SdrPngHandler((NeuralApp)app));
+		put(new RegularDateTimeValuesCsvHandler((NeuralApp)app));
 	}
 }

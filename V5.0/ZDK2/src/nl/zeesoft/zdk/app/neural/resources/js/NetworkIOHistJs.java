@@ -17,6 +17,7 @@ public class NetworkIOHistJs extends Resource {
 		renderToHtmlTable(r);
 		renderToHtmlTableRow(r);
 		renderToHtmlTableColumns(r);
+		renderGetColumnValues(r);
 		renderToHtmlTableGraphColumns(r);
 		renderToGraphValue(r);
 		renderAppendHtmlTableRow(r);
@@ -72,6 +73,20 @@ public class NetworkIOHistJs extends Resource {
 	
 	protected void renderToHtmlTableColumns(StringBuilder r) {
 		append(r, "networkIOHist.toHtmlTableColumns = (networkIo) => {");
+		append(r, "    var values = networkIOHist.getColumnValues(networkIo);");
+		append(r, "    var dateTime = new Date();");
+		append(r, "    dateTime.setTime(networkIo.json.inputs.keyValues[0].value.value);");
+		append(r, "    var html = \"<td align='left'>\" + dateTime.toISOString() + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(values.actualValue) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(values.predictedValue) + \"</td>\";");
+		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(values.predictedLikelyhood,2) + \"</td>\";");
+		append(r, "    html += networkIOHist.toHtmlTableGraphColumns(networkIo, values.actualValue, values.predictedValue);");
+		append(r, "    return html;");
+		append(r, "};");
+	}
+	
+	protected void renderGetColumnValues(StringBuilder r) {
+		append(r, "networkIOHist.getColumnValues = (networkIo) => {");
 		append(r, "    var actualValue = networkIo.json.inputs.keyValues[1].value.value;");
 		append(r, "    var predictedValue = '';");
 		append(r, "    var predictedLikelyhood = '';");
@@ -83,14 +98,7 @@ public class NetworkIOHistJs extends Resource {
 		append(r, "            predictedLikelyhood = prediction.likelyhood;");
 		append(r, "        }");
 		append(r, "    }");
-		append(r, "    var dateTime = new Date();");
-		append(r, "    dateTime.setTime(networkIo.json.inputs.keyValues[0].value.value);");
-		append(r, "    var html = \"<td align='left'>\" + dateTime.toISOString() + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(actualValue) + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(predictedValue) + \"</td>\";");
-		append(r, "    html += \"<td align='right'>\" + util.formatDecimal(predictedLikelyhood,2) + \"</td>\";");
-		append(r, "    html += networkIOHist.toHtmlTableGraphColumns(networkIo, actualValue, predictedValue);");
-		append(r, "    return html;");
+		append(r, "    return { actualValue, predictedValue, predictedLikelyhood };");
 		append(r, "};");
 	}
 	
