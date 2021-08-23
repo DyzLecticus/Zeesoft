@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import javax.swing.JFrame;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.app.App;
@@ -28,6 +27,8 @@ import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.ManagerHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.ManagerJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
@@ -306,6 +307,12 @@ public class TestNeuralApp {
 		// App index css
 		body = testHeadGetRequest(requestHandler, IndexCssHandler.PATH, "text/css");
 
+		// App manager html
+		body = testHeadGetRequest(requestHandler, ManagerHtmlHandler.PATH, "text/html");
+
+		// App manager js
+		body = testHeadGetRequest(requestHandler, ManagerJsHandler.PATH, "application/javascript");
+
 		// App demo trainer html
 		body = testHeadGetRequest(requestHandler, DemoTrainerHtmlHandler.PATH, "text/html");
 
@@ -343,6 +350,16 @@ public class TestNeuralApp {
 		// Network state
 		body = testHeadGetRequest(requestHandler, NetworkStateTextHandler.PATH, "text/plain");
 		assert body.toString().equals(NetworkStateManager.READY);
+
+		request = new HttpRequest(HttpRequest.POST,NetworkStateTextHandler.PATH);
+		request.setBody(new StringBuilder("RESET"));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_OK;
+		
+		request = new HttpRequest(HttpRequest.POST,NetworkStateTextHandler.PATH);
+		request.setBody(new StringBuilder("PIZZA"));
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_BAD_REQUEST;
 
 		// Network config
 		body = testHeadGetRequest(requestHandler, NetworkConfigJsonHandler.PATH, "application/json");
@@ -394,6 +411,10 @@ public class TestNeuralApp {
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 		request = new HttpRequest(HttpRequest.GET,NetworkStatsJsonHandler.PATH);
+		response = requestHandler.handleRequest(request);
+		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
+		request = new HttpRequest(HttpRequest.POST,NetworkStateTextHandler.PATH);
+		request.setBody(new StringBuilder("RESET"));
 		response = requestHandler.handleRequest(request);
 		assert response.code == HttpURLConnection.HTTP_UNAVAILABLE;
 		mockNetworkManager.unsetProcessing();
@@ -459,7 +480,6 @@ public class TestNeuralApp {
 		
 		// Regular date time values training data
 		body = testHeadGetRequest(requestHandler, RegularDateTimeValuesCsvHandler.PATH, "text/plain");
-		Console.log(body.length());
 		assert body.length() == 91551;
 	}
 	

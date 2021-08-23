@@ -46,7 +46,12 @@ public class TestDateTimeEncoder {
 		assert StrUtil.equals(JsonConstructor.fromObject(encoder2).toStringBuilderReadFormat(),str);
 		
 		encoder2 = (DateTimeSdrEncoder) ObjectConstructor.fromJson(new Json(str));
-		
+
+		assert encoder.getEncodedValue("").onBits.size()==0;
+		encoder.setEncode("Pizza",DateTimeSdrEncoder.HOUR);
+		assert encoder.getEncodedValue(0L).onBits.size() == encoder.getOnBits();
+		assert encoder.getEncodedValue(0L).length == encoder.getEncodeLength();
+
 		DateTimeEncoder enc = new DateTimeEncoder();
 		encoder = (DateTimeSdrEncoder) enc.encoder;
 		encoder.setOnBitsPerEncoder(12);

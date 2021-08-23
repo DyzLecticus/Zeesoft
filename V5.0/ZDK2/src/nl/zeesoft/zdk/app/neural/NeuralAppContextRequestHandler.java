@@ -7,6 +7,8 @@ import nl.zeesoft.zdk.app.neural.handlers.FaviconIcoHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.ManagerHtmlHandler;
+import nl.zeesoft.zdk.app.neural.handlers.ManagerJsHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
@@ -29,6 +31,10 @@ public class NeuralAppContextRequestHandler extends AppContextRequestHandler {
 		put(new FaviconIcoHandler((NeuralApp)app));
 		put(new IndexJsHandler((NeuralApp)app));
 		put(new IndexCssHandler((NeuralApp)app));
+
+		put(new ManagerHtmlHandler((NeuralApp)app));
+		put(new ManagerJsHandler((NeuralApp)app));
+
 		put(new DemoTrainerHtmlHandler((NeuralApp)app));
 		put(new DemoTrainerJsHandler((NeuralApp)app));
 		initializeNetworkContextHandlers();

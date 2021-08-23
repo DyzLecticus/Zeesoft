@@ -16,6 +16,7 @@ public class IndexCss extends Resource {
 		renderTablePadding(r);
 		renderSdrTable(r);
 		renderBgColors(r);
+		renderTextArea(r);
 	}
 
 	protected void renderBody(StringBuilder r) {
@@ -157,5 +158,15 @@ public class IndexCss extends Resource {
 		append(r, ".bg-w {\n");
 		append(r, "    background-color: white;");
 		append(r, "}\n");
+	}
+	
+	protected void renderTextArea(StringBuilder r) {
+		append(r, "textarea {");
+		append(r, "    width: 100%;");
+		append(r, "    height: 300px;");
+		append(r, "    white-space: pre;");
+		append(r, "    overflow-wrap: normal;");
+		append(r, "    overflow-x: scroll;");
+		append(r, "}");
 	}
 }

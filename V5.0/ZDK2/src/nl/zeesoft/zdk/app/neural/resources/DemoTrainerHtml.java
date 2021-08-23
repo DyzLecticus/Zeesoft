@@ -21,7 +21,7 @@ public class DemoTrainerHtml extends HtmlResource {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Demo trainer</h1>");
 		append(body, "<p>This page can be used to train the default neural network.<br />");
-		append(body, "It expects a CSV file that is formatted and structured like the Numenta <a href='" + SOURCE_URL + "' target='_blank'>Hot Gym example</a>.<br />");
+		append(body, "It expects a CSV file that is formatted and structured like the Numenta <a href='" + SOURCE_URL + "' target='_blank'>Hot Gym example</a>.<br /></p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\"></span></b></p>");
 		append(body, "<hr />");
 		append(body, "<p>");

@@ -38,9 +38,7 @@ public class NetworkConfigJsonHandler extends NeuralAppContextHandler {
 		testConfig(config, response);
 		if (response.code == HttpURLConnection.HTTP_OK && checkNetworkReady(response)) {
 			getNetworkManager().setConfig(config);
-			if (!getNetworkManager().resetNetwork()) {
-				setResponseUnavailable(response);
-			}
+			resetNetwork(response);
 		}
 	}
 	

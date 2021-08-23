@@ -76,7 +76,7 @@ public class NetworkSettingsJs extends Resource {
 		append(r, "    request.body = JSON.stringify(networkSettings.getFormAsJson());");
 		append(r, "    request.contentType = \"application/json\";");
 		append(r, "    request.execute(() => {");
-		append(r, "        networkSettingsLoader.execute();");
+		append(r, "        networkSettingsLoader.refresh({});");
 		append(r, "    });");
 		append(r, "};");
 	}

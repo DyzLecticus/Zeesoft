@@ -25,6 +25,10 @@ public class TestJson {
 		assert json.root.get("pizza") == null;
 		assert json.root.remove("pizza") == null;
 
+		json.fromStringBuilder(new StringBuilder("[Object object]"));
+		assert json.root.children.size() == 1;
+		assert json.root.children.get(0).key == null;;
+
 		json.fromStringBuilder(new StringBuilder("{}"));
 		assert json.root.children.size() == 0;
 

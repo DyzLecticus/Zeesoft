@@ -13,12 +13,19 @@ public class NetworkStateTextHandler extends NeuralAppContextHandler {
 		path = PATH;
 		allowedMethods.add(HttpRequest.HEAD);
 		allowedMethods.add(HttpRequest.GET);
+		allowedMethods.add(HttpRequest.POST);
 	}
 	
 	public void handleRequest(HttpRequest request, HttpResponse response) {
 		response.setContentTypeText();
 		if (request.method.equals(HttpRequest.GET)) {
 			response.setBody(new StringBuilder(getNetworkManager().getState()));
+		} else if (request.method.equals(HttpRequest.POST)) {
+			if (request.getBody().toString().equals("RESET")) {
+				resetNetwork(response);
+			} else {
+				response.setBadRequest();
+			}
 		}
 	}
 }

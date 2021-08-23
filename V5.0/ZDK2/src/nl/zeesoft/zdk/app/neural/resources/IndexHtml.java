@@ -4,6 +4,7 @@ import nl.zeesoft.zdk.app.AppStateTextHandler;
 import nl.zeesoft.zdk.app.neural.handlers.DemoTrainerHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexCssHandler;
 import nl.zeesoft.zdk.app.neural.handlers.IndexJsHandler;
+import nl.zeesoft.zdk.app.neural.handlers.ManagerHtmlHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkConfigJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOAccuracyJsonHandler;
 import nl.zeesoft.zdk.app.neural.handlers.api.NetworkIOJsonHandler;
@@ -30,7 +31,7 @@ public class IndexHtml extends HtmlResource {
 	protected StringBuilder renderBody() {
 		StringBuilder body = super.renderBody();
 		append(body, "<h1>Zeesoft NeuralServer</h1>");
-		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API. ");
+		append(body, "<p>This HTTP server exposes a configurable HTM network through a JSON API.</p>");
 		append(body, "<p>Network state: <b><span id=\"networkStateText\"></span></b></p>");
 		renderNetworkStatistics(body);
 		renderNetworkSettings(body);
@@ -104,6 +105,7 @@ public class IndexHtml extends HtmlResource {
 	}
 
 	protected void renderLinkListItems(StringBuilder body) {
+		append(body, renderLinkListItem(ManagerHtmlHandler.PATH, "Manager", "_blank"));
 		append(body, renderLinkListItem(AppStateTextHandler.PATH, "App state", "_blank"));
 		append(body, renderLinkListItem(NetworkStateTextHandler.PATH, "Network state", "_blank"));
 		append(body, renderLinkListItem(NetworkConfigJsonHandler.PATH, "Network configuration", "_blank"));

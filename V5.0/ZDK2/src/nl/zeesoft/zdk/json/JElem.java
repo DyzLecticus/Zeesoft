@@ -53,7 +53,7 @@ public class JElem {
 	public JElem get(String key) {
 		JElem r = null;
 		for (JElem child: children) {
-			if (child.key.equals(key)) {
+			if (child.key!=null && child.key.equals(key)) {
 				r = child;
 				break;
 			}

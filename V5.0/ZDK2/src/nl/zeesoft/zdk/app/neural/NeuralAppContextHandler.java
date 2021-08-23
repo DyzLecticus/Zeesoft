@@ -30,4 +30,12 @@ public class NeuralAppContextHandler extends AppContextHandler {
 		response.code = HttpURLConnection.HTTP_UNAVAILABLE;
 		response.message = "Service Unavailable";
 	}
+	
+	public void resetNetwork(HttpResponse response) {
+		if (!getNetworkManager().resetNetwork()) {
+			setResponseUnavailable(response);
+		} else {
+			getNetworkRecorder().reset();
+		}
+	}
 }
