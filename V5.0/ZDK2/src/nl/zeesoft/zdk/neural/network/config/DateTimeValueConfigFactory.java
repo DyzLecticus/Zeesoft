@@ -81,7 +81,7 @@ public class DateTimeValueConfigFactory {
 		clc.config.maxOnBits = 40 * 32;
 		clc.config.initialCount = 1;
 		clc.config.alpha = 0.005F;
-		clc.config.avgPredictionTop = 10;
+		clc.config.avgPredictionTop = 5;
 		clc.config.avgPredictionStdDevFactor = 2F;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);

@@ -52,6 +52,12 @@ public class TestNetworkConfig {
 		config.addInput("Pizza");
 		err = config.test();
 		assert err.toString().equals("Pizza: Input is not used"); // Some would call it a crime
+		
+		config = getNewNetworkConfig();
+		pc = config.getProcessorConfig("TestTemporalMemory");
+		pc.name = "NewName";
+		err = config.test();
+		assert err.toString().equals("TestClassifier: link from 'TestTemporalMemory' not found");
 	}
 	
 	public static NetworkConfig getNewNetworkConfig() {

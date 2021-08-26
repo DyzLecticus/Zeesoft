@@ -51,6 +51,9 @@ public class NetworkConfigTester {
 					StrUtil.appendLine(errors, err);
 				}
 			} else {
+				if (!config.inputNames.contains(link.fromName)) {
+					StrUtil.appendLine(errors, toConfig.name + ": link from '" + link.fromName + "' not found");
+				}
 				unused.remove(link.fromName);
 			}
 		}
