@@ -10,12 +10,14 @@ public class ManagerJs extends Resource {
 	@Override
 	protected void render(StringBuilder r) {
 		append(r, "var manager = manager || {};");
+		append(r, "manager.editorId = \"configEditor\";");
 		renderLoadApp(r);
 		renderReset(r);
 		renderLoadedConfig(r);
 		renderPost(r);
 		renderPostRequest(r);
 		renderParseConfig(r);
+		renderSetCaret(r);
 	}
 	
 	protected void renderLoadApp(StringBuilder r) {
@@ -43,7 +45,7 @@ public class ManagerJs extends Resource {
 		append(r, "    }");
 		append(r, "});");
 		append(r, "manager.loadedConfig = (json) => {");
-		append(r, "    var elem = window.document.getElementById(\"configEditor\");");
+		append(r, "    var elem = window.document.getElementById(manager.editorId);");
 		append(r, "    if (elem) {");
 		append(r, "        elem.value = JSON.stringify(json, null, 2);");
 		append(r, "    }");
@@ -52,7 +54,7 @@ public class ManagerJs extends Resource {
 	
 	protected void renderPost(StringBuilder r) {
 		append(r, "manager.post = () => {");
-		append(r, "    var elem = window.document.getElementById(\"configEditor\");");
+		append(r, "    var elem = window.document.getElementById(manager.editorId);");
 		append(r, "    if (elem) {");
 		append(r, "        var body = manager.parseConfig();");
 		append(r, "        if (body && confirm(\"" + CONFIRM_RESET_MESSAGE + "\")) {");
@@ -65,13 +67,19 @@ public class ManagerJs extends Resource {
 	protected void renderParseConfig(StringBuilder r) {
 		append(r, "manager.parseConfig = () => {");
 		append(r, "    var body = null;");
-		append(r, "    var elem = window.document.getElementById(\"configEditor\");");
+		append(r, "    var elem = window.document.getElementById(manager.editorId);");
 		append(r, "    if (elem) {");
 		append(r, "        try {");
 		append(r, "            body = JSON.parse(elem.value);");
 		append(r, "            body = JSON.stringify(body);");
 		append(r, "        } catch(error) {");
-		append(r, "            console.log(error);");
+		append(r, "            alert(error);");
+		append(r, "            var split = error.toString().split(\"position \");");
+		append(r, "            if (split && split.length==2) {");
+		append(r, "                console.log(split[1]);");
+		append(r, "                console.log(split[1].length);");
+		append(r, "                manager.setCaret(parseInt(split[1],10));");
+		append(r, "            }");
 		append(r, "        }");
 		append(r, "    }");
 		append(r, "    return body;");
@@ -89,6 +97,16 @@ public class ManagerJs extends Resource {
 		append(r, "        networkStateLoader.refresh({});");
 		append(r, "        networkConfigLoader.refresh({});");
 		append(r, "    });");
+		append(r, "};");
+	}
+	
+	protected void renderSetCaret(StringBuilder r) {
+		append(r, "manager.setCaret = (pos) => {");
+		append(r, "    var elem = window.document.getElementById(manager.editorId);");
+		append(r, "    if (elem && elem.setSelectionRange) {");
+		append(r, "        elem.focus();");
+		append(r, "        elem.setSelectionRange(pos, pos);");
+		append(r, "    }");
 		append(r, "};");
 	}
 }

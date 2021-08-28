@@ -31,16 +31,16 @@ public class DateTimeValueConfigFactory {
 
 	protected static int addDateTimeEncoder(NetworkConfig config) {
 		DateTimeEncoderConfig deConfig = config.addDateTimeEncoder("DateTimeEncoder");
-		deConfig.encoder.setOnBitsPerEncoder(16);
-		deConfig.encoder.setScale(120, 2);
-		deConfig.encoder.setEncode(DateTimeSdrEncoder.DAY_OF_WEEK, DateTimeSdrEncoder.HOUR);
+		deConfig.encoder.setOnBitsPerEncoder(12);
+		deConfig.encoder.setScale(120, 1);
+		deConfig.encoder.setEncode(DateTimeSdrEncoder.HOUR);
 		config.addLink("DateTime", "DateTimeEncoder");
 		return deConfig.encoder.getEncodeLength();
 	}
 
 	protected static int addValueEncoder(NetworkConfig config) {
 		ScalarEncoderConfig seConfig = config.addScalarEncoder(0, "ValueEncoder");
-		seConfig.encoder.onBits = 16;
+		seConfig.encoder.onBits = 12;
 		seConfig.encoder.encodeLength = 120;
 		seConfig.encoder.maxValue = 100F;
 		seConfig.encoder.resolution = 0.1F;
@@ -66,7 +66,7 @@ public class DateTimeValueConfigFactory {
 	protected static void addTemporalMemory(NetworkConfig config) {
 		TemporalMemoryConfig tmc = config.addTemporalMemory(3, "TemporalMemory");
 		tmc.config.size = new Size(45,45,32);
-		tmc.config.segmentCreationSubsample = 1F;
+		tmc.config.segmentCreationSubsample = 0.9F;
 		tmc.config.maxNewSynapseCount = 20;
 		tmc.config.activationThreshold = 14;
 		tmc.config.matchingThreshold = 11;
@@ -80,8 +80,8 @@ public class DateTimeValueConfigFactory {
 		clc.config.size = new Size(45,45,32);
 		clc.config.maxOnBits = 40 * 32;
 		clc.config.initialCount = 1;
-		clc.config.alpha = 0.005F;
-		clc.config.avgPredictionTop = 5;
+		clc.config.alpha = 0.0001F;
+		clc.config.avgPredictionTop = 1;
 		clc.config.avgPredictionStdDevFactor = 2F;
 		config.addLink("TemporalMemory", "Classifier");
 		config.addLink("Value", 0, "Classifier", Classifier.ASSOCIATE_VALUE_INPUT);
