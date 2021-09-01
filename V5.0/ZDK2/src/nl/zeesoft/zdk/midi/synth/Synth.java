@@ -55,8 +55,8 @@ public class Synth {
 			if (chan.getProgram()!=channel.instrument) {
 				chan.programChange(channel.instrument);
 			}
-			for (int c = 0; c < ChannelConfig.CONTROLS.length; c++) {
-				chan.controlChange(ChannelConfig.CONTROLS[c],channel.getControlValue(ChannelConfig.CONTROLS[c]));
+			for (int c = 0; c < ChannelControl.CONTROLS.length; c++) {
+				chan.controlChange(ChannelControl.CONTROLS[c],channel.getControlValue(ChannelControl.CONTROLS[c]));
 			}
 			configureRemainingChannelProperties(channel, chan);
 			i++;

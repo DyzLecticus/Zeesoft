@@ -3,52 +3,6 @@ package nl.zeesoft.zdk.midi.synth;
 public class ChannelConfig {
 	public static final int			DEFAULT			= 63;
 	
-	public static final int			VOLUME			= 7;
-	public static final int			ATTACK			= 73;
-	public static final int			DECAY			= 75;
-	public static final int			RELEASE			= 72;
-	public static final int			PAN				= 10;
-	public static final int			MODULATION		= 1;
-	public static final int			CHORUS			= 93;
-	public static final int			FILTER			= 74;
-	public static final int			RESONANCE		= 71;
-	public static final int			REVERB			= 91;
-	public static final int			VIB_RATE		= 76;
-	public static final int			VIB_DEPTH		= 77;
-	public static final int			VIB_DELAY		= 78;
-
-	public static final int[]		CONTROLS		= {
-		VOLUME,
-		ATTACK,
-		DECAY,
-		RELEASE,
-		PAN,
-		MODULATION,
-		CHORUS,
-		FILTER,
-		RESONANCE,
-		REVERB,
-		VIB_RATE,
-		VIB_DEPTH,
-		VIB_DELAY,
-	};
-	
-	public static final String[]	CONTROL_NAMES	= {
-		"Volume",
-		"Attack",
-		"Decay",
-		"Release",
-		"Pan",
-		"Modulation",
-		"Chorus",
-		"Filter",
-		"Resonance",
-		"Reverb",
-		"Vibrato rate",
-		"Vibrato depth",
-		"Vibrato delay",
-	};
-	
 	public int						channel			= 0;
 	
 	public boolean					solo			= false;
@@ -95,17 +49,17 @@ public class ChannelConfig {
 	
 	public int getControlValue(int control) {
 		int r = DEFAULT;
-		if (control==VOLUME) {
+		if (control==ChannelControl.VOLUME) {
 			r = volume;
-		} else if (control==ATTACK) {
+		} else if (control==ChannelControl.ATTACK) {
 			r = attack;
-		} else if (control==DECAY) {
+		} else if (control==ChannelControl.DECAY) {
 			r = decay;
-		} else if (control==RELEASE) {
+		} else if (control==ChannelControl.RELEASE) {
 			r = release;
-		} else if (control==PAN) {
+		} else if (control==ChannelControl.PAN) {
 			r = pan;
-		} else if (control==MODULATION) {
+		} else if (control==ChannelControl.MODULATION) {
 			r = modulation;
 		} else {
 			r = getRemainingControlValue(control);
@@ -115,17 +69,17 @@ public class ChannelConfig {
 	
 	public void setControlValue(int control, int value) {
 		value = limitValue(value);
-		if (control==VOLUME) {
+		if (control==ChannelControl.VOLUME) {
 			volume = value;
-		} else if (control==ATTACK) {
+		} else if (control==ChannelControl.ATTACK) {
 			attack = value;
-		} else if (control==DECAY) {
+		} else if (control==ChannelControl.DECAY) {
 			decay = value;
-		} else if (control==RELEASE) {
+		} else if (control==ChannelControl.RELEASE) {
 			release = value;
-		} else if (control==PAN) {
+		} else if (control==ChannelControl.PAN) {
 			pan = value;
-		} else if (control==MODULATION) {
+		} else if (control==ChannelControl.MODULATION) {
 			modulation = value;
 		} else {
 			setRemainingControlValue(control, value);
@@ -134,38 +88,38 @@ public class ChannelConfig {
 	
 	protected int getRemainingControlValue(int control) {
 		int r = DEFAULT;
-		if (control==CHORUS) {
+		if (control==ChannelControl.CHORUS) {
 			r = chorus;
-		} else if (control==FILTER) {
+		} else if (control==ChannelControl.FILTER) {
 			r = filter;
-		} else if (control==RESONANCE) {
+		} else if (control==ChannelControl.RESONANCE) {
 			r = resonance;
-		} else if (control==REVERB) {
+		} else if (control==ChannelControl.REVERB) {
 			r = reverb;
-		} else if (control==VIB_RATE) {
+		} else if (control==ChannelControl.VIB_RATE) {
 			r = vib_rate;
-		} else if (control==VIB_DEPTH) {
+		} else if (control==ChannelControl.VIB_DEPTH) {
 			r = vib_depth;
-		} else if (control==VIB_DELAY) {
+		} else if (control==ChannelControl.VIB_DELAY) {
 			r = vib_delay;
 		}
 		return r;
 	}
 	
 	protected void setRemainingControlValue(int control, int value) {
-		if (control==CHORUS) {
+		if (control==ChannelControl.CHORUS) {
 			chorus = value;
-		} else if (control==FILTER) {
+		} else if (control==ChannelControl.FILTER) {
 			filter = value;
-		} else if (control==RESONANCE) {
+		} else if (control==ChannelControl.RESONANCE) {
 			resonance = value;
-		} else if (control==REVERB) {
+		} else if (control==ChannelControl.REVERB) {
 			reverb = value;
-		} else if (control==VIB_RATE) {
+		} else if (control==ChannelControl.VIB_RATE) {
 			vib_rate = value;
-		} else if (control==VIB_DEPTH) {
+		} else if (control==ChannelControl.VIB_DEPTH) {
 			vib_depth = value;
-		} else if (control==VIB_DELAY) {
+		} else if (control==ChannelControl.VIB_DELAY) {
 			vib_delay = value;
 		}
 	}
