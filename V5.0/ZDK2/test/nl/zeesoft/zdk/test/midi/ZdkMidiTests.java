@@ -8,5 +8,7 @@ public class ZdkMidiTests {
 		TestSynth.main(args);
 		Console.log("Test Groove ...");
 		TestGroove.main(args);
+		Console.log("Test Instruments ...");
+		TestInstruments.main(args);
 	}
 }
