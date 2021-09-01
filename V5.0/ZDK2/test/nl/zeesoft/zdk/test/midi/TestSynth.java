@@ -5,6 +5,7 @@ import java.io.File;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.synth.ChannelConfig;
+import nl.zeesoft.zdk.midi.synth.DefaultSynthConfig;
 import nl.zeesoft.zdk.midi.synth.SoundbankLoader;
 import nl.zeesoft.zdk.midi.synth.SynthConfig;
 
@@ -12,7 +13,7 @@ public class TestSynth {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
-		SynthConfig sc = new SynthConfig();
+		SynthConfig sc = new DefaultSynthConfig();
 		assert sc.channels.size() == 16;
 		assert sc.getBassChannel(0) == sc.channels.get(SynthConfig.BASS_CHANNEL_1);
 		assert sc.getBassChannel(1) == sc.channels.get(SynthConfig.BASS_CHANNEL_2);

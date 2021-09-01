@@ -114,11 +114,7 @@ public class ChannelConfig {
 	}
 	
 	public void setControlValue(int control, int value) {
-		if (value < 0) {
-			value = 0;
-		} else if (value > 127) {
-			value = 127;
-		}
+		value = limitValue(value);
 		if (control==VOLUME) {
 			volume = value;
 		} else if (control==ATTACK) {
@@ -172,5 +168,14 @@ public class ChannelConfig {
 		} else if (control==VIB_DELAY) {
 			vib_delay = value;
 		}
+	}
+	
+	protected static int limitValue(int value) {
+		if (value < 0) {
+			value = 0;
+		} else if (value > 127) {
+			value = 127;
+		}
+		return value;
 	}
 }
