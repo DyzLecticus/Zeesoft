@@ -6,5 +6,7 @@ public class ZdkMidiTests {
 	public static void main(String[] args) {
 		Console.log("Test Synth ...");
 		TestSynth.main(args);
+		Console.log("Test Groove ...");
+		TestGroove.main(args);
 	}
 }
