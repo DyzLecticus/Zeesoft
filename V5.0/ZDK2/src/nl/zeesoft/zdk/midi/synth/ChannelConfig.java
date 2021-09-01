@@ -3,8 +3,6 @@ package nl.zeesoft.zdk.midi.synth;
 public class ChannelConfig {
 	public static final int	DEFAULT			= 63;
 	
-	public int				channel			= 0;
-	
 	public boolean			solo			= false;
 	public boolean			mute			= false;
 
@@ -27,24 +25,14 @@ public class ChannelConfig {
 	public int				vib_depth		= DEFAULT;
 	public int				vib_delay		= DEFAULT;
 	
-	public void copyFrom(ChannelConfig cfg) {
-		solo = cfg.solo;
-		mute = cfg.mute;
-		instrument = cfg.instrument;
-		volume = cfg.volume;
-		attack = cfg.attack;
-		decay = cfg.decay;
-		release = cfg.release;
-		pan = cfg.pan;
-		pressure = cfg.pressure;
-		modulation = cfg.modulation;
-		chorus = cfg.chorus;
-		filter = cfg.filter;
-		resonance = cfg.resonance;
-		reverb = cfg.reverb;
-		vib_rate = cfg.vib_rate;
-		vib_depth = cfg.vib_depth;
-		vib_delay = cfg.vib_delay;
+	public void copyFrom(ChannelConfig other) {
+		solo = other.solo;
+		mute = other.mute;
+		instrument = other.instrument;
+		pressure = other.pressure;
+		for (int i = 0; i < ChannelControl.CONTROLS.length; i++) {
+			setControlValue(ChannelControl.CONTROLS[i], other.getControlValue(ChannelControl.CONTROLS[i]));
+		}
 	}
 	
 	public int getControlValue(int control) {
