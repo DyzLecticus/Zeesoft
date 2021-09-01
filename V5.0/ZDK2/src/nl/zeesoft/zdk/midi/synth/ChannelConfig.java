@@ -1,31 +1,31 @@
 package nl.zeesoft.zdk.midi.synth;
 
 public class ChannelConfig {
-	public static final int			DEFAULT			= 63;
+	public static final int	DEFAULT			= 63;
 	
-	public int						channel			= 0;
+	public int				channel			= 0;
 	
-	public boolean					solo			= false;
-	public boolean					mute			= false;
+	public boolean			solo			= false;
+	public boolean			mute			= false;
 
-	public int						instrument		= 0;
-	public int						volume			= 120;
-	public int						attack			= DEFAULT;
-	public int						decay			= DEFAULT;
-	public int						release			= DEFAULT;
+	public int				instrument		= 0;
+	public int				volume			= 120;
+	public int				attack			= DEFAULT;
+	public int				decay			= DEFAULT;
+	public int				release			= DEFAULT;
 	
-	public int						pan				= DEFAULT;
-	public int						pressure		= 0;
-	public int						modulation		= 0;
-	public int						chorus			= 0;
+	public int				pan				= DEFAULT;
+	public int				pressure		= 0;
+	public int				modulation		= 0;
+	public int				chorus			= 0;
 	
-	public int						filter			= DEFAULT;
-	public int						resonance		= DEFAULT;
-	public int						reverb			= 16;
+	public int				filter			= DEFAULT;
+	public int				resonance		= DEFAULT;
+	public int				reverb			= 16;
 	
-	public int						vib_rate		= DEFAULT;
-	public int						vib_depth		= DEFAULT;
-	public int						vib_delay		= DEFAULT;
+	public int				vib_rate		= DEFAULT;
+	public int				vib_depth		= DEFAULT;
+	public int				vib_delay		= DEFAULT;
 	
 	public void copyFrom(ChannelConfig cfg) {
 		solo = cfg.solo;
