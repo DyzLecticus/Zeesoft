@@ -14,6 +14,6 @@ public class Stab extends Instrument {
 	public List<Integer> getChannels() {
 		List<Integer> r = new ArrayList<Integer>();
 		r.add(SynthConfig.STAB_CHANNEL);
-		return null;
+		return r;
 	}
 }

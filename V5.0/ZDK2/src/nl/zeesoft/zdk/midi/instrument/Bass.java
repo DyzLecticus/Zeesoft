@@ -15,6 +15,6 @@ public class Bass extends Instrument {
 		List<Integer> r = new ArrayList<Integer>();
 		r.add(SynthConfig.BASS_CHANNEL_1);
 		r.add(SynthConfig.BASS_CHANNEL_2);
-		return null;
+		return r;
 	}
 }

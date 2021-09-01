@@ -17,6 +17,11 @@ public class TestInstruments {
 		assert MidiSys.instruments.arp.name.equals(Instrument.ARP);
 		assert MidiSys.instruments.drum.name.equals(Instrument.DRUM);
 
+		assert MidiSys.instruments.bass.getChannels().size() == 2;
+		assert MidiSys.instruments.stab.getChannels().size() == 1;
+		assert MidiSys.instruments.arp.getChannels().size() == 2;
+		assert MidiSys.instruments.drum.getChannels().size() == 1;
+		
 		assert MidiSys.instruments.list().size() == 4;
 
 		PatternGenerator pg = MidiSys.instruments.drum.addGenerator("Kick");
@@ -30,6 +35,8 @@ public class TestInstruments {
 		assert pg.getStep(0) != null;
 		assert pg.getStep(1) == null;
 		assert pg.getStep(8) != null;
+		
+		assert MidiSys.instruments.drum.addGenerator("Kick") == null;
 		
 		pg = MidiSys.instruments.drum.addGenerator("Snare");
 		pg.midiNoteNum = 37;

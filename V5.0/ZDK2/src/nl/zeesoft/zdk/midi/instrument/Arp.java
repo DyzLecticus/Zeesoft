@@ -15,6 +15,6 @@ public class Arp extends Instrument {
 		List<Integer> r = new ArrayList<Integer>();
 		r.add(SynthConfig.ARP_CHANNEL_1);
 		r.add(SynthConfig.ARP_CHANNEL_2);
-		return null;
+		return r;
 	}
 }

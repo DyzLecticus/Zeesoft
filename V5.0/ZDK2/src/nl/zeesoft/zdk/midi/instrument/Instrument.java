@@ -21,8 +21,8 @@ public abstract class Instrument {
 	public abstract List<Integer> getChannels();
 	
 	public PatternGenerator addGenerator(String name) {
-		PatternGenerator r = getGenerator(name);
-		if (r==null) {
+		PatternGenerator r = null;
+		if (getGenerator(name)==null) {
 			r = new PatternGenerator();
 			r.name = name;
 			generators.add(r);

@@ -14,6 +14,6 @@ public class Drum extends Instrument {
 	public List<Integer> getChannels() {
 		List<Integer> r = new ArrayList<Integer>();
 		r.add(SynthConfig.DRUM_CHANNEL);
-		return null;
+		return r;
 	}
 }
