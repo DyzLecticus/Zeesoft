@@ -1,8 +1,11 @@
 package nl.zeesoft.zdk.test.midi;
 
+import java.io.File;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.synth.ChannelConfig;
+import nl.zeesoft.zdk.midi.synth.SoundbankLoader;
 import nl.zeesoft.zdk.midi.synth.SynthConfig;
 
 public class TestSynth {
@@ -48,7 +51,13 @@ public class TestSynth {
 		sc.getStabChannel().solo = true;
 		sc.getStabChannel().mute = true;
 		sc.getStabChannel().pressure = 111;
-		
+
+		String dummyPath = "/resources/Soundbank.sf2";
+		assert SoundbankLoader.load(dummyPath) == null;
+		assert SoundbankLoader.loadSoundbank(dummyPath, false, false) == null;
+		assert SoundbankLoader.loadSoundbank(dummyPath, true, false) == null;
+		assert SoundbankLoader.loadSoundbank(dummyPath, false, true) == null;
+
 		assert new MidiSys() != null;
 		
 		assert !MidiSys.isInitialized();
@@ -72,7 +81,13 @@ public class TestSynth {
 		assert MidiSys.synth.getInstrument(SynthConfig.STAB_CHANNEL) == 111;
 		MidiSys.synth.setControlValue(SynthConfig.STAB_CHANNEL, ChannelConfig.CHORUS, 111);
 		assert MidiSys.synth.getControlValue(SynthConfig.STAB_CHANNEL, ChannelConfig.CHORUS) == 111;
-				
+	
+		assert SoundbankLoader.load(dummyPath) == null;
+		File file = new File("../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2");
+		if (file.exists()) {
+			assert SoundbankLoader.load("../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2") != null;
+		}
+		
 		MidiSys.destroy();
 		assert !MidiSys.isInitialized();
 	}

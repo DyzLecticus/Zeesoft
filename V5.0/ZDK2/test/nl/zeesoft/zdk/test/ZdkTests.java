@@ -15,6 +15,7 @@ import nl.zeesoft.zdk.test.matrix.TestMatrixExecutor;
 import nl.zeesoft.zdk.test.matrix.TestMatrixStringConvertor;
 import nl.zeesoft.zdk.test.matrix.TestPosition;
 import nl.zeesoft.zdk.test.matrix.TestSize;
+import nl.zeesoft.zdk.test.midi.ZdkMidiTests;
 import nl.zeesoft.zdk.test.neural.ZdkNeuralTests;
 
 public class ZdkTests {
@@ -100,5 +101,7 @@ public class ZdkTests {
 		
 		Console.log("Test App ...");
 		TestNeuralApp.main(args);		
+		
+		ZdkMidiTests.main(args);
 	}
 }
