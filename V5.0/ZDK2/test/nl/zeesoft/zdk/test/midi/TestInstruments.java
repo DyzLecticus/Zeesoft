@@ -26,6 +26,7 @@ public class TestInstruments {
 		
 		assert MidiSys.instruments.list().size() == 4;
 
+		assert MidiSys.chordPattern.getStep(-1) == null;
 		assert MidiSys.chordPattern.getStep(0) != null;
 		assert MidiSys.chordPattern.getStep(1) == MidiSys.chordPattern.getStep(0);
 		assert MidiSys.chordPattern.getStep(32) != MidiSys.chordPattern.getStep(0);
@@ -33,6 +34,7 @@ public class TestInstruments {
 		
 		// Drum patterns
 		PatternGenerator pg = MidiSys.instruments.drum.addGenerator("Kick");
+		assert pg.getStep(0) == null;
 		pg.chordNote = 0;
 		pg.hold = 0.75F;
 		pg.velocity = 110;
