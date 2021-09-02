@@ -38,10 +38,11 @@ public class PatternGenerator {
 		r.name = name;
 		r.stepStart = start;
 		r.stepEnd = end;
+		int mod = end - start;
 		for (int s = start; s < end; s++) {
 			PatternGeneratorStep ps = getStep(s);
 			if (ps!=null) {
-				r.addStep(s, ps.accent);
+				r.addStep(s % mod, ps.accent);
 			}
 		}
 		return r;

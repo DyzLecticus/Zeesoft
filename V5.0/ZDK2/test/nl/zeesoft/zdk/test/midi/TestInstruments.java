@@ -1,12 +1,23 @@
 package nl.zeesoft.zdk.test.midi;
 
+import java.io.File;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Transmitter;
+
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.midi.MidiSys;
 import nl.zeesoft.zdk.midi.instrument.Instrument;
 import nl.zeesoft.zdk.midi.instrument.Instruments;
 import nl.zeesoft.zdk.midi.pattern.InstrumentPattern;
 import nl.zeesoft.zdk.midi.pattern.Pattern;
 import nl.zeesoft.zdk.midi.pattern.PatternGenerator;
+import nl.zeesoft.zdk.midi.synth.SoundbankLoader;
 
 public class TestInstruments {
 	public static void main(String[] args) {
@@ -109,5 +120,43 @@ public class TestInstruments {
 		
 		//Console.log(JsonConstructor.fromObject(drumPattern).toStringBuilderReadFormat());
 		//Console.log(JsonConstructor.fromObject(bassPattern).toStringBuilderReadFormat());
+		
+		Sequence drumSeq = MidiSys.instruments.drum.generateSequence(drumPattern);
+		Sequence bassSeq = MidiSys.instruments.bass.generateSequence(bassPattern);
+		
+		File file = new File("../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2");
+		if (file.exists()) {
+			MidiSys.initialize();
+			assert SoundbankLoader.load("../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2") != null;
+			assert SoundbankLoader.load("../../V3.0/ZeeTracker/resources/ZeeTrackerSynthesizers.sf2") != null;
+
+			Sequencer sequencer = null;
+			try {
+				sequencer = MidiSystem.getSequencer(false);
+				sequencer.open();
+				if (sequencer.getTransmitters().size()>0) {
+					for (Transmitter trm: sequencer.getTransmitters()) {
+						trm.setReceiver(MidiSys.synth.getSynthesizer().getReceiver());
+					}
+				} else {
+					sequencer.getTransmitter().setReceiver(MidiSys.synth.getSynthesizer().getReceiver());
+				}			
+			} catch (MidiUnavailableException e) {
+				e.printStackTrace();
+			}
+			if (sequencer!=null) {
+				try {
+					sequencer.setSequence(drumSeq);
+				} catch (InvalidMidiDataException e) {
+					e.printStackTrace();
+				}
+				sequencer.start();
+				Util.sleep(5000);
+				sequencer.stop();
+				sequencer.close();
+			}
+			
+			MidiSys.destroy();
+		}
 	}
 }

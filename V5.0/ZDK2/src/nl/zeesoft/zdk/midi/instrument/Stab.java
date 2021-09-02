@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.midi.synth.SynthConfig;
 public class Stab extends Instrument {
 	public Stab() {
 		super(STAB);
+		int[] octaves = {3};
+		channelBaseOctaves = octaves;
 	}
 
 	@Override

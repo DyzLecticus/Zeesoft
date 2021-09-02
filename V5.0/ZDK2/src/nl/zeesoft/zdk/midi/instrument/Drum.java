@@ -9,7 +9,8 @@ import nl.zeesoft.zdk.midi.synth.SynthConfig;
 public class Drum extends Instrument {
 	public Drum() {
 		super(DRUM);
-		baseOctaveChannel1 = 2;
+		int[] octaves = {2};
+		channelBaseOctaves = octaves;
 		chordPattern = new DrumChordPattern();
 	}
 

@@ -8,6 +8,8 @@ import nl.zeesoft.zdk.midi.synth.SynthConfig;
 public class Arp extends Instrument {
 	public Arp() {
 		super(ARP);
+		int[] octaves = {3,3};
+		channelBaseOctaves = octaves;
 	}
 
 	@Override
