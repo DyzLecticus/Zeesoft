@@ -54,5 +54,8 @@ public class TestGroove {
 		assert g.getShuffle() == 0.0F;
 		g.setShuffle(1F);
 		assert g.getShuffle() == 0.75F;
+		
+		MidiSys.groove.copyFrom(new Groove());
+		assert MidiSys.groove.getBeatsPerMinute() == 120F;
 	}
 }

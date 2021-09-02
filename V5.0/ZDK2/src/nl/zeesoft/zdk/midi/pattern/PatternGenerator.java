@@ -8,7 +8,7 @@ public class PatternGenerator {
 	public int							length			= 8;
 	public List<PatternGeneratorStep>	steps			= new ArrayList<PatternGeneratorStep>();
 
-	public int							midiNoteNum		= 36;
+	public int							chordNote		= 0;
 	public float						hold			= 0.75F;
 	public int							velocity		= 100;
 	public float						accentHold		= 0.75F;
@@ -20,6 +20,7 @@ public class PatternGenerator {
 		for (PatternGeneratorStep ps: steps) {
 			if (ps.step==step) {
 				r = ps;
+				break;
 			}
 		}
 		return r;
@@ -30,5 +31,19 @@ public class PatternGenerator {
 		ps.step = step;
 		ps.accent = accent;
 		steps.add(ps);
+	}
+	
+	public Pattern generatePattern(int start, int end) {
+		Pattern r = new Pattern();
+		r.name = name;
+		r.stepStart = start;
+		r.stepEnd = end;
+		for (int s = start; s < end; s++) {
+			PatternGeneratorStep ps = getStep(s);
+			if (ps!=null) {
+				r.addStep(s, ps.accent);
+			}
+		}
+		return r;
 	}
 }

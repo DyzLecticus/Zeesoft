@@ -3,11 +3,14 @@ package nl.zeesoft.zdk.midi.instrument;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.midi.pattern.DrumChordPattern;
 import nl.zeesoft.zdk.midi.synth.SynthConfig;
 
 public class Drum extends Instrument {
 	public Drum() {
 		super(DRUM);
+		baseOctaveChannel1 = 2;
+		chordPattern = new DrumChordPattern();
 	}
 
 	@Override
