@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.midi.synth.SynthConfig;
 public class Bass extends Instrument {
 	public Bass() {
 		super(BASS);
-		int[] octaves = {3,3};
-		channelBaseOctaves = octaves;
+		sounds.add(new InstrumentChannelSound(SynthConfig.BASS_CHANNEL_1, BASS, 3, 0, 0.75F, 120, 1.75F, 120));
+		sounds.add(new InstrumentChannelSound(SynthConfig.BASS_CHANNEL_2, BASS, 3, 0, 0.75F, 70, 1.75F, 70));
 	}
 
 	@Override

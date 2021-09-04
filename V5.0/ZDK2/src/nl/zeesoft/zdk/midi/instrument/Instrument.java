@@ -13,110 +13,111 @@ import nl.zeesoft.zdk.midi.pattern.ChordPatternStep;
 import nl.zeesoft.zdk.midi.pattern.InstrumentPattern;
 import nl.zeesoft.zdk.midi.pattern.Pattern;
 import nl.zeesoft.zdk.midi.pattern.PatternGenerator;
+import nl.zeesoft.zdk.midi.pattern.PatternGenerators;
 import nl.zeesoft.zdk.midi.pattern.PatternStep;
 
 public abstract class Instrument {
-	public static String 			BASS				= "Bass";
-	public static String 			STAB				= "Stab";
-	public static String 			ARP					= "Arpeggiator";
-	public static String 			DRUM				= "Drum";
+	public static String 				BASS				= "Bass";
+	public static String 				STAB				= "Stab";
+	public static String 				ARP					= "Arpeggiator";
+	public static String 				DRUM				= "Drum";
 	
-	public String					name				= "";
-	public List<PatternGenerator>	generators			= new ArrayList<PatternGenerator>();
-	public ChordPattern				chordPattern		= null;
-	
-	public int[]					channelBaseOctaves	= {3};
+	public String						name				= "";
+	public List<InstrumentChannelSound>	sounds				= new ArrayList<InstrumentChannelSound>();
+	public List<PatternGenerators>		patternVariations	= new ArrayList<PatternGenerators>();
+	public ChordPattern					chordPattern		= null;
 	
 	public Instrument(String name) {
 		this.name = name;
+		patternVariations.add(new PatternGenerators());
 	}
 	
 	public abstract List<Integer> getChannels();
 	
-	public PatternGenerator addGenerator(String name) {
-		PatternGenerator r = null;
-		if (getGenerator(name)==null) {
-			r = new PatternGenerator();
-			r.name = name;
-			generators.add(r);
-		}
-		return r;
-	}
-	
-	public PatternGenerator getGenerator(String name) {
-		PatternGenerator r = null;
-		for (PatternGenerator pg: generators) {
-			if (pg.name.equals(name)) {
-				r = pg;
+	public InstrumentChannelSound getSound(int channel, String name) {
+		InstrumentChannelSound r = null;
+		for (InstrumentChannelSound sound: sounds) {
+			if (sound.channel == channel && sound.name.equals(name)) {
+				r = sound;
+				break;
 			}
 		}
 		return r;
 	}
 	
-	public InstrumentPattern generatePattern() {
-		return generatePattern(0, MidiSys.groove.getTotalSteps());
-	}
-	
-	public InstrumentPattern generatePattern(int start, int end) {
-		InstrumentPattern r = new InstrumentPattern();
-		r.name = name;
-		if (chordPattern==null) {
-			r.chordPattern = MidiSys.chordPattern;
-		} else {
-			r.chordPattern = chordPattern;
-		}
-		for (PatternGenerator pg: generators) {
-			r.patterns.add(pg.generatePattern(start, end));
+	public List<String> getSoundNames() {
+		List<String> r = new ArrayList<String>();
+		for (InstrumentChannelSound sound: sounds) {
+			if (!r.contains(sound.name)) {
+				r.add(sound.name);
+			}
 		}
 		return r;
+	}
+
+	public PatternGenerator addGenerator(int variation, String soundName) {
+		PatternGenerator r = null;
+		if (getSoundNames().contains(soundName)) {
+			r = patternVariations.get(variation).addGenerator(soundName);
+		}
+		return r;
+	}
+	
+	public InstrumentPattern generatePattern(int variation) {
+		return generatePattern(variation, 0, MidiSys.groove.getTotalSteps());
+	}
+	
+	public InstrumentPattern generatePattern(int variation, int start, int end) {
+		return patternVariations.get(variation).generatePattern(name, chordPattern, start, end);
 	}
 	
 	public Sequence generateSequence(InstrumentPattern pattern) {
 		Sequence r = MidiSequenceUtil.createSequence(getChannels().size());
 		long ticksPerStep = MidiSequenceUtil.getTicksPerStep();
 		for (Pattern p: pattern.patterns) {
-			PatternGenerator generator = getGenerator(p.name);
 			long seqEndTick = MidiSequenceUtil.getStepTick(p.stepEnd);
 			for (PatternStep ps: p.steps) {
-				
-				float hold = generator.hold;
-				int velocity = generator.velocity;
-				if (ps.accent) {
-					hold = generator.accentHold;
-					velocity = generator.accentVelocity;
-				}
-				
 				ChordPatternStep cps = pattern.chordPattern.getStep(ps.step);
-
 				int track = 0;
 				for (Integer channel: getChannels()) {
-					int midiNote = (channelBaseOctaves[track] * 12) + cps.baseNote;
-					if (generator.chordNote>0) {
-						midiNote += cps.interval[(generator.chordNote - 1)];
-					}
-					
-					long nextActiveTick = seqEndTick;
-					// TODO: Get next step to limit next active tick
-					
-					long startTick = MidiSequenceUtil.getStepTick(ps.step);
-					if (startTick<(nextActiveTick - 2)) {
-						MidiSequenceUtil.createEventOnTrack(
-							r.getTracks()[track],ShortMessage.NOTE_ON,channel,midiNote,velocity,startTick
-						);
-						long add = (long)(hold * (float)ticksPerStep);
-						long endTick = startTick + add;
-						if (endTick>=nextActiveTick) {
-							endTick = nextActiveTick - 1;
-						}
-						MidiSequenceUtil.createEventOnTrack(
-							r.getTracks()[track],ShortMessage.NOTE_OFF,channel,midiNote,velocity,endTick
-						);
-					}
-					
+					generateChannelPatternStep(r, track, channel, p, ps, cps, seqEndTick, ticksPerStep);
 					track++;
+					break;
 				}
 			}
 		}
 		return r;
+	}
+	
+	protected void generateChannelPatternStep(
+		Sequence seq, int track, int channel, Pattern p, PatternStep ps, ChordPatternStep cps, long seqEndTick, long ticksPerStep
+		) {
+		InstrumentChannelNote note = getSound(channel, p.name).getNote(ps.accent, cps);		
+		long nextActiveTick = seqEndTick;
+		PatternStep nps = p.getNextStep(ps.step);
+		if (nps!=null) {
+			nextActiveTick = MidiSequenceUtil.getStepTick(nps.step);;
+		}
+		
+		long startTick = MidiSequenceUtil.getStepTick(ps.step);
+		if (startTick<(nextActiveTick - 2)) {
+			generateChannelPatternStepNote(seq, track, note, startTick, nextActiveTick, ticksPerStep);
+		}
+	}
+	
+	protected void generateChannelPatternStepNote(
+		Sequence seq, int track, InstrumentChannelNote note, long startTick, long nextActiveTick, long ticksPerStep
+		) {
+		MidiSequenceUtil.createEventOnTrack(
+			seq.getTracks()[track],ShortMessage.NOTE_ON,note.channel,note.midiNote,note.velocity,startTick
+		);
+		long add = (long)(note.hold * (float)ticksPerStep);
+		long endTick = startTick + add;
+		if (endTick>=nextActiveTick) {
+			endTick = nextActiveTick - 1;
+		}
+		MidiSequenceUtil.createEventOnTrack(
+			seq.getTracks()[track],ShortMessage.NOTE_OFF,note.channel,note.midiNote,note.velocity,endTick
+		);
 	}
 }

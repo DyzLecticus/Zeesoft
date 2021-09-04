@@ -8,6 +8,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.midi.instrument.Instruments;
 import nl.zeesoft.zdk.midi.pattern.ChordPattern;
 import nl.zeesoft.zdk.midi.pattern.DefaultChordPattern;
+import nl.zeesoft.zdk.midi.synth.DefaultSynthConfig;
 import nl.zeesoft.zdk.midi.synth.Synth;
 
 public class MidiSys {
@@ -39,6 +40,7 @@ public class MidiSys {
 				}
 				synthesizer.open();
 				synth = new Synth(synthesizer);
+				synth.setConfig(new DefaultSynthConfig());
 			} else {
 				Logger.error(new MidiSys(), "Synthesizer device is not supported");
 			}

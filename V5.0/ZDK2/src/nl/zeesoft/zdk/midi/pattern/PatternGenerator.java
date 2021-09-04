@@ -7,12 +7,16 @@ public class PatternGenerator {
 	public String						name			= "";
 	public int							length			= 8;
 	public List<PatternGeneratorStep>	steps			= new ArrayList<PatternGeneratorStep>();
-
-	public int							chordNote		= 0;
-	public float						hold			= 0.75F;
-	public int							velocity		= 100;
-	public float						accentHold		= 0.75F;
-	public int							accentVelocity	= 127;
+	
+	public PatternGenerator copy() {
+		PatternGenerator r = new PatternGenerator();
+		r.name = name;
+		r.length = length;
+		for (PatternGeneratorStep step: steps) {
+			r.steps.add(step.copy());
+		}
+		return r;
+	}
 
 	public PatternGeneratorStep getStep(int step) {
 		step = step % length;

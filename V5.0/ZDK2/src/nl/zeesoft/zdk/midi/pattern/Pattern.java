@@ -20,6 +20,16 @@ public class Pattern {
 		return r;
 	}
 	
+	public PatternStep getNextStep(int step) {
+		PatternStep r = null;
+		for (PatternStep ps: steps) {
+			if (ps.step>step && (r==null || r.step>ps.step)) {
+				r = ps;
+			}
+		}
+		return r;
+	}
+	
 	public void addStep(int step, boolean accent) {
 		PatternStep ps = new PatternStep();
 		ps.step = step;

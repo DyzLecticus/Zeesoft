@@ -11,7 +11,10 @@ import javax.sound.midi.Transmitter;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.midi.MidiSequenceUtil;
 import nl.zeesoft.zdk.midi.MidiSys;
+import nl.zeesoft.zdk.midi.instrument.Bass;
+import nl.zeesoft.zdk.midi.instrument.Drum;
 import nl.zeesoft.zdk.midi.instrument.Instrument;
 import nl.zeesoft.zdk.midi.instrument.Instruments;
 import nl.zeesoft.zdk.midi.pattern.InstrumentPattern;
@@ -43,24 +46,21 @@ public class TestInstruments {
 		assert MidiSys.chordPattern.getStep(32) != MidiSys.chordPattern.getStep(0);
 		assert MidiSys.chordPattern.getStep(128) == MidiSys.chordPattern.getStep(0);
 		
+		assert MidiSys.instruments.drum.addGenerator(0,"Pizza") == null;
+		
 		// Drum patterns
-		PatternGenerator pg = MidiSys.instruments.drum.addGenerator("Kick");
+		PatternGenerator pg = MidiSys.instruments.drum.addGenerator(0,Drum.KICK);
 		assert pg.getStep(0) == null;
-		pg.chordNote = 0;
-		pg.hold = 0.75F;
-		pg.velocity = 110;
-		pg.accentHold = 1.5F;
-		pg.accentVelocity = 127;
 		pg.addStep(0, true);
 		
 		assert pg.getStep(0) != null;
 		assert pg.getStep(1) == null;
 		assert pg.getStep(8) != null;
 		
-		assert MidiSys.instruments.drum.addGenerator("Kick") == null;
+		assert MidiSys.instruments.drum.addGenerator(0,Drum.KICK) == null;
 
 		Pattern p = pg.generatePattern(0, MidiSys.groove.getTotalSteps());
-		assert p.name.equals("Kick");
+		assert p.name.equals(Drum.KICK);
 		assert p.stepStart == 0;
 		assert p.stepEnd == MidiSys.groove.getTotalSteps();
 		assert p.steps.size() == 8;
@@ -70,60 +70,62 @@ public class TestInstruments {
 		assert p.getStep(24) != null;
 		assert p.getStep(32) != null;
 		
-		pg = MidiSys.instruments.drum.addGenerator("Snare");
-		pg.chordNote = 1;
-		pg.hold = 0.75F;
-		pg.velocity = 100;
-		pg.accentHold = 1.5F;
-		pg.accentVelocity = 110;
+		pg = MidiSys.instruments.drum.addGenerator(0,Drum.SNARE);
 		pg.addStep(4, true);
 		
-		pg = MidiSys.instruments.drum.addGenerator("ClosedHihat");
+		pg = MidiSys.instruments.drum.addGenerator(0,Drum.CLOSED_HIHAT);
 		pg.length = 4;
-		pg.chordNote = 2;
-		pg.hold = 0.25F;
-		pg.velocity = 70;
-		pg.accentHold = 0.5F;
-		pg.accentVelocity = 70;
 		pg.addStep(0, true);
 		pg.addStep(1, false);
 		pg.addStep(3, false);
 		
-		pg = MidiSys.instruments.drum.addGenerator("OpenHihat");
+		pg = MidiSys.instruments.drum.addGenerator(0,Drum.OPEN_HIHAT);
 		pg.length = 4;
-		pg.chordNote = 3;
-		pg.hold = 0.5F;
-		pg.velocity = 80;
-		pg.accentHold = 0.75F;
-		pg.accentVelocity = 80;
 		pg.addStep(2, true);
 		
+		// Drum patterns variation
+		MidiSys.instruments.drum.patternVariations.add(MidiSys.instruments.drum.patternVariations.get(0).copy());
+		pg = MidiSys.instruments.drum.patternVariations.get(1).getGenerator(Drum.KICK);
+		pg.addStep(2, false);
+		pg.addStep(3, false);
+		
+		pg = MidiSys.instruments.drum.patternVariations.get(1).getGenerator(Drum.SNARE);
+		pg.addStep(7, false);
+		
 		// Bass pattern
-		pg = MidiSys.instruments.bass.addGenerator("Bass");
-		pg.chordNote = 0;
-		pg.hold = 0.75F;
-		pg.velocity = 120;
-		pg.accentHold = 1.75F;
-		pg.accentVelocity = 120;
+		pg = MidiSys.instruments.bass.addGenerator(0,Bass.BASS);
 		pg.addStep(2, false);
 		pg.addStep(3, false);
 		pg.addStep(6, true);
 		
 		//Console.log(JsonConstructor.fromObject(MidiSys.instruments).toStringBuilderReadFormat());
 		
-		InstrumentPattern drumPattern = MidiSys.instruments.drum.generatePattern();
-		assert drumPattern.name.equals(Instrument.DRUM);
-		assert drumPattern.patterns.get(0).name.equals("Kick");
-		InstrumentPattern bassPattern = MidiSys.instruments.bass.generatePattern();
+		InstrumentPattern drumPattern1 = MidiSys.instruments.drum.generatePattern(0);
+		assert drumPattern1.name.equals(Instrument.DRUM);
+		assert drumPattern1.patterns.get(0).name.equals(Drum.KICK);
+		InstrumentPattern drumPattern2 = MidiSys.instruments.drum.generatePattern(1);
+		assert drumPattern2.name.equals(Instrument.DRUM);
+		assert drumPattern2.patterns.get(0).name.equals(Drum.KICK);
+		InstrumentPattern bassPattern = MidiSys.instruments.bass.generatePattern(0);
 		assert bassPattern.name.equals(Instrument.BASS);
-		assert bassPattern.patterns.get(0).name.equals("Bass");
+		assert bassPattern.patterns.get(0).name.equals(Drum.BASS);
 		
 		//Console.log(JsonConstructor.fromObject(drumPattern).toStringBuilderReadFormat());
 		//Console.log(JsonConstructor.fromObject(bassPattern).toStringBuilderReadFormat());
 		
-		Sequence drumSeq = MidiSys.instruments.drum.generateSequence(drumPattern);
+		Sequence drumSeq1 = MidiSys.instruments.drum.generateSequence(drumPattern1);
+		Sequence drumSeq2 = MidiSys.instruments.drum.generateSequence(drumPattern2);
 		Sequence bassSeq = MidiSys.instruments.bass.generateSequence(bassPattern);
 		
+		Sequence seq1 = MidiSequenceUtil.mergeTracks(drumSeq1, bassSeq);
+		Sequence seq2 = MidiSequenceUtil.mergeTracks(drumSeq2, bassSeq);
+		
+		playSequence(seq1,5000);
+		Util.sleep(1000);
+		playSequence(seq2,5000);		
+	}
+	
+	private static void playSequence(Sequence sequence, int ms) {
 		File file = new File("../../V3.0/ZeeTracker/resources/ZeeTrackerDrumKit.sf2");
 		if (file.exists()) {
 			MidiSys.initialize();
@@ -146,12 +148,13 @@ public class TestInstruments {
 			}
 			if (sequencer!=null) {
 				try {
-					sequencer.setSequence(drumSeq);
+					sequencer.setSequence(sequence);
 				} catch (InvalidMidiDataException e) {
 					e.printStackTrace();
 				}
+				sequencer.setTickPosition(0);
 				sequencer.start();
-				Util.sleep(5000);
+				Util.sleep(ms);
 				sequencer.stop();
 				sequencer.close();
 			}

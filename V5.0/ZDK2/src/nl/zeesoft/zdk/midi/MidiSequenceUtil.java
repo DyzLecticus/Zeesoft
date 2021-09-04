@@ -19,7 +19,33 @@ public class MidiSequenceUtil {
 		}
 		return r;
 	}
+
+	public static void copyShortMessages(Track from, Track to) {
+		for (int i = 0; i < from.size(); i++) {
+			MidiEvent event = from.get(i);
+			if (event.getMessage() instanceof ShortMessage) {
+				ShortMessage sm = (ShortMessage)event.getMessage();
+				createEventOnTrack(to, sm.getCommand(), sm.getChannel(), sm.getData1(), sm.getData2(), event.getTick());
+			}
+		}
+	}
 	
+	public static Sequence mergeTracks(Sequence... sequences) {
+		int tracks = 0;
+		for (Sequence seq: sequences) {
+			tracks += seq.getTracks().length;
+		}
+		Sequence r = createSequence(tracks);
+		int track = 0;
+		for (Sequence seq: sequences) {
+			for (Track t: seq.getTracks()) {
+				copyShortMessages(t, r.getTracks()[track]);
+				track++;
+			}
+		}
+		return r;
+	}
+
 	public static long getStepTick(int step) {
 		long r = 0;
 		if (step>0) {
