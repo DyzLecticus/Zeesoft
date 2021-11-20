@@ -16,20 +16,21 @@ public class PatternGenerators {
 		return r;
 	}
 
-	public PatternGenerator addGenerator(String name) {
+	public PatternGenerator addGenerator(String instrumentName, String name) {
 		PatternGenerator r = null;
-		if (getGenerator(name)==null) {
+		if (getGenerator(instrumentName,name)==null) {
 			r = new PatternGenerator();
-			r.name = name;
+			r.instrumentName = instrumentName;
+			r.elementName = name;
 			generators.add(r);
 		}
 		return r;
 	}
 	
-	public PatternGenerator getGenerator(String name) {
+	public PatternGenerator getGenerator(String instrumentName, String name) {
 		PatternGenerator r = null;
 		for (PatternGenerator pg: generators) {
-			if (pg.name.equals(name)) {
+			if (pg.instrumentName.equals(instrumentName) && pg.elementName.equals(name)) {
 				r = pg;
 			}
 		}

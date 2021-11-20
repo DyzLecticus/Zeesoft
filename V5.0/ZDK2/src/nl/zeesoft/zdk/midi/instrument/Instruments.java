@@ -17,4 +17,14 @@ public class Instruments {
 		r.add(drum);
 		return r;
 	}
+	
+	public Instrument get(String name) {
+		Instrument r = null;
+		for (Instrument inst: list()) {
+			if (inst.name.equals(name)) {
+				r = inst;
+			}
+		}
+		return r;
+	}
 }

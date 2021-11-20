@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PatternGenerator {
-	public String						name			= "";
-	public int							length			= 8;
-	public List<PatternGeneratorStep>	steps			= new ArrayList<PatternGeneratorStep>();
+	public String						instrumentName		= "";
+	public String						elementName	= "";
+	public int							length				= 8;
+	public List<PatternGeneratorStep>	steps				= new ArrayList<PatternGeneratorStep>();
 	
 	public PatternGenerator copy() {
 		PatternGenerator r = new PatternGenerator();
-		r.name = name;
+		r.instrumentName = instrumentName;
+		r.elementName = elementName;
 		r.length = length;
 		for (PatternGeneratorStep step: steps) {
 			r.steps.add(step.copy());
@@ -39,7 +41,7 @@ public class PatternGenerator {
 	
 	public Pattern generatePattern(int start, int end) {
 		Pattern r = new Pattern();
-		r.name = name;
+		r.elementName = elementName;
 		r.stepStart = start;
 		r.stepEnd = end;
 		int mod = end - start;

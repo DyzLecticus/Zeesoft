@@ -6,16 +6,18 @@ import javax.sound.midi.Synthesizer;
 
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.midi.instrument.Instruments;
+import nl.zeesoft.zdk.midi.instrument.PatternVariations;
 import nl.zeesoft.zdk.midi.pattern.ChordPattern;
 import nl.zeesoft.zdk.midi.pattern.DefaultChordPattern;
 import nl.zeesoft.zdk.midi.synth.DefaultSynthConfig;
 import nl.zeesoft.zdk.midi.synth.Synth;
 
 public class MidiSys {
-	public static Synth			synth			= null;
-	public static Groove		groove			= new Groove();
-	public static ChordPattern	chordPattern	= new DefaultChordPattern();
-	public static Instruments	instruments		= new Instruments();
+	public static Synth					synth				= null;
+	public static Groove				groove				= new Groove();
+	public static ChordPattern			chordPattern		= new DefaultChordPattern();
+	public static Instruments			instruments			= new Instruments();
+	public static PatternVariations		patternVariations	= new PatternVariations();
 	
 	public static synchronized void initialize() {
 		initializeSynth(false, false);

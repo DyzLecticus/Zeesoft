@@ -6,16 +6,27 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import nl.zeesoft.zdk.Logger;
+
 public class MidiSequenceUtil {
-	public static final int		TEMPO		= 0x51;
-	public static final int		RESOLUTION	= 960;
+	public static final int				TEMPO		= 0x51;
+	public static final int				RESOLUTION	= 960;
 	
+	private static MidiSequenceUtil		self		= new MidiSequenceUtil();
+
 	public static Sequence createSequence(int tracks) {
+		return createSequence(tracks, false);
+	}
+
+	public static Sequence createSequence(int tracks, boolean mockException) {
 		Sequence r = null;
 		try {
+			if (mockException) {
+				throw new InvalidMidiDataException();
+			}
 			r = new Sequence(Sequence.PPQ,MidiSequenceUtil.RESOLUTION,tracks);
 		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
+			Logger.error(self, "Invalid MIDI data exception", e);
 		}
 		return r;
 	}
@@ -63,15 +74,22 @@ public class MidiSequenceUtil {
 	public static int getTicksPerStep() {
 		return RESOLUTION / MidiSys.groove.getStepsPerBeat();
 	}
-	
+
 	public static void createEventOnTrack(Track track, int type, int channel, int num, int val, long tick) {
+		createEventOnTrack(track, type, channel, num, val, tick, false);		
+	}
+
+	public static void createEventOnTrack(Track track, int type, int channel, int num, int val, long tick, boolean mockException) {
 		ShortMessage message = new ShortMessage();
 		try {
+			if (mockException) {
+				throw new InvalidMidiDataException();
+			}
 			message.setMessage(type,channel,num,val); 
 			MidiEvent event = new MidiEvent(message,tick);
 			track.add(event);
 		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
+			Logger.error(self, "Invalid MIDI data exception", e);
 		}
 	}
 

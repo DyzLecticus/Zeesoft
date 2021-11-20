@@ -55,10 +55,10 @@ public abstract class Instrument {
 		return r;
 	}
 
-	public PatternGenerator addGenerator(int variation, String soundName) {
+	public PatternGenerator addGenerator(int variation, String instrumentName, String elementName) {
 		PatternGenerator r = null;
-		if (getSoundNames().contains(soundName)) {
-			r = patternVariations.get(variation).addGenerator(soundName);
+		if (getSoundNames().contains(elementName)) {
+			r = patternVariations.get(variation).addGenerator(instrumentName, elementName);
 		}
 		return r;
 	}
@@ -92,7 +92,7 @@ public abstract class Instrument {
 	protected void generateChannelPatternStep(
 		Sequence seq, int track, int channel, Pattern p, PatternStep ps, ChordPatternStep cps, long seqEndTick, long ticksPerStep
 		) {
-		InstrumentChannelNote note = getSound(channel, p.name).getNote(ps.accent, cps);		
+		InstrumentChannelNote note = getSound(channel, p.elementName).getNote(ps.accent, cps);		
 		long nextActiveTick = seqEndTick;
 		PatternStep nps = p.getNextStep(ps.step);
 		if (nps!=null) {

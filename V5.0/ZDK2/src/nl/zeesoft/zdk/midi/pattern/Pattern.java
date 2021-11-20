@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pattern {
-	public String				name		= "";
+	public String				elementName	= "";
 	public int					stepStart	= 0;
 	public int					stepEnd		= 0;
 	public List<PatternStep>	steps		= new ArrayList<PatternStep>();
