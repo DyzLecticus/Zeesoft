@@ -3,6 +3,7 @@ package nl.zeesoft.zdk.test;
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.app.TestNeuralApp;
+import nl.zeesoft.zdk.test.blackbox.TestBlackbox;
 import nl.zeesoft.zdk.test.code.TestCodeAnalyzer;
 import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
@@ -94,7 +95,10 @@ public class ZdkTests {
 		TestMatrixStringConvertor.main(args);
 		Console.log("Test MatrixExecutor...");
 		TestMatrixExecutor.main(args);
-		
+
+		Console.log("Test Blackbox ...");
+		TestBlackbox.main(args);		
+
 		ZdkNeuralTests.main(args);
 
 		ZdkHttpTests.main(args);
