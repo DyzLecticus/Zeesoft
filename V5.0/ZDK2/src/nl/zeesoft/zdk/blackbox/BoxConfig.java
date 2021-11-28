@@ -6,7 +6,9 @@ import java.util.List;
 import nl.zeesoft.zdk.Instantiator;
 import nl.zeesoft.zdk.blackbox.rules.AverageRule;
 import nl.zeesoft.zdk.blackbox.rules.CopyAddRule;
+import nl.zeesoft.zdk.blackbox.rules.CopyDivideRule;
 import nl.zeesoft.zdk.blackbox.rules.CopyMultiplyRule;
+import nl.zeesoft.zdk.blackbox.rules.CopySubtractRule;
 
 public class BoxConfig {
 	private static int		MEM_LEN				= 0;
@@ -25,7 +27,9 @@ public class BoxConfig {
 	
 	public BoxConfig() {
 		ruleTemplates.add(new CopyAddRule());
+		ruleTemplates.add(new CopySubtractRule());
 		ruleTemplates.add(new CopyMultiplyRule());
+		ruleTemplates.add(new CopyDivideRule());
 		ruleTemplates.add(new AverageRule());
 	}
 
