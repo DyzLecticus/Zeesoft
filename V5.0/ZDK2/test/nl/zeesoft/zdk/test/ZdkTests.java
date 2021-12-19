@@ -10,6 +10,7 @@ import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
 import nl.zeesoft.zdk.test.function.TestFunctionListList;
 import nl.zeesoft.zdk.test.http.ZdkHttpTests;
+import nl.zeesoft.zdk.test.im.TestMachine;
 import nl.zeesoft.zdk.test.json.TestJson;
 import nl.zeesoft.zdk.test.matrix.TestMatrix;
 import nl.zeesoft.zdk.test.matrix.TestMatrixExecutor;
@@ -98,6 +99,9 @@ public class ZdkTests {
 
 		Console.log("Test Blackbox ...");
 		TestBlackbox.main(args);		
+
+		Console.log("Test Machine ...");
+		TestMachine.main(args);		
 
 		ZdkNeuralTests.main(args);
 
