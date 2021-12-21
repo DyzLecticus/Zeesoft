@@ -1,19 +1,18 @@
 package nl.zeesoft.zdk.test.im;
 
-import java.util.List;
-
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.im.Machine;
+import nl.zeesoft.zdk.im.MachinePrediction;
 import nl.zeesoft.zdk.im.ObjectArray;
 import nl.zeesoft.zdk.im.SimilarityCalculator;
 import nl.zeesoft.zdk.im.pattern.FibonacciPatternRecognizer;
 import nl.zeesoft.zdk.im.pattern.PatternRecognizer;
-import nl.zeesoft.zdk.im.pattern.PatternRecognizerPrediction;
-import nl.zeesoft.zdk.im.pattern.PatternRecognizerResult;
 import nl.zeesoft.zdk.im.pattern.PowerPatternRecognizer;
 
 public class TestMachine {
+	private static TestMachine	self	= new TestMachine();
+	
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
@@ -33,6 +32,7 @@ public class TestMachine {
 		testSimilarity(new ObjectArray(), new ObjectArray(), 1F);
 		
 		Machine machine = new Machine();
+		machine.history.maxSize = 2000;
 		machine.generatePatternRecognizers(4, 8);
 		machine.patternRecognizers.add(new PowerPatternRecognizer(8));
 		machine.patternRecognizers.add(new FibonacciPatternRecognizer(8));
@@ -41,16 +41,19 @@ public class TestMachine {
 		}
 		
 		feedPattern(machine);
-		runPatternRecognizers(machine);
+		predictNextInput(machine);
 		
 		feedPattern(machine);
-		runPatternRecognizers(machine);
+		predictNextInput(machine);
 		
 		feedPattern(machine);
-		runPatternRecognizers(machine);
-		
-		feedPattern(machine);
-		runPatternRecognizers(machine);
+		predictNextInput(machine);
+
+		for (int i = 0; i < 200; i++) {
+			feedPattern(machine);
+		}
+		Logger.debug(self, "History size: " + machine.history.list.size());
+		predictNextInput(machine);
 	}
 	
 	private static void testSimilarity(ObjectArray a, ObjectArray b, float expectedSimilarity) {
@@ -78,17 +81,9 @@ public class TestMachine {
 		machine.addInput(new ObjectArray(0F, 0.5F, 0F));		
 	}
 	
-	private static void runPatternRecognizers(Machine machine) {
-		Console.log("");
-		List<PatternRecognizerResult> results = machine.runPatternRecognizers(0F);
-		int i = 0;
-		for (PatternRecognizerResult result: results) {
-			PatternRecognizer pr = machine.patternRecognizers.get(i);
-			Console.log(pr.indexes + " = " + result.startIndexes + " " + result.similarity);
-			for (PatternRecognizerPrediction prediction: result.predictions) {
-				Console.log(" -> " + prediction.predictedInput + ": " + prediction.votes + " = " + prediction.confidence);
-			}
-			i++;
-		}
+	private static MachinePrediction predictNextInput(Machine machine) {
+		MachinePrediction r = machine.predictNextInput(0F);
+		Logger.debug(self, "Predicted next input:\n" + r + "\n");
+		return r;
 	}
 }

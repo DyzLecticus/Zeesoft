@@ -1,5 +1,7 @@
 package nl.zeesoft.zdk.im;
 
+import java.util.List;
+
 public class ObjectArray {
 	public Object[]		objects		= new Object[0];
 	
@@ -11,8 +13,17 @@ public class ObjectArray {
 		objects = new Object[length];
 	}
 	
-	public ObjectArray(Object... inputs) {
-		this.objects = inputs;
+	public ObjectArray(Object... values) {
+		objects = values;
+	}
+	
+	public ObjectArray(List<Object> values) {
+		objects = new Object[values.size()];
+		int i = 0;
+		for (Object value: values) {
+			objects[i] = value;
+			i++;
+		}
 	}
 	
 	@Override

@@ -3,10 +3,7 @@ package nl.zeesoft.zdk.im;
 public class SimilarityCalculator {
 	public float calculateSimilarity(ObjectArrayList a, ObjectArrayList b) {
 		float perc = 1;
-		int max = a.list.size();
-		if (max < b.list.size()) {
-			max = b.list.size();
-		}
+		int max = max(a.list.size(), b.list.size());
 		if (max > 0) {
 			perc = 0;
 			for (int i = 0; i < max; i++) {
@@ -21,10 +18,7 @@ public class SimilarityCalculator {
 	
 	public float calculateSimilarity(ObjectArray a, ObjectArray b) {
 		float perc = 1;
-		int max = a.objects.length;
-		if (max < b.objects.length) {
-			max = b.objects.length;
-		}
+		int max = max(a.objects.length, b.objects.length);
 		if (max > 0) {
 			perc = 0;
 			for (int i = 0; i < max; i++) {
@@ -76,5 +70,13 @@ public class SimilarityCalculator {
 		}
 		perc = 1F - (perc / 2F);
 		return perc;
+	}
+	
+	private int max(int a, int b) {
+		int r = a;
+		if (b > r) {
+			r = b;
+		}
+		return r;
 	}
 }

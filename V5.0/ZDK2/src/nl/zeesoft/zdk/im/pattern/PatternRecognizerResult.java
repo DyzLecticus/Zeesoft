@@ -7,9 +7,10 @@ import nl.zeesoft.zdk.im.ObjectArray;
 import nl.zeesoft.zdk.im.ObjectArrayList;
 
 public class PatternRecognizerResult {
-	public float								similarity		= 0F; 
-	public List<Integer>						startIndexes	= new ArrayList<Integer>();
-	public List<PatternRecognizerPrediction>	predictions		= new ArrayList<PatternRecognizerPrediction>();
+	public PatternRecognizer					patternRecognizer	= null;
+	public float								similarity			= 0F; 
+	public List<Integer>						startIndexes		= new ArrayList<Integer>();
+	public List<PatternRecognizerPrediction>	predictions			= new ArrayList<PatternRecognizerPrediction>();
 	
 	public void addPredictions(ObjectArrayList history, float similarity) {
 		int total = 0;

@@ -24,7 +24,13 @@ public class Machine {
 	public void addInput(ObjectArray input) {
 		history.add(input);
 	}
-	
+
+	public MachinePrediction predictNextInput(float minimumSimilarity) {
+		MachinePrediction r = new MachinePrediction();
+		r.results = runPatternRecognizers(minimumSimilarity);
+		return r;
+	}
+
 	public List<PatternRecognizerResult> runPatternRecognizers(float minimumSimilarity) {
 		List<PatternRecognizerResult> r = new ArrayList<PatternRecognizerResult>();
 		for (PatternRecognizer pr: patternRecognizers) {
