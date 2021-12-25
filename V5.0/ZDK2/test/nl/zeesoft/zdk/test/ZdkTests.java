@@ -5,6 +5,9 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.test.app.TestNeuralApp;
 import nl.zeesoft.zdk.test.blackbox.TestBlackbox;
 import nl.zeesoft.zdk.test.code.TestCodeAnalyzer;
+import nl.zeesoft.zdk.test.dai.TestObjMapList;
+import nl.zeesoft.zdk.test.dai.TestPatternRecognizer;
+import nl.zeesoft.zdk.test.dai.TestPredictor;
 import nl.zeesoft.zdk.test.function.TestExecutor;
 import nl.zeesoft.zdk.test.function.TestFunction;
 import nl.zeesoft.zdk.test.function.TestFunctionList;
@@ -97,11 +100,15 @@ public class ZdkTests {
 		Console.log("Test MatrixExecutor...");
 		TestMatrixExecutor.main(args);
 
-		Console.log("Test Blackbox ...");
+		// Experimental
+		Console.log("Test Blackbox (experimental) ...");
 		TestBlackbox.main(args);		
-
-		Console.log("Test Machine ...");
+		Console.log("Test Machine (experimental) ...");
 		TestMachine.main(args);		
+		Console.log("Test Dirty AI (experimental) ...");
+		TestObjMapList.main(args);		
+		TestPatternRecognizer.main(args);		
+		TestPredictor.main(args);		
 
 		ZdkNeuralTests.main(args);
 

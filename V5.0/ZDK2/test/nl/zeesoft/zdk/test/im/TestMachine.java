@@ -1,13 +1,12 @@
 package nl.zeesoft.zdk.test.im;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.im.Machine;
 import nl.zeesoft.zdk.im.MachinePrediction;
 import nl.zeesoft.zdk.im.ObjectArray;
+import nl.zeesoft.zdk.im.PropertySupport;
 import nl.zeesoft.zdk.im.SimilarityCalculator;
 import nl.zeesoft.zdk.im.pattern.FibonacciPatternRecognizer;
-import nl.zeesoft.zdk.im.pattern.PatternRecognizer;
 import nl.zeesoft.zdk.im.pattern.PowerPatternRecognizer;
 
 public class TestMachine {
@@ -16,6 +15,8 @@ public class TestMachine {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
+		assert new PropertySupport() != null;
+		
 		ObjectArray mi = new ObjectArray(0.1F, -2F);
 		testSimilarity(mi, mi, 1F);
 		testSimilarity(mi, new ObjectArray(0.1F, -2.1F), 0.9883721F);
@@ -36,9 +37,6 @@ public class TestMachine {
 		machine.generatePatternRecognizers(4, 8);
 		machine.patternRecognizers.add(new PowerPatternRecognizer(8));
 		machine.patternRecognizers.add(new FibonacciPatternRecognizer(8));
-		for (PatternRecognizer pr: machine.patternRecognizers) {
-			Console.log(pr.indexes);
-		}
 		
 		feedPattern(machine);
 		predictNextInput(machine);
