@@ -8,6 +8,14 @@ public class ObjMapList {
 	public List<String>		keys	= new ArrayList<String>();
 	public int				maxSize	= 1000;
 	
+	public ObjMapList() {
+		
+	}
+	
+	public ObjMapList(int maxSize) {
+		this.maxSize = maxSize;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();

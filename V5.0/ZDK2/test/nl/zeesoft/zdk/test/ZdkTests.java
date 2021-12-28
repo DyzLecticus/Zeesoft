@@ -6,6 +6,7 @@ import nl.zeesoft.zdk.test.app.TestNeuralApp;
 import nl.zeesoft.zdk.test.blackbox.TestBlackbox;
 import nl.zeesoft.zdk.test.code.TestCodeAnalyzer;
 import nl.zeesoft.zdk.test.dai.TestObjMapList;
+import nl.zeesoft.zdk.test.dai.TestOptimizer;
 import nl.zeesoft.zdk.test.dai.TestPatternRecognizer;
 import nl.zeesoft.zdk.test.dai.TestPredictor;
 import nl.zeesoft.zdk.test.function.TestExecutor;
@@ -109,6 +110,7 @@ public class ZdkTests {
 		TestObjMapList.main(args);		
 		TestPatternRecognizer.main(args);		
 		TestPredictor.main(args);		
+		TestOptimizer.main(args);		
 
 		ZdkNeuralTests.main(args);
 

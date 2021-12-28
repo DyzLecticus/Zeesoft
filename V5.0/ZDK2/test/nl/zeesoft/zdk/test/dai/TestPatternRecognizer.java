@@ -21,7 +21,7 @@ public class TestPatternRecognizer {
 		ObjMapComparator comparator = new ObjMapComparator();
 		
 		PatternRecognizer recognizers = new PatternRecognizer();
-		recognizers.generateDefaultPatternRecognizers(8);
+		recognizers.generateDefaultPatternRecognizers();
 		assert recognizers.patternRecognizers.size() == 8;
 		
 		recognizers.detectPatterns(history, comparator);

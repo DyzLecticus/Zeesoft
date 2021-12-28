@@ -26,7 +26,7 @@ public class TestPredictor {
 		ObjMapComparator comparator = new ObjMapComparator();
 		
 		PatternRecognizer patternRecognizer = new PatternRecognizer();
-		patternRecognizer.generateDefaultPatternRecognizers(8);
+		patternRecognizer.generateDefaultPatternRecognizers();
 		
 		Predictor predictor = new Predictor();
 
@@ -34,7 +34,7 @@ public class TestPredictor {
 		patternRecognizer.detectPatterns(history, comparator);
 		Prediction prediction = predictor.generatePrediction(history, patternRecognizer);
 		Logger.debug(self, "Prediction;\n" + prediction);
-		Logger.debug(self, "Predicted map;" + prediction.getPredictedMap() + ", confidences: " + prediction.getPredictedMapConfidences());
+		Logger.debug(self, "Predicted map; " + prediction.getPredictedMap() + ", confidences: " + prediction.getPredictedMapConfidences());
 		
 		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 2.0F, 0.0F));
 		

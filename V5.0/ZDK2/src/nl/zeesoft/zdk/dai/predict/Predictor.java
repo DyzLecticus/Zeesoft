@@ -4,20 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.dai.ObjMap;
+import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.recognize.ListPatternRecognizer;
 import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
 
 public class Predictor {
+	public PredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator) {
+		return getPredictions(history, patternRecognizer, comparator, 0);
+	}
+	
+	public PredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator, int maxDepth) {
+		PredictionList r = new PredictionList(history.maxSize);
+		ObjMapList workingHistory = new ObjMapList(history.maxSize);
+		for (int i = history.list.size() - 1; i >= 0; i--) {
+			workingHistory.add(history.list.get(i));
+			patternRecognizer.detectPatterns(workingHistory, comparator, maxDepth);
+			r.add(generatePrediction(workingHistory, patternRecognizer));
+		}
+		return r;
+	}
+	
 	public Prediction generatePrediction(ObjMapList history, PatternRecognizer patternRecognizer) {
 		Prediction r = new Prediction(patternRecognizer, history.keys);
-		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-			r.objMapPredictions.addAll(getPredictions(history, lpr));
-		}
+		addObjMapPredictions(r, history, patternRecognizer);
 		addKeyPredictions(r);
 		orderKeyPredictions(r);
 		calculateKeyPredictionConfidences(r);
 		return r;
+	}
+
+	public void addObjMapPredictions(Prediction prediction, ObjMapList history, PatternRecognizer patternRecognizer) {
+		if (history.list.size()==1) {
+			for (String key: prediction.keys) {
+				prediction.keyPredictions.add(new KeyPrediction(key, history.list.get(0).values.get(key)));
+			}
+		} else {
+			for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
+				prediction.objMapPredictions.addAll(getPredictions(history, lpr));
+			}
+		}
 	}
 
 	public List<ObjMapPrediction> getPredictions(ObjMapList history, ListPatternRecognizer lpr) {
@@ -31,7 +57,7 @@ public class Predictor {
 		}
 		if (total>0) {
 			for (ObjMapPrediction p: r) {
-				p.confidence = ((float)p.votes / (float)total) * lpr.similarity;
+				p.confidence = ((float)p.votes / (float)total) * lpr.similarity * lpr.weight;
 			}
 		}
 		return r;
@@ -99,7 +125,9 @@ public class Predictor {
 					if (list.size()>(i+1)) {
 						nextSupport = list.get(i+1).support;
 					}
-					keyPrediction.confidence = (keyPrediction.support - nextSupport) / total;
+					if (keyPrediction.support > nextSupport && total > 0F) {
+						keyPrediction.confidence = (keyPrediction.support - nextSupport) / total;
+					}
 					i++;
 				}
 			}

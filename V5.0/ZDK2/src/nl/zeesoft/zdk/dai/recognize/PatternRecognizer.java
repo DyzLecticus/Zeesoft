@@ -21,25 +21,32 @@ public class PatternRecognizer {
 		return str.toString();
 	}
 	
-	public void generateDefaultPatternRecognizers(int size) {
-		generatePatternRecognizers(size - 2,size);
-		patternRecognizers.add(new FibonacciPatternRecognizer(size));
-		patternRecognizers.add(new PowerPatternRecognizer(size));
+	public void generateDefaultPatternRecognizers() {
+		generatePatternRecognizers(8, 8);
 	}
 
 	public void generatePatternRecognizers(int num, int depth) {
-		for (int i = 0; i < num; i++) {
+		for (int i = 0; i < (num - 2); i++) {
 			ListPatternRecognizer pr = new ListPatternRecognizer();
 			for (int d = 0; d < depth * (i + 1); d += (i+1)) {
 				pr.indexes.add(d);
 			}
 			patternRecognizers.add(pr);
 		}
+		patternRecognizers.add(new FibonacciPatternRecognizer(depth));
+		patternRecognizers.add(new PowerPatternRecognizer(depth));
 	}
 	
 	public void detectPatterns(ObjMapList history, ObjMapComparator comparator) {
+		detectPatterns(history, comparator, 0);
+	}
+	
+	public void detectPatterns(ObjMapList history, ObjMapComparator comparator, int maxDepth) {
+		if (maxDepth<=0) {
+			maxDepth = history.list.size();
+		}
 		for (ListPatternRecognizer lpr: patternRecognizers) {
-			lpr.calculatePatternSimilarity(history, comparator);
+			lpr.calculatePatternSimilarity(history, comparator, maxDepth);
 		}
 	}
 }

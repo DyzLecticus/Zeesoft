@@ -12,16 +12,23 @@ public class ListPatternRecognizer {
 	public float					similarity		= 0F;
 	public List<Integer>			startIndexes	= new ArrayList<Integer>();
 	
+	public float					accuracy		= 1F;
+	public float					weight			= 1F;
+	
 	@Override
 	public String toString() {
 		return indexes + " -> " + startIndexes + " = " + similarity;
 	}
 	
-	public float calculatePatternSimilarity(ObjMapList history, ObjMapComparator comparator) {
+	public float calculatePatternSimilarity(ObjMapList history, ObjMapComparator comparator, int maxDepth) {
 		similarity = 0F;
 		startIndexes.clear();
 		ObjMapList baseList = getSubList(history, 0);
-		for (int s = 1; s < history.list.size(); s++) {
+		int max = history.list.size();
+		if (max > maxDepth) {
+			max = maxDepth;
+		}
+		for (int s = 1; s < max; s++) {
 			checkSublist(history, comparator, baseList, s);
 		}
 		return similarity;

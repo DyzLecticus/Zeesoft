@@ -9,6 +9,8 @@ public class ObjMapPrediction {
 	public int						votes				= 0;
 	public float					confidence			= 0F;
 	
+	public float					accuracy			= 0F;
+	
 	public ObjMapPrediction() {
 		
 	}
