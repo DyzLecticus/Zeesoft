@@ -25,8 +25,8 @@ public class Predictor {
 		return r;
 	}
 	
-	public Prediction generatePrediction(ObjMapList history, PatternRecognizer patternRecognizer) {
-		Prediction r = new Prediction(patternRecognizer, history.keys);
+	public PrPrediction generatePrediction(ObjMapList history, PatternRecognizer patternRecognizer) {
+		PrPrediction r = new PrPrediction(patternRecognizer, history.keys);
 		addObjMapPredictions(r, history, patternRecognizer);
 		addKeyPredictions(r);
 		orderKeyPredictions(r);
@@ -34,7 +34,7 @@ public class Predictor {
 		return r;
 	}
 
-	public void addObjMapPredictions(Prediction prediction, ObjMapList history, PatternRecognizer patternRecognizer) {
+	public void addObjMapPredictions(PrPrediction prediction, ObjMapList history, PatternRecognizer patternRecognizer) {
 		if (history.list.size()==1) {
 			for (String key: prediction.keys) {
 				prediction.keyPredictions.add(new KeyPrediction(key, history.list.get(0).values.get(key)));
@@ -57,7 +57,7 @@ public class Predictor {
 		}
 		if (total>0) {
 			for (ObjMapPrediction p: r) {
-				p.confidence = ((float)p.votes / (float)total) * lpr.similarity * lpr.weight;
+				p.confidence = ((float)p.votes / (float)total) * lpr.similarity;
 			}
 		}
 		return r;
@@ -83,7 +83,7 @@ public class Predictor {
 		return r;
 	}
 
-	public void addKeyPredictions(Prediction prediction) {
+	public void addKeyPredictions(PrPrediction prediction) {
 		for (ObjMapPrediction objMapPrediction: prediction.objMapPredictions) {
 			for (String key: objMapPrediction.predictedMap.values.keySet()) {
 				KeyPrediction kp = prediction.getOrAddPrediction(key, objMapPrediction.predictedMap.values.get(key));
@@ -93,7 +93,7 @@ public class Predictor {
 		}
 	}
 	
-	public void orderKeyPredictions(Prediction prediction) {
+	public void orderKeyPredictions(PrPrediction prediction) {
 		List<KeyPrediction> list = new ArrayList<KeyPrediction>();
 		for (KeyPrediction keyPrediction: prediction.keyPredictions) {
 			boolean added = false;
@@ -111,7 +111,7 @@ public class Predictor {
 		prediction.keyPredictions = list;
 	}
 	
-	public void calculateKeyPredictionConfidences(Prediction prediction) {
+	public void calculateKeyPredictionConfidences(PrPrediction prediction) {
 		for (String key: prediction.keys) {
 			float total = 0F;
 			List<KeyPrediction> list = prediction.getPredictions(key);

@@ -9,11 +9,9 @@ import nl.zeesoft.zdk.dai.ObjMapList;
 public class ListPatternRecognizer {
 	public List<Integer>			indexes			= new ArrayList<Integer>();
 	
+	public ObjMapList				baseList		= null;
 	public float					similarity		= 0F;
 	public List<Integer>			startIndexes	= new ArrayList<Integer>();
-	
-	public float					accuracy		= 1F;
-	public float					weight			= 1F;
 	
 	@Override
 	public String toString() {
@@ -21,9 +19,9 @@ public class ListPatternRecognizer {
 	}
 	
 	public float calculatePatternSimilarity(ObjMapList history, ObjMapComparator comparator, int maxDepth) {
+		baseList = history.getSubList(0,indexes);
 		similarity = 0F;
 		startIndexes.clear();
-		ObjMapList baseList = getSubList(history, 0);
 		int max = history.list.size();
 		if (max > maxDepth) {
 			max = maxDepth;
@@ -35,7 +33,7 @@ public class ListPatternRecognizer {
 	}
 	
 	public void checkSublist(ObjMapList history, ObjMapComparator comparator, ObjMapList baseList, int start) {
-		ObjMapList subList = getSubList(history, start);
+		ObjMapList subList = history.getSubList(start, indexes);
 		float sim = comparator.calculateSimilarity(baseList, subList);
 		if (sim>0F) {
 			if (sim > similarity) {
@@ -47,15 +45,4 @@ public class ListPatternRecognizer {
 			}
 		}
 	}
-	
-	public ObjMapList getSubList(ObjMapList history, int start) {
-		ObjMapList subList = new ObjMapList();
-		for (Integer index: indexes) {
-			int i = start + index;
-			if (i < history.list.size()) {
-				subList.list.add(history.list.get(i));
-			}
-		}
-		return subList;
-	}			
 }

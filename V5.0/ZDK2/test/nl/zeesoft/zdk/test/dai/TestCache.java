@@ -13,20 +13,19 @@ import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
-import nl.zeesoft.zdk.dai.optimize.Optimizer;
+import nl.zeesoft.zdk.dai.analyze.Analyzer;
 import nl.zeesoft.zdk.dai.predict.KeyPrediction;
 import nl.zeesoft.zdk.dai.predict.ObjMapPrediction;
-import nl.zeesoft.zdk.dai.predict.Prediction;
+import nl.zeesoft.zdk.dai.predict.PrPrediction;
 import nl.zeesoft.zdk.dai.predict.PredictionList;
 import nl.zeesoft.zdk.dai.predict.Predictor;
-import nl.zeesoft.zdk.dai.recognize.ListPatternRecognizer;
 import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
 
-public class TestOptimizer {
+public class TestCache {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
-		assert new Prediction() != null;
+		assert new PrPrediction() != null;
 		assert new ObjMapPrediction() != null;
 		assert new KeyPrediction() != null;
 		
@@ -40,7 +39,7 @@ public class TestOptimizer {
 		
 		Predictor predictor = new Predictor();
 		
-		Optimizer optimizer = new Optimizer();
+		Analyzer analyzer = new Analyzer();
 		
 		File f = new File("resources/rec-center-hourly.csv");
 		try {
@@ -72,87 +71,37 @@ public class TestOptimizer {
 		
 		Console.log("History: " + history.list.size());
 		
+		long start = System.currentTimeMillis();
 		Console.log("Generating predictions ...");
-		PredictionList predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
-		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
-		Console.log(predictions.list.get(0));
-
-		Console.log("Optimizing ...");
-		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
-		}
-		
-		Console.log("Generating predictions ...");
-		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
-		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
+		PredictionList predictions = predictor.getPredictions(history, patternRecognizer, comparator);
+		Console.log("Generating predictions took: " + (System.currentTimeMillis() - start) + " ms");
+		Console.log(analyzer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
 		Console.log(predictions.list.get(0));
 		
-		Console.log("Optimizing ...");
-		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
-		}
 		
-		Console.log("Generating predictions ...");
-		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
-		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
-		Console.log(predictions.list.get(0));
 		
 		/*
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-
-		List<Prediction> predictions = predictor.getPredictions(history, patternRecognizer, comparator);
-		
-		//Console.log(optimizer.getErrors(history, predictions, comparator));
-		//SortedMap<String, Float> accuracy = optimizer.getKeyAccuracy(history, predictions, comparator);
-		//for (Entry<String, Float> entry: accuracy.entrySet()) {
-		//	Console.log(entry.getKey() + " = " + entry.getValue());
-		//}
-		Console.log(optimizer.getAccuracy(history, predictions, comparator));
-		
-		for (int i = 0; i < 4; i++) {
-			optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-			predictions = predictor.getPredictions(history, patternRecognizer, comparator);
-			Console.log(optimizer.getAccuracy(history, predictions, comparator));
-		}
-		
+		Console.log("Optimizing ...");
+		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
 		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
 			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
 		}
 		
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		TestPatternRecognizer.feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-		feedPattern(history);
-
-		predictions = predictor.getPredictions(history, patternRecognizer, comparator);
-		Console.log(optimizer.getAccuracy(history, predictions, comparator));
-
-		for (int i = 0; i < 10; i++) {
-			optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-			predictions = predictor.getPredictions(history, patternRecognizer, comparator);
-			Console.log(optimizer.getAccuracy(history, predictions, comparator));
-		}
-
+		Console.log("Generating predictions ...");
+		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
+		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
+		Console.log(predictions.list.get(0));
+		
+		Console.log("Optimizing ...");
+		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
 		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
 			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
 		}
+		
+		Console.log("Generating predictions ...");
+		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
+		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
+		Console.log(predictions.list.get(0));
 		*/
 	}
 

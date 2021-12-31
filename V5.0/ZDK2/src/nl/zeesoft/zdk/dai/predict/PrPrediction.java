@@ -7,17 +7,17 @@ import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.recognize.ListPatternRecognizer;
 import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
 
-public class Prediction {
+public class PrPrediction {
 	public PatternRecognizer		patternRecognizer		= null;
-	public List<String>				keys					= null;
+	public List<String>				keys					= null;	
 	public List<ObjMapPrediction>	objMapPredictions 		= new ArrayList<ObjMapPrediction>();
 	public List<KeyPrediction>		keyPredictions			= new ArrayList<KeyPrediction>();
 	
-	public Prediction() {
+	public PrPrediction() {
 		
 	}
 	
-	public Prediction(PatternRecognizer pr, List<String> keys) {
+	public PrPrediction(PatternRecognizer pr, List<String> keys) {
 		this.patternRecognizer = pr;
 		this.keys = keys;
 	}

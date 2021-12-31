@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import nl.zeesoft.zdk.dai.ObjMap;
 
 public class PredictionList {
-	public List<Prediction>		list	= new ArrayList<Prediction>();
+	public List<PrPrediction>		list	= new ArrayList<PrPrediction>();
 	public int					maxSize	= 1000;
 	
 	public PredictionList() {
@@ -23,7 +23,7 @@ public class PredictionList {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		for (Prediction prediction: list) {
+		for (PrPrediction prediction: list) {
 			if (str.length()>0) {
 				str.append("\n");
 			}
@@ -32,13 +32,13 @@ public class PredictionList {
 		return str.toString();
 	}
 	
-	public void add(Prediction prediction) {
+	public void add(PrPrediction prediction) {
 		this.list.add(0, prediction);
 		applyMaxSize();
 	}
 	
-	public void addAll(List<Prediction> list) {
-		for (Prediction prediction: list) {
+	public void addAll(List<PrPrediction> list) {
+		for (PrPrediction prediction: list) {
 			this.list.add(0, prediction);
 		}
 		applyMaxSize();
@@ -58,7 +58,7 @@ public class PredictionList {
 		SortedMap<String,Float> r = new TreeMap<String,Float>();
 		SortedMap<String,Float> totals = new TreeMap<String,Float>();
 		SortedMap<String,Integer> counts = new TreeMap<String,Integer>();
-		for (Prediction prediction: list) {
+		for (PrPrediction prediction: list) {
 			addConfidences(prediction.getPredictedMapConfidences(), totals, counts);
 		}
 		for (Entry<String,Float> entry: totals.entrySet()) {
