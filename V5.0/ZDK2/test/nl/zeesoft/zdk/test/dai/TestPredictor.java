@@ -30,7 +30,7 @@ public class TestPredictor {
 		
 		Predictor predictor = new Predictor();
 
-		TestPatternRecognizer.feedPattern(history);
+		history.addAll(TestHistory.getPattern());
 		patternRecognizer.detectPatterns(history, comparator);
 		PrPrediction prediction = predictor.generatePrediction(history, patternRecognizer);
 		Logger.debug(self, "Prediction;\n" + prediction);
@@ -38,7 +38,7 @@ public class TestPredictor {
 		
 		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0.0F));
 		
-		TestPatternRecognizer.feedPattern(history);
+		history.addAll(TestHistory.getPattern());
 		patternRecognizer.detectPatterns(history, comparator);
 		prediction = predictor.generatePrediction(history, patternRecognizer);
 		Logger.debug(self, "Prediction;\n" + prediction);

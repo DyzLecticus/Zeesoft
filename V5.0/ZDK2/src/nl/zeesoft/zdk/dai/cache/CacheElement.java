@@ -1,15 +1,18 @@
-package nl.zeesoft.zdk.dai;
+package nl.zeesoft.zdk.dai.cache;
 
-public class HistoryCache {
+import nl.zeesoft.zdk.dai.ObjMap;
+import nl.zeesoft.zdk.dai.ObjMapList;
+
+public class CacheElement {
 	public ObjMapList 	baseList 	= null;
 	public ObjMap		nextMap		= null;
 	public int			count		= 0;
 	
-	public HistoryCache() {
+	public CacheElement() {
 		
 	}
 	
-	public HistoryCache(ObjMapList baseList, ObjMap nextInput) {
+	public CacheElement(ObjMapList baseList, ObjMap nextInput) {
 		this.baseList = baseList;
 		this.nextMap = nextInput;
 	}

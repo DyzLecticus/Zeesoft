@@ -1,13 +1,8 @@
 package nl.zeesoft.zdk.test.dai;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.History;
-import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
-import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.Prediction;
 import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
 
@@ -50,30 +45,5 @@ public class TestPatternRecognizer {
 		
 		Prediction prediction = recognizer.getPrediction(history, recognizer);
 		Logger.debug(self, "Prediction;\n" + prediction);
-	}
-
-	public static List<ObjMap> getPattern() {
-		List<ObjMap> r = new ArrayList<ObjMap>();
-		r.add(new ObjMap(2F, 1F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(2F, 1F, 2F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(2F, 1F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(2F, 1F, 2F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(1F, 2F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));		
-		return r;
-	}
-	
-	public static void feedPattern(ObjMapList history) {
-		history.addAll(getPattern());
 	}
 }

@@ -1,17 +1,20 @@
-package nl.zeesoft.zdk.dai;
+package nl.zeesoft.zdk.dai.cache;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.zeesoft.zdk.dai.MapPrediction;
+import nl.zeesoft.zdk.dai.Prediction;
+
 public class CacheResult {
-	public List<HistoryCache>			results					= new ArrayList<HistoryCache>();
+	public List<CacheElement>			results					= new ArrayList<CacheElement>();
 	public float						similarity				= 0F;
 	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("Similarity: " + similarity);
-		for (HistoryCache cache: results) {
+		for (CacheElement cache: results) {
 			str.append("\n");
 			str.append(cache.nextMap + ", count: " + cache.count);
 		}
@@ -27,7 +30,7 @@ public class CacheResult {
 	
 	public void addMapPredictions(Prediction prediction) {
 		int total = 0;
-		for (HistoryCache cache: results) {
+		for (CacheElement cache: results) {
 			MapPrediction mp = prediction.getOrAddMapPrediction(cache.nextMap);
 			mp.votes += cache.count;
 			total += cache.count;
