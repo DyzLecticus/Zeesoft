@@ -4,13 +4,35 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
-import nl.zeesoft.zdk.dai.predict.PredictionList;
+import nl.zeesoft.zdk.dai.cache.CacheResult;
+import nl.zeesoft.zdk.dai.predict.PrPredictionList;
 
-public class Analyzer {	
-	public Float getAccuracy(ObjMapList history, PredictionList predictions, ObjMapComparator comparator) {
+public class Analyzer {
+	public PredictionList getUntrainedPredictions(History history, ObjMapComparator comparator) {
+		PredictionList r = new PredictionList(history);
+		History workingHistory = new History(history.maxSize);
+		for (int i = history.list.size() - 1; i >= 0; i--) {
+			workingHistory.add(history.list.get(i));
+			CacheResult result = workingHistory.getCacheResult(comparator, 0F);
+			r.add(result.getPrediction());
+		}
+		return r;
+	}
+	
+	public PredictionList getPredictions(History history, ObjMapComparator comparator) {
+		PredictionList r = new PredictionList(history);
+		for (int i = history.list.size() - 1; i >= 0; i--) {
+			CacheResult result = history.getCacheResult(comparator, 0F, i);
+			r.add(result.getPrediction());
+		}
+		return r;
+	}
+	
+	public Float getAccuracy(ObjMapList history, PrPredictionList predictions, ObjMapComparator comparator) {
 		float r = 0F;
 		SortedMap<String, Float> keyAccuracy = getKeyAccuracies(history, predictions, comparator);
 		for (Float accuracy: keyAccuracy.values()) {
@@ -22,11 +44,11 @@ public class Analyzer {
 		return r;
 	}
 	
-	public Float getKeyAccuracy(ObjMapList history, PredictionList predictions, ObjMapComparator comparator, String key) {
+	public Float getKeyAccuracy(ObjMapList history, PrPredictionList predictions, ObjMapComparator comparator, String key) {
 		return getKeyAccuracies(history, predictions, comparator).get(key);
 	}
 	
-	public SortedMap<String,Float> getKeyAccuracies(ObjMapList history, PredictionList predictions, ObjMapComparator comparator) {
+	public SortedMap<String,Float> getKeyAccuracies(ObjMapList history, PrPredictionList predictions, ObjMapComparator comparator) {
 		return getKeyAccuracy(getErrors(history, predictions, comparator));
 	}
 
@@ -59,7 +81,7 @@ public class Analyzer {
 		}
 	}
 	
-	public ObjMapList getErrors(ObjMapList history, PredictionList predictions, ObjMapComparator comparator) {
+	public ObjMapList getErrors(ObjMapList history, PrPredictionList predictions, ObjMapComparator comparator) {
 		ObjMapList r = new ObjMapList(history.maxSize);
 		for (int i = history.list.size() - 1; i > 0; i--) {
 			addErrorMap(r, comparator, predictions.list.get(i).getPredictedMap(), history.list.get(i - 1));

@@ -8,15 +8,15 @@ import java.util.TreeMap;
 
 import nl.zeesoft.zdk.dai.ObjMap;
 
-public class PredictionList {
+public class PrPredictionList {
 	public List<PrPrediction>		list	= new ArrayList<PrPrediction>();
 	public int					maxSize	= 1000;
 	
-	public PredictionList() {
+	public PrPredictionList() {
 		
 	}
 	
-	public PredictionList(int maxSize) {
+	public PrPredictionList(int maxSize) {
 		this.maxSize = maxSize;
 	}
 	

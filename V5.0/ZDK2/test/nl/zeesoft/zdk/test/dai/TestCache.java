@@ -2,45 +2,32 @@ package nl.zeesoft.zdk.test.dai;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Scanner;
 
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
+import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
-import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.analyze.Analyzer;
-import nl.zeesoft.zdk.dai.predict.KeyPrediction;
-import nl.zeesoft.zdk.dai.predict.ObjMapPrediction;
-import nl.zeesoft.zdk.dai.predict.PrPrediction;
-import nl.zeesoft.zdk.dai.predict.PredictionList;
-import nl.zeesoft.zdk.dai.predict.Predictor;
-import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
+import nl.zeesoft.zdk.dai.analyze.PredictionList;
+import nl.zeesoft.zdk.dai.cache.Cache;
+import nl.zeesoft.zdk.dai.cache.SuperCacheBuilder;
 
 public class TestCache {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
-
-		assert new PrPrediction() != null;
-		assert new ObjMapPrediction() != null;
-		assert new KeyPrediction() != null;
 		
-		ObjMapList history = new ObjMapList();
-		history.maxSize = 10000;
+		History history = new History(5000);
 		
 		ObjMapComparator comparator = new ObjMapComparator();
 		
-		PatternRecognizer patternRecognizer = new PatternRecognizer();
-		patternRecognizer.generateDefaultPatternRecognizers();
-		
-		Predictor predictor = new Predictor();
-		
 		Analyzer analyzer = new Analyzer();
 		
+		Console.log("Reading file ...");
+		int num = 0;
 		File f = new File("resources/rec-center-hourly.csv");
 		try {
 			Scanner myReader = new Scanner(f);
@@ -62,67 +49,61 @@ public class TestCache {
 					cal.set(Calendar.SECOND, 0);
 					cal.set(Calendar.MILLISECOND, 0);
 					history.add(new ObjMap(cal.get(Calendar.DAY_OF_WEEK), cal.get(Calendar.HOUR_OF_DAY), val));
+					num++;
 				}
 			}
 			myReader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
-		Console.log("History: " + history.list.size());
-		
-		long start = System.currentTimeMillis();
-		Console.log("Generating predictions ...");
-		PredictionList predictions = predictor.getPredictions(history, patternRecognizer, comparator);
-		Console.log("Generating predictions took: " + (System.currentTimeMillis() - start) + " ms");
-		Console.log(analyzer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
-		Console.log(predictions.list.get(0));
-		
-		
-		
-		/*
-		Console.log("Optimizing ...");
-		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
-		}
-		
-		Console.log("Generating predictions ...");
-		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
-		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
-		Console.log(predictions.list.get(0));
-		
-		Console.log("Optimizing ...");
-		optimizer.calculatePatternRecognizerWeights(patternRecognizer, history, predictions, comparator);
-		for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-			Console.log(lpr.indexes + " = " + lpr.accuracy + " > " + lpr.weight);
-		}
-		
-		Console.log("Generating predictions ...");
-		predictions = predictor.getPredictions(history, patternRecognizer, comparator, 500);
-		Console.log(optimizer.getKeyAccuracy(history, predictions, comparator, "3") + " " + predictions.getKeyConfidence("3"));
-		Console.log(predictions.list.get(0));
-		*/
-	}
+		Console.log("Records: " + num);
 
-	public static List<ObjMap> getPattern() {
-		List<ObjMap> r = new ArrayList<ObjMap>();
-		r.add(new ObjMap(2F, 2F, 2F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 0F));
-		r.add(new ObjMap(2F, 1F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 2F));
-		r.add(new ObjMap(2F, 1F, 0F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(0F, 2F, 0F));
-		r.add(new ObjMap(2F, 1F, 2F));
-		r.add(new ObjMap(0F, 0.5F, 0F));
-		r.add(new ObjMap(1F, 2F, 0F));
+		/*
+		Console.log("");
+		PredictionList predictions = generatePredictions(analyzer, history, comparator, true);
+		predictions = analyzer.getUntrainedPredictions(history, comparator);
+		assert predictions.list.size() == num;
+		
+		Console.log("");
+		predictions = generatePredictions(analyzer, history, comparator, false);
+		*/
+		
+		Cache originalCache = history.cache;
+
+		Console.log("");
+		history.cache = buildSuperCache(originalCache, history, comparator, 0.9F); 
+		generatePredictions(analyzer, history, comparator, false);
+		
+		Console.log("");
+		history.cache = buildSuperCache(originalCache, history, comparator, 0.8F); 
+		generatePredictions(analyzer, history, comparator, false);
+	}
+	
+	public static PredictionList generatePredictions(Analyzer analyzer, History history, ObjMapComparator comparator, boolean untrained) {
+		PredictionList r = null;
+		long start = System.currentTimeMillis();
+		if (untrained) {
+			Console.log("Generating untrained predictions ...");
+			r = analyzer.getUntrainedPredictions(history, comparator);
+			Console.log("Generating untrained predictions took: " + (System.currentTimeMillis() - start) + " ms");
+		} else {
+			Console.log("Generating predictions ...");
+			r = analyzer.getPredictions(history, comparator);
+			Console.log("Generating predictions took: " + (System.currentTimeMillis() - start) + " ms");
+		}
+		Console.log("Accuracy: " + r.getKeyAccuracy("3", comparator) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", comparator));
+		Console.log("Confidence: " + r.getKeyConfidence("3") + ", standard deviation: " + r.getKeyConfidenceStdDev("3"));
 		return r;
 	}
 	
-	public static void feedPattern(ObjMapList history) {
-		history.addAll(getPattern());
+	public static Cache buildSuperCache(Cache originalCache, History history, ObjMapComparator comparator, float mergeSimilarity) {
+		Cache r = null;
+		long start = System.currentTimeMillis();
+		Console.log("Building super cache ...");
+		SuperCacheBuilder builder = new SuperCacheBuilder();
+		r = builder.buildSuperCache(originalCache, comparator, mergeSimilarity);
+		Console.log("Building super cache took: " + (System.currentTimeMillis() - start) + " ms");
+		Console.log("Relative super cache size: " + ((float)r.elements.size() / (float)history.cache.elements.size()));
+		return r;
 	}
 }

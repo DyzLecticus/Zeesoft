@@ -25,7 +25,21 @@ public class History extends ObjMapList {
 	}
 	
 	public CacheResult getCacheResult(ObjMapComparator comparator, float minSimilarity) {
-		return cache.getCacheResult(getSubList(0, cache.indexes), comparator, minSimilarity);
+		return getCacheResult(comparator, minSimilarity, 0);
+	}
+	
+	public CacheResult getCacheResult(ObjMapComparator comparator, float minSimilarity, int index) {
+		if (index >= list.size()) {
+			index = list.size() - 1;
+		}
+		CacheResult r = cache.getCacheResult(getSubList(index, cache.indexes), comparator, minSimilarity);
+		if (list.size()==1) {
+			CacheElement ce = new CacheElement();
+			ce.nextMap = list.get(0);
+			r.results.add(ce);
+			r.similarity = 1F;
+		}
+		return r;
 	}
 	
 	public CacheElement hitCache() {

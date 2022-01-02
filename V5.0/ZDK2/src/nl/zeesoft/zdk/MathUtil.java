@@ -7,6 +7,17 @@ public class MathUtil {
 		return (float) Math.sqrt((len1 * len1) + (len2 * len2));
 	}
 	
+	public static float getAverage(List<Float> values) {
+		float r = 0.0F;
+		for (Float value: values) {
+			r += value;
+		}
+		if (values.size()>0) {
+			r = r / (float)values.size();
+		}
+		return r;
+	}
+	
 	public static float getStandardDeviation(List<Float> values) {
 		float r = 0.0F;
 		if (values.size()>1) {

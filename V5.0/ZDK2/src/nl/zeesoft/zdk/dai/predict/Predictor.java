@@ -10,12 +10,12 @@ import nl.zeesoft.zdk.dai.recognize.ListPatternRecognizer;
 import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
 
 public class Predictor {
-	public PredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator) {
+	public PrPredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator) {
 		return getPredictions(history, patternRecognizer, comparator, 0);
 	}
 	
-	public PredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator, int maxDepth) {
-		PredictionList r = new PredictionList(history.maxSize);
+	public PrPredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator, int maxDepth) {
+		PrPredictionList r = new PrPredictionList(history.maxSize);
 		ObjMapList workingHistory = new ObjMapList(history.maxSize);
 		for (int i = history.list.size() - 1; i >= 0; i--) {
 			workingHistory.add(history.list.get(i));

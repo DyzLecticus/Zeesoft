@@ -7,8 +7,8 @@ import nl.zeesoft.zdk.dai.MapPrediction;
 import nl.zeesoft.zdk.dai.Prediction;
 
 public class CacheResult {
-	public List<CacheElement>			results					= new ArrayList<CacheElement>();
-	public float						similarity				= 0F;
+	public List<CacheElement>	results		= new ArrayList<CacheElement>();
+	public float				similarity	= 0F;
 	
 	@Override
 	public String toString() {
