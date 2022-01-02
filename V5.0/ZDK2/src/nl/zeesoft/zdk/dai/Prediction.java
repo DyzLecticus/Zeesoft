@@ -71,29 +71,41 @@ public class Prediction {
 	
 	public void calculateKeyPredictionConfidences(List<String> keys) {
 		for (String key: keys) {
-			float total = 0F;
 			List<KeyPrediction> list = getKeyPredictions(key);
-			if (list.size()>0) {
-				for (KeyPrediction prediction: list) {
-					total += prediction.support;
-				}
-				int i = 0;
-				for (KeyPrediction prediction: list) {
-					float nextSupport = 0F;
-					if (list.size()>(i+1)) {
-						nextSupport = list.get(i+1).support;
-					}
-					if (prediction.support > nextSupport && total > 0F) {
-						prediction.confidence = (prediction.support - nextSupport) / total;
-					}
-					if (i==0) {
-						predictedMap.values.put(key, prediction.predictedValue);
-						predictedConfidencesMap.values.put(key, prediction.confidence);
-					}
-					i++;
-				}
+			if (list.size()==1) {
+				KeyPrediction prediction = list.get(0);
+				prediction.confidence = prediction.support;
+				setPredictedMapValueAndConfidence(key, prediction.predictedValue, prediction.confidence);
+			} else if (list.size()>1) {
+				calculateRelativePredictionConfidences(list, key);
 			}
 		}
+	}
+	
+	public void calculateRelativePredictionConfidences(List<KeyPrediction> list, String key) {
+		float total = 0F;
+		for (KeyPrediction prediction: list) {
+			total += prediction.support;
+		}
+		int i = 0;
+		for (KeyPrediction prediction: list) {
+			float nextSupport = 0F;
+			if (list.size()>(i+1)) {
+				nextSupport = list.get(i+1).support;
+			}
+			if (prediction.support > nextSupport && total > 0F) {
+				prediction.confidence = (prediction.support - nextSupport) / total;
+			}
+			if (i==0) {
+				setPredictedMapValueAndConfidence(key, prediction.predictedValue, prediction.confidence);
+			}
+			i++;
+		}
+	}
+	
+	public void setPredictedMapValueAndConfidence(String key, Object value, float confidence) {
+		predictedMap.values.put(key, value);
+		predictedConfidencesMap.values.put(key, confidence);
 	}
 
 	public MapPrediction getMapPrediction(ObjMap predictedMap) {

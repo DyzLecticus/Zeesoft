@@ -75,21 +75,22 @@ public class TestHistory {
 		assert prediction.mapPredictions.get(0).toString().equals("{1:2.0, 2:1.0, 3:0.0}, votes: 1, confidence: 0.9166667");
 		assert prediction.keyPredictions.size() == 3;
 		assert prediction.predictedMap.equals(new ObjMap(2.0F, 1.0F, 0F));
-		assert prediction.predictedConfidencesMap.equals(new ObjMap(1F, 1F, 1F));
+		assert prediction.predictedConfidencesMap.equals(new ObjMap(0.9166667F, 0.9166667F, 0.9166667F));
 		
 		SuperCacheBuilder builder = new SuperCacheBuilder();
 		
 		Cache superCache = builder.buildSuperCache(history.cache, comparator, 0.9F);
-		Console.log(superCache.elements.size());
+		assert superCache.elements.size() == 10;
 		result = superCache.getCacheResult(history.getSubList(0, superCache.indexes), comparator, 0.5F);
 		prediction = result.getPrediction();
 		Logger.debug(self, "Super cache prediction;\n" + prediction);
 		
 		Cache superSuperCache = builder.buildSuperCache(superCache, comparator, 0.6F);
-		Console.log(superSuperCache.elements.size());
+		assert superSuperCache.elements.size() == 6;
 		result = superSuperCache.getCacheResult(history.getSubList(0, superSuperCache.indexes), comparator, 0.5F);
 		prediction = result.getPrediction();
 		Logger.debug(self, "Super super cache prediction;\n" + prediction);
+		assert prediction.predictedConfidencesMap.equals(new ObjMap(0.8333334F, 0.8333334F, 0.8333334F));
 	}
 
 	public static List<ObjMap> getPattern() {

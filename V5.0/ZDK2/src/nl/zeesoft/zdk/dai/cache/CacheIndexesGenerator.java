@@ -62,7 +62,19 @@ public class CacheIndexesGenerator {
 
 	private void addToList(List<Integer> list, int val) {
 		if (!list.contains(val)) {
-			list.add(val);
+			boolean added = false;
+			int i = 0;
+			for (Integer index: list) {
+				if (index>=val) {
+					list.add(i,val);
+					added = true;
+					break;
+				}
+				i++;
+			}
+			if (!added) {
+				list.add(val);
+			}
 		}
 	}
 }
