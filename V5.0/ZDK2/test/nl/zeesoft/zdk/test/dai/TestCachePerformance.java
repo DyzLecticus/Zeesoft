@@ -11,12 +11,13 @@ import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
+import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.analyze.Analyzer;
 import nl.zeesoft.zdk.dai.analyze.PredictionList;
 import nl.zeesoft.zdk.dai.cache.Cache;
-import nl.zeesoft.zdk.dai.cache.SuperCacheBuilder;
+import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 
-public class TestCache {
+public class TestCachePerformance {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 		
@@ -27,38 +28,9 @@ public class TestCache {
 		Analyzer analyzer = new Analyzer();
 		
 		Console.log("Reading file ...");
-		int num = 0;
-		File f = new File("resources/rec-center-hourly.csv");
-		try {
-			Scanner myReader = new Scanner(f);
-			while (myReader.hasNextLine()) {
-				String data = myReader.nextLine();
-				if (data.contains(" ") && data.contains(",")) {
-					String[] vals = data.split(",");
-					String[] dt = vals[0].split(" ");
-					String[] d = dt[0].split("/");
-					String[] t = dt[1].split(":");
-					
-					Float val = Util.parseFloat(vals[1]);
-					Calendar cal = Calendar.getInstance();
-					cal.set(Calendar.YEAR, Util.parseInt(d[2]));
-					cal.set(Calendar.MONTH, Util.parseInt(d[0]));
-					cal.set(Calendar.DATE, Util.parseInt(d[1]));
-					cal.set(Calendar.HOUR, Util.parseInt(t[0]));
-					cal.set(Calendar.MINUTE, 0);
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					history.add(new ObjMap(cal.get(Calendar.DAY_OF_WEEK), cal.get(Calendar.HOUR_OF_DAY), val));
-					num++;
-				}
-			}
-			myReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		int num = readInputFile(history);
 		Console.log("Records: " + num);
 
-		/*
 		Console.log("");
 		PredictionList predictions = generatePredictions(analyzer, history, comparator, true);
 		predictions = analyzer.getUntrainedPredictions(history, comparator);
@@ -66,7 +38,6 @@ public class TestCache {
 		
 		Console.log("");
 		predictions = generatePredictions(analyzer, history, comparator, false);
-		*/
 		
 		Cache originalCache = history.cache;
 
@@ -100,10 +71,43 @@ public class TestCache {
 		Cache r = null;
 		long start = System.currentTimeMillis();
 		Console.log("Building super cache ...");
-		SuperCacheBuilder builder = new SuperCacheBuilder();
+		CacheBuilder builder = new CacheBuilder();
 		r = builder.buildSuperCache(originalCache, comparator, mergeSimilarity);
 		Console.log("Building super cache took: " + (System.currentTimeMillis() - start) + " ms");
 		Console.log("Relative super cache size: " + ((float)r.elements.size() / (float)history.cache.elements.size()));
 		return r;
+	}
+	
+	public static int readInputFile(ObjMapList history) {
+		int num = 0;
+		File f = new File("resources/rec-center-hourly.csv");
+		try {
+			Scanner myReader = new Scanner(f);
+			while (myReader.hasNextLine()) {
+				String data = myReader.nextLine();
+				if (data.contains(" ") && data.contains(",")) {
+					String[] vals = data.split(",");
+					String[] dt = vals[0].split(" ");
+					String[] d = dt[0].split("/");
+					String[] t = dt[1].split(":");
+					
+					Float val = Util.parseFloat(vals[1]);
+					Calendar cal = Calendar.getInstance();
+					cal.set(Calendar.YEAR, Util.parseInt(d[2]));
+					cal.set(Calendar.MONTH, Util.parseInt(d[0]));
+					cal.set(Calendar.DATE, Util.parseInt(d[1]));
+					cal.set(Calendar.HOUR, Util.parseInt(t[0]));
+					cal.set(Calendar.MINUTE, 0);
+					cal.set(Calendar.SECOND, 0);
+					cal.set(Calendar.MILLISECOND, 0);
+					history.add(new ObjMap(cal.get(Calendar.DAY_OF_WEEK), cal.get(Calendar.HOUR_OF_DAY), val));
+					num++;
+				}
+			}
+			myReader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return num;
 	}
 }

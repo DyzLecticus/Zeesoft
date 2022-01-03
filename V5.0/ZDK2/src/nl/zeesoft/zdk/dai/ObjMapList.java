@@ -78,7 +78,7 @@ public class ObjMapList {
 		ObjMapList subList = new ObjMapList();
 		for (Integer index: indexes) {
 			int i = start + index;
-			if (i < list.size()) {
+			if (i >= 0 && i < list.size()) {
 				subList.list.add(list.get(i));
 			}
 		}

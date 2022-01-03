@@ -12,9 +12,9 @@ public class CacheElement {
 		
 	}
 	
-	public CacheElement(ObjMapList baseList, ObjMap nextInput) {
+	public CacheElement(ObjMapList baseList, ObjMap nextMap) {
 		this.baseList = baseList;
-		this.nextMap = nextInput;
+		this.nextMap = nextMap;
 	}
 	
 	@Override
@@ -25,5 +25,11 @@ public class CacheElement {
 		r.append(nextMap);
 		r.append(", count: " + count);
 		return r.toString();
+	}
+	
+	public CacheElement copy() {
+		CacheElement r = new CacheElement(baseList, nextMap);
+		r.count = count;
+		return r;
 	}
 }

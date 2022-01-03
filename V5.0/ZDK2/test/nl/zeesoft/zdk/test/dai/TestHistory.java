@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.test.dai;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.KeyPrediction;
@@ -14,7 +13,7 @@ import nl.zeesoft.zdk.dai.Prediction;
 import nl.zeesoft.zdk.dai.cache.Cache;
 import nl.zeesoft.zdk.dai.cache.CacheElement;
 import nl.zeesoft.zdk.dai.cache.CacheResult;
-import nl.zeesoft.zdk.dai.cache.SuperCacheBuilder;
+import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 
 public class TestHistory {
 	private static TestHistory	self	= new TestHistory();
@@ -31,10 +30,11 @@ public class TestHistory {
 		history.maxSize = 16;
 		history.updateCache = false;
 		
-		Console.log(history.cache.indexes);
-		
 		ObjMapComparator comparator = new ObjMapComparator();
 		
+		CacheResult result = history.getCacheResult(comparator, 0.5F);
+		assert result.similarity == 0F;
+		assert result.results.size() == 0;
 		history.addAll(getPattern());
 		history.addAll(getPattern());
 	
@@ -53,11 +53,12 @@ public class TestHistory {
 		assert history.cache.elements.size() == 13;
 		assert history.cache.elements.get(0).toString().length() == 122;
 		
-		CacheResult result = history.getCacheResult(comparator, 0.5F);
+		result = history.getCacheResult(comparator, 0.5F);
 		assert result.similarity == 1.0F;
 		assert result.results.size() == 1;
 		assert result.results.get(0).nextMap.equals(new ObjMap(2.0F, 1.0F, 0F));
 		assert result.results.get(0).count == 2;
+		assert result.toString().equals("Similarity: 1.0\n{1:2.0, 2:1.0, 3:0.0}, count: 2");
 		
 		history = new History(16);
 		history.cache.indexes.clear();
@@ -77,7 +78,7 @@ public class TestHistory {
 		assert prediction.predictedMap.equals(new ObjMap(2.0F, 1.0F, 0F));
 		assert prediction.predictedConfidencesMap.equals(new ObjMap(0.9166667F, 0.9166667F, 0.9166667F));
 		
-		SuperCacheBuilder builder = new SuperCacheBuilder();
+		CacheBuilder builder = new CacheBuilder();
 		
 		Cache superCache = builder.buildSuperCache(history.cache, comparator, 0.9F);
 		assert superCache.elements.size() == 10;
@@ -88,9 +89,19 @@ public class TestHistory {
 		Cache superSuperCache = builder.buildSuperCache(superCache, comparator, 0.6F);
 		assert superSuperCache.elements.size() == 6;
 		result = superSuperCache.getCacheResult(history.getSubList(0, superSuperCache.indexes), comparator, 0.5F);
-		prediction = result.getPrediction();
-		Logger.debug(self, "Super super cache prediction;\n" + prediction);
-		assert prediction.predictedConfidencesMap.equals(new ObjMap(0.8333334F, 0.8333334F, 0.8333334F));
+		Prediction prediction2 = result.getPrediction();
+		Logger.debug(self, "Super super cache prediction;\n" + prediction2);
+		assert prediction2.predictedConfidencesMap.equals(new ObjMap(0.8333334F, 0.8333334F, 0.8333334F));
+		
+		Prediction prediction3 = Prediction.mergePredictions(prediction, prediction2);
+		assert prediction3.mapPredictions.size() == 2;
+		Logger.debug(self, "Merged cache prediction;\n" + prediction3);
+		assert prediction3.predictedConfidencesMap.equals(new ObjMap(0.875F, 0.875F, 0.047619037F));
+		
+		history = new History(16);
+		history.add(new ObjMap(2, 1, 0));
+		result = history.getCacheResult(comparator, 0.5F);
+		assert result.results.size() == 1;
 	}
 
 	public static List<ObjMap> getPattern() {

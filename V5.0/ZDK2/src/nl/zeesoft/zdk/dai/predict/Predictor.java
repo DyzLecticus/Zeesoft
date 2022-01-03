@@ -6,131 +6,102 @@ import java.util.List;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
-import nl.zeesoft.zdk.dai.recognize.ListPatternRecognizer;
-import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
+import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 
 public class Predictor {
-	public PrPredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator) {
-		return getPredictions(history, patternRecognizer, comparator, 0);
-	}
+	protected ObjMapComparator		comparator			= null;
+	protected ObjMapList 			history				= null;
+	protected List<Integer>			cacheIndexes		= new ArrayList<Integer>();
+	protected CacheBuilder			cacheBuilder		= null;
+	protected List<PredictorCache>	caches				= new ArrayList<PredictorCache>();
 	
-	public PrPredictionList getPredictions(ObjMapList history, PatternRecognizer patternRecognizer, ObjMapComparator comparator, int maxDepth) {
-		PrPredictionList r = new PrPredictionList(history.maxSize);
-		ObjMapList workingHistory = new ObjMapList(history.maxSize);
-		for (int i = history.list.size() - 1; i >= 0; i--) {
-			workingHistory.add(history.list.get(i));
-			patternRecognizer.detectPatterns(workingHistory, comparator, maxDepth);
-			r.add(generatePrediction(workingHistory, patternRecognizer));
+	protected long					processed			= 0;
+	
+	protected int					rebuildCache		= 250;
+	protected boolean				updateCache			= true;
+	
+	protected List<Thread>			activeRebuilders	= new ArrayList<Thread>();
+	protected boolean				triggerRebuild		= false;
+	
+	public synchronized void configure(PredictorConfig config) {
+		comparator = config.comparator;
+		history = new ObjMapList(config.maxHistorySize);
+		cacheIndexes.clear();
+		cacheIndexes.addAll(config.cacheIndexes);
+		cacheBuilder = config.cacheBuilder;
+		caches.clear();
+		for (CacheConfig cc: config.cacheConfigs) {
+			PredictorCache pc = new PredictorCache();
+			pc.mergeSimilarity = cc.mergeSimilarity;
+			caches.add(pc);
 		}
-		return r;
+		rebuildCache = config.rebuildCache;
 	}
 	
-	public PrPrediction generatePrediction(ObjMapList history, PatternRecognizer patternRecognizer) {
-		PrPrediction r = new PrPrediction(patternRecognizer, history.keys);
-		addObjMapPredictions(r, history, patternRecognizer);
-		addKeyPredictions(r);
-		orderKeyPredictions(r);
-		calculateKeyPredictionConfidences(r);
-		return r;
-	}
-
-	public void addObjMapPredictions(PrPrediction prediction, ObjMapList history, PatternRecognizer patternRecognizer) {
-		if (history.list.size()==1) {
-			for (String key: prediction.keys) {
-				prediction.keyPredictions.add(new KeyPrediction(key, history.list.get(0).values.get(key)));
+	@Override
+	public synchronized String toString() {
+		StringBuilder str = new StringBuilder();
+		if (history!=null) {
+			str.append("History max size: " + history.maxSize + ", rebuild: " + rebuildCache + ", processed: " + processed);
+			str.append("\nCaches;");
+			for (PredictorCache pc: caches) {
+				str.append("\n- " + pc.mergeSimilarity + " / " + pc.getCacheSize());
 			}
 		} else {
-			for (ListPatternRecognizer lpr: patternRecognizer.patternRecognizers) {
-				prediction.objMapPredictions.addAll(getPredictions(history, lpr));
-			}
+			str.append(super.toString());
 		}
+		return str.toString();
 	}
-
-	public List<ObjMapPrediction> getPredictions(ObjMapList history, ListPatternRecognizer lpr) {
-		List<ObjMapPrediction> r = new ArrayList<ObjMapPrediction>();
-		int total = 0;
-		for (Integer index: lpr.startIndexes) {
-			ObjMap predictedMap = history.list.get(index - 1);
-			ObjMapPrediction prediction = getOrAddPrediction(lpr,r,predictedMap);
-			prediction.votes++;
-			total++;
-		}
-		if (total>0) {
-			for (ObjMapPrediction p: r) {
-				p.confidence = ((float)p.votes / (float)total) * lpr.similarity;
-			}
-		}
-		return r;
-	}
-
-	public ObjMapPrediction getOrAddPrediction(ListPatternRecognizer lpr, List<ObjMapPrediction> predictions, ObjMap predictedMap) {
-		ObjMapPrediction r = getPrediction(predictions, predictedMap);
-		if (r==null) {
-			r = new ObjMapPrediction(lpr, predictedMap);
-			predictions.add(r);
-		}
-		return r;
-	}
-
-	public ObjMapPrediction getPrediction(List<ObjMapPrediction> predictions, ObjMap predictedMap) {
-		ObjMapPrediction r = null;
-		for (ObjMapPrediction omp: predictions) {
-			if (omp.predictedMap.equals(predictedMap)) {
-				r = omp;
-				break;
-			}
-		}
-		return r;
-	}
-
-	public void addKeyPredictions(PrPrediction prediction) {
-		for (ObjMapPrediction objMapPrediction: prediction.objMapPredictions) {
-			for (String key: objMapPrediction.predictedMap.values.keySet()) {
-				KeyPrediction kp = prediction.getOrAddPrediction(key, objMapPrediction.predictedMap.values.get(key));
-				kp.support += (objMapPrediction.confidence / (float) prediction.patternRecognizer.patternRecognizers.size());
-				kp.patternRecognizers.add(objMapPrediction.patternRecognizer);
+	
+	public synchronized void add(ObjMap map) {
+		if (history!=null) {
+			history.add(map);
+			caches.get(0).hitCache(history);
+			processed++;
+			if (processed % rebuildCache == 0) {
+				rebuildCache();
 			}
 		}
 	}
 	
-	public void orderKeyPredictions(PrPrediction prediction) {
-		List<KeyPrediction> list = new ArrayList<KeyPrediction>();
-		for (KeyPrediction keyPrediction: prediction.keyPredictions) {
-			boolean added = false;
-			for (KeyPrediction listPrediction: list) {
-				if (keyPrediction.support >= listPrediction.support) {
-					list.add(list.indexOf(listPrediction), keyPrediction);
-					added = true;
-					break;
-				}
-			}
-			if (!added) {
-				list.add(keyPrediction);
-			}
-		}
-		prediction.keyPredictions = list;
+	public synchronized boolean isRebuildingCache() {
+		return activeRebuilders.size() > 0;
 	}
 	
-	public void calculateKeyPredictionConfidences(PrPrediction prediction) {
-		for (String key: prediction.keys) {
-			float total = 0F;
-			List<KeyPrediction> list = prediction.getPredictions(key);
-			if (list.size()>0) {
-				for (KeyPrediction keyPrediction: list) {
-					total += keyPrediction.support;
-				}
-				int i = 0;
-				for (KeyPrediction keyPrediction: list) {
-					float nextSupport = 0F;
-					if (list.size()>(i+1)) {
-						nextSupport = list.get(i+1).support;
-					}
-					if (keyPrediction.support > nextSupport && total > 0F) {
-						keyPrediction.confidence = (keyPrediction.support - nextSupport) / total;
-					}
-					i++;
-				}
-			}
+	protected void rebuildCache() {
+		if (activeRebuilders.size() > 0) {
+			triggerRebuild = true;
+		} else {
+			Thread rebuilder = new Thread(new CacheRebuilder(this, cacheBuilder, comparator));
+			activeRebuilders.add(rebuilder);
+			rebuilder.start();
+		}
+	}
+	
+	protected synchronized void rebuilderIsDone(Thread rebuilder) {
+		activeRebuilders.remove(rebuilder);
+		if (triggerRebuild && activeRebuilders.size()==0) {
+			triggerRebuild = false;
+			rebuildCache();
+		}
+	}
+	
+	protected synchronized PredictorCache getCache(int index) {
+		PredictorCache r = null;
+		if (index < caches.size()) {
+			r = caches.get(index);
+		}
+		return r;
+	}
+	
+	public synchronized void processRequest(PredictorRequest request) {
+		int max = request.maxCacheIndex;
+		if (max > caches.size() - 1) {
+			max = caches.size() - 1;
+		}
+		int min = request.minCacheIndex;
+		for (int i = max; i >= min; i--) {
+			
 		}
 	}
 }

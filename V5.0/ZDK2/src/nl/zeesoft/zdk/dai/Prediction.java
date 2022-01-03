@@ -22,6 +22,17 @@ public class Prediction {
 		return str.toString();
 	}
 	
+	public static Prediction mergePredictions(Prediction... predictions) {
+		Prediction r = new Prediction();
+		for (int i = 0; i < predictions.length; i++) {
+			for (MapPrediction mp: predictions[i].mapPredictions) {
+				r.mapPredictions.add(mp);
+			}
+		}
+		r.calculatePredictedMap();
+		return r;
+	}
+	
 	public void appendKeyPredictions(StringBuilder str) {
 		for (String key: predictedMap.values.keySet()) {
 			str.append("\n- key: " + key);

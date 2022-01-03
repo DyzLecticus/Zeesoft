@@ -1,14 +1,11 @@
 package nl.zeesoft.zdk.test.dai;
 
+import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.dai.ObjMap;
-import nl.zeesoft.zdk.dai.ObjMapComparator;
+import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.ObjMapList;
-import nl.zeesoft.zdk.dai.predict.KeyPrediction;
-import nl.zeesoft.zdk.dai.predict.ObjMapPrediction;
-import nl.zeesoft.zdk.dai.predict.PrPrediction;
 import nl.zeesoft.zdk.dai.predict.Predictor;
-import nl.zeesoft.zdk.dai.recognize.PatternRecognizer;
+import nl.zeesoft.zdk.dai.predict.PredictorConfig;
 
 public class TestPredictor {
 	private static TestPredictor	self	= new TestPredictor();
@@ -16,34 +13,32 @@ public class TestPredictor {
 	public static void main(String[] args) {
 		Logger.setLoggerDebug(true);
 
-		assert new PrPrediction() != null;
-		assert new ObjMapPrediction() != null;
-		assert new KeyPrediction() != null;
+		PredictorConfig config = new PredictorConfig();
+		assert config.cacheConfigs.size() == 3;
+		assert config.cacheConfigs.get(0).mergeSimilarity == 1F;
+		assert config.cacheConfigs.get(1).mergeSimilarity == 0.9F;
+		assert config.cacheConfigs.get(2).mergeSimilarity == 0.8F;
 		
-		ObjMapList history = new ObjMapList();
-		history.maxSize = 2000;
-		
-		ObjMapComparator comparator = new ObjMapComparator();
-		
-		PatternRecognizer patternRecognizer = new PatternRecognizer();
-		patternRecognizer.generateDefaultPatternRecognizers();
+		config.maxHistorySize = 500;
+		config.rebuildCache = 200;
+		config.cacheConfigs.get(2).mergeSimilarity = 0.85F;
 		
 		Predictor predictor = new Predictor();
-
-		history.addAll(TestHistory.getPattern());
-		patternRecognizer.detectPatterns(history, comparator);
-		PrPrediction prediction = predictor.generatePrediction(history, patternRecognizer);
-		Logger.debug(self, "Prediction;\n" + prediction);
-		Logger.debug(self, "Predicted map; " + prediction.getPredictedMap() + ", confidences: " + prediction.getPredictedMapConfidences());
+		predictor.configure(config);
+		Logger.debug(self, "Predictor;\n" + predictor);
+		assert predictor.toString().equals("History max size: 500, rebuild: 200, processed: 0\nCaches;\n- 1.0 / 0\n- 0.9 / 0\n- 0.85 / 0");
 		
-		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0.0F));
+		ObjMapList history = new ObjMapList(5000);
+		int num = TestCachePerformance.readInputFile(history);
+		Logger.debug(self, "Adding " + (num - 1000) + " records ...");		
+		for (int i = history.list.size() - 1; i > 1000; i--) {
+			predictor.add(history.list.get(i));
+		}
+		while(predictor.isRebuildingCache()) {
+			Util.sleep(100);
+		}
+		Logger.debug(self, "Predictor;\n" + predictor);
 		
-		history.addAll(TestHistory.getPattern());
-		patternRecognizer.detectPatterns(history, comparator);
-		prediction = predictor.generatePrediction(history, patternRecognizer);
-		Logger.debug(self, "Prediction;\n" + prediction);
-		Logger.debug(self, "Predicted map; " + prediction.getPredictedMap() + ", confidences: " + prediction.getPredictedMapConfidences());
 		
-		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0.0F));
 	}
 }

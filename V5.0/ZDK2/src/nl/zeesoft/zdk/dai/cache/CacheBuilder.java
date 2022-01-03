@@ -5,7 +5,7 @@ import java.util.List;
 
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 
-public class SuperCacheBuilder {
+public class CacheBuilder {
 	public Cache buildSuperCache(Cache from, ObjMapComparator comparator, float mergeSimilarity) {
 		Cache r = new Cache();
 		r.indexes = from.indexes;
