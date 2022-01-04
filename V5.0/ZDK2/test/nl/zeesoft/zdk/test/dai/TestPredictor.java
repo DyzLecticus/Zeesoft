@@ -1,11 +1,12 @@
 package nl.zeesoft.zdk.test.dai;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.ObjMapList;
+import nl.zeesoft.zdk.dai.cache.CacheResult;
 import nl.zeesoft.zdk.dai.predict.Predictor;
 import nl.zeesoft.zdk.dai.predict.PredictorConfig;
+import nl.zeesoft.zdk.dai.predict.PredictorRequest;
 
 public class TestPredictor {
 	private static TestPredictor	self	= new TestPredictor();
@@ -39,6 +40,40 @@ public class TestPredictor {
 		}
 		Logger.debug(self, "Predictor;\n" + predictor);
 		
+		
+		
+		PredictorRequest request = new PredictorRequest();
+		Logger.debug(self, "Processing request ...");
+		predictor.processRequest(request);
+		while(request.isProcessing()) {
+			Util.sleep(1);
+		}
+		Logger.debug(self, "Request results;" + request.getResults().size());
+		assert request.getResults().size() == 3;
+		for (CacheResult result: request.getResults()) {
+			Logger.debug(self, "Request result;\n" + result);
+		}
+		
+		
+		
+		for (int i = 1000; i > 900; i--) {
+			predictor.add(history.list.get(i));
+		}
+		while(predictor.isRebuildingCache()) {
+			Util.sleep(100);
+		}
+		
+		request = new PredictorRequest();
+		Logger.debug(self, "Processing request ...");
+		predictor.processRequest(request);
+		while(request.isProcessing()) {
+			Util.sleep(1);
+		}
+		Logger.debug(self, "Request results;" + request.getResults().size());
+		assert request.getResults().size() == 3;
+		for (CacheResult result: request.getResults()) {
+			Logger.debug(self, "Request result;\n" + result);
+		}
 		
 	}
 }

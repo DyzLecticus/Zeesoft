@@ -64,6 +64,10 @@ public class Predictor {
 		}
 	}
 	
+	public synchronized void processRequest(PredictorRequest request) {
+		request.process(caches, history.getSubList(0, cacheIndexes), comparator);
+	}
+
 	public synchronized boolean isRebuildingCache() {
 		return activeRebuilders.size() > 0;
 	}
@@ -92,16 +96,5 @@ public class Predictor {
 			r = caches.get(index);
 		}
 		return r;
-	}
-	
-	public synchronized void processRequest(PredictorRequest request) {
-		int max = request.maxCacheIndex;
-		if (max > caches.size() - 1) {
-			max = caches.size() - 1;
-		}
-		int min = request.minCacheIndex;
-		for (int i = max; i >= min; i--) {
-			
-		}
 	}
 }

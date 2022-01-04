@@ -17,6 +17,9 @@ public class Cache {
 			float sim = comparator.calculateSimilarity(baseList, ce.baseList);
 			if (sim>=minSimilarity) {
 				if (sim > r.similarity) {
+					if (r.results.size()>0) {
+						r.secondary = new CacheResult(r.results, r.similarity);
+					}
 					r.similarity = sim;
 					r.results.clear();
 				}

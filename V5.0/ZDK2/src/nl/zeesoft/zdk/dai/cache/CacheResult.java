@@ -9,6 +9,16 @@ import nl.zeesoft.zdk.dai.Prediction;
 public class CacheResult {
 	public List<CacheElement>	results		= new ArrayList<CacheElement>();
 	public float				similarity	= 0F;
+	public CacheResult			secondary	= null;
+	
+	public CacheResult() {
+		
+	}
+	
+	public CacheResult(List<CacheElement> results, float similarity) {
+		this.results.addAll(results);
+		this.similarity = similarity;
+	}
 	
 	@Override
 	public String toString() {
@@ -17,6 +27,14 @@ public class CacheResult {
 		for (CacheElement cache: results) {
 			str.append("\n");
 			str.append(cache.nextMap + ", count: " + cache.count);
+		}
+		if (secondary!=null && secondary.results.size()>0) {
+			str.append("\n  Secondary: " + secondary.similarity);
+			for (CacheElement cache: secondary.results) {
+				str.append("\n  ");
+				str.append(cache.nextMap + ", count: " + cache.count);
+			}
+			
 		}
 		return str.toString();
 	}

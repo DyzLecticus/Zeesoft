@@ -14,8 +14,8 @@ public class PredictorCache {
 		cache.hitCache(history.getSubList(1,cache.indexes),history.list.get(0));
 	}
 	
-	public synchronized PredictorCacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {
-		return new PredictorCacheResult(cache.getCacheResult(baseList, comparator, minSimilarity), mergeSimilarity);
+	public synchronized CacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {
+		return cache.getCacheResult(baseList, comparator, minSimilarity);
 	}
 	
 	public synchronized void setCache(Cache cache) {
