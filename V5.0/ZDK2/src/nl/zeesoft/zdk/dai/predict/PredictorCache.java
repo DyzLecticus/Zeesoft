@@ -9,8 +9,8 @@ public class PredictorCache {
 	
 	private Cache		cache			= new Cache();
 	
-	public synchronized void hitCache(ObjMapList history) {
-		cache.hitCache(history.getSubList(1,cache.indexes),history.list.get(0));
+	public synchronized void hitCache(ObjMapList history, ObjMapComparator comparator) {
+		cache.hitCache(history.getSubList(1,cache.indexes),history.list.get(0),mergeSimilarity,comparator);
 	}
 	
 	public synchronized PredictorCacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {

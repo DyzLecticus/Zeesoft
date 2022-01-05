@@ -1,7 +1,6 @@
 package nl.zeesoft.zdk.test.dai;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.Prediction;
@@ -22,14 +21,12 @@ public class TestAutoPredictor {
 		assert config.cacheConfigs.get(2).mergeSimilarity == 0.8F;
 		
 		config.maxHistorySize = 500;
-		config.rebuildCache = 200;
 		config.cacheConfigs.get(2).mergeSimilarity = 0.85F;
-		config.waitForCacheRebuild = false;
 		
 		AutoPredictor predictor = new AutoPredictor();
 		predictor.configure(config);
 		Logger.debug(self, "Predictor;\n" + predictor);
-		assert predictor.toString().equals("History max size: 500, rebuild: 200, processed: 0\nCaches;\n- 1.0 / 0\n- 0.9 / 0\n- 0.85 / 0");
+		assert predictor.toString().equals("History max size: 500, processed: 0\nCaches;\n- 1.0 / 0\n- 0.9 / 0\n- 0.85 / 0");
 		
 		predictor.setPredict(false);
 		
@@ -38,13 +35,11 @@ public class TestAutoPredictor {
 		Logger.debug(self, "Adding " + num + " records ...");		
 		for (int i = history.list.size() - 1; i >= 0; i--) {
 			if (i==1000) {
+				Logger.debug(self, "Predictor;\n" + predictor);
 				Logger.debug(self, "Predicting ...");
 				predictor.setPredict(true);
 			}
 			predictor.add(history.list.get(i));
-		}
-		while(predictor.isRebuildingCache()) {
-			Util.sleep(100);
 		}
 		Logger.debug(self, "Predictor;\n" + predictor);
 		

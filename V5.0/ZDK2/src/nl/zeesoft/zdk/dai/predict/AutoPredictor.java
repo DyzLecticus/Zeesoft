@@ -18,7 +18,6 @@ public class AutoPredictor extends Predictor {
 			AutoPredictorConfig cfg = (AutoPredictorConfig) config;
 			predictionLog.setComparator(comparator);
 			predictionLog.setMaxSize(cfg.maxLogSize);
-			waitForCacheRebuild = cfg.waitForCacheRebuild;
 		}
 	}
 
@@ -30,37 +29,23 @@ public class AutoPredictor extends Predictor {
 		return predict;
 	}
 
-	public synchronized boolean isPredicting() {
-		return request.isProcessing();
+	public synchronized PredictorRequest getRequest() {
+		return request;
 	}
 	
 	@Override
-	public void add(ObjMap map) {
+	public synchronized void add(ObjMap map) {
 		super.add(map);
 		if (isPredict()) {
-			if (waitForCacheRebuild && isRebuildingCache()) {
-				while(isRebuildingCache()) {
-					Util.sleepNs(100000);
-				}
-			}
-			PredictorRequest req = getRequest();
-			processRequest(req);
-			while(req.isProcessing()) {
+			processRequest(request);
+			while(request.isProcessing()) {
 				Util.sleepNs(100000);
 			}
-			predictionLog.add(getHistory(0), req.getPrediction());
+			predictionLog.add(history.list.get(0), request.getPrediction());
 		}
 	}
 		
 	public synchronized PredictionLog getPredictionLog() {
 		return predictionLog.copy();
-	}
-	
-	protected synchronized PredictorRequest getRequest() {
-		return request;
-	}
-	
-	protected synchronized ObjMap getHistory(int index) {
-		return history.list.get(0);
 	}
 }

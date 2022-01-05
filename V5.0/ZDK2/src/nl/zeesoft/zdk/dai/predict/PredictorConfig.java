@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.dai.ObjMapComparator;
-import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 import nl.zeesoft.zdk.dai.cache.CacheIndexesGenerator;
 
 public class PredictorConfig {
@@ -12,8 +11,6 @@ public class PredictorConfig {
 	public int					maxHistorySize	= 1000;
 
 	public List<Integer>		cacheIndexes	= CacheIndexesGenerator.generate();
-	public int					rebuildCache	= 250;
-	public CacheBuilder			cacheBuilder	= new CacheBuilder();
 	public List<CacheConfig>	cacheConfigs	= new ArrayList<CacheConfig>();
 	
 	public PredictorConfig() {
