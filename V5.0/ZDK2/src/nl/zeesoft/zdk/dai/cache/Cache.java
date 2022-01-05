@@ -20,11 +20,9 @@ public class Cache {
 					if (r.results.size()>0) {
 						r.secondary = new CacheResult(r.results, r.similarity);
 					}
-					r.similarity = sim;
-					r.results.clear();
 				}
-				if (sim == r.similarity) {
-					r.results.add(ce);
+				if (!r.addSimilarElement(ce, sim) && r.secondary!=null) {
+					r.secondary.addSimilarElement(ce, sim);
 				}
 			}
 		}

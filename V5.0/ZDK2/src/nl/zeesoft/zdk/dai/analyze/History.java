@@ -1,5 +1,8 @@
-package nl.zeesoft.zdk.dai;
+package nl.zeesoft.zdk.dai.analyze;
 
+import nl.zeesoft.zdk.dai.ObjMap;
+import nl.zeesoft.zdk.dai.ObjMapComparator;
+import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.cache.Cache;
 import nl.zeesoft.zdk.dai.cache.CacheElement;
 import nl.zeesoft.zdk.dai.cache.CacheResult;
@@ -37,7 +40,7 @@ public class History extends ObjMapList {
 			CacheElement ce = new CacheElement();
 			ce.nextMap = list.get(0);
 			r.results.add(ce);
-			r.similarity = 1F;
+			r.similarity = 0.5F;
 		}
 		return r;
 	}

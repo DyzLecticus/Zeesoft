@@ -8,11 +8,11 @@ import java.util.Scanner;
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.Util;
-import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.analyze.Analyzer;
+import nl.zeesoft.zdk.dai.analyze.History;
 import nl.zeesoft.zdk.dai.analyze.PredictionList;
 import nl.zeesoft.zdk.dai.cache.Cache;
 import nl.zeesoft.zdk.dai.cache.CacheBuilder;
@@ -34,7 +34,7 @@ public class TestCachePerformance {
 		Console.log("");
 		PredictionList predictions = generatePredictions(analyzer, history, comparator, true);
 		predictions = analyzer.getUntrainedPredictions(history, comparator);
-		assert predictions.list.size() == num;
+		assert predictions.getPredictions().size() == num;
 		
 		Console.log("");
 		predictions = generatePredictions(analyzer, history, comparator, false);
@@ -62,7 +62,8 @@ public class TestCachePerformance {
 			r = analyzer.getPredictions(history, comparator);
 			Console.log("Generating predictions took: " + (System.currentTimeMillis() - start) + " ms");
 		}
-		Console.log("Accuracy: " + r.getKeyAccuracy("3", comparator) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", comparator));
+		Console.log("Accuracy: " + r.getKeyAccuracy("3", false) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", false));
+		Console.log("Weighted accuracy: " + r.getKeyAccuracy("3", true) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", true));
 		Console.log("Confidence: " + r.getKeyConfidence("3") + ", standard deviation: " + r.getKeyConfidenceStdDev("3"));
 		return r;
 	}

@@ -18,7 +18,6 @@ public class Predictor {
 	protected long					processed			= 0;
 	
 	protected int					rebuildCache		= 250;
-	protected boolean				updateCache			= true;
 	
 	protected List<Thread>			activeRebuilders	= new ArrayList<Thread>();
 	protected boolean				triggerRebuild		= false;
@@ -76,7 +75,7 @@ public class Predictor {
 		if (activeRebuilders.size() > 0) {
 			triggerRebuild = true;
 		} else {
-			Thread rebuilder = new Thread(new CacheRebuilder(this, cacheBuilder, comparator));
+			Thread rebuilder = new Thread(new CacheRebuilder(this));
 			activeRebuilders.add(rebuilder);
 			rebuilder.start();
 		}

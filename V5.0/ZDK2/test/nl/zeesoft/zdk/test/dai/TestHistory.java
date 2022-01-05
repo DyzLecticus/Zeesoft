@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Logger;
-import nl.zeesoft.zdk.dai.History;
 import nl.zeesoft.zdk.dai.KeyPrediction;
 import nl.zeesoft.zdk.dai.MapPrediction;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.Prediction;
+import nl.zeesoft.zdk.dai.analyze.History;
 import nl.zeesoft.zdk.dai.cache.Cache;
+import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 import nl.zeesoft.zdk.dai.cache.CacheElement;
 import nl.zeesoft.zdk.dai.cache.CacheResult;
-import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 
 public class TestHistory {
 	private static TestHistory	self	= new TestHistory();
@@ -71,12 +71,12 @@ public class TestHistory {
 		assert result.similarity == 0.9166667F;
 		Prediction prediction = result.getPrediction();
 		Logger.debug(self, "Prediction;\n" + prediction);
-		assert prediction.mapPredictions.size() == 1;
-		assert prediction.mapPredictions.get(0).confidence == result.similarity;
-		assert prediction.mapPredictions.get(0).toString().equals("{1:2.0, 2:1.0, 3:0.0}, votes: 1, confidence: 0.9166667");
-		assert prediction.keyPredictions.size() == 3;
-		assert prediction.predictedMap.equals(new ObjMap(2.0F, 1.0F, 0F));
-		assert prediction.predictedConfidencesMap.equals(new ObjMap(0.9166667F, 0.9166667F, 0.9166667F));
+		assert prediction.mapPredictions.size() == 2;
+		assert prediction.mapPredictions.get(0).support == result.similarity;
+		assert prediction.mapPredictions.get(0).toString().equals("{1:2.0, 2:1.0, 3:0.0}, support: 0.9166667");
+		assert prediction.keyPredictions.keyPredictions.size() == 4;
+		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0F));
+		assert prediction.getConfidencesMap().equals(new ObjMap(0.875F, 0.875F, 0.047619037F));
 		
 		CacheBuilder builder = new CacheBuilder();
 		
@@ -91,12 +91,12 @@ public class TestHistory {
 		result = superSuperCache.getCacheResult(history.getSubList(0, superSuperCache.indexes), comparator, 0.5F);
 		Prediction prediction2 = result.getPrediction();
 		Logger.debug(self, "Super super cache prediction;\n" + prediction2);
-		assert prediction2.predictedConfidencesMap.equals(new ObjMap(0.8333334F, 0.8333334F, 0.8333334F));
+		assert prediction2.getConfidencesMap().equals(new ObjMap(0.0526316F, 0.0526316F, 0.0526316F));
 		
 		Prediction prediction3 = Prediction.mergePredictions(prediction, prediction2);
-		assert prediction3.mapPredictions.size() == 2;
+		assert prediction3.mapPredictions.size() == 3;
 		Logger.debug(self, "Merged cache prediction;\n" + prediction3);
-		assert prediction3.predictedConfidencesMap.equals(new ObjMap(0.875F, 0.875F, 0.047619037F));
+		assert prediction3.getConfidencesMap().equals(new ObjMap(0.40000004F, 0.40000004F, 0.33333334F));
 		
 		history = new History(16);
 		history.add(new ObjMap(2, 1, 0));

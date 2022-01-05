@@ -5,9 +5,7 @@ import java.util.List;
 
 public class Prediction {
 	public List<MapPrediction>		mapPredictions			= new ArrayList<MapPrediction>();
-	public List<KeyPrediction>		keyPredictions			= new ArrayList<KeyPrediction>();
-	public ObjMap					predictedMap			= new ObjMap();
-	public ObjMap					predictedConfidencesMap	= new ObjMap();
+	public KeyPredictions			keyPredictions			= new KeyPredictions();
 	
 	@Override
 	public String toString() {
@@ -18,107 +16,57 @@ public class Prediction {
 			}
 			str.append(mp);
 		}
-		appendKeyPredictions(str);
+		str.append("\n" + keyPredictions);
 		return str.toString();
 	}
 	
-	public static Prediction mergePredictions(Prediction... predictions) {
+	public static Prediction mergePredictions(List<Prediction> predictions) {
 		Prediction r = new Prediction();
-		for (int i = 0; i < predictions.length; i++) {
-			for (MapPrediction mp: predictions[i].mapPredictions) {
-				r.mapPredictions.add(mp);
+		for (Prediction p: predictions) {
+			for (MapPrediction mp: p.mapPredictions) {
+				MapPrediction nmp = r.getOrAddMapPrediction(mp.predictedMap);
+				nmp.votes++;
+				nmp.support += mp.support;
 			}
 		}
+		r.calculateMapPredictionSupport();
 		r.calculatePredictedMap();
 		return r;
 	}
 	
-	public void appendKeyPredictions(StringBuilder str) {
-		for (String key: predictedMap.values.keySet()) {
-			str.append("\n- key: " + key);
-			for (KeyPrediction kp: getKeyPredictions(key)) {
-				str.append(" [" + kp.predictedValue + " = " + kp.confidence + "]");
+	public static Prediction mergePredictions(Prediction... predictions) {
+		List<Prediction> list = new ArrayList<Prediction>();
+		for (int i = 0; i < predictions.length; i++) {
+			list.add(predictions[i]);
+		}
+		return mergePredictions(list);
+	}
+	
+	public void calculateMapPredictionSupport() {
+		for (MapPrediction mp: mapPredictions) {
+			if (mp.votes>1) {
+				mp.support = mp.support / (float)mp.votes;
 			}
+			mp.votes = 0;
 		}
 	}
-
+	
 	public void calculatePredictedMap() {
-		List<String> keys = addKeyPredictions();
-		orderKeyPredictions();
-		calculateKeyPredictionConfidences(keys);
-	}
-	
-	public List<String> addKeyPredictions() {
-		List<String> r = new ArrayList<String>();
-		for (MapPrediction prediction: mapPredictions) {
-			for (String key: prediction.predictedMap.values.keySet()) {
-				KeyPrediction kp = getOrAddKeyPrediction(key, prediction.predictedMap.values.get(key));
-				kp.support += (prediction.confidence / (float) mapPredictions.size());
-				if (!r.contains(key)) {
-					r.add(key);
-				}
-			}
-		}
-		return r;
-	}
-	
-	public void orderKeyPredictions() {
-		List<KeyPrediction> list = new ArrayList<KeyPrediction>();
-		for (KeyPrediction keyPrediction: keyPredictions) {
-			boolean added = false;
-			for (KeyPrediction listPrediction: list) {
-				if (keyPrediction.support >= listPrediction.support) {
-					list.add(list.indexOf(listPrediction), keyPrediction);
-					added = true;
-					break;
-				}
-			}
-			if (!added) {
-				list.add(keyPrediction);
-			}
-		}
-		keyPredictions = list;
-	}
-	
-	public void calculateKeyPredictionConfidences(List<String> keys) {
-		for (String key: keys) {
-			List<KeyPrediction> list = getKeyPredictions(key);
-			if (list.size()==1) {
-				KeyPrediction prediction = list.get(0);
-				prediction.confidence = prediction.support;
-				setPredictedMapValueAndConfidence(key, prediction.predictedValue, prediction.confidence);
-			} else if (list.size()>1) {
-				calculateRelativePredictionConfidences(list, key);
-			}
-		}
-	}
-	
-	public void calculateRelativePredictionConfidences(List<KeyPrediction> list, String key) {
-		float total = 0F;
-		for (KeyPrediction prediction: list) {
-			total += prediction.support;
-		}
-		int i = 0;
-		for (KeyPrediction prediction: list) {
-			float nextSupport = 0F;
-			if (list.size()>(i+1)) {
-				nextSupport = list.get(i+1).support;
-			}
-			if (prediction.support > nextSupport && total > 0F) {
-				prediction.confidence = (prediction.support - nextSupport) / total;
-			}
-			if (i==0) {
-				setPredictedMapValueAndConfidence(key, prediction.predictedValue, prediction.confidence);
-			}
-			i++;
-		}
-	}
-	
-	public void setPredictedMapValueAndConfidence(String key, Object value, float confidence) {
-		predictedMap.values.put(key, value);
-		predictedConfidencesMap.values.put(key, confidence);
+		keyPredictions.calculatePredictedMap(mapPredictions);
 	}
 
+	public ObjMap getPredictedMap() {
+		return keyPredictions.predictedMap;
+	}
+
+	public ObjMap getConfidencesMap() {
+		return keyPredictions.confidencesMap;
+	}
+
+	public ObjMap getWeightedMap() {
+		return keyPredictions.weightedMap;
+	}
+	
 	public MapPrediction getMapPrediction(ObjMap predictedMap) {
 		MapPrediction r = null;
 		for (MapPrediction prediction: mapPredictions) {
@@ -135,37 +83,6 @@ public class Prediction {
 		if (r==null) {
 			r = new MapPrediction(predictedMap);
 			mapPredictions.add(r);
-		}
-		return r;
-	}
-	
-	public KeyPrediction getKeyPrediction(String key, Object predictedValue) {
-		KeyPrediction r = null;
-		for (KeyPrediction prediction: keyPredictions) {
-			if (prediction.key.equals(key) && 
-				(prediction.predictedValue==predictedValue || (prediction.predictedValue != null && prediction.predictedValue.equals(predictedValue)))) {
-				r = prediction;
-				break;
-			}
-		}
-		return r;
-	}
-	
-	public KeyPrediction getOrAddKeyPrediction(String key, Object predictedValue) {
-		KeyPrediction r = getKeyPrediction(key, predictedValue);
-		if (r==null) {
-			r = new KeyPrediction(key, predictedValue);
-			keyPredictions.add(r);
-		}
-		return r;
-	}
-	
-	public List<KeyPrediction> getKeyPredictions(String key) {
-		List<KeyPrediction> r = new ArrayList<KeyPrediction>();
-		for (KeyPrediction prediction: keyPredictions) {
-			if (prediction.key.equals(key)) {
-				r.add(prediction);
-			}
 		}
 		return r;
 	}

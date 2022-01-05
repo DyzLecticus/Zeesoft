@@ -21,19 +21,21 @@ public class CacheBuilder {
 				List<CacheElement> mergeElements = getMergeElementsForElement(ce, orderedByCount, comparator, mergeSimilarity);
 				if (mergeElements.size()>0) {
 					merge.addAll(mergeElements);
-					CacheElement nce = new CacheElement();
-					nce.count = ce.count;
-					nce.baseList = ce.baseList;
-					nce.nextMap = ce.nextMap;
-					to.elements.add(nce);
-					for (CacheElement mce: mergeElements) {
-						nce.count += mce.count;
-					}
+					to.elements.add(mergeElements(ce, mergeElements));
 				} else {
 					to.elements.add(ce);
 				}
 			}
 		}
+	}
+	
+	public CacheElement mergeElements(CacheElement ce, List<CacheElement> mergeElements) {
+		CacheElement r = new CacheElement(ce.baseList, ce.nextMap);
+		r.count = ce.count;
+		for (CacheElement mce: mergeElements) {
+			r.count += mce.count;
+		}
+		return r;
 	}
 	
 	public List<CacheElement> getMergeElementsForElement(CacheElement ce, List<CacheElement> orderedByCount, ObjMapComparator comparator, float mergeSimilarity) {

@@ -4,7 +4,7 @@ public class MapPrediction {
 	public ObjMap	predictedMap	= null;
 	
 	public int		votes			= 0;
-	public float	confidence		= 0F;
+	public float	support			= 0F;
 	
 	public MapPrediction() {
 		
@@ -16,6 +16,6 @@ public class MapPrediction {
 	
 	@Override
 	public String toString() {
-		return predictedMap + ", votes: " + votes + ", confidence: " + confidence;
+		return predictedMap + ", support: " + support;
 	}
 }

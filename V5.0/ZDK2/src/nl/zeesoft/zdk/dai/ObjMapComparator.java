@@ -27,14 +27,14 @@ public class ObjMapComparator {
 		if (total>0) {
 			perc = 0;
 			for (String key: overlap) {
-				perc += calculateSimilarity(a.values.get(key), b.values.get(key));
+				perc += calculateSimilarity(a.values.get(key), b.values.get(key), key);
 			}
 			perc = perc / (float) total;
 		}
 		return perc;
 	}
 	
-	public float calculateSimilarity(Object a, Object b) {
+	public float calculateSimilarity(Object a, Object b, String key) {
 		float perc = 0;
 		if (a==null && b==null) {
 			perc = 1;
@@ -42,21 +42,21 @@ public class ObjMapComparator {
 			if (a.equals(b)) {
 				perc = 1;
 			} else {
-				perc = calculateValueSimilarity(a, b);
+				perc = calculateValueSimilarity(a, b, key);
 			}
 		}
 		return perc;
 	}
 	
-	public float calculateValueSimilarity(Object a, Object b) {
+	public float calculateValueSimilarity(Object a, Object b, String key) {
 		float perc = 0;
 		if (a instanceof Float) {
-			perc = calculateFloatSimilarity((Float) a, (Float) b);
+			perc = calculateFloatSimilarity((Float) a, (Float) b, key);
 		}
 		return perc;
 	}
 	
-	public float calculateFloatSimilarity(float a, float b) {
+	public float calculateFloatSimilarity(float a, float b, String key) {
 		float perc = 0;
 		float min = min(a, b);
 		if (min < 0) {

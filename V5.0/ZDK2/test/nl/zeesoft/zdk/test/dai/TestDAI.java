@@ -4,6 +4,6 @@ public class TestDAI {
 	public static void main(String[] args) {
 		TestObjMapList.main(args);
 		TestHistory.main(args);
-		TestPredictor.main(args);
+		TestAutoPredictor.main(args);
 	}
 }

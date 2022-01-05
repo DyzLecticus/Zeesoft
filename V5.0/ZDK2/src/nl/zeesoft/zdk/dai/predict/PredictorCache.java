@@ -3,7 +3,6 @@ package nl.zeesoft.zdk.dai.predict;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.cache.Cache;
-import nl.zeesoft.zdk.dai.cache.CacheResult;
 
 public class PredictorCache {
 	protected float		mergeSimilarity = 1F;
@@ -14,8 +13,10 @@ public class PredictorCache {
 		cache.hitCache(history.getSubList(1,cache.indexes),history.list.get(0));
 	}
 	
-	public synchronized CacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {
-		return cache.getCacheResult(baseList, comparator, minSimilarity);
+	public synchronized PredictorCacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {
+		PredictorCacheResult r = new PredictorCacheResult(mergeSimilarity);
+		r.setResult(cache.getCacheResult(baseList, comparator, minSimilarity));
+		return r;
 	}
 	
 	public synchronized void setCache(Cache cache) {

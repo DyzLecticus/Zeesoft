@@ -2,7 +2,6 @@ package nl.zeesoft.zdk.dai.predict;
 
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
-import nl.zeesoft.zdk.dai.cache.CacheResult;
 
 public class PredictorRequestWorker implements Runnable {
 	protected PredictorRequest	predictorRequest	= null;
@@ -21,7 +20,7 @@ public class PredictorRequestWorker implements Runnable {
 
 	@Override
 	public void run() {
-		CacheResult result = predictorCache.getCacheResult(baseList, comparator, minSimilarity);
+		PredictorCacheResult result = predictorCache.getCacheResult(baseList, comparator, minSimilarity);
 		predictorRequest.workerIsDone(this, result);
 	}
 	

@@ -39,24 +39,39 @@ public class CacheResult {
 		return str.toString();
 	}
 
+	public boolean addSimilarElement(CacheElement element, float sim) {
+		boolean r = false;
+		if (sim > similarity) {
+			similarity = sim;
+			results.clear();
+		}
+		if (sim == similarity) {
+			results.add(element);
+			r = true;
+		}
+		return r;
+	}
+	
 	public Prediction getPrediction() {
 		Prediction r = new Prediction();
-		addMapPredictions(r);
+		addMapPredictions(r, this);
+		if (secondary!=null) {
+			addMapPredictions(r, secondary);
+		}
+		r.calculateMapPredictionSupport();
 		r.calculatePredictedMap();
 		return r;
 	}
 	
-	public void addMapPredictions(Prediction prediction) {
+	public void addMapPredictions(Prediction prediction, CacheResult res) {
 		int total = 0;
-		for (CacheElement cache: results) {
-			MapPrediction mp = prediction.getOrAddMapPrediction(cache.nextMap);
-			mp.votes += cache.count;
+		for (CacheElement cache: res.results) {
 			total += cache.count;
 		}
-		if (total>0) {
-			for (MapPrediction mp: prediction.mapPredictions) {
-				mp.confidence = ((float)mp.votes / (float)total) * similarity;
-			}
+		for (CacheElement cache: res.results) {
+			MapPrediction mp = prediction.getOrAddMapPrediction(cache.nextMap);
+			mp.votes++;
+			mp.support += ((float)cache.count / (float)total) * res.similarity;
 		}
 	}
 }
