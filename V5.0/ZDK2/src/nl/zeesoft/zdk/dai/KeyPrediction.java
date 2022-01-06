@@ -4,7 +4,7 @@ public class KeyPrediction {
 	public String	key				= "";
 	public Object	predictedValue	= null;
 	public float	support			= 0F;
-	public float	confidence		= 0F;
+	public float	weight			= 0F;
 	
 	public KeyPrediction() {
 		

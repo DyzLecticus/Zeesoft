@@ -63,8 +63,8 @@ public class TestCachePerformance {
 			Console.log("Generating predictions took: " + (System.currentTimeMillis() - start) + " ms");
 		}
 		Console.log("Accuracy: " + r.getKeyAccuracy("3", false) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", false));
+		Console.log("Weight: " + r.getKeyWeight("3") + ", standard deviation: " + r.getKeyWeightStdDev("3"));
 		Console.log("Weighted accuracy: " + r.getKeyAccuracy("3", true) + ", standard deviation: " + r.getKeyAccuracyStdDev("3", true));
-		Console.log("Confidence: " + r.getKeyConfidence("3") + ", standard deviation: " + r.getKeyConfidenceStdDev("3"));
 		return r;
 	}
 	

@@ -105,18 +105,18 @@ public class PredictionLog {
 		return r;
 	}
 
-	public Float getKeyConfidence(String key) {
-		return MathUtil.getAverage(getKeyConfidences(key));
+	public Float getKeyWeight(String key) {
+		return MathUtil.getAverage(getKeyWeights(key));
 	}
 
-	public Float getKeyConfidenceStdDev(String key) {
-		return MathUtil.getStandardDeviation(getKeyConfidences(key));
+	public Float getKeyWeightStdDev(String key) {
+		return MathUtil.getStandardDeviation(getKeyWeights(key));
 	}
 
-	public List<Float> getKeyConfidences(String key) {
+	public List<Float> getKeyWeights(String key) {
 		List<Float> r = new ArrayList<Float>();
 		for (Prediction prediction: list) {
-			Object conf = prediction.getConfidencesMap().values.get(key);
+			Object conf = prediction.getWeightsMap().values.get(key);
 			if (conf!=null) {
 				r.add((Float)conf);
 			}

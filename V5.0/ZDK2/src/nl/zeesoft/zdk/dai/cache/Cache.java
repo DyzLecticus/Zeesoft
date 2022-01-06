@@ -76,14 +76,4 @@ public class Cache {
 		r.count++;
 		return r;
 	}
-	
-	public Cache copy() {
-		Cache r = new Cache();
-		r.indexes.clear();
-		r.indexes.addAll(indexes);
-		for (CacheElement ce: elements) {
-			r.elements.add(ce.copy());
-		}
-		return r;
-	}
 }

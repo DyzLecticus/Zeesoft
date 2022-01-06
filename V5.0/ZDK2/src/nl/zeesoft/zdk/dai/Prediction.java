@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Prediction {
-	public List<MapPrediction>		mapPredictions			= new ArrayList<MapPrediction>();
-	public KeyPredictions			keyPredictions			= new KeyPredictions();
+	public List<MapPrediction>	mapPredictions	= new ArrayList<MapPrediction>();
+	public KeyPredictions		keyPredictions	= new KeyPredictions();
 	
 	@Override
 	public String toString() {
@@ -59,8 +59,8 @@ public class Prediction {
 		return keyPredictions.predictedMap;
 	}
 
-	public ObjMap getConfidencesMap() {
-		return keyPredictions.confidencesMap;
+	public ObjMap getWeightsMap() {
+		return keyPredictions.weightsMap;
 	}
 
 	public ObjMap getWeightedMap() {

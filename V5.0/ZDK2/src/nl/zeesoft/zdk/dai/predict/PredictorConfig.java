@@ -15,11 +15,14 @@ public class PredictorConfig {
 	
 	public PredictorConfig() {
 		float subtract = 0F;
+		int maxSize = 10000;
 		for (int i = 0; i < 3; i++) {
 			CacheConfig cc = new CacheConfig();
 			cc.mergeSimilarity = cc.mergeSimilarity - subtract;
+			cc.maxSize = maxSize;
 			cacheConfigs.add(cc);
 			subtract += 0.1F;
+			maxSize = (int)((float)maxSize * (subtract * 2));
 		}
 	}
 }

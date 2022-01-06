@@ -76,7 +76,7 @@ public class TestHistory {
 		assert prediction.mapPredictions.get(0).toString().equals("{1:2.0, 2:1.0, 3:0.0}, support: 0.9166667");
 		assert prediction.keyPredictions.keyPredictions.size() == 4;
 		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0F));
-		assert prediction.getConfidencesMap().equals(new ObjMap(0.875F, 0.875F, 0.047619037F));
+		assert prediction.getWeightsMap().equals(new ObjMap(1F, 1F, 0.52380955F));
 		
 		CacheBuilder builder = new CacheBuilder();
 		
@@ -91,12 +91,12 @@ public class TestHistory {
 		result = superSuperCache.getCacheResult(history.getSubList(0, superSuperCache.indexes), comparator, 0.5F);
 		Prediction prediction2 = result.getPrediction();
 		Logger.debug(self, "Super super cache prediction;\n" + prediction2);
-		assert prediction2.getConfidencesMap().equals(new ObjMap(0.111111164F, 0.111111164F, 0.111111164F));
+		assert prediction2.getWeightsMap().equals(new ObjMap(0.5555556F, 0.5555556F, 0.5555556F));
 		
 		Prediction prediction3 = Prediction.mergePredictions(prediction, prediction2);
 		assert prediction3.mapPredictions.size() == 3;
 		Logger.debug(self, "Merged cache prediction;\n" + prediction3);
-		assert prediction3.getConfidencesMap().equals(new ObjMap(0.44827592F, 0.44827592F, 0.31034482F));
+		assert prediction3.getWeightsMap().equals(new ObjMap(0.72413796F, 0.72413796F, 0.6551724F));
 		
 		history = new History(16);
 		history.add(new ObjMap(2, 1, 0));

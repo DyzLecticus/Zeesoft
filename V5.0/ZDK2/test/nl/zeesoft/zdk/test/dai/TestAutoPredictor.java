@@ -21,12 +21,16 @@ public class TestAutoPredictor {
 		assert config.cacheConfigs.get(2).mergeSimilarity == 0.8F;
 		
 		config.maxHistorySize = 500;
-		config.cacheConfigs.get(2).mergeSimilarity = 0.85F;
+		config.cacheConfigs.get(0).maxSize = 5000;
+		config.cacheConfigs.get(1).maxSize = 1000;
+		config.cacheConfigs.get(2).mergeSimilarity = 0.825F;
+		config.cacheConfigs.get(2).maxSize = 600;
 		
 		AutoPredictor predictor = new AutoPredictor();
 		predictor.configure(config);
 		Logger.debug(self, "Predictor;\n" + predictor);
-		assert predictor.toString().equals("History max size: 500, processed: 0\nCaches;\n- 1.0 / 0\n- 0.9 / 0\n- 0.85 / 0");
+		assert predictor.toString().startsWith("History max size: 500, processed: 0");
+		assert predictor.toString().endsWith("- 0.825 (0 / 600)");
 		
 		predictor.setPredict(false);
 		
@@ -44,13 +48,19 @@ public class TestAutoPredictor {
 		Logger.debug(self, "Predictor;\n" + predictor);
 		
 		PredictionLog log = predictor.getPredictionLog();
-		Logger.debug(self, "Accuracy: " + log.getKeyAccuracy("3", false) + ", deviation: " + log.getKeyAccuracyStdDev("3", false));
-		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true));
-		Logger.debug(self, "Confidence: " + log.getKeyConfidence("3") + ", deviation: " + log.getKeyConfidenceStdDev("3"));
-
+		
 		Prediction prediction = log.getPredictions().get(1);
 		Logger.debug(self, "Request prediction;\n" + prediction);
 		ObjMap actual = log.getHistory().get(0);
 		Logger.debug(self, "Predicted: " + prediction.getPredictedMap() + ", weighted: " + prediction.getWeightedMap() + ", actual: " + actual);
+		
+		Logger.debug(self, "Accuracy: " + log.getKeyAccuracy("3", false) + ", deviation: " + log.getKeyAccuracyStdDev("3", false));
+		Logger.debug(self, "Weight: " + log.getKeyWeight("3") + ", deviation: " + log.getKeyWeightStdDev("3"));
+		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true));
+
+		Logger.debug(self, "Average cache update time: " + (predictor.getCacheUpdateMs() / (float)predictor.getProcessed()) + " ms");
+		for (int i = 0; i < config.cacheConfigs.size(); i++) {
+			Logger.debug(self, "Average cache " + i + " request time; " + predictor.getAverageRequestMsForCache(i) + " ms");
+		}
 	}
 }
