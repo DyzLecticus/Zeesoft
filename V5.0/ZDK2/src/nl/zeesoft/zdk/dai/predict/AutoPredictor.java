@@ -3,12 +3,10 @@ package nl.zeesoft.zdk.dai.predict;
 import nl.zeesoft.zdk.Util;
 import nl.zeesoft.zdk.dai.ObjMap;
 
-public class AutoPredictor extends Predictor {
+public class AutoPredictor extends TransformationPredictor {
 	protected MsLogger				addMsLogger			= new MsLogger();
 	protected PredictorRequest		request				= new PredictorRequest();
 	protected PredictionLog			predictionLog		= new PredictionLog();
-	
-	protected boolean				waitForCacheRebuild	= true;
 	
 	protected boolean				predict				= true;
 	
@@ -44,7 +42,7 @@ public class AutoPredictor extends Predictor {
 			while(request.isProcessing()) {
 				Util.sleepNs(100000);
 			}
-			predictionLog.add(history.list.get(0), request.getPrediction());
+			predictionLog.add(absoluteHistory.list.get(0), request.getPrediction());
 		}
 		addMsLogger.add((float)(System.nanoTime() - start) / 1000000F);
 	}

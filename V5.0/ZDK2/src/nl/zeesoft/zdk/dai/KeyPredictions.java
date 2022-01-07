@@ -28,8 +28,8 @@ public class KeyPredictions {
 	public void calculatePredictedMap(List<MapPrediction> mapPredictions) {
 		keys = addKeyPredictions(mapPredictions);
 		orderKeyPredictions();
-		calculateKeyPredictionWeights(keys);
-		calculateWeightedPredictions(keys);
+		calculateKeyPredictionWeights();
+		calculateWeightedPredictions();
 	}
 	
 	public List<String> addKeyPredictions(List<MapPrediction> mapPredictions) {
@@ -64,7 +64,7 @@ public class KeyPredictions {
 		keyPredictions = list;
 	}
 	
-	public void calculateKeyPredictionWeights(List<String> keys) {
+	public void calculateKeyPredictionWeights() {
 		for (String key: keys) {
 			List<KeyPrediction> list = getKeyPredictions(key);
 			calculateRelativePredictionWeights(list, key);
@@ -91,7 +91,7 @@ public class KeyPredictions {
 		weightsMap.values.put(key, weight);
 	}
 	
-	public void calculateWeightedPredictions(List<String> keys) {
+	public void calculateWeightedPredictions() {
 		for (String key: keys) {
 			List<KeyPrediction> list = getWeighablePredictions(key);
 			float total = 0F;

@@ -22,15 +22,18 @@ public class TestAutoPredictor {
 		
 		config.maxHistorySize = 500;
 		config.cacheConfigs.get(0).maxSize = 5000;
+		config.cacheConfigs.get(1).mergeSimilarity = 0.95F;
 		config.cacheConfigs.get(1).maxSize = 1000;
-		config.cacheConfigs.get(2).mergeSimilarity = 0.825F;
+		config.cacheConfigs.get(2).mergeSimilarity = 0.9F;
 		config.cacheConfigs.get(2).maxSize = 600;
+		
+		//config.transformer = null;
 		
 		AutoPredictor predictor = new AutoPredictor();
 		predictor.configure(config);
 		Logger.debug(self, "Predictor;\n" + predictor);
 		assert predictor.toString().startsWith("History max size: 500, processed: 0");
-		assert predictor.toString().endsWith("- 0.825 (0 / 600)");
+		assert predictor.toString().endsWith("- 0.9 (0 / 600)");
 		
 		predictor.setPredict(false);
 		

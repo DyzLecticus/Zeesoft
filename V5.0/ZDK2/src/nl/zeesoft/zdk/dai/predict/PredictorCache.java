@@ -32,7 +32,7 @@ public class PredictorCache {
 		worker = null;
 	}
 	
-	public synchronized boolean isUpdatingCache() {
+	public synchronized boolean isHittingCache() {
 		return worker!=null;
 	}
 	

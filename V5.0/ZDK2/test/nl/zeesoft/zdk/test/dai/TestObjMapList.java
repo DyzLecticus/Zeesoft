@@ -7,6 +7,7 @@ import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
+import nl.zeesoft.zdk.dai.ObjMapTransformer;
 
 public class TestObjMapList {
 	public static void main(String[] args) {
@@ -68,6 +69,18 @@ public class TestObjMapList {
 
 		list2.list.add(new ObjMap(2F, 1F, 0F));
 		assert comparator.calculateSimilarity(list, list2) == 0.6666667F;
+		
+		ObjMapTransformer transformer = new ObjMapTransformer();
+		ObjMap from = new ObjMap(2F,1,"");
+		ObjMap to = new ObjMap(3F,3,"");
+		ObjMap transformation = transformer.getTransformation(from, to);
+		ObjMap transformed = transformer.applyTransformation(from, transformation);
+		assert comparator.calculateSimilarity(to, transformed) == 1.0F;
+
+		to = new ObjMap(-2.5F,-3,"");
+		transformation = transformer.getTransformation(from, to);
+		transformed = transformer.applyTransformation(from, transformation);
+		assert comparator.calculateSimilarity(to, transformed) == 1.0F;
 	}
 	
 	private static void testSimilarity(ObjMap a, ObjMap b, float expectedSimilarity) {

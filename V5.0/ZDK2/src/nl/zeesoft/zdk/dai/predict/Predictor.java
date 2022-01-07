@@ -54,7 +54,7 @@ public class Predictor {
 				pc.hitCache(history, comparator);
 			}
 			for (PredictorCache pc: caches) {
-				while(pc.isUpdatingCache()) {
+				while(pc.isHittingCache()) {
 					Util.sleepNs(100000);
 				}
 			}

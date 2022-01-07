@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.dai.MapPrediction;
+import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
+import nl.zeesoft.zdk.dai.ObjMapTransformer;
 import nl.zeesoft.zdk.dai.Prediction;
 
 public class PredictorRequest {
@@ -16,6 +18,9 @@ public class PredictorRequest {
 	private List<PredictorRequestWorker>	workers				= new ArrayList<PredictorRequestWorker>();
 	
 	private List<PredictorCacheResult>		predictorResults	= new ArrayList<PredictorCacheResult>();
+	
+	private ObjMapTransformer				transformer			= null;
+	private ObjMap							from				= null;
 	
 	protected synchronized void process(List<PredictorCache> caches, ObjMapList baseList, ObjMapComparator comparator) {
 		predictorResults.clear();
@@ -43,6 +48,11 @@ public class PredictorRequest {
 		// Override to extend
 	}
 	
+	protected synchronized void setTransform(ObjMapTransformer transformer, ObjMap from) {
+		this.transformer = transformer;
+		this.from = from;
+	}
+	
 	public synchronized boolean isProcessing() {
 		return workers.size()>0;
 	}
@@ -65,7 +75,12 @@ public class PredictorRequest {
 	}
 
 	public Prediction getPrediction() {
-		return Prediction.mergePredictions(getPredictions());
+		Prediction r = Prediction.mergePredictions(getPredictions());
+		if (transformer!=null && from!=null) {
+			transformer.applyTransformation(from, r.keyPredictions.predictedMap, r.keyPredictions.predictedMap);
+			transformer.applyTransformation(from, r.keyPredictions.weightedMap, r.keyPredictions.weightedMap);
+		}
+		return r;
 	}
 	
 	public synchronized float getMinSimilarity() {
