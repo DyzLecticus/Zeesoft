@@ -16,8 +16,6 @@ public class Predictor {
 	
 	protected int					processed			= 0;
 	
-	protected float					cacheUpdateMs		= 0F;
-	
 	public synchronized void configure(PredictorConfig config) {
 		comparator = config.comparator;
 		history = new ObjMapList(config.maxHistorySize);
@@ -28,6 +26,8 @@ public class Predictor {
 			PredictorCache pc = new PredictorCache();
 			pc.mergeSimilarity = cc.mergeSimilarity;
 			pc.maxSize = cc.maxSize;
+			pc.hitMsLogger.setMaxSize(config.maxMsLoggerSize);
+			pc.requestMsLogger.setMaxSize(config.maxMsLoggerSize);
 			caches.add(pc);
 		}
 	}
@@ -50,7 +50,6 @@ public class Predictor {
 	public synchronized void add(ObjMap map) {
 		if (history!=null) {
 			history.add(map);
-			long start = System.nanoTime();
 			for (PredictorCache pc: caches) {
 				pc.hitCache(history, comparator);
 			}
@@ -59,7 +58,6 @@ public class Predictor {
 					Util.sleepNs(100000);
 				}
 			}
-			cacheUpdateMs += (float)(System.nanoTime() - start) / 1000000F;
 			processed++;
 		}
 	}
@@ -72,11 +70,19 @@ public class Predictor {
 		return processed;
 	}
 	
-	public synchronized float getCacheUpdateMs() {
-		return cacheUpdateMs;
+	public synchronized MsLogger getHitMsLogger(int index) {
+		MsLogger r = null;
+		if (caches.size()>index) {
+			r = caches.get(index).hitMsLogger;
+		}
+		return r;
 	}
 	
-	public synchronized float getAverageRequestMsForCache(int index) {
-		return caches.get(index).getAverageRequestMs();
+	public synchronized MsLogger getRequestMsLogger(int index) {
+		MsLogger r = null;
+		if (caches.size()>index) {
+			r = caches.get(index).requestMsLogger;
+		}
+		return r;
 	}
 }

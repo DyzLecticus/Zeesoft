@@ -6,14 +6,14 @@ import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.cache.Cache;
 
 public class PredictorCache {
-	protected float					mergeSimilarity = 1F;
-	protected int					maxSize			= 10000;		
+	public MsLogger					hitMsLogger			= new MsLogger();
+	public MsLogger					requestMsLogger		= new MsLogger();
 	
-	private Cache					cache			= new Cache();
-	private PredictorCacheWorker	worker			= null;
+	protected float					mergeSimilarity 	= 1F;
+	protected int					maxSize				= 10000;
 	
-	private int						requests		= 0;
-	private float					requestMs		= 0F;
+	private Cache					cache				= new Cache();
+	private PredictorCacheWorker	worker				= null;
 	
 	public synchronized void hitCache(ObjMapList history, ObjMapComparator comparator) {
 		ObjMapList baseList = history.getSubList(1,cache.indexes);
@@ -23,10 +23,12 @@ public class PredictorCache {
 	}
 
 	public synchronized void hitCache(ObjMapList baseList, ObjMap nextMap, ObjMapComparator comparator) {
+		long start = System.nanoTime();
 		cache.hitCache(baseList,nextMap,mergeSimilarity,comparator);
 		while(cache.elements.size()>maxSize) {
 			cache.elements.remove(cache.elements.size() - 1);
 		}
+		hitMsLogger.add((float)(System.nanoTime() - start) / 1000000F);
 		worker = null;
 	}
 	
@@ -37,20 +39,11 @@ public class PredictorCache {
 	public synchronized PredictorCacheResult getCacheResult(ObjMapList baseList, ObjMapComparator comparator, float minSimilarity) {
 		PredictorCacheResult r = new PredictorCacheResult(mergeSimilarity);
 		r.setResult(cache.getCacheResult(baseList, comparator, minSimilarity));
-		requests++;
-		requestMs+=r.getTimeMs();
+		requestMsLogger.add(r.getTimeMs());
 		return r;
-	}
-	
-	public synchronized void setCache(Cache cache) {
-		this.cache = cache;
 	}
 	
 	public synchronized int getCacheSize() {
 		return cache.elements.size();
-	}
-	
-	public synchronized float getAverageRequestMs() {
-		return requestMs / (float)requests;
 	}
 }

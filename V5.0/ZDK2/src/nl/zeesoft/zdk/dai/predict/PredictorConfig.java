@@ -7,11 +7,12 @@ import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.cache.CacheIndexesGenerator;
 
 public class PredictorConfig {
-	public ObjMapComparator		comparator		= new ObjMapComparator();
-	public int					maxHistorySize	= 1000;
+	public ObjMapComparator		comparator			= new ObjMapComparator();
+	public int					maxHistorySize		= 1000;
+	public int					maxMsLoggerSize		= 1000;
 
-	public List<Integer>		cacheIndexes	= CacheIndexesGenerator.generate();
-	public List<CacheConfig>	cacheConfigs	= new ArrayList<CacheConfig>();
+	public List<Integer>		cacheIndexes		= CacheIndexesGenerator.generate();
+	public List<CacheConfig>	cacheConfigs		= new ArrayList<CacheConfig>();
 	
 	public PredictorConfig() {
 		float subtract = 0F;

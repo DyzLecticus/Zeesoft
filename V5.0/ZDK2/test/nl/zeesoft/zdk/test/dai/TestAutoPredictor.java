@@ -58,9 +58,10 @@ public class TestAutoPredictor {
 		Logger.debug(self, "Weight: " + log.getKeyWeight("3") + ", deviation: " + log.getKeyWeightStdDev("3"));
 		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true));
 
-		Logger.debug(self, "Average cache update time: " + (predictor.getCacheUpdateMs() / (float)predictor.getProcessed()) + " ms");
+		Logger.debug(self, "Add ms: " + predictor.getAddMsLogger());
 		for (int i = 0; i < config.cacheConfigs.size(); i++) {
-			Logger.debug(self, "Average cache " + i + " request time; " + predictor.getAverageRequestMsForCache(i) + " ms");
+			Logger.debug(self, "Cache " + i + " hit ms: " + predictor.getHitMsLogger(i));
+			Logger.debug(self, "Cache " + i + " request ms; " + predictor.getRequestMsLogger(i));
 		}
 	}
 }
