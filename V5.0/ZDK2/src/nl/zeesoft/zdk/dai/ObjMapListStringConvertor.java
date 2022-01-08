@@ -29,15 +29,14 @@ public class ObjMapListStringConvertor extends ObjectStringConvertor {
 	public ObjMapList fromStringBuilder(StringBuilder str) {
 		ObjMapList r = new ObjMapList();
 		List<StringBuilder> data = StrUtil.split(str, dataSeparator);
-		if (data.size()>2) {
+		if (data.size()>1) {
 			r.maxSize = Util.parseInt(data.remove(0).toString());
 			int numKeys = Util.parseInt(data.remove(0).toString());
 			for (int i = 0; i < numKeys; i++) {
 				r.keys.add(data.remove(0).toString());
 			}
 			for (StringBuilder dat: data) {
-				ObjMap map = mapConvertor.fromStringBuilder(dat);
-				r.list.add(map);
+				r.list.add(mapConvertor.fromStringBuilder(dat));
 			}
 		}
 		return r;
