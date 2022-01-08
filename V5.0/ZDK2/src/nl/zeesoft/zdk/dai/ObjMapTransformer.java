@@ -1,6 +1,8 @@
 package nl.zeesoft.zdk.dai;
 
 public class ObjMapTransformer {
+	public float	minValue	= 0.0000000001F;
+	
 	public ObjMap getTransformation(ObjMap from, ObjMap to) {
 		ObjMap r = new ObjMap();
 		for (String key: to.values.keySet()) {
@@ -18,19 +20,11 @@ public class ObjMapTransformer {
 	public float calculateValueTransformation(Object fromVal, Object toVal, String key) {
 		float perc = 1F;
 		if (fromVal instanceof Float) {
-			float f = (Float)fromVal;
-			if (f!=0F) {
-				perc = (Float)toVal / f;
-			} else {
-				perc = Float.MAX_VALUE;
-			}
+			float f = getMinValue((Float)fromVal);
+			perc = (Float)toVal / f;
 		} else if (fromVal instanceof Integer) {
-			float f = ((Integer)fromVal).floatValue();
-			if (f!=0F) {
-				perc = ((Integer)toVal).floatValue() / f;
-			} else {
-				perc = Float.MAX_VALUE;
-			}
+			float f = getMinValue(((Integer)fromVal).floatValue());
+			perc = ((Integer)toVal).floatValue() / f;
 		}
 		return perc;
 	}
@@ -56,10 +50,28 @@ public class ObjMapTransformer {
 	public Object calculateTransformedValue(Object fromVal, float perc, String key) {
 		Object toVal = fromVal;
 		if (fromVal instanceof Float) {
-			toVal = (Float)fromVal * perc;
+			float f = getMinValue((Float)fromVal);
+			toVal = f * perc;
 		} else if (fromVal instanceof Integer) {
-			toVal = Math.round(((Integer)fromVal).floatValue() * perc);
+			float f = getMinValue(((Integer)fromVal).floatValue());
+			toVal = Math.round(f * perc);
 		}
 		return toVal;
+	}
+	
+	public float getMinValue(float value) {
+		float r = value;
+		boolean reverse = false;
+		if (r < 0F) {
+			reverse = true;
+			r = r * -1F;
+		}
+		if (r < minValue) {
+			r = minValue;
+		}
+		if (reverse) {
+			r = r * -1F;
+		}
+		return r;
 	}
 }

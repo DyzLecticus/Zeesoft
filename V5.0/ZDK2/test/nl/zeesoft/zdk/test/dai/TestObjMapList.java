@@ -52,6 +52,10 @@ public class TestObjMapList {
 		testSimilarity(om, new ObjMap("Pizza", null), 0F);
 		testSimilarity(new ObjMap(), new ObjMap(), 1F);
 		
+		Json json = JsonConstructor.fromObjectUseConvertors(om);
+		ObjMap omc = (ObjMap) ObjectConstructor.fromJson(json);
+		assert omc.equals(omc);
+		
 		ObjMapList list = new ObjMapList();
 		list.maxSize = 3;
 		list.add(new ObjMap(2F, 1F, 0F));
@@ -63,11 +67,11 @@ public class TestObjMapList {
 		assert list.keys.size() == 3;
 		assert list.toString().equals("{1:0.0, 2:0.5, 3:0.0}\n{1:0.0, 2:2.0, 3:0.0}\n{1:0.0, 2:0.5, 3:0.0}");
 	
-		Json json = JsonConstructor.fromObjectUseConvertors(list);
-		ObjMapList comp = (ObjMapList) ObjectConstructor.fromJson(json);
-		assert comp.maxSize == list.maxSize;
-		assert comp.keys.toString().equals(list.keys.toString());
-		assert comp.toString().equals(list.toString());
+		json = JsonConstructor.fromObjectUseConvertors(list);
+		ObjMapList lc = (ObjMapList) ObjectConstructor.fromJson(json);
+		assert lc.maxSize == list.maxSize;
+		assert lc.keys.toString().equals(list.keys.toString());
+		assert lc.toString().equals(list.toString());
 		
 		ObjMapList list2 = new ObjMapList();
 		list2.add(new ObjMap(0F, 0.5F, 0F));
@@ -82,18 +86,35 @@ public class TestObjMapList {
 		ObjMapTransformer transformer = new ObjMapTransformer();
 		ObjMap from = new ObjMap(2F,1,"");
 		ObjMap to = new ObjMap(3F,3,"");
-		ObjMap transformation = transformer.getTransformation(from, to);
-		ObjMap transformed = transformer.applyTransformation(from, transformation);
-		assert comparator.calculateSimilarity(to, transformed) == 1.0F;
+		testTransformation(transformer, from, to, comparator);
 
 		to = new ObjMap(-2.5F,-3,"");
-		transformation = transformer.getTransformation(from, to);
-		transformed = transformer.applyTransformation(from, transformation);
-		assert comparator.calculateSimilarity(to, transformed) == 1.0F;
+		testTransformation(transformer, from, to, comparator);
+		
+		from = new ObjMap(0F,0,"");
+		to = new ObjMap(1F,1,"");
+		testTransformation(transformer, from, to, comparator);
+		
+		to = new ObjMap(10F,10,"");
+		testTransformation(transformer, from, to, comparator);
+
+		from = new ObjMap(transformer.minValue / -10F ,-0,"");
+		to = new ObjMap(10F,10,"");
+		testTransformation(transformer, from, to, comparator);
+		
+		from = new ObjMap(1F,1,"");
+		to = new ObjMap(0F,0,"");
+		testTransformation(transformer, from, to, comparator);
 	}
 	
 	private static void testSimilarity(ObjMap a, ObjMap b, float expectedSimilarity) {
 		ObjMapComparator calculator = new ObjMapComparator();
 		assert calculator.calculateSimilarity(a, b) == expectedSimilarity;
+	}
+	
+	private static void testTransformation(ObjMapTransformer transformer, ObjMap from, ObjMap to, ObjMapComparator comparator) {
+		ObjMap transformation = transformer.getTransformation(from, to);
+		ObjMap transformed = transformer.applyTransformation(from, transformation);
+		assert comparator.calculateSimilarity(to, transformed) == 1.0F;
 	}
 }

@@ -26,10 +26,4 @@ public class CacheElement {
 		r.append(", count: " + count);
 		return r.toString();
 	}
-	
-	public CacheElement copy() {
-		CacheElement r = new CacheElement(baseList, nextMap);
-		r.count = count;
-		return r;
-	}
 }

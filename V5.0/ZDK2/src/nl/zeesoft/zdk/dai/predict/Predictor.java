@@ -63,7 +63,9 @@ public class Predictor {
 	}
 	
 	public synchronized void processRequest(PredictorRequest request) {
-		request.process(caches, history.getSubList(0, cacheIndexes), comparator);
+		if (history!=null) {
+			request.process(caches, history.getSubList(0, cacheIndexes), comparator);
+		}
 	}
 	
 	public synchronized int getProcessed() {
