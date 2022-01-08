@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import nl.zeesoft.zdk.Logger;
+import nl.zeesoft.zdk.dai.KeyPredictions;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.Prediction;
@@ -12,6 +13,7 @@ import nl.zeesoft.zdk.dai.predict.AutoPredictorConfig;
 import nl.zeesoft.zdk.dai.predict.PredictionLog;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 
 public class TestAutoPredictor {
 	private static TestAutoPredictor	self	= new TestAutoPredictor();
@@ -57,6 +59,16 @@ public class TestAutoPredictor {
 		
 		PredictionLog log = predictor.getPredictionLog();
 		
+		Json json = JsonConstructor.fromObjectUseConvertors(log.getPredictions().get(0).keyPredictions);
+		KeyPredictions kpc = (KeyPredictions)ObjectConstructor.fromJson(json);
+		Json json2 = JsonConstructor.fromObjectUseConvertors(kpc);
+		assert json2.toStringBuilderReadFormat().toString().equals(json.toStringBuilderReadFormat().toString());
+		
+		json = JsonConstructor.fromObjectUseConvertors(log);
+		PredictionLog plc = (PredictionLog) ObjectConstructor.fromJson(json);
+		json2 = JsonConstructor.fromObjectUseConvertors(plc);
+		assert json2.toStringBuilderReadFormat().toString().equals(json.toStringBuilderReadFormat().toString());
+		
 		Prediction prediction = log.getPredictions().get(1);
 		Logger.debug(self, "Request prediction;\n" + prediction);
 		ObjMap actual = log.getHistory().get(0);
@@ -73,7 +85,7 @@ public class TestAutoPredictor {
 		}
 		
 		Logger.debug(self, "Converting to JSON ...");
-		Json json = JsonConstructor.fromObjectUseConvertors(predictor);
+		json = JsonConstructor.fromObjectUseConvertors(predictor);
 	    try {
 			FileWriter writer = new FileWriter("dist/predictor.json");
 			Logger.debug(self, "Writing to file ...");

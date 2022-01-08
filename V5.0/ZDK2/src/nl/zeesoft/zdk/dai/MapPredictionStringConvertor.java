@@ -31,7 +31,7 @@ public class MapPredictionStringConvertor extends ObjectStringConvertor {
 		List<StringBuilder> data = StrUtil.split(str, dataSeparator);
 		if (data.size()==2) {
 			r.predictedMap = mapConvertor.fromStringBuilder(data.get(0));
-			r.support = Util.parseInt(data.get(1).toString());
+			r.support = Util.parseFloat(data.get(1).toString());
 		}
 		return r;
 	}

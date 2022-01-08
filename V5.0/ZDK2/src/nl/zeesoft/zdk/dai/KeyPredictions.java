@@ -5,7 +5,7 @@ import java.util.List;
 
 public class KeyPredictions {
 	public List<String>				keys				= new ArrayList<String>();
-	public List<KeyPrediction>		keyPredictions		= new ArrayList<KeyPrediction>();
+	public List<KeyPrediction>		list		= new ArrayList<KeyPrediction>();
 	public ObjMap					predictedMap		= new ObjMap();
 	public ObjMap					weightsMap			= new ObjMap();
 	public ObjMap					weightedMap			= new ObjMap();
@@ -48,7 +48,7 @@ public class KeyPredictions {
 	
 	public void orderKeyPredictions() {
 		List<KeyPrediction> list = new ArrayList<KeyPrediction>();
-		for (KeyPrediction keyPrediction: keyPredictions) {
+		for (KeyPrediction keyPrediction: this.list) {
 			boolean added = false;
 			for (KeyPrediction listPrediction: list) {
 				if (keyPrediction.support >= listPrediction.support) {
@@ -61,13 +61,12 @@ public class KeyPredictions {
 				list.add(keyPrediction);
 			}
 		}
-		keyPredictions = list;
+		this.list = list;
 	}
 	
 	public void calculateKeyPredictionWeights() {
 		for (String key: keys) {
-			List<KeyPrediction> list = getKeyPredictions(key);
-			calculateRelativePredictionWeights(list, key);
+			calculateRelativePredictionWeights(getKeyPredictions(key), key);
 		}
 	}
 	
@@ -110,7 +109,7 @@ public class KeyPredictions {
 	
 	public KeyPrediction getKeyPrediction(String key, Object predictedValue) {
 		KeyPrediction r = null;
-		for (KeyPrediction prediction: keyPredictions) {
+		for (KeyPrediction prediction: list) {
 			if (prediction.key.equals(key) && 
 				(prediction.predictedValue==predictedValue || (prediction.predictedValue != null && prediction.predictedValue.equals(predictedValue)))) {
 				r = prediction;
@@ -124,14 +123,14 @@ public class KeyPredictions {
 		KeyPrediction r = getKeyPrediction(key, predictedValue);
 		if (r==null) {
 			r = new KeyPrediction(key, predictedValue);
-			keyPredictions.add(r);
+			list.add(r);
 		}
 		return r;
 	}
 	
 	public List<KeyPrediction> getKeyPredictions(String key) {
 		List<KeyPrediction> r = new ArrayList<KeyPrediction>();
-		for (KeyPrediction prediction: keyPredictions) {
+		for (KeyPrediction prediction: list) {
 			if (prediction.key.equals(key)) {
 				r.add(prediction);
 			}
@@ -141,7 +140,7 @@ public class KeyPredictions {
 	
 	public List<KeyPrediction> getWeighablePredictions(String key) {
 		List<KeyPrediction> r = new ArrayList<KeyPrediction>();
-		for (KeyPrediction prediction: keyPredictions) {
+		for (KeyPrediction prediction: list) {
 			if (prediction.key.equals(key) && prediction.predictedValue!=null && prediction.predictedValue instanceof Float) {
 				r.add(prediction);
 				if (r.size()==2) {

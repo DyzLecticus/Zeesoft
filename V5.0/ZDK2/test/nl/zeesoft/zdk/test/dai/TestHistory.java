@@ -14,6 +14,9 @@ import nl.zeesoft.zdk.dai.cache.Cache;
 import nl.zeesoft.zdk.dai.cache.CacheBuilder;
 import nl.zeesoft.zdk.dai.cache.CacheElement;
 import nl.zeesoft.zdk.dai.cache.CacheResult;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 
 public class TestHistory {
 	private static TestHistory	self	= new TestHistory();
@@ -74,7 +77,7 @@ public class TestHistory {
 		assert prediction.mapPredictions.size() == 2;
 		assert prediction.mapPredictions.get(0).support == result.similarity;
 		assert prediction.mapPredictions.get(0).toString().equals("{1:2.0, 2:1.0, 3:0.0}, support: 0.9166667");
-		assert prediction.keyPredictions.keyPredictions.size() == 4;
+		assert prediction.keyPredictions.list.size() == 4;
 		assert prediction.getPredictedMap().equals(new ObjMap(2.0F, 1.0F, 0F));
 		assert prediction.getWeightsMap().equals(new ObjMap(1F, 1F, 0.52380955F));
 		
@@ -97,6 +100,17 @@ public class TestHistory {
 		assert prediction3.mapPredictions.size() == 3;
 		Logger.debug(self, "Merged cache prediction;\n" + prediction3);
 		assert prediction3.getWeightsMap().equals(new ObjMap(0.72413796F, 0.72413796F, 0.6551724F));
+		
+		Json json = JsonConstructor.fromObjectUseConvertors(history.cache);
+		Cache comp = (Cache) ObjectConstructor.fromJson(json);
+		Json json2 = JsonConstructor.fromObjectUseConvertors(comp);
+		assert json2.toStringBuilderReadFormat().toString().equals(json.toStringBuilderReadFormat().toString());
+		
+		result = history.getCacheResult(comparator, 0.5F);
+		prediction = result.getPrediction();
+		result = comp.getCacheResult(history.getSubList(0, comp.indexes), comparator, 0.5F);
+		prediction2 = result.getPrediction();
+		assert prediction2.toString().equals(prediction.toString());
 		
 		history = new History(16);
 		history.add(new ObjMap(2, 1, 0));
