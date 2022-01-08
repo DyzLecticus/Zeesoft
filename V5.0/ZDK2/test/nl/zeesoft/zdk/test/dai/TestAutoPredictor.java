@@ -1,5 +1,8 @@
 package nl.zeesoft.zdk.test.dai;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
@@ -7,6 +10,8 @@ import nl.zeesoft.zdk.dai.Prediction;
 import nl.zeesoft.zdk.dai.predict.AutoPredictor;
 import nl.zeesoft.zdk.dai.predict.AutoPredictorConfig;
 import nl.zeesoft.zdk.dai.predict.PredictionLog;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
 
 public class TestAutoPredictor {
 	private static TestAutoPredictor	self	= new TestAutoPredictor();
@@ -57,14 +62,25 @@ public class TestAutoPredictor {
 		ObjMap actual = log.getHistory().get(0);
 		Logger.debug(self, "Predicted: " + prediction.getPredictedMap() + ", weighted: " + prediction.getWeightedMap() + ", actual: " + actual);
 		
-		Logger.debug(self, "Accuracy: " + log.getKeyAccuracy("3", false) + ", deviation: " + log.getKeyAccuracyStdDev("3", false));
+		Logger.debug(self, "Accuracy: " + log.getKeyAccuracy("3", false) + ", deviation: " + log.getKeyAccuracyStdDev("3", false) + ", trend: " + log.getKeyAccuracy("3", false, 0.1F));
 		Logger.debug(self, "Weight: " + log.getKeyWeight("3") + ", deviation: " + log.getKeyWeightStdDev("3"));
-		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true));
+		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true) + ", trend: " + log.getKeyAccuracy("3", true, 0.1F));
 
 		Logger.debug(self, "Add ms: " + predictor.getAddMsLogger());
 		for (int i = 0; i < config.cacheConfigs.size(); i++) {
 			Logger.debug(self, "Cache " + i + " hit ms: " + predictor.getHitMsLogger(i));
 			Logger.debug(self, "Cache " + i + " request ms; " + predictor.getRequestMsLogger(i));
+		}
+		
+		Logger.debug(self, "Converting to JSON ...");
+		Json json = JsonConstructor.fromObjectUseConvertors(predictor);
+	    try {
+			FileWriter writer = new FileWriter("dist/predictor.json");
+			Logger.debug(self, "Writing to file ...");
+			writer.write(json.toStringBuilderReadFormat().toString());
+			writer.close();
+	    } catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -77,16 +77,28 @@ public class PredictionLog {
 		}
 		return str.toString();
 	}
-
-	public Float getKeyAccuracy(String key, boolean weighted) {
-		return MathUtil.getAverage(getKeyAccuracies(key, weighted, comparator));
+	
+	public float getKeyAccuracyTrend(String key, boolean weighted) {
+		return getKeyAccuracy(key, weighted, 0.1F);
 	}
 
-	public Float getKeyAccuracyStdDev(String key, boolean weighted) {
-		return MathUtil.getStandardDeviation(getKeyAccuracies(key, weighted, comparator));
+	public float getKeyAccuracy(String key, boolean weighted, float trend) {
+		int max = 0;
+		if (trend>0F) {
+			max = (int)((float)list.size() * trend);
+		}
+		return MathUtil.getAverage(getKeyAccuracies(key, weighted, max, comparator));
 	}
 
-	public List<Float> getKeyAccuracies(String key, boolean weighted, ObjMapComparator comparator) {
+	public float getKeyAccuracy(String key, boolean weighted) {
+		return MathUtil.getAverage(getKeyAccuracies(key, weighted, 0, comparator));
+	}
+
+	public float getKeyAccuracyStdDev(String key, boolean weighted) {
+		return MathUtil.getStandardDeviation(getKeyAccuracies(key, weighted, 0, comparator));
+	}
+
+	public List<Float> getKeyAccuracies(String key, boolean weighted, int max, ObjMapComparator comparator) {
 		List<Float> r = new ArrayList<Float>();
 		if (history.keys.contains(key)) {
 			int i = 0;
@@ -100,6 +112,9 @@ public class PredictionLog {
 					r.add(comparator.calculateSimilarity(predictedValue,actualMap.values.get(key),key));
 				}
 				i++;
+				if (i==max) {
+					break;
+				}
 			}
 		}
 		return r;

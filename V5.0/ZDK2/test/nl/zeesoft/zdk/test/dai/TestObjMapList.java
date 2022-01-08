@@ -8,6 +8,9 @@ import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.ObjMapTransformer;
+import nl.zeesoft.zdk.json.Json;
+import nl.zeesoft.zdk.json.JsonConstructor;
+import nl.zeesoft.zdk.json.ObjectConstructor;
 
 public class TestObjMapList {
 	public static void main(String[] args) {
@@ -59,6 +62,12 @@ public class TestObjMapList {
 		assert list.list.size() == 3;
 		assert list.keys.size() == 3;
 		assert list.toString().equals("{1:0.0, 2:0.5, 3:0.0}\n{1:0.0, 2:2.0, 3:0.0}\n{1:0.0, 2:0.5, 3:0.0}");
+	
+		Json json = JsonConstructor.fromObjectUseConvertors(list);
+		ObjMapList comp = (ObjMapList) ObjectConstructor.fromJson(json);
+		assert comp.maxSize == list.maxSize;
+		assert comp.keys.toString().equals(list.keys.toString());
+		assert comp.toString().equals(list.toString());
 		
 		ObjMapList list2 = new ObjMapList();
 		list2.add(new ObjMap(0F, 0.5F, 0F));

@@ -1,8 +1,6 @@
 package nl.zeesoft.zdk.dai;
 
 public class ObjMapTransformer {
-	public int resolution = 3;
-	
 	public ObjMap getTransformation(ObjMap from, ObjMap to) {
 		ObjMap r = new ObjMap();
 		for (String key: to.values.keySet()) {
