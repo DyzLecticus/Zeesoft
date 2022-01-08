@@ -53,8 +53,7 @@ public class ObjMapStringConvertor extends ObjectStringConvertor {
 	
 	protected void parseKeyValue(StringBuilder dat, ObjMap map) {
 		List<StringBuilder> keyVal = StrUtil.split(dat, valueSeparator);
-		String key = keyVal.get(0).toString();
-		map.values.put(key, parseValue(keyVal.get(1)));
+		map.values.put(keyVal.get(0).toString(), parseValue(keyVal.get(1)));
 	}
 	
 	public static Object parseValue(StringBuilder str) {
