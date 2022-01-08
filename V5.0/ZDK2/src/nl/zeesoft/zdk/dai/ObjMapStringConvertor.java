@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.str.ObjectStringConvertor;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class ObjMapStringConvertor extends ObjectStringConvertor {
-	public String					dataSeparator		= "#";
-	public String					valueSeparator		= ";";
+	public String	dataSeparator		= "#";
+	public String	valueSeparator		= ";";
 	
 	@Override
 	public Class<?> getObjectClass() {
