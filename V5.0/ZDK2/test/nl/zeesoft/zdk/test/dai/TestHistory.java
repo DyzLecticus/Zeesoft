@@ -99,7 +99,7 @@ public class TestHistory {
 		Prediction prediction3 = Prediction.mergePredictions(prediction, prediction2);
 		assert prediction3.mapPredictions.size() == 3;
 		Logger.debug(self, "Merged cache prediction;\n" + prediction3);
-		assert prediction3.getWeightsMap().equals(new ObjMap(0.72413796F, 0.72413796F, 0.6551724F));
+		assert prediction3.getWeightsMap().equals(new ObjMap(0.7948718F, 0.7948718F, 0.51282054F));
 		
 		Json json = JsonConstructor.fromObjectUseConvertors(history.cache);
 		Cache comp = (Cache) ObjectConstructor.fromJson(json);

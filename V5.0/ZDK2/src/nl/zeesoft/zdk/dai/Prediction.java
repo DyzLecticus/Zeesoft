@@ -43,9 +43,18 @@ public class Prediction {
 	}
 	
 	public void calculateMapPredictionSupport() {
+		int maxVotes = 0;
+		for (MapPrediction mp: mapPredictions) {
+			if (mp.votes > maxVotes) {
+				maxVotes = mp.votes;
+			}
+		}
 		for (MapPrediction mp: mapPredictions) {
 			if (mp.votes>1) {
 				mp.support = mp.support / (float)mp.votes;
+			}
+			if (maxVotes>1) {
+				mp.support = mp.support * ((float)mp.votes / (float)maxVotes);
 			}
 			mp.votes = 0;
 		}
