@@ -75,7 +75,7 @@ public class TestCachePerformance {
 		CacheBuilder builder = new CacheBuilder();
 		r = builder.buildSuperCache(originalCache, comparator, mergeSimilarity);
 		Console.log("Building super cache took: " + (System.currentTimeMillis() - start) + " ms");
-		Console.log("Relative super cache size: " + ((float)r.elements.size() / (float)history.cache.elements.size()));
+		Console.log("Relative super cache size: " + ((float)r.elements.elements.size() / (float)history.cache.elements.elements.size()));
 		return r;
 	}
 	

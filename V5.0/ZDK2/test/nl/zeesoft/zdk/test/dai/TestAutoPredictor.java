@@ -41,11 +41,16 @@ public class TestAutoPredictor {
 		assert config.cacheConfigs.get(2).mergeSimilarity == 0.8F;
 		
 		config.maxHistorySize = 500;
-		config.cacheConfigs.get(0).maxSize = 4000;
+		config.cacheConfigs.get(0).maxSize = 2000;
+		
 		config.cacheConfigs.get(1).mergeSimilarity = 0.95F;
 		config.cacheConfigs.get(1).maxSize = 1000;
+		config.cacheConfigs.get(1).linkedMergeSimilarity = 1F;
+		
 		config.cacheConfigs.get(2).mergeSimilarity = 0.9F;
 		config.cacheConfigs.get(2).maxSize = 600;
+		config.cacheConfigs.get(2).linkedMergeSimilarity = 0.95F;
+		config.cacheConfigs.get(2).linkedMaxSize = 300;
 		
 		//config.transformer = null;
 		
@@ -54,7 +59,7 @@ public class TestAutoPredictor {
 		predictor.configure(config);
 		Logger.debug(self, "Predictor;\n" + predictor);
 		assert predictor.toString().startsWith("History max size: 500, processed: 0");
-		assert predictor.toString().endsWith("- 0.9 (0 / 600)");
+		assert predictor.toString().endsWith("- 0.9 / 0.95 (0 / 180000 [600 * 300])");
 		
 		predictor.setPredict(false);
 		

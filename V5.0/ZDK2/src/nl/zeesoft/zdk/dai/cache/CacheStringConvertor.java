@@ -8,8 +8,8 @@ import nl.zeesoft.zdk.str.ObjectStringConvertors;
 import nl.zeesoft.zdk.str.StrUtil;
 
 public class CacheStringConvertor extends ObjectStringConvertor {
-	public CacheElementStringConvertor	elementConvertor	= (CacheElementStringConvertor) ObjectStringConvertors.getConvertor(CacheElement.class);
-	public String						dataSeparator		= "&";
+	public CacheElementsStringConvertor	elemsConvertor	= (CacheElementsStringConvertor) ObjectStringConvertors.getConvertor(CacheElements.class);
+	public String						dataSeparator	= "*";
 	
 	@Override
 	public Class<?> getObjectClass() {
@@ -35,9 +35,7 @@ public class CacheStringConvertor extends ObjectStringConvertor {
 			for (int i = 0; i < numIndexes; i++) {
 				r.indexes.add(Util.parseInt(data.remove(0).toString()));
 			}
-			for (StringBuilder dat: data) {
-				r.elements.add(elementConvertor.fromStringBuilder(dat));
-			}
+			r.elements = elemsConvertor.fromStringBuilder(data.get(0));
 		}
 		return r;
 	}
@@ -48,9 +46,7 @@ public class CacheStringConvertor extends ObjectStringConvertor {
 			str.append(dataSeparator);
 			str.append(index);
 		}
-		for (CacheElement ce: cache.elements) {
-			str.append(dataSeparator);
-			str.append(elementConvertor.toStringBuilder(ce));
-		}
+		str.append(dataSeparator);
+		str.append(elemsConvertor.toStringBuilder(cache.elements));
 	}
 }

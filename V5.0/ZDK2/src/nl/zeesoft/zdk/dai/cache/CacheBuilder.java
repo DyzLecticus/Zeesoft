@@ -15,15 +15,15 @@ public class CacheBuilder {
 	
 	public void mergeElements(Cache from, Cache to, ObjMapComparator comparator, float mergeSimilarity) {
 		List<CacheElement> merge = new ArrayList<CacheElement>();
-		List<CacheElement> orderedByCount = orderByCount(from.elements);
+		List<CacheElement> orderedByCount = orderByCount(from.elements.elements);
 		for (CacheElement ce: orderedByCount) {
 			if (!merge.contains(ce)) {
 				List<CacheElement> mergeElements = getMergeElementsForElement(ce, orderedByCount, comparator, mergeSimilarity);
 				if (mergeElements.size()>0) {
 					merge.addAll(mergeElements);
-					to.elements.add(mergeElements(ce, mergeElements));
+					to.elements.elements.add(mergeElements(ce, mergeElements));
 				} else {
-					to.elements.add(ce);
+					to.elements.elements.add(ce);
 				}
 			}
 		}

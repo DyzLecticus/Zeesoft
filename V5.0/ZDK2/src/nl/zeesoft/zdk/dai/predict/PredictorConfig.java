@@ -21,6 +21,11 @@ public class PredictorConfig {
 			CacheConfig cc = new CacheConfig();
 			cc.mergeSimilarity = cc.mergeSimilarity - subtract;
 			cc.maxSize = maxSize;
+			if (cc.mergeSimilarity < 1F) {
+				cc.linked = true;
+				cc.linkedMergeSimilarity = (1F + cc.mergeSimilarity) / 2F;
+				cc.linkedMaxSize = cc.maxSize / 2;
+			}
 			cacheConfigs.add(cc);
 			subtract += 0.1F;
 			maxSize = (int)((float)maxSize * (subtract * 2));

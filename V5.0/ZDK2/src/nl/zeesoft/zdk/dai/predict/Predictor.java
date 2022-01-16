@@ -23,9 +23,7 @@ public class Predictor {
 		cacheIndexes.addAll(config.cacheIndexes);
 		caches.clear();
 		for (CacheConfig cc: config.cacheConfigs) {
-			PredictorCache pc = new PredictorCache();
-			pc.mergeSimilarity = cc.mergeSimilarity;
-			pc.maxSize = cc.maxSize;
+			PredictorCache pc = new PredictorCache(cc.mergeSimilarity, cc.maxSize, cc.linked, cc.linkedMergeSimilarity, cc.linkedMaxSize);
 			pc.hitMsLogger.setMaxSize(config.maxMsLoggerSize);
 			pc.requestMsLogger.setMaxSize(config.maxMsLoggerSize);
 			caches.add(pc);
@@ -39,7 +37,13 @@ public class Predictor {
 			str.append("History max size: " + history.maxSize + ", processed: " + processed);
 			str.append("\nCaches;");
 			for (PredictorCache pc: caches) {
-				str.append("\n- " + pc.mergeSimilarity + " (" + pc.getCacheSize() + " / " + pc.maxSize + ")");
+				if (pc.linked) {
+					int max = pc.getCacheMaxSize();
+					int lmax = pc.getCacheLinkedMaxSize();
+					str.append("\n- " + pc.mergeSimilarity + " / " + pc.linkedMergeSimilarity + " (" + pc.getCacheSize() + " / " + (max * lmax) + " [" + max + " * " + lmax + "])");
+				} else {
+					str.append("\n- " + pc.mergeSimilarity + " (" + pc.getCacheSize() + " / " + pc.getCacheMaxSize() + ")");
+				}
 			}
 		} else {
 			str.append(super.toString());

@@ -14,7 +14,13 @@ import nl.zeesoft.zdk.str.StrUtil;
 public class CacheElementStringConvertor extends ObjectStringConvertor {
 	public ObjMapListStringConvertor	mapsConvertor		= (ObjMapListStringConvertor) ObjectStringConvertors.getConvertor(ObjMapList.class);
 	public ObjMapStringConvertor		mapConvertor		= (ObjMapStringConvertor) ObjectStringConvertors.getConvertor(ObjMap.class);
+	public CacheElementsStringConvertor	elemsConvertor		= new CacheElementsStringConvertor();
+
 	public String						dataSeparator		= "%";
+
+	public CacheElementStringConvertor() {
+		elemsConvertor.dataSeparator = "*";
+	}
 	
 	@Override
 	public Class<?> getObjectClass() {

@@ -42,7 +42,7 @@ public class TestHistory {
 		history.addAll(getPattern());
 	
 		assert history.list.size() == 16;
-		assert history.cache.elements.size() == 0;
+		assert history.cache.elements.elements.size() == 0;
 		
 		history.cache.indexes.clear();
 		history.cache.indexes.add(0);
@@ -53,8 +53,8 @@ public class TestHistory {
 		history.addAll(getPattern());
 		history.addAll(getPattern());
 		assert history.list.size() == 16;
-		assert history.cache.elements.size() == 13;
-		assert history.cache.elements.get(0).toString().length() == 122;
+		assert history.cache.elements.elements.size() == 13;
+		assert history.cache.elements.elements.get(0).toString().length() == 122;
 		
 		result = history.getCacheResult(comparator, 0.5F);
 		assert result.similarity == 1.0F;
@@ -84,13 +84,13 @@ public class TestHistory {
 		CacheBuilder builder = new CacheBuilder();
 		
 		Cache superCache = builder.buildSuperCache(history.cache, comparator, 0.9F);
-		assert superCache.elements.size() == 9;
+		assert superCache.elements.elements.size() == 9;
 		result = superCache.getCacheResult(history.getSubList(0, superCache.indexes), comparator, 0.5F);
 		prediction = result.getPrediction();
 		Logger.debug(self, "Super cache prediction;\n" + prediction);
 		
 		Cache superSuperCache = builder.buildSuperCache(superCache, comparator, 0.6F);
-		assert superSuperCache.elements.size() == 5;
+		assert superSuperCache.elements.elements.size() == 5;
 		result = superSuperCache.getCacheResult(history.getSubList(0, superSuperCache.indexes), comparator, 0.5F);
 		Prediction prediction2 = result.getPrediction();
 		Logger.debug(self, "Super super cache prediction;\n" + prediction2);
