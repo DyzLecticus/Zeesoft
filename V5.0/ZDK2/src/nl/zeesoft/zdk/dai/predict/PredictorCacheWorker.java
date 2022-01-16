@@ -8,14 +8,12 @@ public class PredictorCacheWorker implements Runnable {
 	protected PredictorCache	predictorCache		= null;
 	protected ObjMapList		baseList			= null;
 	protected ObjMap			nextMap				= null;
-	protected float				mergeSimilarity		= 0F;
 	protected ObjMapComparator	comparator			= null;
 	
-	protected PredictorCacheWorker(PredictorCache predictorCache, ObjMapList baseList, ObjMap nextMap, float mergeSimilarity, ObjMapComparator comparator) {
+	protected PredictorCacheWorker(PredictorCache predictorCache, ObjMapList baseList, ObjMap nextMap, ObjMapComparator comparator) {
 		this.predictorCache = predictorCache;
 		this.baseList = baseList;
 		this.nextMap = nextMap;
-		this.mergeSimilarity = mergeSimilarity;
 		this.comparator = comparator;
 	}
 

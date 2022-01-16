@@ -17,9 +17,11 @@ public class PredictorCache {
 	
 	public synchronized void hitCache(ObjMapList history, ObjMapComparator comparator) {
 		ObjMapList baseList = history.getSubList(1,cache.indexes);
-		ObjMap nextMap = history.list.get(0);
-		worker = new PredictorCacheWorker(this, baseList, nextMap, mergeSimilarity, comparator);
-		worker.start();
+		if (baseList.list.size()>0) {
+			ObjMap nextMap = history.list.get(0);
+			worker = new PredictorCacheWorker(this, baseList, nextMap, comparator);
+			worker.start();
+		}
 	}
 
 	public synchronized void hitCache(ObjMapList baseList, ObjMap nextMap, ObjMapComparator comparator) {

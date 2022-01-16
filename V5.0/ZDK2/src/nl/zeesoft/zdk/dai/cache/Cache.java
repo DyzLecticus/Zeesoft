@@ -55,25 +55,36 @@ public class Cache {
 		}
 		return r;
 	}
-	
-	public CacheElement hitCache(ObjMapList baseList, ObjMap nextMap) {
-		return hitCache(baseList,nextMap,1F,null);
+
+
+	public CacheElement hitCache(ObjMapList history) {
+		return hitCache(history.getSubList(1,indexes),history.list.get(0), 1F, null);
+	}
+
+	public CacheElement hitCache(ObjMapList history, float minSimilarity, ObjMapComparator comparator) {
+		CacheElement r = null;
+		if (history.list.size()>1 && indexes.size()>0) {
+			r = hitCache(history.getSubList(1,indexes),history.list.get(0), minSimilarity, comparator);
+		}
+		return r;
 	}
 	
 	public CacheElement hitCache(ObjMapList baseList, ObjMap nextMap, float minSimilarity, ObjMapComparator comparator) {
 		CacheElement r = null;
-		if (minSimilarity < 1F && comparator!=null) {
-			r = getElement(baseList, nextMap, minSimilarity, comparator);
-		} else {
-			r = getElement(baseList, nextMap);
+		if (baseList.list.size()>0) {
+			if (minSimilarity < 1F && comparator!=null) {
+				r = getElement(baseList, nextMap, minSimilarity, comparator);
+			} else {
+				r = getElement(baseList, nextMap);
+			}
+			if (r==null) {
+				r = new CacheElement(baseList, nextMap);
+			} else {
+				elements.remove(r);
+			}
+			elements.add(0, r);
+			r.count++;
 		}
-		if (r==null) {
-			r = new CacheElement(baseList, nextMap);
-		} else {
-			elements.remove(r);
-		}
-		elements.add(0, r);
-		r.count++;
 		return r;
 	}
 }

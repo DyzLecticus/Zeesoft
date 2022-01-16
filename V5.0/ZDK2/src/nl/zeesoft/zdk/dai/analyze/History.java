@@ -47,8 +47,8 @@ public class History extends ObjMapList {
 	
 	public CacheElement hitCache() {
 		CacheElement r = null;
-		if (updateCache && list.size()>1 && cache.indexes.size()>0) {
-			r = cache.hitCache(getSubList(1,cache.indexes),list.get(0));
+		if (updateCache) {
+			r = cache.hitCache(this);
 		}
 		return r;
 	}
