@@ -5,26 +5,18 @@ import nl.zeesoft.zdk.dai.Prediction;
 
 public class OMCacheResultSummary {
 	public OMCacheResult	top				= null;
-	
-	public int 				addCount		= 0;
-	
-	public OMCacheResult	primary			= null;
-	public int				primaryCount	= 0;
-	
-	public OMCacheResult	secondary		= null;
-	public int				secondaryCount	= 0;
+	public int 				parentCount		= 0;
+	public OMCacheResult	winner			= null;
 		
 	public OMCacheResultSummary(OMCacheResult top) {
+		this.top = top;
 		checkResult(top, 0);
 	}
 	
 	public void checkResult(OMCacheResult result, int count) {
-		if (primary==null || result.similarity >= primary.similarity) {
-			addCount = count;
-			primary = result;
-			if (result.secondary!=null && (secondary==null || result.secondary.similarity >= secondary.similarity)) {
-				secondary = result;
-			}
+		if (winner==null || (result.similarity >= winner.similarity && count >= parentCount)) {
+			parentCount = count;
+			winner = result;
 		}
 		checkSubResults(result, count);
 	}
@@ -43,9 +35,9 @@ public class OMCacheResultSummary {
 	
 	public Prediction getPrediction() {
 		Prediction r = new Prediction();
-		addMapPredictions(r, primary);
-		if (secondary!=null) {
-			addMapPredictions(r, secondary);
+		addMapPredictions(r, winner);
+		if (winner.secondary!=null) {
+			addMapPredictions(r, winner.secondary);
 		}
 		r.calculateMapPredictionSupport();
 		r.calculatePredictedMap();
