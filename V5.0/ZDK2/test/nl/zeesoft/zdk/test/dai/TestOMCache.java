@@ -34,9 +34,9 @@ public class TestOMCache {
 		cache.hit(getKey(2), getValue(2));
 		cache.hit(getKey(3), getValue(3));
 		
-		Console.log(cache.elements.size());
-		Console.log(cache.elements.get(0).subCache.elements.size());
-		Console.log(cache.elements.get(0).subCache.elements.get(0).subCache.elements.size());
+		//Console.log(cache.elements.size());
+		//Console.log(cache.elements.get(0).subCache.elements.size());
+		//Console.log(cache.elements.get(0).subCache.elements.get(0).subCache.elements.size());
 
 		ObjMapList key = getKey(1);
 		key.list.get(0).values.put("3", 8.5F);
@@ -65,10 +65,8 @@ public class TestOMCache {
 		return key;
 	}
 	
-	public static ObjMapList getValue(int index) {
+	public static ObjMap getValue(int index) {
 		float v = 9F + (float) index;
-		ObjMapList key = new ObjMapList();
-		key.add(new ObjMap(1,index + 4,v));
-		return key;
+		return new ObjMap(1,index + 4,v);
 	}
 }

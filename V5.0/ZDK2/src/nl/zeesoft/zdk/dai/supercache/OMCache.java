@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.zeesoft.zdk.Console;
+import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
 
 public class OMCache {
@@ -14,7 +15,7 @@ public class OMCache {
 		this.config = config;
 	}
 	
-	public OMCacheElement hit(ObjMapList key, ObjMapList value) {
+	public OMCacheElement hit(ObjMapList key, ObjMap value) {
 		OMCacheElement r = null;
 		if (config.mergeSimilarity<1F) {
 			r = get(key, value, config.mergeSimilarity);
@@ -64,7 +65,7 @@ public class OMCache {
 		return r;
 	}
 	
-	public OMCacheElement get(ObjMapList key, ObjMapList value, float minSimilarity) {
+	public OMCacheElement get(ObjMapList key, ObjMap value, float minSimilarity) {
 		OMCacheElement r = null;
 		float max = 0F;
 		for (OMCacheElement ce: elements) {
@@ -80,7 +81,7 @@ public class OMCache {
 		return r;
 	}
 	
-	public OMCacheElement get(ObjMapList key, ObjMapList value) {
+	public OMCacheElement get(ObjMapList key, ObjMap value) {
 		OMCacheElement r = null;
 		for (OMCacheElement ce: elements) {
 			if (ce.value.equals(value) && ce.key.equals(key)) {

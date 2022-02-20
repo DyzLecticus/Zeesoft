@@ -50,7 +50,7 @@ public class OMCacheResultSummary {
 			total += cache.count;
 		}
 		for (OMCacheElement cache: res.elements) {
-			MapPrediction mp = prediction.getOrAddMapPrediction(cache.value.list.get(0));
+			MapPrediction mp = prediction.getOrAddMapPrediction(cache.value);
 			mp.votes++;
 			mp.support += ((float)cache.count / (float)total) * res.similarity;
 		}
