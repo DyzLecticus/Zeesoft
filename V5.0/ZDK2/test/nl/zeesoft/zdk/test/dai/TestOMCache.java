@@ -1,14 +1,17 @@
 package nl.zeesoft.zdk.test.dai;
 
+import java.util.Map.Entry;
+import java.util.SortedMap;
+
 import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.Prediction;
-import nl.zeesoft.zdk.dai.supercache.OMCache;
-import nl.zeesoft.zdk.dai.supercache.OMCacheConfig;
-import nl.zeesoft.zdk.dai.supercache.OMCacheResult;
-import nl.zeesoft.zdk.dai.supercache.OMCacheResultSummary;
+import nl.zeesoft.zdk.dai.omcache.OMCache;
+import nl.zeesoft.zdk.dai.omcache.OMCacheConfig;
+import nl.zeesoft.zdk.dai.omcache.OMCacheResult;
+import nl.zeesoft.zdk.dai.omcache.OMCacheResultSummary;
 
 public class TestOMCache {
 	public static void main(String[] args) {
@@ -51,6 +54,14 @@ public class TestOMCache {
 		Prediction prediction = summary.getPrediction();
 		Console.log(prediction);
 		Console.log(getValue(1));
+		
+		Console.log(cache);
+		
+		Console.log("Caches;");
+		SortedMap<Float,Integer> size = cache.size();
+		for (Entry<Float,Integer> entry: size.entrySet()) {
+			Console.log("- " + entry.getKey() + ", size: " + entry.getValue());
+		}
 	}
 	
 	public static ObjMapList getKey(int index) {

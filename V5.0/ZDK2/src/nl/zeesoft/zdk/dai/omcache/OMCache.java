@@ -1,9 +1,10 @@
-package nl.zeesoft.zdk.dai.supercache;
+package nl.zeesoft.zdk.dai.omcache;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.dai.ObjMap;
 import nl.zeesoft.zdk.dai.ObjMapList;
 
@@ -14,7 +15,46 @@ public class OMCache {
 	public OMCache(OMCacheConfig config) {
 		this.config = config;
 	}
-	
+
+	@Override
+	public String toString() {
+		return toStringBuilder(1).toString();
+	}
+
+	public StringBuilder toStringBuilder(int level) {
+		StringBuilder str = new StringBuilder();
+		str.append(config.mergeSimilarity + ", elements: " + elements.size());
+		if (config.mergeSimilarity<1.0F) {
+			for (OMCacheElement element: elements) {
+				str.append("\n");
+				for (int i = 0; i < level; i++) {
+					str.append("  ");
+				}
+				str.append(element.subCache.toStringBuilder(level + 1));
+			}
+		}
+		return str;
+	}
+
+	public SortedMap<Float,Integer> size() {
+		SortedMap<Float,Integer> r = new TreeMap<Float,Integer>();
+		size(r);
+		return r;
+	}
+
+	public void size(SortedMap<Float,Integer> r) {
+		Integer s = r.get(config.mergeSimilarity);
+		if (s==null) {
+			s = new Integer(0);
+		}
+		r.put(config.mergeSimilarity, (s + elements.size()));
+		if (config.mergeSimilarity<1.0F) {
+			for (OMCacheElement element: elements) {
+				element.subCache.size(r);
+			}
+		}
+	}
+
 	public OMCacheElement hit(ObjMapList key, ObjMap value) {
 		OMCacheElement r = null;
 		if (config.mergeSimilarity<1F) {
@@ -58,7 +98,6 @@ public class OMCache {
 				}
 			}
 		}
-		Console.log(config.mergeSimilarity + " -> " + r.elements.size() + ", sim: " + r.similarity);
 		if (config.mergeSimilarity<1F) {
 			r.addSubResults(key);
 		}

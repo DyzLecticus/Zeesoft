@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.dai.supercache;
+package nl.zeesoft.zdk.dai.omcache;
 
 import nl.zeesoft.zdk.dai.ObjMapComparator;
 
@@ -20,6 +20,13 @@ public class OMCacheConfig {
 			str.append(subConfig.toString());
 		}
 		return str.toString();
+	}
+	
+	public void setComparator(ObjMapComparator comparator) {
+		this.comparator = comparator;
+		if (subConfig!=null) {
+			subConfig.setComparator(comparator);
+		}
 	}
 	
 	public void initializeDefault() {

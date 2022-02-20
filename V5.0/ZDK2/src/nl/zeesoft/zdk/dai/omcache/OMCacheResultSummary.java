@@ -1,4 +1,4 @@
-package nl.zeesoft.zdk.dai.supercache;
+package nl.zeesoft.zdk.dai.omcache;
 
 import nl.zeesoft.zdk.dai.MapPrediction;
 import nl.zeesoft.zdk.dai.Prediction;
