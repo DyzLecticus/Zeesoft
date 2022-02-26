@@ -5,7 +5,7 @@ import nl.zeesoft.zdk.dai.Prediction;
 
 public class OMCacheResultSummary {
 	public OMCacheResult	top				= null;
-	public int 				parentCount		= 0;
+	public int 				winnerLevel		= 0;
 	public OMCacheResult	winner			= null;
 		
 	public OMCacheResultSummary(OMCacheResult top) {
@@ -13,23 +13,13 @@ public class OMCacheResultSummary {
 		checkResult(top, 0);
 	}
 	
-	public void checkResult(OMCacheResult result, int count) {
-		if (winner==null || (result.similarity >= winner.similarity && count >= parentCount)) {
-			parentCount = count;
+	public void checkResult(OMCacheResult result, int level) {
+		if (winner==null || (result.similarity >= winner.similarity && level >= winnerLevel)) {
+			winnerLevel = level;
 			winner = result;
 		}
-		checkSubResults(result, count);
-	}
-	
-	public void checkSubResults(OMCacheResult result, int count) {
-		int index = 0;
 		for (OMCacheResult res: result.subResults) {
-			int add = 0;
-			if (res.elements.size()>index) {
-				add = res.elements.get(index).count;
-			}
-			checkResult(res, (count + add));
-			index++;
+			checkResult(res, (level + 1));
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package nl.zeesoft.zdk.test.dai;
 
-import nl.zeesoft.zdk.Console;
 import nl.zeesoft.zdk.Logger;
 import nl.zeesoft.zdk.dai.KeyPredictions;
 import nl.zeesoft.zdk.dai.ObjMap;
@@ -39,15 +38,17 @@ public class TestAutoOMPredictor {
 		assert config.cacheConfig.toString().equals("Merge/Size: 0.85/1000 -> Merge/Size: 0.925/1000 -> Merge/Size: 1.0/1000");
 		
 		config.maxHistorySize = 500;
-		
-		config.transformer = null;
+		config.cacheConfig.mergeSimilarity = 0.9F;
+		config.cacheConfig.subConfig.mergeSimilarity = 0.95F;
+				
+		//config.transformer = null;
 		
 		AutoOMPredictor predictor = new AutoOMPredictor();
 		assert predictor.toString().startsWith("nl.zeesoft");
 		predictor.configure(config);
 		Logger.debug(self, "Predictor;\n" + predictor);
 		assert predictor.toString().startsWith("History max size: 500, processed: 0");
-		assert predictor.toString().endsWith("- 0.85, size: 0");
+		assert predictor.toString().endsWith("- 0.9, size: 0");
 		
 		predictor.setPredict(false);
 		
@@ -58,7 +59,11 @@ public class TestAutoOMPredictor {
 			if (i==1000) {
 				Logger.debug(self, "Predictor;\n" + predictor);
 				Logger.debug(self, "Predicting ...");
-				assert predictor.getProcessed() == 3389L;
+				if (config.transformer!=null) {
+					assert predictor.getProcessed() == 3389L;
+				} else {
+					assert predictor.getProcessed() == 3390L;
+				}
 				predictor.setPredict(true);
 			}
 			predictor.add(history.list.get(i));
@@ -66,7 +71,6 @@ public class TestAutoOMPredictor {
 		Logger.debug(self, "Predictor;\n" + predictor);
 		
 		Logger.debug(self, "Latest prediction;\n" + predictor.getRequest().getPrediction());
-		assert predictor.getRequest().getPrediction().mapPredictions.size() == 2;
 		
 		PredictionLog log = predictor.getPredictionLog();
 		assert log.toString().length() > 100;
@@ -90,9 +94,9 @@ public class TestAutoOMPredictor {
 		Logger.debug(self, "Weight: " + log.getKeyWeight("3") + ", deviation: " + log.getKeyWeightStdDev("3"));
 		Logger.debug(self, "Weighted accuracy: " + log.getKeyAccuracy("3", true) + ", deviation: " + log.getKeyAccuracyStdDev("3", true) + ", trend: " + log.getKeyAccuracyTrend("3", true));
 
-		assert log.getKeyAccuracy("3", false) > 0.9F;
+		assert log.getKeyAccuracy("3", false) > 0.8F;
 		assert log.getKeyAccuracy("3", false) != log.getKeyAccuracyTrend("3", false);
-		assert log.getKeyAccuracy("3", true) > 0.9F;
+		assert log.getKeyAccuracy("3", true) > 0.8F;
 		assert log.getKeyAccuracy("3", true) != log.getKeyAccuracyTrend("3", true);
 		
 		Logger.debug(self, "Cache hit ms: " + predictor.getHitMsLogger());

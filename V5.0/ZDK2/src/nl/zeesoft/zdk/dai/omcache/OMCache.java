@@ -99,7 +99,7 @@ public class OMCache {
 			}
 		}
 		if (config.mergeSimilarity<1F) {
-			r.addSubResults(key);
+			r.addSubResults(key, minSimilarity);
 		}
 		return r;
 	}
