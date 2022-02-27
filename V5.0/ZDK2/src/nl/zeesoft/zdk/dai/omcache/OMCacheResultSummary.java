@@ -10,16 +10,28 @@ public class OMCacheResultSummary {
 		
 	public OMCacheResultSummary(OMCacheResult top) {
 		this.top = top;
-		checkResult(top, 0);
+		determineWinner(top, 0);
+		if (winner.secondary==null) {
+			determineWinnerSecondary(top, 0);
+		}
 	}
 	
-	public void checkResult(OMCacheResult result, int level) {
-		if (winner==null || (result.similarity >= winner.similarity && level >= winnerLevel)) {
+	public void determineWinner(OMCacheResult result, int level) {
+		if (winner==null || (result.similarity > winner.similarity && level >= winnerLevel)) {
 			winnerLevel = level;
 			winner = result;
 		}
 		for (OMCacheResult res: result.subResults) {
-			checkResult(res, (level + 1));
+			determineWinner(res, (level + 1));
+		}
+	}
+	
+	public void determineWinnerSecondary(OMCacheResult result, int level) {
+		if (level >= winnerLevel && result!=winner && (winner.secondary==null || (result.similarity > winner.secondary.similarity))) {
+			winner.secondary = result;
+		}
+		for (OMCacheResult res: result.subResults) {
+			determineWinnerSecondary(res, (level + 1));
 		}
 	}
 	
