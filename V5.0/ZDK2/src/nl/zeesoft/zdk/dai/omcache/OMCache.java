@@ -80,10 +80,14 @@ public class OMCache {
 	}
 	
 	public OMCacheResult lookup(ObjMapList key) {
-		return lookup(key, 0F);
+		return lookup(key, 0F, -1);
 	}
 	
-	public OMCacheResult lookup(ObjMapList key, float minSimilarity) {
+	public OMCacheResult lookup(ObjMapList key, float minSimilarity, int maxDepth) {
+		return lookup(key, 0F, 1, maxDepth);
+	}
+	
+	protected OMCacheResult lookup(ObjMapList key, float minSimilarity, int level, int maxDepth) {
 		OMCacheResult r = new OMCacheResult();
 		for (OMCacheElement ce: elements) {
 			float sim = config.comparator.calculateSimilarity(key, ce.key);
@@ -98,8 +102,8 @@ public class OMCache {
 				}
 			}
 		}
-		if (config.mergeSimilarity<1F) {
-			r.addSubResults(key, minSimilarity);
+		if (config.mergeSimilarity<1F && (maxDepth==0 || level < maxDepth)) {
+			r.addSubResults(key, minSimilarity, level, maxDepth);
 		}
 		return r;
 	}

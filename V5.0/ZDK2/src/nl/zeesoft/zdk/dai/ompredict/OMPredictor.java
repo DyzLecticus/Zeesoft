@@ -71,7 +71,7 @@ public class OMPredictor {
 			ObjMapList baseList = history.getSubList(0,cacheIndexes);
 			if (baseList.list.size()>0) {
 				long start = System.nanoTime();
-				OMCacheResult result = cache.lookup(baseList, request.getMinSimilarity());
+				OMCacheResult result = cache.lookup(baseList, request.getMinSimilarity(), request.getMaxDepth());
 				lookupMsLogger.add((float)(System.nanoTime() - start) / 1000000F);
 				OMCacheResultSummary summary = new OMCacheResultSummary(result);
 				request.setPrediction(summary.getPrediction());

@@ -7,10 +7,10 @@ import nl.zeesoft.zdk.dai.ObjMapList;
 import nl.zeesoft.zdk.dai.Prediction;
 import nl.zeesoft.zdk.dai.ompredict.AutoOMPredictor;
 import nl.zeesoft.zdk.dai.ompredict.AutoOMPredictorConfig;
+import nl.zeesoft.zdk.dai.ompredict.OMPredictorRequest;
 import nl.zeesoft.zdk.dai.predict.MsLogger;
 import nl.zeesoft.zdk.dai.predict.PredictionLog;
 import nl.zeesoft.zdk.dai.predict.PredictorCacheResult;
-import nl.zeesoft.zdk.dai.predict.PredictorRequest;
 import nl.zeesoft.zdk.json.Json;
 import nl.zeesoft.zdk.json.JsonConstructor;
 import nl.zeesoft.zdk.json.ObjectConstructor;
@@ -26,13 +26,11 @@ public class TestAutoOMPredictor {
 		pcr.timeNs = 1000000;
 		assert pcr.toString().equals("Merge similarity: 1.0\nnull\nTime: 1.0 ms");
 		
-		PredictorRequest request = new PredictorRequest();
+		OMPredictorRequest request = new OMPredictorRequest();
 		request.setMinSimilarity(0.1F);
 		assert request.getMinSimilarity() == 0.1F;
-		request.setMaxCacheIndex(1);
-		assert request.getMaxCacheIndex() == 1;
-		request.setMinCacheIndex(1);
-		assert request.getMinCacheIndex() == 1;
+		request.setMaxDepth(2);
+		assert request.getMaxDepth() == 2;
 		
 		AutoOMPredictorConfig config = new AutoOMPredictorConfig();
 		assert config.cacheConfig.toString().equals("Merge/Size: 0.85/1000 -> Merge/Size: 0.925/1000 -> Merge/Size: 1.0/1000");
@@ -51,6 +49,8 @@ public class TestAutoOMPredictor {
 		assert predictor.toString().endsWith("- 0.9, size: 0");
 		
 		predictor.setPredict(false);
+		
+		//predictor.getRequest().setMaxDepth(3);
 		
 		ObjMapList history = new ObjMapList(5000);
 		int num = TestCachePerformance.readInputFile(history);

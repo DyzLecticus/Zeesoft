@@ -6,17 +6,27 @@ import nl.zeesoft.zdk.dai.Prediction;
 
 public class OMPredictorRequest {
 	private float				minSimilarity	= 0F;
-	private Prediction			prediction		= null;
-
+	private int					maxDepth		= 0;
+	
 	private ObjMapTransformer	transformer		= null;
 	private ObjMap				from			= null;
-	
+
+	private Prediction			prediction		= null;
+
 	public synchronized float getMinSimilarity() {
 		return minSimilarity;
 	}
 	
 	public synchronized void setMinSimilarity(float minSimilarity) {
 		this.minSimilarity = minSimilarity;
+	}
+
+	public synchronized int getMaxDepth() {
+		return maxDepth;
+	}
+	
+	public synchronized void setMaxDepth(int maxDepth) {
+		this.maxDepth = maxDepth;
 	}
 
 	public synchronized Prediction getPrediction() {

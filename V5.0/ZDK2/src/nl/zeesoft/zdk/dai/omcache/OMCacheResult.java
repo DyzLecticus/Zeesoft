@@ -34,9 +34,9 @@ public class OMCacheResult {
 		return r;
 	}
 	
-	public void addSubResults(ObjMapList key, float minSimilarity) {
+	public void addSubResults(ObjMapList key, float minSimilarity, int level, int maxDepth) {
 		for (OMCacheElement ce: elements) {
-			OMCacheResult subResult = ce.subCache.lookup(key, minSimilarity);
+			OMCacheResult subResult = ce.subCache.lookup(key, minSimilarity, (level+1), maxDepth);
 			if (subResult.elements.size()>0) {
 				subResults.add(subResult);
 			}
