@@ -1,4 +1,5 @@
 const CacheElement = require('./CacheElement');
+const CacheResult = require('./CacheResult');
 
 function Cache(config) {
   this.config = config;
@@ -43,6 +44,29 @@ function Cache(config) {
       elem = elem.subCache.hit(key, value);
     }
     return elem;
+  };
+  this.lookup = (key, minSimilarity, level, maxDepth) => {
+    const minSim = minSimilarity || 0.0;
+    const lvl = level || 0;
+    const maxD = maxDepth || 0;
+    const res = new CacheResult();
+    for (let i = 0; i < this.elements.length; i += 1) {
+      const sim = this.config.comparator.calculateSimilarity(key, this.elements[i].key);
+      if (sim >= minSim) {
+        if (sim > res.similarity) {
+          if (res.elements.length > 0) {
+            res.secondary = new CacheResult(res.similarity, res.elements);
+          }
+        }
+        if (!res.addSimilarElement(sim, this.elements[i]) && res.secondary != null) {
+          res.secondary.addSimilarElement(sim, this.elements[i]);
+        }
+      }
+    }
+    if (this.config.mergeSimilarity < 1.0 && (maxD === 0 || lvl < maxD)) {
+      res.addSubResults(key, minSim, lvl, maxD);
+    }
+    return res;
   };
 }
 module.exports = Cache;
