@@ -59,7 +59,7 @@ function Comparator() {
     const max = this.max(a.length, b.length);
     if (max > 0) {
       perc = 0;
-      for (let i = 0; i < max; i+=1) {
+      for (let i = 0; i < max; i += 1) {
         if (a.length > i && b.length > i) {
           perc += this.calculateObjectSimilarity(a[i], b[i]);
         }
