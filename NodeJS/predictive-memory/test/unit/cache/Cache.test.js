@@ -62,9 +62,19 @@ describe('Cache', () => {
     const v2 = { a: 4, b: 2, c: 8 };
     cache.hit(k2, v2);
 
-    const res = cache.lookup(k1);
+    let res = cache.lookup(k1);
     expect(res.similarity).toBe(1.0);
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
+
+    const k3 = [
+      { a: 2, b: 2, c: 3 },
+      { a: 3, b: 2, c: 3 },
+    ];
+    res = cache.lookup(k3, 0.0, 0, 1);
+    expect(res.similarity).toBe(0.9761904761904763);
+    expect(res.elements.length).toBe(1);
+    expect(res.subResults.length).toBe(1);
+    expect(res.subResults[0].subResults.length).toBe(0);
   });
 });
