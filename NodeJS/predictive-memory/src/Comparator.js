@@ -55,7 +55,7 @@ function Comparator() {
     return perc;
   };
   this.calculateObjectArraySimilarity = (a, b) => {
-    let perc = 1;
+    let perc = 1.0;
     const max = this.max(a.length, b.length);
     if (max > 0) {
       perc = 0;
@@ -65,6 +65,15 @@ function Comparator() {
         }
       }
       perc /= max;
+    }
+    return perc;
+  };
+  this.calculateSimilarity = (a, b) => {
+    let perc = 0.0;
+    if (Array.isArray(a) && Array.isArray(b)) {
+      perc = this.calculateObjectArraySimilarity(a, b);
+    } else {
+      perc = this.calculateObjectSimilarity(a, b);
     }
     return perc;
   };

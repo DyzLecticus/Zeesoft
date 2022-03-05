@@ -88,4 +88,19 @@ describe('Comparator', () => {
     expect(comparator.calculateObjectArraySimilarity(a, b)).toBe(0.5555555555555556);
     expect(comparator.calculateObjectArraySimilarity([], [])).toBe(1);
   });
+
+  test('Calculates the similarity between two objects or arrays correctly', () => {
+    const comparator = new Comparator();
+    const a = [
+      { a: 1, b: 1 },
+      { a: 2, b: 2 },
+    ];
+    const b = [
+      { a: 1, b: 1 },
+      { a: 2, b: 2 },
+    ];
+    expect(comparator.calculateSimilarity(a, b)).toBe(1);
+    expect(comparator.calculateSimilarity(a[0], b[0])).toBe(1);
+    expect(comparator.calculateSimilarity(a, b[0])).toBe(0);
+  });
 });

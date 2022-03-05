@@ -5,7 +5,7 @@ describe('CacheElement', () => {
     let elem = new CacheElement();
     expect(elem.key).toBe(null);
     expect(elem.value).toBe(null);
-    elem = new CacheElement(1, 2);  
+    elem = new CacheElement(1, 2);
     expect(elem.key).toBe(1);
     expect(elem.value).toBe(2);
   });
