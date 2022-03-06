@@ -23,13 +23,13 @@ function Cache(config) {
     }
     return elem;
   };
-  
+
   this.applyMaxSize = () => {
     if (this.elements.length > this.config.maxSize) {
       this.elements = this.elements.slice(this.elements.length - this.config.maxSize);
     }
   };
-  
+
   this.hit = (key, value) => {
     let elem = this.get(key, value, this.config.mergeSimilarity);
     if (elem === null) {
@@ -48,7 +48,7 @@ function Cache(config) {
     }
     return elem;
   };
-  
+
   this.lookup = (key, minSimilarity, level, maxDepth) => {
     const minSim = minSimilarity || 0.0;
     const lvl = level || 0;
@@ -75,7 +75,7 @@ function Cache(config) {
     }
     return res;
   };
-  
+
   this.size = (obj) => {
     const ob = obj || {};
     const key = `${this.config.mergeSimilarity}`;

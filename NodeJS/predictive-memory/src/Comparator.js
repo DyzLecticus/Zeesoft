@@ -1,25 +1,9 @@
 function Comparator() {
-  this.max = (a, b) => {
-    let r = a;
-    if (b > a) {
-      r = b;
-    }
-    return r;
-  };
-  
-  this.min = (a, b) => {
-    let r = a;
-    if (b < a) {
-      r = b;
-    }
-    return r;
-  };
-  
   this.calculateNumberSimilarity = (a, b) => {
     let perc = 0.0;
     let ac = a;
     let bc = b;
-    const min = this.min(a, b);
+    const min = Math.min(a, b);
     if (min < 0) {
       ac += (min * -2.0);
       bc += (min * -2.0);
@@ -32,7 +16,7 @@ function Comparator() {
     perc = 1.0 - (perc / 2.0);
     return perc;
   };
-  
+
   this.calculateValueSimilarity = (a, b) => {
     let perc = 0.0;
     if (typeof (a) === 'number' && typeof (b) === 'number') {
@@ -42,7 +26,7 @@ function Comparator() {
     }
     return perc;
   };
-  
+
   this.calculateObjectSimilarity = (a, b) => {
     let perc = 1.0;
     const abKeys = Object.keys(a).filter((key) => key in b);
@@ -58,10 +42,10 @@ function Comparator() {
     }
     return perc;
   };
-  
+
   this.calculateObjectArraySimilarity = (a, b) => {
     let perc = 1.0;
-    const max = this.max(a.length, b.length);
+    const max = Math.max(a.length, b.length);
     if (max > 0) {
       perc = 0;
       for (let i = 0; i < max; i += 1) {
@@ -73,7 +57,7 @@ function Comparator() {
     }
     return perc;
   };
-  
+
   this.calculateSimilarity = (a, b) => {
     let perc = 0.0;
     if (Array.isArray(a) && Array.isArray(b)) {

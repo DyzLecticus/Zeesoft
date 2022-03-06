@@ -78,7 +78,7 @@ describe('Cache', () => {
     ];
     const v3 = { a: 3, b: 2, c: 3.1 };
     cache.hit(k3, v3);
-    
+
     const k4 = [
       { a: 2, b: 2, c: 4.1 },
       { a: 3, b: 2, c: 3 },
