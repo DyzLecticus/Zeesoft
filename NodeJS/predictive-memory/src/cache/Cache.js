@@ -58,7 +58,10 @@ function Cache(config) {
             res.secondary = new CacheResult(res.similarity, res.elements);
           }
         }
-        if (!res.addSimilarElement(sim, this.elements[i]) && res.secondary != null) {
+        if (!res.addSimilarElement(sim, this.elements[i])) {
+          if (res.secondary === null) {
+            res.secondary = new CacheResult();
+          }
           res.secondary.addSimilarElement(sim, this.elements[i]);
         }
       }
@@ -68,5 +71,18 @@ function Cache(config) {
     }
     return res;
   };
+  this.size = (obj) => {
+    const ob = obj ? obj : {};
+    const key = "" + this.config.mergeSimilarity;
+    let s = ob[key] ? ob[key] : 0;
+    s += this.elements.length;
+    ob[key] = s;
+    if (config.subConfig) {
+      for (let i = 0; i < this.elements.length; i += 1) {
+        this.elements[i].subCache.size(ob);
+      }
+    }
+    return ob;
+  }
 }
 module.exports = Cache;

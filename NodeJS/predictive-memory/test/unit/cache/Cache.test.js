@@ -1,6 +1,51 @@
 const CacheConfig = require('../../../src/cache/CacheConfig');
 const Cache = require('../../../src/cache/Cache');
 
+const k1 = [
+  { a: 1, b: 2, c: 3 },
+  { a: 2, b: 2, c: 4 },
+];
+const v1 = { a: 3, b: 2, c: 3 };
+
+const k2 = [
+  { a: 2, b: 2, c: 4 },
+  { a: 3, b: 2, c: 3 },
+];
+const v2 = { a: 4, b: 2, c: 8 };
+
+const k3 = [
+  { a: 1, b: 2, c: 3.1 },
+  { a: 2, b: 2, c: 4 },
+];
+const v3 = { a: 3, b: 2, c: 3.1 };
+
+const k4 = [
+  { a: 2, b: 2, c: 4.1 },
+  { a: 3, b: 2, c: 3 },
+];
+const v4 = { a: 4, b: 2, c: 8.1 };
+
+const k5 = [
+  { a: 1, b: 2, c: 3.2 },
+  { a: 2, b: 2, c: 4 },
+];
+const v5 = { a: 3, b: 2, c: 3.2 };
+
+const k6 = [
+  { a: 2, b: 2, c: 4.2 },
+  { a: 3, b: 2, c: 3 },
+];
+const v6 = { a: 4, b: 2, c: 8.2 };
+
+const initializeTestCache = () => {
+  const config = new CacheConfig();
+  config.initiatlizeDefault();
+  const cache = new Cache(config);
+  cache.hit(k1, v1);
+  cache.hit(k2, v2);
+  return cache;
+};
+
 describe('Cache', () => {
   test('Constructs itself correctly', () => {
     const config = new CacheConfig();
@@ -21,11 +66,6 @@ describe('Cache', () => {
     config.initiatlizeDefault();
     const cache = new Cache(config);
 
-    const k1 = [
-      { a: 1, b: 2, c: 3 },
-      { a: 2, b: 2, c: 4 },
-    ];
-    const v1 = { a: 3, b: 2, c: 3 };
     const elem1 = cache.hit(k1, v1);
     expect(cache.elements.length).toBe(1);
     expect(elem1.subCache).toBe(null);
@@ -33,48 +73,43 @@ describe('Cache', () => {
     cache.hit(k1, v1);
     expect(elem1.count).toBe(2);
 
-    const k2 = [
-      { a: 2, b: 2, c: 4 },
-      { a: 3, b: 2, c: 3 },
-    ];
-    const v2 = { a: 4, b: 2, c: 8 };
     const elem2 = cache.hit(k2, v2);
     expect(cache.elements.length).toBe(2);
     expect(elem1.count).toBe(2);
     expect(elem2.count).toBe(1);
   });
   test('Returns correct lookup results', () => {
-    const config = new CacheConfig();
-    config.initiatlizeDefault();
-    const cache = new Cache(config);
-
-    const k1 = [
-      { a: 1, b: 2, c: 3 },
-      { a: 2, b: 2, c: 4 },
-    ];
-    const v1 = { a: 3, b: 2, c: 3 };
-    cache.hit(k1, v1);
-
-    const k2 = [
-      { a: 2, b: 2, c: 4 },
-      { a: 3, b: 2, c: 3 },
-    ];
-    const v2 = { a: 4, b: 2, c: 8 };
-    cache.hit(k2, v2);
+    const cache = initializeTestCache();
 
     let res = cache.lookup(k1);
     expect(res.similarity).toBe(1.0);
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
 
-    const k3 = [
+    const lk1 = [
       { a: 2, b: 2, c: 3 },
       { a: 3, b: 2, c: 3 },
     ];
-    res = cache.lookup(k3, 0.0, 0, 1);
+    res = cache.lookup(lk1, 0.0, 0, 1);
     expect(res.similarity).toBe(0.9761904761904763);
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
     expect(res.subResults[0].subResults.length).toBe(0);
+
+    const lk2 = [
+      { a: 1, b: 2, c: 3.04 },
+      { a: 2, b: 2, c: 4 },
+    ];
+
+    cache.hit(k3, v3);
+    cache.hit(k4, v4);
+    res = cache.lookup(lk2, 0.0, 0, 1);
+    console.log(res);
+    console.log(cache.size());
+  });
+  test('Returns the correct size(s)', () => {
+    const cache = initializeTestCache();
+    const size = cache.size();
+    expect(size).toStrictEqual({"0.95": 2, "0.98": 2, "0.99": 2, "1": 2});
   });
 });

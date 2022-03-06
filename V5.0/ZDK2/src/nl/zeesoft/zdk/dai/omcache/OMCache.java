@@ -97,7 +97,10 @@ public class OMCache {
 						r.secondary = new OMCacheResult(r.elements, r.similarity);
 					}
 				}
-				if (!r.addSimilarElement(ce, sim) && r.secondary!=null) {
+				if (!r.addSimilarElement(ce, sim)) {
+					if (r.secondary==null) {
+						r.secondary = new OMCacheResult();
+					}
 					r.secondary.addSimilarElement(ce, sim);
 				}
 			}
