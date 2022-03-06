@@ -3,6 +3,7 @@ function CacheResult(sim, elems) {
   this.elements = elems || [];
   this.secondary = null;
   this.subResults = [];
+  
   this.addSimilarElement = (s, element) => {
     let added = false;
     if (s > this.similarity) {
@@ -15,6 +16,7 @@ function CacheResult(sim, elems) {
     }
     return added;
   };
+  
   this.addSubResults = (key, minSimilarity, level, maxDepth) => {
     for (let i = 0; i < this.elements.length; i += 1) {
       const subResult = this.elements[i].subCache.lookup(key, minSimilarity, (level + 1), maxDepth);
