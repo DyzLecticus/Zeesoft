@@ -12,6 +12,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'linebreak-style': ['error', process.env.NODE_ENV === 'prod' ? 'unix' : 'windows'],
   },
   plugins: ['jest'],
 };
