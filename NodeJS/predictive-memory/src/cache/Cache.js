@@ -34,7 +34,7 @@ function Cache(config) {
     let elem = this.get(key, value, this.config.mergeSimilarity);
     if (elem === null) {
       elem = new CacheElement(key, value);
-      if (this.config.mergeSimilarity < 1.0 && this.config.subConfig != null) {
+      if (this.config.subConfig) {
         elem.subCache = new Cache(this.config.subConfig);
       }
     } else {
@@ -67,7 +67,7 @@ function Cache(config) {
         }
       }
     }
-    if (this.config.subConfig != null && (maxDepth === 0 || level < maxDepth)) {
+    if (this.config.subConfig && (maxDepth === 0 || level < maxDepth)) {
       res.addSubResults(key, minSimilarity, level, maxDepth);
     }
     return res;
@@ -85,7 +85,7 @@ function Cache(config) {
     let s = ob[key] ? ob[key] : 0;
     s += this.elements.length;
     ob[key] = s;
-    if (config.subConfig) {
+    if (this.config.subConfig) {
       for (let i = 0; i < this.elements.length; i += 1) {
         this.elements[i].subCache.size(ob);
       }
