@@ -17,8 +17,8 @@ const initializeTestCache = () => {
   const config = new CacheConfig();
   config.initiatlizeDefault();
   const cache = new Cache(config);
-  cache.hit(k1, v1);
-  cache.hit(k2, v2);
+  cache.process(k1, v1);
+  cache.process(k2, v2);
   return cache;
 };
 
@@ -37,27 +37,27 @@ describe('Cache', () => {
     cache.applyMaxSize();
     expect(cache.elements.length).toBe(10);
   });
-  test('Hits sub caches correctly', () => {
+  test('Processes key/value pairs in sub caches correctly', () => {
     const config = new CacheConfig();
     config.initiatlizeDefault();
     const cache = new Cache(config);
 
-    const elem1 = cache.hit(k1, v1);
+    const elem1 = cache.process(k1, v1);
     expect(cache.elements.length).toBe(1);
     expect(elem1.subCache).toBe(null);
     expect(elem1.count).toBe(1);
-    cache.hit(k1, v1);
+    cache.process(k1, v1);
     expect(elem1.count).toBe(2);
 
-    const elem2 = cache.hit(k2, v2);
+    const elem2 = cache.process(k2, v2);
     expect(cache.elements.length).toBe(2);
     expect(elem1.count).toBe(2);
     expect(elem2.count).toBe(1);
   });
-  test('Returns correct lookup results', () => {
+  test('Returns correct query results', () => {
     const cache = initializeTestCache();
 
-    let res = cache.lookup(k1);
+    let res = cache.query(k1);
     expect(res.similarity).toBe(1.0);
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
@@ -66,7 +66,7 @@ describe('Cache', () => {
       { a: 2, b: 2, c: 3 },
       { a: 3, b: 2, c: 3 },
     ];
-    res = cache.lookup(lk1, 0.0, 0, 1);
+    res = cache.query(lk1, 0.0, 1);
     expect(res.similarity).toBe(0.9761904761904763);
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
@@ -77,23 +77,25 @@ describe('Cache', () => {
       { a: 2, b: 2, c: 4 },
     ];
     const v3 = { a: 3, b: 2, c: 3.1 };
-    cache.hit(k3, v3);
+    cache.process(k3, v3);
 
     const k4 = [
       { a: 2, b: 2, c: 4.1 },
       { a: 3, b: 2, c: 3 },
     ];
     const v4 = { a: 4, b: 2, c: 8.1 };
-    cache.hit(k4, v4);
+    cache.process(k4, v4);
 
     const lk2 = [
       { a: 1, b: 2, c: 3.04 },
       { a: 2, b: 2, c: 4 },
     ];
 
-    res = cache.lookup(lk2, 0.0, 0, 1);
+    res = cache.query(lk2, 0.0, 1);
     expect(res.similarity).toBe(0.9988962472406182);
     expect(res.secondary.similarity).toBe(0.8645743145743146);
+    expect(res.winner.similarity).toBe(0.9988962472406182);
+    expect(res.winner.secondary.similarity).toBe(0.8645743145743146);
   });
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();

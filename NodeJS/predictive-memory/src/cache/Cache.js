@@ -30,7 +30,7 @@ function Cache(config) {
     }
   };
 
-  this.hit = (key, value) => {
+  this.process = (key, value) => {
     let elem = this.get(key, value, this.config.mergeSimilarity);
     if (elem === null) {
       elem = new CacheElement(key, value);
@@ -44,19 +44,16 @@ function Cache(config) {
     elem.count += 1;
     this.applyMaxSize();
     if (elem.subCache !== null) {
-      elem = elem.subCache.hit(key, value);
+      elem = elem.subCache.process(key, value);
     }
     return elem;
   };
 
   this.lookup = (key, minSimilarity, level, maxDepth) => {
-    const minSim = minSimilarity || 0.0;
-    const lvl = level || 0;
-    const maxD = maxDepth || 0;
     const res = new CacheResult();
     for (let i = 0; i < this.elements.length; i += 1) {
       const sim = this.config.comparator.calculateSimilarity(key, this.elements[i].key);
-      if (sim >= minSim) {
+      if (sim >= minSimilarity) {
         if (sim > res.similarity) {
           if (res.elements.length > 0) {
             res.secondary = new CacheResult(res.similarity, res.elements);
@@ -70,9 +67,15 @@ function Cache(config) {
         }
       }
     }
-    if (this.config.mergeSimilarity < 1.0 && (maxD === 0 || lvl < maxD)) {
-      res.addSubResults(key, minSim, lvl, maxD);
+    if (this.config.subConfig != null && (maxDepth === 0 || level < maxDepth)) {
+      res.addSubResults(key, minSimilarity, level, maxDepth);
     }
+    return res;
+  };
+
+  this.query = (key, minSimilarity, maxDepth) => {
+    const res = this.lookup(key, minSimilarity || 0.0, 0, maxDepth || 0);
+    res.summarize();
     return res;
   };
 
