@@ -1,24 +1,6 @@
 const Comparator = require('../../src/Comparator');
 
 describe('Comparator', () => {
-  xtest('Determines the highest value of two numbers correctly', () => {
-    const comparator = new Comparator();
-    expect(comparator.max(1, 1)).toBe(1);
-    expect(comparator.max(2, 1)).toBe(2);
-    expect(comparator.max(1, 2)).toBe(2);
-    expect(comparator.max(-2, 1)).toBe(1);
-    expect(comparator.max(1, -2)).toBe(1);
-  });
-
-  xtest('Determines the lowest value of two numbers correctly', () => {
-    const comparator = new Comparator();
-    expect(comparator.min(1, 1)).toBe(1);
-    expect(comparator.min(2, 1)).toBe(1);
-    expect(comparator.min(1, 2)).toBe(1);
-    expect(comparator.min(-2, 1)).toBe(-2);
-    expect(comparator.min(1, -2)).toBe(-2);
-  });
-
   test('Calculates the similarity between two numbers correctly', () => {
     const comparator = new Comparator();
     expect(comparator.calculateNumberSimilarity(1, 1)).toBe(1);

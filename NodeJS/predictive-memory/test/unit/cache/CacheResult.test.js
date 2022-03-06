@@ -40,4 +40,33 @@ describe('CacheResult', () => {
     res.addSubResults([{}], 0.0, 0, 0);
     expect(res.subResults.length).toBe(2);
   });
+  test('Determines winner and winner secondary correctly', () => {
+    const res = new CacheResult();
+    res.subResults = [];
+    res.subResults[0] = new CacheResult();
+    res.subResults[0].similarity = 0.15;
+    res.subResults[0].elements[0] = { mock: 1 };
+    res.subResults[1] = new CacheResult();
+    res.subResults[1].similarity = 0.3;
+    res.subResults[1].elements[0] = { mock: 2 };
+    res.subResults[2] = new CacheResult();
+    res.subResults[2].similarity = 0.2;
+    res.subResults[2].elements[0] = { mock: 3 };
+    res.summarize();
+    expect(res.winner.similarity).toBe(0.3);
+    expect(res.winner.elements[0]).toStrictEqual({ mock: 2 });
+    expect(res.winner.secondary.similarity).toBe(0.2);
+    expect(res.winner.secondary.elements[0]).toStrictEqual({ mock: 3 });
+
+    res.subResults[1].secondary = new CacheResult();
+    res.subResults[1].secondary.similarity = 0.25;
+    res.subResults[1].secondary.elements[0] = { mock: 4 };
+    res.winnerLevel = 0;
+    res.winner = null;
+    res.summarize();
+    expect(res.winner.similarity).toBe(0.3);
+    expect(res.winner.elements[0]).toStrictEqual({ mock: 2 });
+    expect(res.winner.secondary.similarity).toBe(0.25);
+    expect(res.winner.secondary.elements[0]).toStrictEqual({ mock: 4 });
+  });
 });
