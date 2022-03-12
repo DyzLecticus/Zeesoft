@@ -56,11 +56,13 @@ function Cache(config) {
         res.addLevelElement(lvl, sim, pCount, this.elements[i]);
       }
     }
-    if (lookupSubCache && this.config.subConfig && (options.maxDepth === 0 || lvl < options.maxDepth)) {
+    if (lookupSubCache && this.config.subConfig
+      && (options.maxDepth === 0 || lvl < options.maxDepth)
+    ) {
       const elems = res.getLevelElements(lvl, 2);
       for (let i = 0; i < elems.length; i += 1) {
         const elem = elems[i].element;
-        const sub = i === elems.length - 1
+        const sub = i === elems.length - 1;
         elem.subCache.lookup(res, key, lvl + 1, pCount + elem.count, options, sub);
       }
     }
