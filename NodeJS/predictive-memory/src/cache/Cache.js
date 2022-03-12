@@ -49,26 +49,29 @@ function Cache(config) {
     return elem;
   };
 
-  this.lookup = (key, level, options) => {
+  this.lookup = (key, level, pCount, options) => {
     const res = new CacheResult();
     for (let i = 0; i < this.elements.length; i += 1) {
       const sim = this.config.comparator.calculateSimilarity(key, this.elements[i].key);
       if (sim >= options.minSimilarity) {
         if (sim > res.similarity) {
           if (res.elements.length > 0) {
-            res.secondary = new CacheResult(res.similarity, res.elements);
+            res.secondary = new CacheResult(res.similarity, res.parentCount, res.elements);
           }
         }
-        if (!res.addSimilarElement(sim, this.elements[i])) {
+        if (!res.addSimilarElement(sim, pCount, this.elements[i])) {
           if (res.secondary === null) {
             res.secondary = new CacheResult();
           }
-          res.secondary.addSimilarElement(sim, this.elements[i]);
+          res.secondary.addSimilarElement(sim, pCount, this.elements[i]);
         }
       }
     }
     if (this.config.subConfig && (options.maxDepth === 0 || level < options.maxDepth)) {
-      res.addSubResults(key, level, options);
+      res.addSubResults(key, level, pCount, options);
+      if (res.secondary) {
+        res.secondary.addSubResults(key, level, pCount, options);
+      }
     }
     return res;
   };
@@ -76,9 +79,9 @@ function Cache(config) {
   this.query = (key, minSimilarity, maxDepth) => {
     const options = {
       minSimilarity: minSimilarity || 0.0,
-      maxDepth: maxDepth || 0
+      maxDepth: maxDepth || 0,
     };
-    const res = this.lookup(key, 0, options);
+    const res = this.lookup(key, 0, 0, options);
     res.summarize();
     return res;
   };

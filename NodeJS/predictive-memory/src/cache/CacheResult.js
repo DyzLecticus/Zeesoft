@@ -1,5 +1,6 @@
-function CacheResult(sim, elems) {
+function CacheResult(sim, pCount, elems) {
   this.similarity = sim || 0.0;
+  this.parentCount = pCount || 0;
   this.elements = elems || [];
   this.secondary = null;
   this.subResults = [];
@@ -7,10 +8,11 @@ function CacheResult(sim, elems) {
   this.winnerLevel = 0;
   this.winner = null;
 
-  this.addSimilarElement = (s, element) => {
+  this.addSimilarElement = (s, pc, element) => {
     let added = false;
     if (s > this.similarity) {
       this.similarity = s;
+      this.parentCount = pc;
       this.elements = [];
     }
     if (s === this.similarity) {
@@ -20,9 +22,10 @@ function CacheResult(sim, elems) {
     return added;
   };
 
-  this.addSubResults = (key, level, options) => {
+  this.addSubResults = (key, level, pc, options) => {
     for (let i = 0; i < this.elements.length; i += 1) {
-      const subResult = this.elements[i].subCache.lookup(key, (level + 1), options);
+      const npc = pc + this.elements[i].count;
+      const subResult = this.elements[i].subCache.lookup(key, (level + 1), npc, options);
       if (subResult.elements.length > 0) {
         this.subResults.push(subResult);
       }
@@ -32,6 +35,7 @@ function CacheResult(sim, elems) {
   this.determineWinner = (result, level) => {
     if (this.winner === null
       || (result.similarity > this.winner.similarity && level >= this.winnerLevel)
+      || (result.similarity === this.winner.similarity && level > this.winnerLevel)
     ) {
       this.winnerLevel = level;
       this.winner = result;
@@ -42,13 +46,24 @@ function CacheResult(sim, elems) {
   };
 
   this.determineWinnerSecondary = (result, level) => {
-    if (level >= this.winnerLevel && result !== this.winner
-      && (this.winner.secondary === null || (result.similarity > this.winner.secondary.similarity))
+    if (result.similarity < this.winner.similarity
+      && (this.winner.secondary === null
+          || result.similarity >= this.winner.secondary.similarity)
     ) {
       this.winner.secondary = result;
+    } else if (result.secondary && result.secondary.similarity < this.winner.similarity
+      && (this.winner.secondary === null
+        || result.secondary.similarity >= this.winner.secondary.similarity)
+    ) {
+      this.winner.secondary = result.secondary;
     }
     for (let i = 0; i < result.subResults.length; i += 1) {
       this.determineWinnerSecondary(result.subResults[i], (level + 1));
+    }
+    if (result.secondary) {
+      for (let i = 0; i < result.secondary.subResults.length; i += 1) {
+        this.determineWinnerSecondary(result.secondary.subResults[i], (level + 1));
+      }
     }
   };
 

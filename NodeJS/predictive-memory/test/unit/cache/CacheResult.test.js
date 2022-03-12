@@ -2,23 +2,32 @@ const CacheResult = require('../../../src/cache/CacheResult');
 
 describe('CacheResult', () => {
   test('Constructs itself correctly', () => {
-    const res = new CacheResult(0.5, [{}, {}]);
+    const res = new CacheResult(0.5, 2, [{}, {}]);
     expect(res.similarity).toBe(0.5);
+    expect(res.parentCount).toBe(2);
     expect(res.elements).toStrictEqual([{}, {}]);
   });
   test('Adds similar elements correctly', () => {
     const res = new CacheResult();
-    let added = res.addSimilarElement(0.1, {});
+    let added = res.addSimilarElement(0.1, 2, {});
     expect(added).toBe(true);
+    expect(res.similarity).toBe(0.1);
+    expect(res.parentCount).toBe(2);
     expect(res.elements.length).toBe(1);
-    added = res.addSimilarElement(0.1, {});
+    added = res.addSimilarElement(0.1, 2, {});
     expect(added).toBe(true);
+    expect(res.similarity).toBe(0.1);
+    expect(res.parentCount).toBe(2);
     expect(res.elements.length).toBe(2);
-    added = res.addSimilarElement(0.05, {});
+    added = res.addSimilarElement(0.05, 3, {});
     expect(added).toBe(false);
+    expect(res.similarity).toBe(0.1);
+    expect(res.parentCount).toBe(2);
     expect(res.elements.length).toBe(2);
-    added = res.addSimilarElement(0.2, {});
+    added = res.addSimilarElement(0.2, 5, {});
     expect(added).toBe(true);
+    expect(res.similarity).toBe(0.2);
+    expect(res.parentCount).toBe(5);
     expect(res.elements.length).toBe(1);
   });
   test('Adds subresults correctly', () => {
@@ -31,17 +40,17 @@ describe('CacheResult', () => {
         return mockRes;
       },
     };
-    res.addSimilarElement(0.1, { subCache });
-    res.addSimilarElement(0.1, { subCache });
+    res.addSimilarElement(0.1, 2, { subCache });
+    res.addSimilarElement(0.1, 2, { subCache });
     const options = {
       minSimilarity: 0.0,
-      maxDepth: 0
+      maxDepth: 0,
     };
-    res.addSubResults([{}], 0, options);
+    res.addSubResults([{}], 0, 0, options);
     expect(called).toBe(2);
     expect(res.subResults.length).toBe(0);
     mockRes.elements.push({});
-    res.addSubResults([{}], 0, options);
+    res.addSubResults([{}], 0, 0, options);
     expect(res.subResults.length).toBe(2);
   });
   test('Determines winner and winner secondary correctly', () => {
