@@ -49,18 +49,19 @@ function Cache(config) {
     return elem;
   };
 
-  this.lookup = (res, key, lvl, pCount, options) => {
+  this.lookup = (res, key, lvl, pCount, options, lookupSubCache) => {
     for (let i = 0; i < this.elements.length; i += 1) {
       const sim = this.config.comparator.calculateSimilarity(key, this.elements[i].key);
       if (sim >= options.minSimilarity) {
         res.addLevelElement(lvl, sim, pCount, this.elements[i]);
       }
     }
-    if (this.config.subConfig && (options.maxDepth === 0 || lvl < options.maxDepth)) {
+    if (lookupSubCache && this.config.subConfig && (options.maxDepth === 0 || lvl < options.maxDepth)) {
       const elems = res.getLevelElements(lvl, 2);
       for (let i = 0; i < elems.length; i += 1) {
         const elem = elems[i].element;
-        elem.subCache.lookup(res, key, lvl + 1, pCount + elem.count, options);
+        const sub = i === elems.length - 1
+        elem.subCache.lookup(res, key, lvl + 1, pCount + elem.count, options, sub);
       }
     }
   };
@@ -71,7 +72,7 @@ function Cache(config) {
       minSimilarity: minSimilarity || 0.0,
       maxDepth: maxDepth || 0,
     };
-    this.lookup(res, key, 0, 0, options);
+    this.lookup(res, key, 0, 0, options, true);
     return res;
   };
 
