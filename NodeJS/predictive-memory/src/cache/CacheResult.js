@@ -20,9 +20,9 @@ function CacheResult(sim, elems) {
     return added;
   };
 
-  this.addSubResults = (key, minSimilarity, level, maxDepth) => {
+  this.addSubResults = (key, level, options) => {
     for (let i = 0; i < this.elements.length; i += 1) {
-      const subResult = this.elements[i].subCache.lookup(key, minSimilarity, (level + 1), maxDepth);
+      const subResult = this.elements[i].subCache.lookup(key, (level + 1), options);
       if (subResult.elements.length > 0) {
         this.subResults.push(subResult);
       }

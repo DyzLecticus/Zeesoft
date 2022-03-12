@@ -33,11 +33,15 @@ describe('CacheResult', () => {
     };
     res.addSimilarElement(0.1, { subCache });
     res.addSimilarElement(0.1, { subCache });
-    res.addSubResults([{}], 0.0, 0, 0);
+    const options = {
+      minSimilarity: 0.0,
+      maxDepth: 0
+    };
+    res.addSubResults([{}], 0, options);
     expect(called).toBe(2);
     expect(res.subResults.length).toBe(0);
     mockRes.elements.push({});
-    res.addSubResults([{}], 0.0, 0, 0);
+    res.addSubResults([{}], 0, options);
     expect(res.subResults.length).toBe(2);
   });
   test('Determines winner and winner secondary correctly', () => {
