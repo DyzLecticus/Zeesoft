@@ -53,6 +53,10 @@ describe('Cache', () => {
     expect(cache.elements.length).toBe(2);
     expect(elem1.count).toBe(2);
     expect(elem2.count).toBe(1);
+
+    const elem3 = cache.process({}, v2);
+    expect(cache.elements.length).toBe(3);
+    expect(elem3.count).toBe(1);
   });
   test('Returns correct query results', () => {
     const cache = initializeTestCache();
@@ -102,6 +106,10 @@ describe('Cache', () => {
     expect(elems[0].parentCount).toBe(2);
     expect(elems[1].similarity).toBe(0.8645743145743146);
     expect(elems[1].parentCount).toBe(2);
+
+    res = cache.query(lk2, 0.99, 1);
+    elems = res.getDeepestElements(2);
+    expect(elems.length).toBe(1);
   });
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();

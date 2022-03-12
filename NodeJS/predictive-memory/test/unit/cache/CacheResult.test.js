@@ -9,7 +9,7 @@ const addLevelElements = (res) => {
   res.addLevelElement(1, 0.96, 1, {});
   res.addLevelElement(1, 0.99, 4, {});
   res.addLevelElement(1, 0.97, 2, {});
-}
+};
 
 describe('CacheResult', () => {
   test('Adds level elements correctly', () => {

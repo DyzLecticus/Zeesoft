@@ -12,7 +12,7 @@ function CacheResult2() {
     if (lvl >= this.levelElements.length) {
       this.levelElements[lvl] = [];
     }
-    for (let i = 0; i < this.levelElements[lvl].length; i+=1) {
+    for (let i = 0; i < this.levelElements[lvl].length; i += 1) {
       const levelElem = this.levelElements[lvl][i];
       if (sim >= levelElem.similarity) {
         this.levelElements[lvl].splice(i, 0, new LevelElement(sim, pCount, elem));
@@ -28,7 +28,7 @@ function CacheResult2() {
   this.getLevelElements = (lvl, num) => {
     const r = [];
     if (this.levelElements[lvl]) {
-      for (let i = 0; i < this.levelElements[lvl].length; i+=1) {
+      for (let i = 0; i < this.levelElements[lvl].length; i += 1) {
         r.push(this.levelElements[lvl][i]);
         if (r.length === num) {
           break;
@@ -38,8 +38,6 @@ function CacheResult2() {
     return r;
   };
 
-  this.getDeepestElements = (num) => {
-    return this.getLevelElements(this.levelElements.length - 1, num);
-  }
+  this.getDeepestElements = (num) => this.getLevelElements(this.levelElements.length - 1, num);
 }
 module.exports = CacheResult2;
