@@ -62,6 +62,7 @@ describe('Cache', () => {
     expect(res.elements.length).toBe(1);
     expect(res.subResults.length).toBe(1);
     expect(res.winner.parentCount).toBe(3);
+    expect(res.winner.secondary.parentCount).toBe(3);
 
     const lk1 = [
       { a: 2, b: 2, c: 3 },
@@ -73,6 +74,7 @@ describe('Cache', () => {
     expect(res.subResults.length).toBe(1);
     expect(res.subResults[0].subResults.length).toBe(0);
     expect(res.winner.parentCount).toBe(1);
+    expect(res.winner.secondary.parentCount).toBe(1);
 
     const k3 = [
       { a: 1, b: 2, c: 3.1 },

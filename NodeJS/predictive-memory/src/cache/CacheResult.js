@@ -46,16 +46,18 @@ function CacheResult(sim, pCount, elems) {
   };
 
   this.determineWinnerSecondary = (result, level) => {
-    if (result.similarity < this.winner.similarity
-      && (this.winner.secondary === null
-          || result.similarity >= this.winner.secondary.similarity)
-    ) {
-      this.winner.secondary = result;
-    } else if (result.secondary && result.secondary.similarity < this.winner.similarity
-      && (this.winner.secondary === null
-        || result.secondary.similarity >= this.winner.secondary.similarity)
-    ) {
-      this.winner.secondary = result.secondary;
+    if (level>=this.winnerLevel) {
+      if (result.similarity < this.winner.similarity
+        && (this.winner.secondary === null
+            || result.similarity >= this.winner.secondary.similarity)
+      ) {
+        this.winner.secondary = result;
+      } else if (result.secondary && result.secondary.similarity < this.winner.similarity
+        && (this.winner.secondary === null
+          || result.secondary.similarity >= this.winner.secondary.similarity)
+      ) {
+        this.winner.secondary = result.secondary;
+      }
     }
     for (let i = 0; i < result.subResults.length; i += 1) {
       this.determineWinnerSecondary(result.subResults[i], (level + 1));
