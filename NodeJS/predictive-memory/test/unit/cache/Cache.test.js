@@ -58,23 +58,24 @@ describe('Cache', () => {
     const cache = initializeTestCache();
 
     let res = cache.query(k1);
-    expect(res.similarity).toBe(1.0);
-    expect(res.elements.length).toBe(1);
-    expect(res.subResults.length).toBe(1);
-    expect(res.winner.parentCount).toBe(3);
-    expect(res.winner.secondary.parentCount).toBe(3);
+    expect(res.levelElements.length).toBe(4);
+    expect(res.levelElements[3].length).toBe(5);
+    let elems = res.getDeepestElements(2);
+    expect(elems[0].similarity).toBe(1.0);
+    expect(elems[0].parentCount).toBe(3);
+    expect(elems[1].similarity).toBe(1.0);
+    expect(elems[1].parentCount).toBe(3);
 
     const lk1 = [
       { a: 2, b: 2, c: 3 },
       { a: 3, b: 2, c: 3 },
     ];
     res = cache.query(lk1, 0.0, 1);
-    expect(res.similarity).toBe(0.9761904761904763);
-    expect(res.elements.length).toBe(1);
-    expect(res.subResults.length).toBe(1);
-    expect(res.subResults[0].subResults.length).toBe(0);
-    expect(res.winner.parentCount).toBe(1);
-    expect(res.winner.secondary.parentCount).toBe(1);
+    elems = res.getDeepestElements(2);
+    expect(elems[0].similarity).toBe(0.9761904761904763);
+    expect(elems[0].parentCount).toBe(1);
+    expect(elems[1].similarity).toBe(0.8873015873015874);
+    expect(elems[1].parentCount).toBe(1);
 
     const k3 = [
       { a: 1, b: 2, c: 3.1 },
@@ -96,10 +97,11 @@ describe('Cache', () => {
     ];
 
     res = cache.query(lk2, 0.0, 1);
-    expect(res.similarity).toBe(0.9988962472406182);
-    expect(res.secondary.similarity).toBe(0.8645743145743146);
-    expect(res.winner.similarity).toBe(0.9988962472406182);
-    expect(res.winner.secondary.similarity).toBe(0.8645743145743146);
+    elems = res.getDeepestElements(2);
+    expect(elems[0].similarity).toBe(0.9988962472406182);
+    expect(elems[0].parentCount).toBe(2);
+    expect(elems[1].similarity).toBe(0.8645743145743146);
+    expect(elems[1].parentCount).toBe(2);
   });
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();
