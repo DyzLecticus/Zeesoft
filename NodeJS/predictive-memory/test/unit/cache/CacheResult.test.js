@@ -35,41 +35,4 @@ describe('CacheResult', () => {
     expect(res.getDeepestElements(1)).toStrictEqual([res.levelElements[1][0]]);
     expect(res.getDeepestElements().length).toBe(res.levelElements[1].length);
   });
-  test('Generates key predictions correctly', () => {
-    const res = new CacheResult();
-    addLevelElements(res);
-    res.generateKeyPredictions();
-    expect(res.keyPredictions.a[0].value).toBe(1);
-    expect(res.keyPredictions.a[0].totalSimilarity).toBe(3.9);
-    expect(res.keyPredictions.a[0].totalCount).toBe(18);
-    expect(res.keyPredictions.b[0].value).toBe(3);
-    expect(res.keyPredictions.b[0].totalSimilarity).toBe(1.96);
-    expect(res.keyPredictions.b[0].totalCount).toBe(10);
-    expect(res.keyPredictions.b[1].value).toBe(2);
-    expect(res.keyPredictions.b[1].totalSimilarity).toBe(1.94);
-    expect(res.keyPredictions.b[1].totalCount).toBe(8);
-  });
-  test('Calculates key prediction weights correctly', () => {
-    const res = new CacheResult();
-    addLevelElements(res);
-    res.generateKeyPredictions();
-    res.calculateKeyPredictionWeights();
-    expect(res.keyPredictions.a[0].weight).toBe(1);
-    expect(res.keyPredictions.b[0].weight).toBe(0.5580865603644647);
-    expect(res.keyPredictions.b[1].weight).toBe(0.44191343963553525);
-  });
-  test('Calculates predicted values correctly', () => {
-    const res = new CacheResult();
-    addLevelElements(res);
-    res.generateKeyPredictions();
-    res.calculateKeyPredictionWeights();
-    res.keyPredictions.c = [{ value: 'C', weight: 1.0 }];
-    res.calculatePredictedValues();
-    expect(res.predictedValues.a).toBe(1);
-    expect(res.predictedValues.b).toBe(3);
-    expect(res.predictedValues.c).toBe('C');
-    expect(res.weightedPredictedValues.a).toBe(1);
-    expect(res.weightedPredictedValues.b).toBe(2.5580865603644645);
-    expect(res.weightedPredictedValues.c).toBe(undefined);
-  });
 });

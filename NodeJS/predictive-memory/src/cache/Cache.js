@@ -75,7 +75,6 @@ function Cache(config) {
       maxDepth: maxDepth || 0,
     };
     this.lookup(res, key, 0, 0, options, true);
-    res.generateKeyPredictions(2);
     return res;
   };
 
