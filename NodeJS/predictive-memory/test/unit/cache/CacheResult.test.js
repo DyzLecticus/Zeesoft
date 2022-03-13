@@ -1,14 +1,14 @@
 const CacheResult = require('../../../src/cache/CacheResult');
 
 const addLevelElements = (res) => {
-  res.addLevelElement(0, 0.8, 0, {});
-  res.addLevelElement(0, 0.6, 0, {});
-  res.addLevelElement(0, 0.9, 0, {});
-  res.addLevelElement(0, 0.7, 0, {});
-  res.addLevelElement(1, 0.98, 3, {});
-  res.addLevelElement(1, 0.96, 1, {});
-  res.addLevelElement(1, 0.99, 4, {});
-  res.addLevelElement(1, 0.97, 2, {});
+  res.addLevelElement(0, 0.8, 0, { count: 2, value: { a: 1, b: 2 } });
+  res.addLevelElement(0, 0.6, 0, { count: 2, value: { a: 1, b: 2 } });
+  res.addLevelElement(0, 0.9, 0, { count: 2, value: { a: 1, b: 3 } });
+  res.addLevelElement(0, 0.7, 0, { count: 2, value: { a: 1, b: 3 } });
+  res.addLevelElement(1, 0.98, 3, { count: 2, value: { a: 1, b: 2 } });
+  res.addLevelElement(1, 0.96, 1, { count: 2, value: { a: 1, b: 2 } });
+  res.addLevelElement(1, 0.99, 4, { count: 2, value: { a: 1, b: 3 } });
+  res.addLevelElement(1, 0.97, 2, { count: 2, value: { a: 1, b: 3 } });
 };
 
 describe('CacheResult', () => {
@@ -34,5 +34,19 @@ describe('CacheResult', () => {
     expect(res.getLevelElements(2, 2)).toStrictEqual([]);
     expect(res.getDeepestElements(1)).toStrictEqual([res.levelElements[1][0]]);
     expect(res.getDeepestElements().length).toBe(res.levelElements[1].length);
+  });
+  test('Generates key predictions correctly', () => {
+    const res = new CacheResult();
+    addLevelElements(res);
+    res.generateKeyPredictions();
+    expect(res.keyPredictions.a[0].value).toBe(1);
+    expect(res.keyPredictions.a[0].totalSimilarity).toBe(3.9);
+    expect(res.keyPredictions.a[0].totalCount).toBe(18);
+    expect(res.keyPredictions.b[0].value).toBe(3);
+    expect(res.keyPredictions.b[0].totalSimilarity).toBe(1.96);
+    expect(res.keyPredictions.b[0].totalCount).toBe(10);
+    expect(res.keyPredictions.b[1].value).toBe(2);
+    expect(res.keyPredictions.b[1].totalSimilarity).toBe(1.94);
+    expect(res.keyPredictions.b[1].totalCount).toBe(8);
   });
 });
