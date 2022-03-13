@@ -49,4 +49,14 @@ describe('CacheResult', () => {
     expect(res.keyPredictions.b[1].totalSimilarity).toBe(1.94);
     expect(res.keyPredictions.b[1].totalCount).toBe(8);
   });
+  test('Calculates key prediction weights correctly', () => {
+    const res = new CacheResult();
+    addLevelElements(res);
+    res.generateKeyPredictions();
+    res.calculateKeyPredictionWeights();
+    console.log(res.keyPredictions)
+    expect(res.keyPredictions.a[0].weight).toBe(1);
+    expect(res.keyPredictions.b[0].weight).toBe(0.5580865603644647);
+    expect(res.keyPredictions.b[1].weight).toBe(0.44191343963553525);
+  });
 });

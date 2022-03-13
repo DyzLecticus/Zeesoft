@@ -8,6 +8,7 @@ function KeyPrediction(val) {
   this.value = val;
   this.totalSimilarity = 0.0;
   this.totalCount = 0;
+  this.weight = 0.0
 }
 
 function CacheResult2() {
@@ -66,6 +67,22 @@ function CacheResult2() {
         }
         kp.totalSimilarity += (elems[i].similarity);
         kp.totalCount += (elems[i].parentCount + elems[i].element.count);
+      }
+    }
+  };
+
+  this.calculateKeyPredictionWeights = () => {
+    const keys = Object.keys(this.keyPredictions);
+    for (let k = 0; k < keys.length; k += 1) {
+      const key = keys[k];
+      let total = 0.0;
+      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
+        const kp = this.keyPredictions[key][i];
+        total += (kp.totalCount * kp.totalSimilarity);
+      }
+      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
+        kp = this.keyPredictions[key][i]
+        kp.weight = (kp.totalCount * kp.totalSimilarity) / total;
       }
     }
   };
