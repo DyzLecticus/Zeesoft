@@ -1,5 +1,5 @@
-const ObjectPrediction = require('../../src/ObjectPrediction');
-const CacheResult = require('../../src/cache/CacheResult');
+const ObjectPrediction = require('../../../src/predict/ObjectPrediction');
+const CacheResult = require('../../../src/cache/CacheResult');
 
 const getCacheResult = () => {
   const res = new CacheResult();
