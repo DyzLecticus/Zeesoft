@@ -58,8 +58,7 @@ function CacheResult2() {
         if (!this.keyPredictions[key]) {
           this.keyPredictions[key] = [];
         }
-        // eslint-disable-next-line eqeqeq
-        const kps = this.keyPredictions[key].filter((kp) => kp.value == value);
+        const kps = this.keyPredictions[key].filter((kp) => kp.value === value);
         let kp = kps.length ? kps[0] : null;
         if (!kp) {
           kp = new KeyPrediction(value);
