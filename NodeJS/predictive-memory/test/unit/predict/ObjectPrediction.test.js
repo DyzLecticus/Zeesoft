@@ -24,6 +24,7 @@ describe('ObjectPrediction', () => {
     expect(pred.keyPredictions.b[1].totalSimilarity).toBe(1.94);
     expect(pred.keyPredictions.b[1].totalCount).toBe(8);
   });
+
   test('Calculates key prediction weights correctly', () => {
     const pred = new ObjectPrediction(getCacheResult());
     pred.generateKeyPredictions(pred.cacheResult.getDeepestElements());
@@ -32,6 +33,7 @@ describe('ObjectPrediction', () => {
     expect(pred.keyPredictions.b[0].weight).toBe(0.5580865603644647);
     expect(pred.keyPredictions.b[1].weight).toBe(0.44191343963553525);
   });
+
   test('Calculates predicted values correctly', () => {
     const pred = new ObjectPrediction(getCacheResult());
     pred.generateKeyPredictions(pred.cacheResult.getDeepestElements());
@@ -45,6 +47,7 @@ describe('ObjectPrediction', () => {
     expect(pred.weightedPredictedValues.b).toBe(2.5580865603644645);
     expect(pred.weightedPredictedValues.c).toBe(undefined);
   });
+  
   test('Generates predictions correctly', () => {
     const pred = new ObjectPrediction(getCacheResult());
     pred.generatePrediction();

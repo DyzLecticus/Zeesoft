@@ -29,6 +29,7 @@ describe('Cache', () => {
     const cache = new Cache(config);
     expect(cache.config).toBe(config);
   });
+
   test('Limits its size correctly', () => {
     const config = new CacheConfig();
     config.maxSize = 10;
@@ -37,6 +38,7 @@ describe('Cache', () => {
     cache.applyMaxSize();
     expect(cache.elements.length).toBe(10);
   });
+
   test('Processes key/value pairs in sub caches correctly', () => {
     const config = new CacheConfig();
     config.initiatlizeDefault();
@@ -58,6 +60,7 @@ describe('Cache', () => {
     expect(cache.elements.length).toBe(3);
     expect(elem3.count).toBe(1);
   });
+
   test('Returns correct query results', () => {
     const cache = initializeTestCache();
 
@@ -111,6 +114,7 @@ describe('Cache', () => {
     elems = res.getDeepestElements(2);
     expect(elems.length).toBe(1);
   });
+  
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();
     const size = cache.size();
