@@ -8,12 +8,14 @@ function KeyPrediction(val) {
   this.value = val;
   this.totalSimilarity = 0.0;
   this.totalCount = 0;
-  this.weight = 0.0
+  this.weight = 0.0;
 }
 
-function CacheResult2() {
+function CacheResult() {
   this.levelElements = [];
   this.keyPredictions = {};
+  this.predictedValues = {};
+  this.weightedPredictedValues = {};
 
   this.addLevelElement = (lvl, sim, pCount, elem) => {
     let added = false;
@@ -81,10 +83,33 @@ function CacheResult2() {
         total += (kp.totalCount * kp.totalSimilarity);
       }
       for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
-        kp = this.keyPredictions[key][i]
+        const kp = this.keyPredictions[key][i];
         kp.weight = (kp.totalCount * kp.totalSimilarity) / total;
+      }
+      this.keyPredictions[key] = this.keyPredictions[key].sort((a, b) => (b.weight - a.weight));
+    }
+  };
+
+  this.calculatePredictedValues = () => {
+    const keys = Object.keys(this.keyPredictions);
+    for (let k = 0; k < keys.length; k += 1) {
+      const key = keys[k];
+      let val = 0.0;
+      let isNum = false;
+      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
+        const kp = this.keyPredictions[key][i];
+        if (i === 0) {
+          this.predictedValues[key] = kp.value;
+        }
+        if (typeof (kp.value) === 'number') {
+          isNum = true;
+          val += kp.weight * kp.value;
+        }
+      }
+      if (isNum) {
+        this.weightedPredictedValues[key] = val;
       }
     }
   };
 }
-module.exports = CacheResult2;
+module.exports = CacheResult;
