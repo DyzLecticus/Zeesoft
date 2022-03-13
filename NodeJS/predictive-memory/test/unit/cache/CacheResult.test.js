@@ -33,5 +33,6 @@ describe('CacheResult', () => {
     expect(elems[1].similarity).toBe(0.8);
     expect(res.getLevelElements(2, 2)).toStrictEqual([]);
     expect(res.getDeepestElements(1)).toStrictEqual([res.levelElements[1][0]]);
+    expect(res.getDeepestElements().length).toBe(res.levelElements[1].length);
   });
 });

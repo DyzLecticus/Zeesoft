@@ -81,6 +81,12 @@ describe('Cache', () => {
     expect(elems[1].similarity).toBe(0.8873015873015874);
     expect(elems[1].parentCount).toBe(1);
 
+    expect(res.keyPredictions.a.length).toBe(2);
+    expect(res.keyPredictions.a[0].totalCount).toBe(2);
+    expect(res.keyPredictions.b.length).toBe(1);
+    expect(res.keyPredictions.b[0].totalCount).toBe(4);
+    expect(res.keyPredictions.c.length).toBe(2);
+
     const k3 = [
       { a: 1, b: 2, c: 3.1 },
       { a: 2, b: 2, c: 4 },
@@ -107,9 +113,21 @@ describe('Cache', () => {
     expect(elems[1].similarity).toBe(0.8645743145743146);
     expect(elems[1].parentCount).toBe(2);
 
+    expect(res.keyPredictions.a.length).toBe(2);
+    expect(res.keyPredictions.a[0].totalCount).toBe(4);
+    expect(res.keyPredictions.b.length).toBe(1);
+    expect(res.keyPredictions.b[0].totalCount).toBe(8);
+    expect(res.keyPredictions.c.length).toBe(2);
+
     res = cache.query(lk2, 0.99, 1);
     elems = res.getDeepestElements(2);
     expect(elems.length).toBe(1);
+
+    expect(res.keyPredictions.a.length).toBe(1);
+    expect(res.keyPredictions.a[0].totalCount).toBe(4);
+    expect(res.keyPredictions.b.length).toBe(1);
+    expect(res.keyPredictions.b[0].totalCount).toBe(4);
+    expect(res.keyPredictions.c.length).toBe(1);
   });
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();
