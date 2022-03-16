@@ -11,7 +11,7 @@ describe('CacheConfig', () => {
     expect(config.subConfig.subConfig.subConfig.mergeSimilarity).toBe(1.0);
     expect(config.subConfig.subConfig.subConfig.comparator).toBe(comp);
   });
-  
+
   test('Sets the comparator recursively', () => {
     const config = new CacheConfig();
     config.initiatlizeDefault();

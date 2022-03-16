@@ -47,7 +47,7 @@ describe('ObjectPrediction', () => {
     expect(pred.weightedPredictedValues.b).toBe(2.5580865603644645);
     expect(pred.weightedPredictedValues.c).toBe(undefined);
   });
-  
+
   test('Generates predictions correctly', () => {
     const pred = new ObjectPrediction(getCacheResult());
     pred.generatePrediction();

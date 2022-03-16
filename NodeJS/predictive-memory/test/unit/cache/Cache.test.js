@@ -114,7 +114,7 @@ describe('Cache', () => {
     elems = res.getDeepestElements(2);
     expect(elems.length).toBe(1);
   });
-  
+
   test('Returns the correct size(s)', () => {
     const cache = initializeTestCache();
     const size = cache.size();

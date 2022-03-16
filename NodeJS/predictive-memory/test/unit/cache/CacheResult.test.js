@@ -25,7 +25,7 @@ describe('CacheResult', () => {
     expect(res.levelElements[1][2].similarity).toBe(0.97);
     expect(res.levelElements[1][3].similarity).toBe(0.96);
   });
-  
+
   test('Returns top level elements correctly', () => {
     const res = new CacheResult();
     addLevelElements(res);
