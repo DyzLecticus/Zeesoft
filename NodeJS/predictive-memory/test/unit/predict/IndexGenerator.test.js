@@ -34,4 +34,10 @@ describe('IndexGenerator', () => {
     generator.addPower(indexes);
     expect(indexes).toStrictEqual([1, 2, 4, 8, 16, 32]);
   });
+
+  test('Generate indexes correctly', () => {
+    const generator = new IndexGenerator();
+    const indexes = generator.generate();
+    expect(indexes).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 13, 16, 21, 32, 34, 64, 128]);
+  });
 });

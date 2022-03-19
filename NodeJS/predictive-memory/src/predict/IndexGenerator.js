@@ -38,5 +38,14 @@ function IndexGenerator(depth) {
       idx += idx;
     }
   };
+
+  this.generate = () => {
+    const idxs = [];
+    this.addDefault(idxs);
+    this.addFibonacci(idxs);
+    this.addPower(idxs);
+    idxs.sort((a, b) => a - b);
+    return idxs;
+  };
 }
 module.exports = IndexGenerator;
