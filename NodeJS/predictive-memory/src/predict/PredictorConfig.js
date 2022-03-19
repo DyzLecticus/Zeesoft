@@ -4,7 +4,7 @@ const CacheConfig = require('../cache/CacheConfig');
 const Transformer = require('../Transformer');
 
 function PredictorConfig(size, depth) {
-  this.maxHistorySize = size || 128;
+  this.maxHistorySize = size || 129;
   this.comparator = new Comparator();
   this.cacheIndexes = (new IndexGenerator(depth)).generate();
   this.cacheConfig = new CacheConfig();

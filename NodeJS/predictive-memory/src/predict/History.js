@@ -13,10 +13,16 @@ function History(max) {
     this.applyMaxSize();
   };
 
-  this.get = (indexes) => {
+  this.get = (indexes, trans) => {
     const r = [];
     for (let i = 0; i < indexes.length; i += 1) {
-      const ri = (this.elements.length - 1) - indexes[i];
+      let idx = indexes[i];
+      if (trans < 0) {
+        idx -= (trans * -1);
+      } else if (trans > 0) {
+        idx += trans;
+      }
+      const ri = (this.elements.length - 1) - idx;
       if (ri >= 0) {
         r.push(this.elements[ri]);
       }

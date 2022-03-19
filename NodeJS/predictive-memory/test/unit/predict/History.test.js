@@ -20,7 +20,11 @@ describe('History', () => {
     hist.add({ a: 3 });
     hist.add({ a: 4 });
     const indexes = [1, 2, 4];
-    const elements = hist.get(indexes);
+    let elements = hist.get(indexes);
     expect(elements).toStrictEqual([{ a: 3 }, { a: 2 }]);
+    elements = hist.get(indexes, -1);
+    expect(elements).toStrictEqual([{ a: 4 }, { a: 3 }, { a: 1 }]);
+    elements = hist.get(indexes, 1);
+    expect(elements).toStrictEqual([{ a: 2 }, { a: 1 }]);
   });
 });
