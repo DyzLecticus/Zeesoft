@@ -25,6 +25,8 @@ function History(max) {
       const ri = (this.elements.length - 1) - idx;
       if (ri >= 0) {
         r.push(this.elements[ri]);
+      } else {
+        break;
       }
     }
     return r;
