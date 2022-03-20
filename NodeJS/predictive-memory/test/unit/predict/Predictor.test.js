@@ -46,7 +46,7 @@ const addHists = (predictor) => {
   for (let i = 0; i < hists.length; i += 1) {
     if (i === 30) {
       pr.learn = true;
-      pr.predict = true;
+      pr.setPredict(true);
     }
     pr.add(hists[i]);
   }
@@ -72,6 +72,17 @@ describe('Predictor', () => {
     expect(predictor.predictions.elements.length).toBe(hists.length - 30);
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
+
+    let predAct = predictor.getPredictedAndActualValues();
+    expect(predAct.length).toBe(0);
+    predAct = predictor.getPredictedAndActualValues('b');
+    expect(predAct.length).toBe(5);
+    predAct = predictor.getPredictedAndActualValues('b', false, 1);
+    expect(predAct.length).toBe(1);
+    expect(predAct).toStrictEqual([{ predicted: 5, actual: 6 }]);
+    predAct = predictor.getPredictedAndActualValues('b', true, 1);
+    expect(predAct.length).toBe(1);
+    expect(predAct).toStrictEqual([{ predicted: 4.717731976068007, actual: 6 }]);
   });
 
   test('Generates relative predictions correctly', () => {
@@ -82,5 +93,19 @@ describe('Predictor', () => {
     expect(predictor.predictions.elements.length).toBe(hists.length - 30);
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
+
+    let predAct = predictor.getPredictedAndActualValues();
+    expect(predAct.length).toBe(0);
+    predAct = predictor.getPredictedAndActualValues('b');
+    expect(predAct.length).toBe(5);
+    predAct = predictor.getPredictedAndActualValues('b', false, 1);
+    expect(predAct.length).toBe(1);
+    expect(predAct).toStrictEqual([{ predicted: 3.333333333333333, actual: 6 }]);
+    predAct = predictor.getPredictedAndActualValues('b', true, 1);
+    expect(predAct.length).toBe(1);
+    expect(predAct).toStrictEqual([{ predicted: 4.910439277160205, actual: 6 }]);
+
+    predictor.setPredict(false);
+    expect(predictor.predictions.elements.length).toBe(0);
   });
 });

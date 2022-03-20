@@ -14,6 +14,13 @@ function Predictor(config) {
   this.predict = false;
   this.predictions = new History(this.config.maxHistorySize);
 
+  this.setPredict = (p) => {
+    this.predict = p;
+    if (!p) {
+      this.predictions.elements = [];
+    }
+  };
+
   this.getCacheHistory = () => (
     this.config.transformer ? this.relativeHistory : this.absoluteHistory
   );
@@ -60,6 +67,25 @@ function Predictor(config) {
       }
       this.predictions.add(pred);
     }
+  };
+
+  this.getPredictedAndActualValues = (key, weighted, max) => {
+    const r = [];
+    let m = max;
+    if (!m || m >= (this.predictions.elements.length - 1)) {
+      m = (this.predictions.elements.length - 1);
+    }
+    for (let i = 1; i <= m; i += 1) {
+      const pred = this.predictions.get([i])[0];
+      const pObj = weighted ? pred.weightedPredictedValues : pred.predictedValues;
+      const aObj = this.absoluteHistory.get([i - 1])[0];
+      const predicted = pObj[key];
+      const actual = aObj[key];
+      if (predicted !== undefined && actual !== undefined) {
+        r.push({ predicted, actual });
+      }
+    }
+    return r;
   };
 }
 module.exports = Predictor;

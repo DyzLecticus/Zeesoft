@@ -12,7 +12,7 @@ function MathUtil() {
 
   this.getStandardDeviation = (numArray) => {
     let dev = 0.0;
-    if (numArray.length > 0) {
+    if (numArray.length > 1) {
       let sum = 0.0;
       for (let i = 0; i < numArray.length; i += 1) {
         sum += numArray[i];
