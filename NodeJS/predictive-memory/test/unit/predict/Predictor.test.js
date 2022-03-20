@@ -5,50 +5,17 @@ const hists = [
   { a: 1, b: 4 },
   { a: 2, b: 5 },
   { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
-  { a: 1, b: 4 },
-  { a: 2, b: 5 },
-  { a: 3, b: 6 },
 ];
 
-const addHists = (predictor) => {
+const addHists = (predictor, rep) => {
   const pr = predictor;
   pr.learn = false;
-  for (let i = 0; i < hists.length; i += 1) {
+  for (let i = 0; i < (hists.length * rep); i += 1) {
     if (i === 30) {
       pr.learn = true;
       pr.setPredict(true);
     }
-    pr.add(hists[i]);
+    pr.add(hists[(i % hists.length)]);
   }
 };
 
@@ -66,10 +33,11 @@ describe('Predictor', () => {
     const pc = new PredictorConfig();
     pc.transformer = null;
     const predictor = new Predictor(pc);
-    addHists(predictor);
-    expect(predictor.absoluteHistory.elements.length).toBe(hists.length);
+    const repeat = 12;
+    addHists(predictor, repeat);
+    expect(predictor.absoluteHistory.elements.length).toBe(hists.length * repeat);
     expect(predictor.relativeHistory.elements.length).toBe(0);
-    expect(predictor.predictions.elements.length).toBe(hists.length - 30);
+    expect(predictor.predictions.elements.length).toBe((hists.length * repeat) - 30);
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
 
@@ -87,10 +55,11 @@ describe('Predictor', () => {
 
   test('Generates relative predictions correctly', () => {
     const predictor = new Predictor();
-    addHists(predictor);
-    expect(predictor.absoluteHistory.elements.length).toBe(hists.length);
-    expect(predictor.relativeHistory.elements.length).toBe(hists.length - 1);
-    expect(predictor.predictions.elements.length).toBe(hists.length - 30);
+    const repeat = 12;
+    addHists(predictor, repeat);
+    expect(predictor.absoluteHistory.elements.length).toBe(hists.length * repeat);
+    expect(predictor.relativeHistory.elements.length).toBe((hists.length * repeat) - 1);
+    expect(predictor.predictions.elements.length).toBe((hists.length * repeat) - 30);
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
 
@@ -107,5 +76,16 @@ describe('Predictor', () => {
 
     predictor.setPredict(false);
     expect(predictor.predictions.elements.length).toBe(0);
+  });
+
+  test('Learns regular patterns correctly', () => {
+    const predictor = new Predictor();
+    const repeat = 120;
+    addHists(predictor, repeat);
+    const predAct = predictor.getPredictedAndActualValues('b');
+    expect(predAct.length).toBe(128);
+    for (let i = 0; i < predAct.length; i += 1) {
+      expect(predAct.predicted).toBe(predAct.actual);
+    }
   });
 });
