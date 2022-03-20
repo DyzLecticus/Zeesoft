@@ -69,7 +69,7 @@ function Predictor(config) {
     }
   };
 
-  this.getPredictedAndActualValues = (key, weighted, max) => {
+  this.getResults = (key, weighted, max) => {
     const r = [];
     let m = max;
     if (!m || m >= (this.predictions.elements.length - 1)) {

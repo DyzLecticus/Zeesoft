@@ -41,16 +41,16 @@ describe('Predictor', () => {
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
 
-    let predAct = predictor.getPredictedAndActualValues();
-    expect(predAct.length).toBe(0);
-    predAct = predictor.getPredictedAndActualValues('b');
-    expect(predAct.length).toBe(5);
-    predAct = predictor.getPredictedAndActualValues('b', false, 1);
-    expect(predAct.length).toBe(1);
-    expect(predAct).toStrictEqual([{ predicted: 5, actual: 6 }]);
-    predAct = predictor.getPredictedAndActualValues('b', true, 1);
-    expect(predAct.length).toBe(1);
-    expect(predAct).toStrictEqual([{ predicted: 4.717731976068007, actual: 6 }]);
+    let results = predictor.getResults();
+    expect(results.length).toBe(0);
+    results = predictor.getResults('b');
+    expect(results.length).toBe(5);
+    results = predictor.getResults('b', false, 1);
+    expect(results.length).toBe(1);
+    expect(results).toStrictEqual([{ predicted: 5, actual: 6 }]);
+    results = predictor.getResults('b', true, 1);
+    expect(results.length).toBe(1);
+    expect(results).toStrictEqual([{ predicted: 4.717731976068007, actual: 6 }]);
   });
 
   test('Generates relative predictions correctly', () => {
@@ -63,16 +63,16 @@ describe('Predictor', () => {
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
 
-    let predAct = predictor.getPredictedAndActualValues();
-    expect(predAct.length).toBe(0);
-    predAct = predictor.getPredictedAndActualValues('b');
-    expect(predAct.length).toBe(5);
-    predAct = predictor.getPredictedAndActualValues('b', false, 1);
-    expect(predAct.length).toBe(1);
-    expect(predAct).toStrictEqual([{ predicted: 3.333333333333333, actual: 6 }]);
-    predAct = predictor.getPredictedAndActualValues('b', true, 1);
-    expect(predAct.length).toBe(1);
-    expect(predAct).toStrictEqual([{ predicted: 4.910439277160205, actual: 6 }]);
+    let results = predictor.getResults();
+    expect(results.length).toBe(0);
+    results = predictor.getResults('b');
+    expect(results.length).toBe(5);
+    results = predictor.getResults('b', false, 1);
+    expect(results.length).toBe(1);
+    expect(results).toStrictEqual([{ predicted: 3.333333333333333, actual: 6 }]);
+    results = predictor.getResults('b', true, 1);
+    expect(results.length).toBe(1);
+    expect(results).toStrictEqual([{ predicted: 4.910439277160205, actual: 6 }]);
 
     predictor.setPredict(false);
     expect(predictor.predictions.elements.length).toBe(0);
@@ -82,10 +82,10 @@ describe('Predictor', () => {
     const predictor = new Predictor();
     const repeat = 120;
     addHists(predictor, repeat);
-    const predAct = predictor.getPredictedAndActualValues('b');
-    expect(predAct.length).toBe(128);
-    for (let i = 0; i < predAct.length; i += 1) {
-      expect(predAct.predicted).toBe(predAct.actual);
+    const results = predictor.getResults('b');
+    expect(results.length).toBe(128);
+    for (let i = 0; i < results.length; i += 1) {
+      expect(results.predicted).toBe(results.actual);
     }
   });
 });
