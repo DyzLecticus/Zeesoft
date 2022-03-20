@@ -8,7 +8,7 @@ function Predictor(config) {
   this.absoluteHistory = new History(this.config.maxHistorySize);
   this.relativeHistory = new History(this.config.maxHistorySize);
 
-  this.learn = false;
+  this.learn = true;
   this.cache = new Cache(this.config.cacheConfig);
 
   this.predict = false;

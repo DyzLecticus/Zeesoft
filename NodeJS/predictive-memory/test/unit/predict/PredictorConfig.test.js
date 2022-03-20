@@ -9,6 +9,7 @@ describe('PredictorConfig', () => {
     expect(pc.comparator).not.toBe(null);
     expect(pc.transformer).not.toBe(null);
     expect(pc.cacheConfig.comparator).toBe(pc.comparator);
+    expect(pc.cacheConfig.subConfig).not.toBe(null);
     pc = new PredictorConfig(33, 6);
     expect(pc.maxHistorySize).toBe(33);
     expect(pc.cacheIndexes.length).toBe(10);
