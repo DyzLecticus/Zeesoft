@@ -15,7 +15,7 @@ const addHists = (predictor, rep) => {
       pr.learn = true;
       pr.setPredict(true);
     }
-    pr.add(hists[(i % hists.length)]);
+    pr.process(hists[(i % hists.length)]);
   }
 };
 

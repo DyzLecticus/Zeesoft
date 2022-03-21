@@ -42,7 +42,7 @@ for (let i = 3; i < lines.length; i += 1) {
       h: d.getHours() + 1,
       kwh: parseInt(val, 10),
     };
-    predictor.add(obj);
+    predictor.process(obj);
     if (i === 3000) {
       start = Date.now();
       predictor.setPredict(true);

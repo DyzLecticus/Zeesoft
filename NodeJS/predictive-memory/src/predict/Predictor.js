@@ -25,7 +25,8 @@ function Predictor(config) {
     this.config.transformer ? this.relativeHistory : this.absoluteHistory
   );
 
-  this.add = (hist) => {
+  this.process = (hist) => {
+    let r = null;
     this.absoluteHistory.add(hist);
     if (this.config.transformer && this.absoluteHistory.elements.length > 1) {
       this.relativeHistory.add(this.config.transformer.calculateTransformation(
@@ -39,8 +40,9 @@ function Predictor(config) {
         const value = this.getCacheHistory().get([0])[0];
         this.cache.process(key, value);
       }
-      this.addPrediction();
+      r = this.addPrediction();
     }
+    return r;
   };
 
   this.transformPrediction = (prediction) => {
@@ -57,16 +59,18 @@ function Predictor(config) {
   };
 
   this.addPrediction = () => {
+    let r = null;
     if (this.predict) {
       const key = this.getCacheHistory().get(this.config.cacheIndexes, -1);
       const result = this.cache.query(key);
-      const pred = new ObjectPrediction(result);
-      pred.generatePrediction();
+      r = new ObjectPrediction(result);
+      r.generatePrediction();
       if (this.config.transformer) {
-        this.transformPrediction(pred);
+        this.transformPrediction(r);
       }
-      this.predictions.add(pred);
+      this.predictions.add(r);
     }
+    return r;
   };
 
   this.getResults = (key, weighted, max) => {
