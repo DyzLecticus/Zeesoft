@@ -65,13 +65,13 @@ describe('Cache', () => {
     const cache = initializeTestCache();
 
     let res = cache.query(k1);
-    expect(res.levelElements.length).toBe(4);
-    expect(res.levelElements[3].length).toBe(2);
+    expect(res.levelElements.length).toBe(3);
+    expect(res.levelElements[2].length).toBe(2);
     let elems = res.getDeepestElements(2);
     expect(elems[0].similarity).toBe(1.0);
-    expect(elems[0].parentCount).toBe(3);
+    expect(elems[0].parentCount).toBe(2);
     expect(elems[1].similarity).toBe(0.8634920634920635);
-    expect(elems[1].parentCount).toBe(3);
+    expect(elems[1].parentCount).toBe(2);
 
     const lk1 = [
       { a: 2, b: 2, c: 3 },
@@ -119,7 +119,7 @@ describe('Cache', () => {
     const cache = initializeTestCache();
     const size = cache.size();
     expect(size).toStrictEqual({
-      0.95: 2, 0.98: 2, 0.99: 2, 1: 2,
+      0.925: 2, 0.96: 2, 1: 2,
     });
   });
 });

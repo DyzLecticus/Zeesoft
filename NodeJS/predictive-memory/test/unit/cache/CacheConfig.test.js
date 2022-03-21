@@ -6,10 +6,10 @@ describe('CacheConfig', () => {
     const comp = {};
     config.comparator = comp;
     config.initiatlizeDefault();
-    expect(config.subConfig.mergeSimilarity).toBe(0.98);
-    expect(config.subConfig.subConfig.mergeSimilarity).toBe(0.99);
-    expect(config.subConfig.subConfig.subConfig.mergeSimilarity).toBe(1.0);
-    expect(config.subConfig.subConfig.subConfig.comparator).toBe(comp);
+    expect(config.mergeSimilarity).toBe(0.925);
+    expect(config.subConfig.mergeSimilarity).toBe(0.96);
+    expect(config.subConfig.subConfig.mergeSimilarity).toBe(1.0);
+    expect(config.subConfig.subConfig.comparator).toBe(comp);
   });
 
   test('Sets the comparator recursively', () => {
@@ -17,6 +17,6 @@ describe('CacheConfig', () => {
     config.initiatlizeDefault();
     const comp = {};
     config.setComparator(comp);
-    expect(config.subConfig.subConfig.subConfig.comparator).toBe(comp);
+    expect(config.subConfig.subConfig.comparator).toBe(comp);
   });
 });
