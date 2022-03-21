@@ -1,5 +1,11 @@
-const CacheElement = require('./CacheElement');
 const CacheResult = require('./CacheResult');
+
+function CacheElement(k, v) {
+  this.key = k;
+  this.value = v;
+  this.count = 0;
+  this.subCache = null;
+}
 
 function Cache(config) {
   this.config = config;
