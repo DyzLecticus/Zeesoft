@@ -28,9 +28,14 @@ for (let i = 3; i < lines.length; i += 1) {
     const dt = dtv[0].split(' ');
     const dats = dt[0].split('/');
     const tims = dt[1].split(':');
+    const d = new Date();
+    d.setFullYear(parseInt(`20${dats[2]}`, 10));
+    d.setMonth(parseInt(dats[0], 10) - 1);
+    d.setDate(parseInt(dats[1], 10));
+    d.setHours(parseInt(tims[0], 10), parseInt(tims[1], 10), 0);
     const obj = {
-      m: parseInt(dats[0], 10),
-      h: parseInt(tims[0], 10),
+      wd: d.getDay() + 1,
+      h: d.getHours() + 1,
       v: parseInt(val, 10),
     };
     predictor.add(obj);
