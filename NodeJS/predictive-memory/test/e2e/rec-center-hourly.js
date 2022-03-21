@@ -19,7 +19,8 @@ const data = fs.readFileSync(csvPath);
 const pc = new PredictorConfig();
 pc.maxHistorySize = 1000;
 pc.cacheConfig.mergeSimilarity = 0.975;
-pc.cacheConfig.subConfig.mergeSimilarity = 0.99;
+pc.cacheConfig.maxSize = 500;
+pc.cacheConfig.subConfig.mergeSimilarity = 0.9825;
 const predictor = new Predictor(pc);
 
 const lines = data.toString().split('\n');
