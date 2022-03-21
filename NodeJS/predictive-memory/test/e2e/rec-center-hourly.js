@@ -24,6 +24,7 @@ pc.cacheConfig.subConfig.mergeSimilarity = 0.9825;
 const predictor = new Predictor(pc);
 
 const lines = data.toString().split('\n');
+let start = 0;
 for (let i = 3; i < lines.length; i += 1) {
   if (lines[i].length) {
     const dtv = lines[i].split(',');
@@ -43,6 +44,7 @@ for (let i = 3; i < lines.length; i += 1) {
     };
     predictor.add(obj);
     if (i === 3000) {
+      start = Date.now();
       predictor.setPredict(true);
     }
   }
@@ -50,6 +52,7 @@ for (let i = 3; i < lines.length; i += 1) {
 const analyzer = new PredictorAnalyzer('v', weighted);
 const analysis = analyzer.analyze(predictor);
 analysis.cacheSize = predictor.cache.size();
+analysis.msPerObject = (Date.now() - start) / (lines.length - 3000);
 // eslint-disable-next-line no-console
 console.log(analysis);
 analysis.results = predictor.getResults('v', weighted);
