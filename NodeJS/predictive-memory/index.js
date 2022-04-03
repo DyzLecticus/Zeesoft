@@ -1,13 +1,8 @@
-const IndexGenerator = require('./src/predict/IndexGenerator');
-const PredictorConfig = require('./src/predict/PredictorConfig');
-const Predictor = require('./src/predict/Predictor');
-const PredictorAnalyzer = require('./src/predict/PredictorAnalyzer');
-const CacheConfig = require('./src/cache/CacheConfig');
-const Cache = require('./src/cache/Cache');
-
-module.exports.IndexGenerator = IndexGenerator;
-module.exports.PredictorConfig = PredictorConfig;
-module.exports.Predictor = Predictor;
-module.exports.PredictorAnalyzer = PredictorAnalyzer;
-module.exports.CacheConfig = CacheConfig;
-module.exports.Cache = Cache;
+module.exports.Comparator = require('./src/Comparator');
+module.exports.Transformer = require('./src/Transformer');
+module.exports.IndexGenerator = require('./src/predict/IndexGenerator');
+module.exports.PredictorConfig = require('./src/predict/PredictorConfig');
+module.exports.Predictor = require('./src/predict/Predictor');
+module.exports.PredictorAnalyzer = require('./src/predict/PredictorAnalyzer');
+module.exports.CacheConfig = require('./src/cache/CacheConfig');
+module.exports.Cache = require('./src/cache/Cache');

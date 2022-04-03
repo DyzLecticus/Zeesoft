@@ -9,8 +9,8 @@ const path = require('path');
 
 const { PredictorConfig, Predictor, PredictorAnalyzer } = require('../../index');
 
-const csvPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.csv');
 const weighted = true;
+const csvPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.csv');
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.json');
 
 const data = fs.readFileSync(csvPath);
