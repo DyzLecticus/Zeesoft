@@ -65,7 +65,7 @@ function Cache(config) {
     if (lookupSubCache && this.config.subConfig
       && (options.maxDepth === 0 || lvl < options.maxDepth)
     ) {
-      const elems = res.getLevelElements(lvl, 2);
+      const elems = res.getLevelElements(lvl, options.maxWidth);
       for (let i = 0; i < elems.length; i += 1) {
         const elem = elems[i].element;
         const sub = i === elems.length - 1;
@@ -74,11 +74,12 @@ function Cache(config) {
     }
   };
 
-  this.query = (key, minSimilarity, maxDepth) => {
+  this.query = (key, minSimilarity, maxDepth, maxWidth) => {
     const res = new CacheResult();
     const options = {
       minSimilarity: minSimilarity || 0.0,
       maxDepth: maxDepth || 0,
+      maxWidth: maxWidth || 2,
     };
     this.lookup(res, key, 0, 0, options, true);
     return res;
