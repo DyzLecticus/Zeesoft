@@ -62,7 +62,7 @@ function Predictor(config) {
     let r = null;
     if (this.predict) {
       const key = this.getCacheHistory().get(this.config.cacheIndexes, -1);
-      const result = this.cache.query(key);
+      const result = this.cache.query(key, this.config.cacheQueryOptions);
       r = new ObjectPrediction(result);
       r.generatePrediction();
       if (this.config.transformer) {

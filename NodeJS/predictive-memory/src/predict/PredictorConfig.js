@@ -11,6 +11,7 @@ function PredictorConfig(size, depth) {
   this.cacheIndexes = (new IndexGenerator(depth)).generate();
   this.cacheConfig = new CacheConfig();
   this.cacheConfig.initiatlizeDefault();
+  this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
 
   this.setComparator = (com) => {
     this.comparator = com;

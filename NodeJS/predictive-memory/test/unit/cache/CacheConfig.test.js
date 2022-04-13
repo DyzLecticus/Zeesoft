@@ -19,4 +19,16 @@ describe('CacheConfig', () => {
     config.setComparator(comp);
     expect(config.subConfig.subConfig.comparator).toBe(comp);
   });
+
+  test('Returns correct query options', () => {
+    const config = new CacheConfig();
+    let options = config.getQueryOptions();
+    expect(options.minSimilarity).toBe(0);
+    expect(options.maxDepth).toBe(0);
+    expect(options.maxWidth).toBe(2);
+    options = config.getQueryOptions(0.9, 1, 3);
+    expect(options.minSimilarity).toBe(0.9);
+    expect(options.maxDepth).toBe(1);
+    expect(options.maxWidth).toBe(3);
+  });
 });

@@ -77,7 +77,7 @@ describe('Cache', () => {
       { a: 2, b: 2, c: 3 },
       { a: 3, b: 2, c: 3 },
     ];
-    res = cache.query(lk1, 0.0, 1);
+    res = cache.query(lk1, { minSimilarity: 0.0, maxDepth: 1 });
     elems = res.getDeepestElements(2);
     expect(elems[0].similarity).toBe(0.9761904761904763);
     expect(elems[0].parentCount).toBe(1);
@@ -103,14 +103,14 @@ describe('Cache', () => {
       { a: 2, b: 2, c: 4 },
     ];
 
-    res = cache.query(lk2, 0.0, 1);
+    res = cache.query(lk2, { minSimilarity: 0.0, maxDepth: 1 });
     elems = res.getDeepestElements(2);
     expect(elems[0].similarity).toBe(0.9988962472406182);
     expect(elems[0].parentCount).toBe(2);
     expect(elems[1].similarity).toBe(0.8645743145743146);
     expect(elems[1].parentCount).toBe(2);
 
-    res = cache.query(lk2, 0.99, 1);
+    res = cache.query(lk2, { minSimilarity: 0.99, maxDepth: 1 });
     elems = res.getDeepestElements(2);
     expect(elems.length).toBe(1);
   });

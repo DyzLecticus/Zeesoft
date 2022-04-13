@@ -17,5 +17,11 @@ function CacheConfig(comp, mergeSim) {
       this.subConfig.setComparator(com);
     }
   };
+
+  this.getQueryOptions = (minSimilarity, maxDepth, maxWidth) => ({
+    minSimilarity: minSimilarity || 0,
+    maxDepth: maxDepth || 0,
+    maxWidth: maxWidth || 2,
+  });
 }
 module.exports = CacheConfig;

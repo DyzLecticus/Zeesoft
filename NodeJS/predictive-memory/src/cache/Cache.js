@@ -74,14 +74,10 @@ function Cache(config) {
     }
   };
 
-  this.query = (key, minSimilarity, maxDepth, maxWidth) => {
+  this.query = (key, options) => {
     const res = new CacheResult();
-    const options = {
-      minSimilarity: minSimilarity || 0.0,
-      maxDepth: maxDepth || 0,
-      maxWidth: maxWidth || 2,
-    };
-    this.lookup(res, key, 0, 0, options, true);
+    const opts = options || this.config.getQueryOptions();
+    this.lookup(res, key, 0, 0, opts, true);
     return res;
   };
 
