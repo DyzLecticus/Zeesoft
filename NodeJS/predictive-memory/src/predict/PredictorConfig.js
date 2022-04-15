@@ -1,17 +1,15 @@
 const Comparator = require('../Comparator');
-const IndexGenerator = require('./IndexGenerator');
-const CacheConfig = require('../cache/CacheConfig');
 const Transformer = require('../Transformer');
+
+const Extender = require('../Extender');
+const PredictorCacheConfig = require('./PredictorCacheConfig');
 
 function PredictorConfig(size, depth) {
   this.maxHistorySize = size || 129;
   this.comparator = new Comparator();
   this.transformer = new Transformer();
 
-  this.cacheIndexes = (new IndexGenerator(depth)).generate();
-  this.cacheConfig = new CacheConfig();
-  this.cacheConfig.initiatlizeDefault();
-  this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
+  Extender.copyInstanceProperties(new PredictorCacheConfig(depth), this);
 
   this.setComparator = (com) => {
     this.comparator = com;
