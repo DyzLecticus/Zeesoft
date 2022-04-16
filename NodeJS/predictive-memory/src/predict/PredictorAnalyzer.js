@@ -1,5 +1,9 @@
 const MathUtil = require('../MathUtil');
 
+/**
+ * @param {Array} key An array of object property keys
+ * @param {String} type The prediction type; 'predictedValues' | 'weightedPredictedValues'
+ */
 function PredictorAnalyzer(keys, type) {
   this.keys = keys || [];
   this.type = type || 'weightedPredictedValues';

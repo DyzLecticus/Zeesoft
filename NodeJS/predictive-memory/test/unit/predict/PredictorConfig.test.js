@@ -11,8 +11,10 @@ describe('PredictorConfig', () => {
     expect(pc.cacheConfig.comparator).toBe(pc.comparator);
     expect(pc.cacheConfig.subConfig).not.toBe(null);
     expect(pc.cacheQueryOptions.minSimilarity).toBe(0);
+    expect(pc.maxPredictionHistorySize).toBe(129);
     pc = new PredictorConfig(33, 6);
     expect(pc.maxHistorySize).toBe(33);
     expect(pc.cacheIndexes.length).toBe(10);
+    expect(pc.maxPredictionHistorySize).toBe(33);
   });
 });

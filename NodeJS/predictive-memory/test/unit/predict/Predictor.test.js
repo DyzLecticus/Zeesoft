@@ -9,10 +9,10 @@ const hists = [
 
 const addHists = (predictor, rep) => {
   const pr = predictor;
-  pr.learn = false;
+  pr.setLearn(false);
   for (let i = 0; i < (hists.length * rep); i += 1) {
     if (i === 30) {
-      pr.learn = true;
+      pr.setLearn(true);
       pr.setPredict(true);
     }
     pr.process(hists[(i % hists.length)]);
@@ -21,8 +21,7 @@ const addHists = (predictor, rep) => {
 
 describe('Predictor', () => {
   test('Constructs itself correctly', () => {
-    const pc = new PredictorConfig();
-    pc.maxHistorySize = 1000;
+    const pc = new PredictorConfig(1000);
     const predictor = new Predictor(pc);
     expect(predictor.absoluteHistory.maxSize).toBe(1000);
     expect(predictor.relativeHistory.maxSize).toBe(1000);
@@ -43,12 +42,12 @@ describe('Predictor', () => {
 
     let results = predictor.getResults();
     expect(results.length).toBe(0);
-    results = predictor.getResults(['b']);
+    results = predictor.getResults('b');
     expect(results.length).toBe(5);
-    results = predictor.getResults(['b'], 'predictedValues', 1);
+    results = predictor.getResults('b', 'predictedValues', 1);
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
-    results = predictor.getResults(['b'], 'weightedPredictedValues', 1);
+    results = predictor.getResults('b', 'weightedPredictedValues', 1);
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 5.5496946141032755, actual: 6 }]);
   });
@@ -65,12 +64,12 @@ describe('Predictor', () => {
 
     let results = predictor.getResults();
     expect(results.length).toBe(0);
-    results = predictor.getResults(['b']);
+    results = predictor.getResults('b');
     expect(results.length).toBe(5);
-    results = predictor.getResults(['b'], 'predictedValues', 1);
+    results = predictor.getResults('b', 'predictedValues', 1);
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
-    results = predictor.getResults(['b'], 'weightedPredictedValues', 1);
+    results = predictor.getResults('b', 'weightedPredictedValues', 1);
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 4.8633860468117, actual: 6 }]);
 
@@ -82,7 +81,7 @@ describe('Predictor', () => {
     const predictor = new Predictor();
     const repeat = 120;
     addHists(predictor, repeat);
-    const results = predictor.getResults(['b']);
+    const results = predictor.getResults('b');
     expect(results.length).toBe(128);
     for (let i = 0; i < results.length; i += 1) {
       expect(results.predicted).toBe(results.actual);
