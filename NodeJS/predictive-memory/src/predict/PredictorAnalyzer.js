@@ -49,11 +49,11 @@ function PredictorAnalyzer(keys, type) {
     return MathUtil.getStandardDeviation(diffs);
   };
 
-  this.analyze = (predictor) => {
+  this.analyze = (predictor, max) => {
     const r = {};
     for (let k = 0; k < keys.length; k += 1) {
       const key = keys[k];
-      const results = predictor.getResults(key, this.type);
+      const results = predictor.getResults(key, this.type, max);
       r[key] = {
         accuracy: this.getAccuracy(results, predictor.config.comparator),
         accuracyStdDev: this.getAccuracyStdDev(results, predictor.config.comparator),

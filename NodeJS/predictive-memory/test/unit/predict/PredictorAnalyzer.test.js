@@ -31,10 +31,11 @@ const getMockPredictor = () => {
       comparator: new Comparator(),
     },
   };
-  mock.getResults = (key, type) => {
-    let r = mockResults;
+  mock.getResults = (key, type, max) => {
+    const m = max || mockResultsW.length;
+    let r = mockResults.slice(0, m);
     if (type === 'weightedPredictedValues') {
-      r = mockResultsW;
+      r = mockResultsW.slice(0, m);
     }
     return r;
   };
@@ -58,6 +59,12 @@ describe('PredictorAnalyzer', () => {
     expect(analysis.a.accuracyStdDev).toBe(0.02295130637897434);
     expect(analysis.a.accuracyTrend).toBe(1);
     expect(analysis.a.valueStdDev).toBe(0.44095855184409843);
+  });
+
+  test('Analyzes limited predictor results correctly', () => {
+    const analyzer = new PredictorAnalyzer(['a'], 'predictedValues');
+    const analysis = analyzer.analyze(getMockPredictor(), 4);
+    expect(analysis.a.accuracy).toBe(0.9736842105263159);
   });
 
   test('Analyzes weighted predictor results correctly', () => {
