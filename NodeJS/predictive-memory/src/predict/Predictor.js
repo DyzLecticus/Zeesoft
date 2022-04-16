@@ -73,18 +73,18 @@ function Predictor(config) {
     return r;
   };
 
-  this.getResults = (key, weighted, max) => {
+  this.getResults = (key, type, max) => {
     const r = [];
     let m = max;
     if (!m || m >= (this.predictions.elements.length - 1)) {
       m = (this.predictions.elements.length - 1);
     }
+    const typeName = type || 'weightedPredictedValues';
     for (let i = 1; i <= m; i += 1) {
       const pred = this.predictions.get([i])[0];
-      const pObj = weighted ? pred.weightedPredictedValues : pred.predictedValues;
-      const aObj = this.absoluteHistory.get([i - 1])[0];
-      const predicted = pObj[key];
-      const actual = aObj[key];
+      const predicted = pred[typeName][key];
+      const hist = this.absoluteHistory.get([i - 1])[0];
+      const actual = hist[key];
       if (predicted !== undefined && actual !== undefined) {
         r.push({ predicted, actual });
       }

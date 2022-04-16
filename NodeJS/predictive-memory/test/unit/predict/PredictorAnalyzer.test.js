@@ -31,9 +31,9 @@ const getMockPredictor = () => {
       comparator: new Comparator(),
     },
   };
-  mock.getResults = (key, weighted) => {
+  mock.getResults = (key, type) => {
     let r = mockResults;
-    if (weighted) {
+    if (type === 'weightedPredictedValues') {
       r = mockResultsW;
     }
     return r;
@@ -43,12 +43,16 @@ const getMockPredictor = () => {
 
 describe('PredictorAnalyzer', () => {
   test('Constructs itself results correctly', () => {
-    const analyzer = new PredictorAnalyzer();
+    let analyzer = new PredictorAnalyzer();
     expect(analyzer.keys.length).toBe(0);
+    expect(analyzer.type).toBe('weightedPredictedValues');
+    analyzer = new PredictorAnalyzer(['a', 'b'], 'predictedValues');
+    expect(analyzer.keys.length).toBe(2);
+    expect(analyzer.type).toBe('predictedValues');
   });
 
   test('Analyzes predictor results correctly', () => {
-    const analyzer = new PredictorAnalyzer('a', false);
+    const analyzer = new PredictorAnalyzer(['a'], 'predictedValues');
     const analysis = analyzer.analyze(getMockPredictor());
     expect(analysis.a.accuracy).toBe(0.9596212754107493);
     expect(analysis.a.accuracyStdDev).toBe(0.02295130637897434);
@@ -57,7 +61,7 @@ describe('PredictorAnalyzer', () => {
   });
 
   test('Analyzes weighted predictor results correctly', () => {
-    const analyzer = new PredictorAnalyzer('a');
+    const analyzer = new PredictorAnalyzer(['a']);
     const analysis = analyzer.analyze(getMockPredictor());
     expect(analysis.a.accuracy).toBe(0.9622410734567873);
     expect(analysis.a.accuracyStdDev).toBe(0.020102689034713326);

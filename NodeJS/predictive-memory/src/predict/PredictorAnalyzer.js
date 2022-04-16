@@ -1,8 +1,8 @@
 const MathUtil = require('../MathUtil');
 
-function PredictorAnalyzer(keys, weighted) {
+function PredictorAnalyzer(keys, type) {
   this.keys = keys || [];
-  this.weighted = weighted === false ? weighted : true;
+  this.type = type || 'weightedPredictedValues';
 
   this.getAccuracies = (results, comparator) => {
     const accs = [];
@@ -49,7 +49,7 @@ function PredictorAnalyzer(keys, weighted) {
     const r = {};
     for (let k = 0; k < keys.length; k += 1) {
       const key = keys[k];
-      const results = predictor.getResults(key, this.weighted);
+      const results = predictor.getResults(key, this.type);
       r[key] = {
         accuracy: this.getAccuracy(results, predictor.config.comparator),
         accuracyStdDev: this.getAccuracyStdDev(results, predictor.config.comparator),

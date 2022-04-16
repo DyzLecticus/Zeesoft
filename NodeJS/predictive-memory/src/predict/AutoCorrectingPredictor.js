@@ -30,7 +30,7 @@ function AutoCorrectingPredictor(config) {
       const key = this.getCacheHistory().get(this.config.correctionCacheIndexes);
       const result = this.correctionCache.query(key, this.config.correctionCacheQueryOptions);
       const correctionPrediction = new ObjectPrediction(result);
-      correctionPrediction.weightedPredictedValues = {};
+      correctionPrediction.generatePrediction();
       prediction.correctedPredictedValues = this.config.transformer.applyTransformation(
         prediction.weightedPredictedValues,
         correctionPrediction.weightedPredictedValues,
