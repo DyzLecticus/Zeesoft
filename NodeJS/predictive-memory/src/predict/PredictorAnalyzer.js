@@ -19,12 +19,8 @@ function PredictorAnalyzer() {
   );
 
   this.getAccuracyTrend = (results, comparator) => {
-    const subResults = [];
     const m = Math.round(results.length / 10);
-    for (let i = 0; i < m; i += 1) {
-      subResults.push(results[i]);
-    }
-    return this.getAccuracy(subResults, comparator);
+    return this.getAccuracy(results.slice(0, m), comparator);
   };
 
   this.getValueStdDev = (results) => {

@@ -12,11 +12,9 @@ function ObjectPrediction(result) {
   this.weightedPredictedValues = {};
 
   this.generateKeyPredictions = (elems) => {
-    for (let i = 0; i < elems.length; i += 1) {
-      const keys = Object.keys(elems[i].element.value);
-      for (let k = 0; k < keys.length; k += 1) {
-        const key = keys[k];
-        const value = elems[i].element.value[key];
+    elems.forEach((elem) => {
+      Object.keys(elem.element.value).forEach((key) => {
+        const value = elem.element.value[key];
         if (!this.keyPredictions[key]) {
           this.keyPredictions[key] = [];
         }
@@ -26,37 +24,31 @@ function ObjectPrediction(result) {
           kp = new KeyPrediction(value);
           this.keyPredictions[key].push(kp);
         }
-        kp.totalSimilarity += (elems[i].similarity);
-        kp.totalCount += (elems[i].parentCount + elems[i].element.count);
-      }
-    }
+        kp.totalSimilarity += (elem.similarity);
+        kp.totalCount += (elem.parentCount + elem.element.count);
+      });
+    });
   };
 
   this.calculateKeyPredictionWeights = () => {
-    const keys = Object.keys(this.keyPredictions);
-    for (let k = 0; k < keys.length; k += 1) {
-      const key = keys[k];
+    Object.keys(this.keyPredictions).forEach((key) => {
       let total = 0.0;
-      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
-        const kp = this.keyPredictions[key][i];
+      this.keyPredictions[key].forEach((kp) => {
         total += (kp.totalCount * kp.totalSimilarity);
-      }
-      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
-        const kp = this.keyPredictions[key][i];
-        kp.weight = (kp.totalCount * kp.totalSimilarity) / total;
-      }
+      });
+      this.keyPredictions[key].forEach((kp) => {
+        const p = kp;
+        p.weight = (kp.totalCount * kp.totalSimilarity) / total;
+      });
       this.keyPredictions[key] = this.keyPredictions[key].sort((a, b) => (b.weight - a.weight));
-    }
+    });
   };
 
   this.calculatePredictedValues = () => {
-    const keys = Object.keys(this.keyPredictions);
-    for (let k = 0; k < keys.length; k += 1) {
-      const key = keys[k];
+    Object.keys(this.keyPredictions).forEach((key) => {
       let val = 0.0;
       let isNum = false;
-      for (let i = 0; i < this.keyPredictions[key].length; i += 1) {
-        const kp = this.keyPredictions[key][i];
+      this.keyPredictions[key].forEach((kp, i) => {
         if (i === 0) {
           this.predictedValues[key] = kp.value;
         }
@@ -64,11 +56,11 @@ function ObjectPrediction(result) {
           isNum = true;
           val += kp.weight * kp.value;
         }
-      }
+      });
       if (isNum) {
         this.weightedPredictedValues[key] = val;
       }
-    }
+    });
   };
 
   this.generatePrediction = (num) => {

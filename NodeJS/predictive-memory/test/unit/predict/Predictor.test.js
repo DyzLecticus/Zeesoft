@@ -83,8 +83,8 @@ describe('Predictor', () => {
     addHists(predictor, repeat);
     const results = predictor.getResults('b');
     expect(results.length).toBe(128);
-    for (let i = 0; i < results.length; i += 1) {
-      expect(results.predicted).toBe(results.actual);
-    }
+    results.forEach((result) => {
+      expect(result.predicted).toBe(result.actual);
+    });
   });
 });
