@@ -2,9 +2,7 @@ function MathUtil() {
   this.getAverage = (numArray) => {
     let avg = 0.0;
     if (numArray.length > 0) {
-      for (let i = 0; i < numArray.length; i += 1) {
-        avg += numArray[i];
-      }
+      numArray.forEach((val) => { avg += val; });
       avg /= numArray.length;
     }
     return avg;
@@ -14,13 +12,9 @@ function MathUtil() {
     let dev = 0.0;
     if (numArray.length > 1) {
       let sum = 0.0;
-      for (let i = 0; i < numArray.length; i += 1) {
-        sum += numArray[i];
-      }
+      numArray.forEach((val) => { sum += val; });
       const avg = sum / numArray.length;
-      for (let i = 0; i < numArray.length; i += 1) {
-        dev += (numArray[i] - avg) ** 2;
-      }
+      numArray.forEach((val) => { dev += (val - avg) ** 2; });
       dev = Math.sqrt(dev / (numArray.length - 1));
     }
     return dev;

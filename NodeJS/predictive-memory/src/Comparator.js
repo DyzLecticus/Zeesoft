@@ -35,9 +35,7 @@ function Comparator() {
     const total = abKeys.length + nbKeys.length + naKeys.length;
     if (total > 0) {
       perc = 0;
-      for (let i = 0; i < abKeys.length; i += 1) {
-        perc += this.calculateValueSimilarity(a[abKeys[i]], b[abKeys[i]]);
-      }
+      abKeys.forEach((key) => { perc += this.calculateValueSimilarity(a[key], b[key]); });
       perc /= total;
     }
     return perc;

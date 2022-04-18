@@ -66,11 +66,11 @@ describe('Cache', () => {
 
     let res = cache.query(k1);
     expect(res.levelElements.length).toBe(3);
-    expect(res.levelElements[2].length).toBe(2);
+    expect(res.levelElements[2].length).toBe(3);
     let elems = res.getDeepestElements(2);
     expect(elems[0].similarity).toBe(1.0);
     expect(elems[0].parentCount).toBe(2);
-    expect(elems[1].similarity).toBe(0.8634920634920635);
+    expect(elems[1].similarity).toBe(1.0);
     expect(elems[1].parentCount).toBe(2);
 
     const lk1 = [

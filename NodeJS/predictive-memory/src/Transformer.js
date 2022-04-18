@@ -30,14 +30,13 @@ function Transformer() {
   this.calculateTransformation = (fromObj, toObj) => {
     const r = {};
     const fromToKeys = Object.keys(fromObj).filter((key) => key in toObj);
-    for (let k = 0; k < fromToKeys.length; k += 1) {
-      const key = fromToKeys[k];
+    fromToKeys.forEach((key) => {
       const fromVal = fromObj[key];
       const toVal = toObj[key];
       if (fromVal != null && toVal != null) {
         r[key] = this.calculateValueTransformation(fromVal, toVal);
       }
-    }
+    });
     return r;
   };
 
@@ -52,14 +51,13 @@ function Transformer() {
   this.applyTransformation = (fromObj, transformation) => {
     const r = {};
     const fromToKeys = Object.keys(fromObj).filter((key) => key in transformation);
-    for (let k = 0; k < fromToKeys.length; k += 1) {
-      const key = fromToKeys[k];
+    fromToKeys.forEach((key) => {
       const fromVal = fromObj[key];
       const perc = transformation[key];
       if (fromVal != null) {
         r[key] = this.applyValueTransformation(fromVal, perc);
       }
-    }
+    });
     return r;
   };
 }

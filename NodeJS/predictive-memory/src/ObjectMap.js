@@ -12,10 +12,7 @@ function ObjectMap() {
   };
 
   this.forEach = (func) => {
-    const keys = Object.keys(this.map);
-    for (let i = 0; i < keys.length; i += 1) {
-      func(this.map[keys[i]]);
-    }
+    Object.keys(this.map).forEach((key) => { func(this.get(key)); });
   };
 }
 module.exports = ObjectMap;

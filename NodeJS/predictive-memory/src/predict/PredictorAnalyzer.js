@@ -6,15 +6,9 @@ function PredictorAnalyzer() {
     type: type || 'weightedPredictedValues',
   });
 
-  this.getAccuracies = (results, comparator) => {
-    const accs = [];
-    for (let i = 0; i < results.length; i += 1) {
-      const p = results[i].predicted;
-      const a = results[i].actual;
-      accs.push(comparator.calculateValueSimilarity(p, a));
-    }
-    return accs;
-  };
+  this.getAccuracies = (results, comparator) => results.map(
+    (result) => comparator.calculateValueSimilarity(result.predicted, result.actual),
+  );
 
   this.getAccuracy = (results, comparator) => MathUtil.getAverage(
     this.getAccuracies(results, comparator),
@@ -34,16 +28,13 @@ function PredictorAnalyzer() {
   };
 
   this.getValueStdDev = (results) => {
-    const diffs = [];
-    for (let i = 0; i < results.length; i += 1) {
-      const p = results[i].predicted;
-      const a = results[i].actual;
-      let diff = p - a;
+    const diffs = results.map((result) => {
+      let diff = result.predicted - result.actual;
       if (diff < 0) {
         diff *= -1;
       }
-      diffs.push(diff);
-    }
+      return diff;
+    });
     return MathUtil.getStandardDeviation(diffs);
   };
 
@@ -56,8 +47,7 @@ function PredictorAnalyzer() {
   this.analyze = (predictor, keys, options) => {
     const r = {};
     const opts = options || this.getAnalysisOptions();
-    for (let k = 0; k < keys.length; k += 1) {
-      const key = keys[k];
+    keys.forEach((key) => {
       const results = predictor.getResults(key, opts.max, opts.type);
       r[key] = {
         accuracy: this.getAccuracy(results, predictor.config.comparator),
@@ -65,7 +55,7 @@ function PredictorAnalyzer() {
         accuracyTrend: this.getAccuracyTrend(results, predictor.config.comparator),
         valueStdDev: this.getValueStdDev(results),
       };
-    }
+    });
     return r;
   };
 }

@@ -49,7 +49,7 @@ describe('Predictor', () => {
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
     results = predictor.getResults('b', 1, 'weightedPredictedValues');
     expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 5.5496946141032755, actual: 6 }]);
+    expect(results).toStrictEqual([{ predicted: 5.8300146719765245, actual: 6 }]);
   });
 
   test('Generates relative predictions correctly', () => {
@@ -71,7 +71,7 @@ describe('Predictor', () => {
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
     results = predictor.getResults('b', 1, 'weightedPredictedValues');
     expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 4.8633860468117, actual: 6 }]);
+    expect(results).toStrictEqual([{ predicted: 5.582328274086311, actual: 6 }]);
 
     predictor.setPredict(false);
     expect(predictor.predictions.elements.length).toBe(0);

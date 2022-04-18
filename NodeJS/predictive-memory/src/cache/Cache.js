@@ -60,28 +60,26 @@ function Cache(config) {
     return elem;
   };
 
-  this.lookup = (res, key, lvl, pCount, options, lookupSubCache) => {
-    for (let i = 0; i < this.elements.length; i += 1) {
-      const sim = this.config.comparator.calculateSimilarity(key, this.elements[i].key);
+  this.lookup = (res, key, lvl, pCount, options) => {
+    this.elements.forEach((element) => {
+      const sim = this.config.comparator.calculateSimilarity(key, element.key);
       if (sim >= options.minSimilarity) {
-        res.addLevelElement(lvl, sim, pCount, this.elements[i]);
+        res.addLevelElement(lvl, sim, pCount, element);
       }
-    }
-    if (lookupSubCache && this.config.subConfig
+    });
+    if (this.config.subConfig
       && (options.maxDepth === 0 || lvl < options.maxDepth)
     ) {
       const elems = res.getLevelElements(lvl, options.maxWidth);
-      for (let i = 0; i < elems.length; i += 1) {
-        const elem = elems[i].element;
-        const sub = i === elems.length - 1;
-        elem.subCache.lookup(res, key, lvl + 1, pCount + elem.count, options, sub);
-      }
+      elems.forEach((elem) => {
+        elem.element.subCache.lookup(res, key, lvl + 1, pCount + elem.element.count, options);
+      });
     }
   };
 
   /**
-   * @param {*} key An array of similar objects (See Comparator and Transformer)
-   * @param {*} options An object with query options (See CacheConfig.getQueryOptions)
+   * @param {String} key An array of similar objects (See Comparator and Transformer)
+   * @param {Object} options An object with query options (See CacheConfig.getQueryOptions)
    * @returns
    */
   this.query = (key, options) => {
@@ -98,9 +96,7 @@ function Cache(config) {
     s += this.elements.length;
     ob[key] = s;
     if (this.config.subConfig) {
-      for (let i = 0; i < this.elements.length; i += 1) {
-        this.elements[i].subCache.size(ob);
-      }
+      this.elements.forEach((element) => { element.subCache.size(ob); });
     }
     return ob;
   };

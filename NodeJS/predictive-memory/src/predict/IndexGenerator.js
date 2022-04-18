@@ -25,10 +25,7 @@ function IndexGenerator(depth) {
   };
 
   this.addFibonacci = (idxs) => {
-    const add = this.getFibonacci();
-    for (let i = 0; i < add.length; i += 1) {
-      this.addIndex(idxs, add[i]);
-    }
+    this.getFibonacci().forEach((idx) => { this.addIndex(idxs, idx); });
   };
 
   this.addPower = (idxs) => {
