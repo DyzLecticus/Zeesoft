@@ -44,8 +44,8 @@ prediction = predictor.process({ dayOfWeek: 2, hourOfDay: 0, measuredValue: 1.5 
 // const latestPrediction = predictor.predictions.get([0])[0];
 // const results = predictor.getResults('measuredValue');
 
-const analyzer = new PredictorAnalyzer(['measuredValue']);
-const analysis = analyzer.analyze(predictor);
+const analyzer = new PredictorAnalyzer();
+const analysis = analyzer.analyze(predictor, ['measuredValue']);
 
 console.log(analysis);
 ```

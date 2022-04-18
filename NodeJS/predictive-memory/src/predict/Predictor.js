@@ -83,11 +83,11 @@ function Predictor(config) {
 
   /**
    * @param {String} key The object property key
-   * @param {String} type The prediction type; 'predictedValues' | 'weightedPredictedValues'
    * @param {Number} max The maximum number of results
+   * @param {String} type The prediction type; 'predictedValues' | 'weightedPredictedValues'
    * @returns An array of objects containing predicted and actual values for the specified key
    */
-  this.getResults = (key, type, max) => {
+  this.getResults = (key, max, type) => {
     const r = [];
     let m = max;
     if (!m || m >= (this.predictions.elements.length - 1)) {

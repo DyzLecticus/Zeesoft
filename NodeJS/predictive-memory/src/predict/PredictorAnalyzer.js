@@ -1,12 +1,10 @@
 const MathUtil = require('../MathUtil');
 
-/**
- * @param {Array} key An array of object property keys
- * @param {String} type The prediction type; 'predictedValues' | 'weightedPredictedValues'
- */
-function PredictorAnalyzer(keys, type) {
-  this.keys = keys || [];
-  this.type = type || 'weightedPredictedValues';
+function PredictorAnalyzer() {
+  this.getAnalysisOptions = (max, type) => ({
+    max: max || 0,
+    type: type || 'weightedPredictedValues',
+  });
 
   this.getAccuracies = (results, comparator) => {
     const accs = [];
@@ -49,11 +47,18 @@ function PredictorAnalyzer(keys, type) {
     return MathUtil.getStandardDeviation(diffs);
   };
 
-  this.analyze = (predictor, max) => {
+  /**
+   * @param {Predictor} predictor The predictor to analyze
+   * @param {Array} keys
+   * @param {Object} options An optional object that specifies type and max results
+   * @returns An object containing the results of the analysis
+   */
+  this.analyze = (predictor, keys, options) => {
     const r = {};
+    const opts = options || this.getAnalysisOptions();
     for (let k = 0; k < keys.length; k += 1) {
       const key = keys[k];
-      const results = predictor.getResults(key, this.type, max);
+      const results = predictor.getResults(key, opts.max, opts.type);
       r[key] = {
         accuracy: this.getAccuracy(results, predictor.config.comparator),
         accuracyStdDev: this.getAccuracyStdDev(results, predictor.config.comparator),

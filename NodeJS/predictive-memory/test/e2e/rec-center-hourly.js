@@ -9,7 +9,6 @@ const path = require('path');
 
 const { PredictorConfig, Predictor, PredictorAnalyzer } = require('../../index');
 
-const type = 'weightedPredictedValues';
 const csvPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.csv');
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.json');
 
@@ -49,11 +48,11 @@ for (let i = 3; i < lines.length; i += 1) {
   }
 }
 
-const analyzer = new PredictorAnalyzer(['kwh'], type);
-const analysis = analyzer.analyze(predictor);
+const analyzer = new PredictorAnalyzer();
+const analysis = analyzer.analyze(predictor, ['kwh']);
 analysis.cacheSize = predictor.cache.size();
 analysis.msPerObject = (Date.now() - start) / (lines.length - 3000);
 // eslint-disable-next-line no-console
 console.log(analysis);
-analysis.results = predictor.getResults('kwh', type);
+analysis.results = predictor.getResults('kwh');
 fs.writeFileSync(jsonPath, JSON.stringify(analysis, null, 2));

@@ -31,7 +31,7 @@ const getMockPredictor = () => {
       comparator: new Comparator(),
     },
   };
-  mock.getResults = (key, type, max) => {
+  mock.getResults = (key, max, type) => {
     const m = max || mockResultsW.length;
     let r = mockResults.slice(0, m);
     if (type === 'weightedPredictedValues') {
@@ -43,18 +43,19 @@ const getMockPredictor = () => {
 };
 
 describe('PredictorAnalyzer', () => {
-  test('Constructs itself results correctly', () => {
-    let analyzer = new PredictorAnalyzer();
-    expect(analyzer.keys.length).toBe(0);
-    expect(analyzer.type).toBe('weightedPredictedValues');
-    analyzer = new PredictorAnalyzer(['a', 'b'], 'predictedValues');
-    expect(analyzer.keys.length).toBe(2);
-    expect(analyzer.type).toBe('predictedValues');
+  test('Returns correct analysis options', () => {
+    const analyzer = new PredictorAnalyzer();
+    let options = analyzer.getAnalysisOptions(10, 'pizza');
+    expect(options.max).toBe(10);
+    expect(options.type).toBe('pizza');
+    options = analyzer.getAnalysisOptions();
+    expect(options.max).toBe(0);
+    expect(options.type).toBe('weightedPredictedValues');
   });
 
   test('Analyzes predictor results correctly', () => {
-    const analyzer = new PredictorAnalyzer(['a'], 'predictedValues');
-    const analysis = analyzer.analyze(getMockPredictor());
+    const analyzer = new PredictorAnalyzer();
+    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(0, 'predictedValues'));
     expect(analysis.a.accuracy).toBe(0.9596212754107493);
     expect(analysis.a.accuracyStdDev).toBe(0.02295130637897434);
     expect(analysis.a.accuracyTrend).toBe(1);
@@ -63,13 +64,13 @@ describe('PredictorAnalyzer', () => {
 
   test('Analyzes limited predictor results correctly', () => {
     const analyzer = new PredictorAnalyzer(['a'], 'predictedValues');
-    const analysis = analyzer.analyze(getMockPredictor(), 4);
+    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(4, 'predictedValues'));
     expect(analysis.a.accuracy).toBe(0.9736842105263159);
   });
 
   test('Analyzes weighted predictor results correctly', () => {
-    const analyzer = new PredictorAnalyzer(['a']);
-    const analysis = analyzer.analyze(getMockPredictor());
+    const analyzer = new PredictorAnalyzer();
+    const analysis = analyzer.analyze(getMockPredictor(), ['a']);
     expect(analysis.a.accuracy).toBe(0.9622410734567873);
     expect(analysis.a.accuracyStdDev).toBe(0.020102689034713326);
     expect(analysis.a.accuracyTrend).toBe(1);
