@@ -105,5 +105,16 @@ function Predictor(config) {
     }
     return r;
   };
+
+  this.copy = () => {
+    const r = new Predictor(this.config);
+    r.absoluteHistory = this.absoluteHistory.copy();
+    r.relativeHistory = this.relativeHistory.copy();
+    r.learn = this.learn;
+    r.cache = this.cache.copy();
+    r.predict = this.predict;
+    r.predictions = this.predictions.copy();
+    return r;
+  };
 }
 module.exports = Predictor;

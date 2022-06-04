@@ -87,4 +87,23 @@ describe('Predictor', () => {
       expect(result.predicted).toBe(result.actual);
     });
   });
+
+  test('Copies itself correctly', () => {
+    const predictor = new Predictor();
+    const repeat = 12;
+    addHists(predictor, repeat);
+
+    const copy = predictor.copy();
+    expect(copy.absoluteHistory.length).toBe(predictor.absoluteHistory.length);
+    expect(copy.absoluteHistory[0]).toStrictEqual(predictor.absoluteHistory[0]);
+    expect(copy.relativeHistory.length).toBe(predictor.relativeHistory.length);
+    expect(copy.relativeHistory[0]).toStrictEqual(predictor.relativeHistory[0]);
+
+    expect(copy.learn).toBe(predictor.learn);
+    expect(copy.cache.config).toStrictEqual(copy.cache.config);
+
+    expect(copy.predict).toBe(predictor.predict);
+    expect(copy.predictions.length).toBe(predictor.predictions.length);
+    expect(copy.predictions[0]).toStrictEqual(predictor.predictions[0]);
+  });
 });

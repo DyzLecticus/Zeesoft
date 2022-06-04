@@ -31,5 +31,13 @@ function History(max) {
     }
     return r;
   };
+
+  this.copy = () => {
+    const r = new History(this.maxSize);
+    this.elements.forEach((elem, index) => {
+      r.elements[index] = elem;
+    });
+    return r;
+  };
 }
 module.exports = History;

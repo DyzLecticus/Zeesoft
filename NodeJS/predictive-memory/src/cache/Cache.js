@@ -5,6 +5,14 @@ function CacheElement(k, v) {
   this.value = v;
   this.count = 0;
   this.subCache = null;
+  this.copy = () => {
+    const r = new CacheElement(this.key, this.value);
+    r.count = this.count;
+    if (this.subCache != null) {
+      r.subCache = this.subCache.copy();
+    }
+    return r;
+  };
 }
 
 function Cache(config) {
@@ -99,6 +107,14 @@ function Cache(config) {
       this.elements.forEach((element) => { element.subCache.size(ob); });
     }
     return ob;
+  };
+
+  this.copy = () => {
+    const r = new Cache(this.config);
+    this.elements.forEach((elem, index) => {
+      r.elements[index] = elem.copy();
+    });
+    return r;
   };
 }
 module.exports = Cache;

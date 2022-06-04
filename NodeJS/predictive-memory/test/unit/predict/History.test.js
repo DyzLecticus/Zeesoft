@@ -27,4 +27,19 @@ describe('History', () => {
     elements = hist.get(indexes, 1);
     expect(elements).toStrictEqual([{ a: 2 }, { a: 1 }]);
   });
+
+  test('Copies itself correctly', () => {
+    const hist = new History();
+    expect(hist.maxSize).toBe(1000);
+    hist.add({ a: 1 });
+    hist.add({ a: 2 });
+    hist.add({ a: 3 });
+    hist.add({ a: 4 });
+    const copy = hist.copy();
+    expect(copy.maxSize).toBe(hist.maxSize);
+    expect(copy.elements.length).toBe(hist.elements.length);
+    copy.elements.forEach((elem, index) => {
+      expect(JSON.stringify(elem)).toStrictEqual(JSON.stringify(hist.elements[index]));
+    });
+  });
 });

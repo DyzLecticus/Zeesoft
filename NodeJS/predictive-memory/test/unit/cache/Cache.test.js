@@ -122,4 +122,13 @@ describe('Cache', () => {
       0.925: 2, 0.96: 2, 1: 2,
     });
   });
+
+  test('Copies itself correctly', () => {
+    const cache = initializeTestCache();
+    const copy = cache.copy();
+    expect(copy.elements.length).toBe(cache.elements.length);
+    copy.elements.forEach((elem, index) => {
+      expect(JSON.stringify(elem)).toStrictEqual(JSON.stringify(cache.elements[index]));
+    });
+  });
 });
