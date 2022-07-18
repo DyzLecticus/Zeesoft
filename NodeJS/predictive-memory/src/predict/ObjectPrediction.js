@@ -9,7 +9,7 @@ function ObjectPrediction(result) {
   this.cacheResult = result;
   this.keyPredictions = {};
   this.predictedValues = {};
-  this.weightedPredictedValues = {};
+  this.rawPredictedValues = {};
 
   this.generateKeyPredictions = (elems) => {
     elems.forEach((elem) => {
@@ -50,16 +50,14 @@ function ObjectPrediction(result) {
       let isNum = false;
       this.keyPredictions[key].forEach((kp, i) => {
         if (i === 0) {
-          this.predictedValues[key] = kp.value;
+          this.rawPredictedValues[key] = kp.value;
         }
         if (typeof (kp.value) === 'number') {
           isNum = true;
           val += kp.weight * kp.value;
         }
       });
-      if (isNum) {
-        this.weightedPredictedValues[key] = val;
-      }
+      this.predictedValues[key] = isNum ? val : this.rawPredictedValues[key];
     });
   };
 

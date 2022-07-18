@@ -36,9 +36,9 @@ function Predictor(config) {
       from,
       pred.predictedValues,
     );
-    pred.weightedPredictedValues = this.config.transformer.applyTransformation(
+    pred.rawPredictedValues = this.config.transformer.applyTransformation(
       from,
-      pred.weightedPredictedValues,
+      pred.rawPredictedValues,
     );
   };
 
@@ -59,7 +59,7 @@ function Predictor(config) {
 
   /**
    * @param {Object} hist An object that has one or more properties (See Comparator and Transformer)
-   * @returns An ObjectPrediction (with predictedValues and weightedPredictedValues) or null
+   * @returns An ObjectPrediction (with predictedValues and rawPredictedValues) or null
    */
   this.process = (hist) => {
     let r = null;
@@ -83,8 +83,8 @@ function Predictor(config) {
 
   /**
    * @param {String} key The object property key
-   * @param {Number} max The maximum number of results
-   * @param {String} type The prediction type; 'predictedValues' | 'weightedPredictedValues'
+   * @param {Number} max The optional maximum number of results
+   * @param {String} type The optional prediction type; 'predictedValues' | 'rawPredictedValues'
    * @returns An array of objects containing predicted and actual values for the specified key
    */
   this.getResults = (key, max, type) => {
@@ -93,7 +93,7 @@ function Predictor(config) {
     if (!m || m >= (this.predictions.elements.length - 1)) {
       m = (this.predictions.elements.length - 1);
     }
-    const typeName = type || 'weightedPredictedValues';
+    const typeName = type || 'predictedValues';
     for (let i = 1; i <= m; i += 1) {
       const pred = this.predictions.get([i])[0];
       const predicted = pred[typeName][key];

@@ -28,7 +28,7 @@ describe('Predictor', () => {
     plan = planner.plan(predictor, 3);
     expect(plan.length).toBe(3);
     plan.forEach((step, index) => {
-      expect(step.weightedPredictedValues).toStrictEqual(hists[index]);
+      expect(step.predictedValues).toStrictEqual(hists[index]);
     });
   });
 });

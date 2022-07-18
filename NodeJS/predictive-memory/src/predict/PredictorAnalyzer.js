@@ -3,7 +3,7 @@ const MathUtil = require('../MathUtil');
 function PredictorAnalyzer() {
   this.getAnalysisOptions = (max, type) => ({
     max: max || 0,
-    type: type || 'weightedPredictedValues',
+    type: type || 'predictedValues',
   });
 
   this.getAccuracies = (results, comparator) => results.map(

@@ -44,10 +44,10 @@ describe('Predictor', () => {
     expect(results.length).toBe(0);
     results = predictor.getResults('b');
     expect(results.length).toBe(5);
-    results = predictor.getResults('b', 1, 'predictedValues');
+    results = predictor.getResults('b', 1, 'rawPredictedValues');
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
-    results = predictor.getResults('b', 1, 'weightedPredictedValues');
+    results = predictor.getResults('b', 1, 'predictedValues');
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 5.8300146719765245, actual: 6 }]);
   });
@@ -66,10 +66,10 @@ describe('Predictor', () => {
     expect(results.length).toBe(0);
     results = predictor.getResults('b');
     expect(results.length).toBe(5);
-    results = predictor.getResults('b', 1, 'predictedValues');
+    results = predictor.getResults('b', 1, 'rawPredictedValues');
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
-    results = predictor.getResults('b', 1, 'weightedPredictedValues');
+    results = predictor.getResults('b', 1, 'predictedValues');
     expect(results.length).toBe(1);
     expect(results).toStrictEqual([{ predicted: 5.582328274086311, actual: 6 }]);
 
