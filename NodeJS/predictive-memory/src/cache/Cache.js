@@ -47,7 +47,7 @@ function Cache(config) {
   /**
    * @param {Array} key An array of similar objects (See Comparator and Transformer)
    * @param {Object} value An object to associate with the specified key
-   * @returns The updated or added cache element
+   * @returns The updated or added CacheElement
    */
   this.process = (key, value) => {
     let elem = this.get(key, value, this.config.mergeSimilarity);
@@ -88,7 +88,7 @@ function Cache(config) {
   /**
    * @param {String} key An array of similar objects (See Comparator and Transformer)
    * @param {Object} options An object with query options (See CacheConfig.getQueryOptions)
-   * @returns
+   * @returns {Object} A CacheResult
    */
   this.query = (key, options) => {
     const res = new CacheResult();
