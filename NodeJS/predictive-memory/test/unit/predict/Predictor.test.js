@@ -106,4 +106,19 @@ describe('Predictor', () => {
     expect(copy.predictions.length).toBe(predictor.predictions.length);
     expect(copy.predictions[0]).toStrictEqual(predictor.predictions[0]);
   });
+
+  test('Generates long term predictions correctly', () => {
+    const predictor = new Predictor();
+
+    let predictions = predictor.generatePredictions(3);
+    expect(predictions.length).toBe(0);
+
+    const repeat = 12;
+    addHists(predictor, repeat);
+    predictions = predictor.generatePredictions(3);
+    expect(predictions.length).toBe(3);
+    predictions.forEach((step, index) => {
+      expect(step.predictedValues).toStrictEqual(hists[index]);
+    });
+  });
 });

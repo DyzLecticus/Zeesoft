@@ -116,5 +116,23 @@ function Predictor(config) {
     r.predictions = this.predictions.copy();
     return r;
   };
+
+  /**
+   * @param {Number} steps The number of future steps
+   * @returns An array of ObjectPredictions
+   */
+  this.generatePredictions = (steps) => {
+    const r = [];
+    let pred = this.predictions.get([0])[0];
+    if (pred) {
+      r.push(pred);
+      const pathPredictor = this.copy();
+      for (let s = 1; s < steps; s += 1) {
+        pred = pathPredictor.process(pred.predictedValues);
+        r.push(pred);
+      }
+    }
+    return r;
+  };
 }
 module.exports = Predictor;
