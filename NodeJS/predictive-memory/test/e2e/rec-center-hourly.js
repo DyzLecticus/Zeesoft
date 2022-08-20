@@ -16,9 +16,10 @@ const data = fs.readFileSync(csvPath);
 
 const pc = new PredictorConfig(1000);
 // This cache configuration is tuned for high accuracy on this data set
-pc.cacheConfig.mergeSimilarity = 0.975;
-pc.cacheConfig.maxSize = 500;
-pc.cacheConfig.subConfig.mergeSimilarity = 0.9825;
+//pc.cacheConfig.mergeSimilarity = 0.975;
+//pc.cacheConfig.maxSize = 500;
+//pc.cacheConfig.subConfig.mergeSimilarity = 0.9825;
+pc.transformer = null;
 const predictor = new Predictor(pc);
 
 const lines = data.toString().split('\n');
@@ -55,4 +56,5 @@ analysis.msPerObject = (Date.now() - start) / (lines.length - 3000);
 // eslint-disable-next-line no-console
 console.log(analysis);
 analysis.results = predictor.getResults('kwh');
+analysis.future = predictor.generatePredictions(48, 'rawPredictedValues').map((pred) => pred.predictedValues);
 fs.writeFileSync(jsonPath, JSON.stringify(analysis, null, 2));

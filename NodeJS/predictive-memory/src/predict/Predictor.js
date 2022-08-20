@@ -119,16 +119,19 @@ function Predictor(config) {
 
   /**
    * @param {Number} steps The number of future steps
+   * @param {String} type The optional prediction type; 'predictedValues' | 'rawPredictedValues'
    * @returns An array of ObjectPredictions
    */
-  this.generatePredictions = (steps) => {
+  this.generatePredictions = (steps, type) => {
     const r = [];
     let pred = this.predictions.get([0])[0];
     if (pred) {
       r.push(pred);
       const pathPredictor = this.copy();
+      pathPredictor.setLearn(false);
+      const typeName = type || 'predictedValues';
       for (let s = 1; s < steps; s += 1) {
-        pred = pathPredictor.process(pred.predictedValues);
+        pred = pathPredictor.process(pred[typeName]);
         r.push(pred);
       }
     }
