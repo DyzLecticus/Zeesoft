@@ -55,17 +55,17 @@ describe('PredictorAnalyzer', () => {
 
   test('Analyzes predictor results correctly', () => {
     const analyzer = new PredictorAnalyzer();
-    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(0, 'rawPredictedValues'));
-    expect(analysis.a.accuracy).toBe(0.9596212754107493);
-    expect(analysis.a.accuracyStdDev).toBe(0.02295130637897434);
+    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(0, 'predictedValues'));
+    expect(analysis.a.accuracy).toBe(0.9622410734567873);
+    expect(analysis.a.accuracyStdDev).toBe(0.020102689034713326);
     expect(analysis.a.accuracyTrend).toBe(1);
-    expect(analysis.a.valueStdDev).toBe(0.44095855184409843);
+    expect(analysis.a.valueStdDev).toBe(0.39370039370059073);
   });
 
   test('Analyzes limited predictor results correctly', () => {
-    const analyzer = new PredictorAnalyzer(['a'], 'rawPredictedValues');
-    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(4, 'rawPredictedValues'));
-    expect(analysis.a.accuracy).toBe(0.9736842105263159);
+    const analyzer = new PredictorAnalyzer(['a'], 'predictedValues');
+    const analysis = analyzer.analyze(getMockPredictor(), ['a'], analyzer.getAnalysisOptions(4, 'predictedValues'));
+    expect(analysis.a.accuracy).toBe(0.975196009481389);
   });
 
   test('Analyzes weighted predictor results correctly', () => {

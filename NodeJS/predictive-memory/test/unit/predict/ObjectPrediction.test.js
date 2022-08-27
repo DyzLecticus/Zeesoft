@@ -40,20 +40,20 @@ describe('ObjectPrediction', () => {
     pred.calculateKeyPredictionWeights();
     pred.keyPredictions.c = [{ value: 'C', weight: 1.0 }];
     pred.calculatePredictedValues();
-    expect(pred.rawPredictedValues.a).toBe(1);
-    expect(pred.rawPredictedValues.b).toBe(3);
-    expect(pred.rawPredictedValues.c).toBe('C');
     expect(pred.predictedValues.a).toBe(1);
-    expect(pred.predictedValues.b).toBe(2.5580865603644645);
+    expect(pred.predictedValues.b).toBe(3);
     expect(pred.predictedValues.c).toBe('C');
+    expect(pred.weightedPredictedValues.a).toBe(1);
+    expect(pred.weightedPredictedValues.b).toBe(2.5580865603644645);
+    expect(pred.weightedPredictedValues.c).toBe('C');
   });
 
   test('Generates predictions correctly', () => {
     const pred = new ObjectPrediction(getCacheResult());
     pred.generatePrediction();
-    expect(pred.rawPredictedValues.a).toBe(1);
-    expect(pred.rawPredictedValues.b).toBe(3);
     expect(pred.predictedValues.a).toBe(1);
-    expect(pred.predictedValues.b).toBe(2.5580865603644645);
+    expect(pred.predictedValues.b).toBe(3);
+    expect(pred.weightedPredictedValues.a).toBe(1);
+    expect(pred.weightedPredictedValues.b).toBe(2.5580865603644645);
   });
 });

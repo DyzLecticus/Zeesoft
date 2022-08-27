@@ -23,41 +23,15 @@ describe('Predictor', () => {
   test('Constructs itself correctly', () => {
     const pc = new PredictorConfig(1000);
     const predictor = new Predictor(pc);
-    expect(predictor.absoluteHistory.maxSize).toBe(1000);
-    expect(predictor.relativeHistory.maxSize).toBe(1000);
+    expect(predictor.history.maxSize).toBe(1000);
     expect(predictor.predictions.maxSize).toBe(1000);
   });
 
-  test('Generates absolute predictions correctly', () => {
-    const pc = new PredictorConfig();
-    pc.transformer = null;
-    const predictor = new Predictor(pc);
-    const repeat = 12;
-    addHists(predictor, repeat);
-    expect(predictor.absoluteHistory.elements.length).toBe(hists.length * repeat);
-    expect(predictor.relativeHistory.elements.length).toBe(0);
-    expect(predictor.predictions.elements.length).toBe((hists.length * repeat) - 30);
-    const prediction = predictor.predictions.get([0])[0];
-    expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
-
-    let results = predictor.getResults();
-    expect(results.length).toBe(0);
-    results = predictor.getResults('b');
-    expect(results.length).toBe(5);
-    results = predictor.getResults('b', 1, 'rawPredictedValues');
-    expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
-    results = predictor.getResults('b', 1, 'predictedValues');
-    expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 5.8300146719765245, actual: 6 }]);
-  });
-
-  test('Generates relative predictions correctly', () => {
+  test('Generates predictions correctly', () => {
     const predictor = new Predictor();
     const repeat = 12;
     addHists(predictor, repeat);
-    expect(predictor.absoluteHistory.elements.length).toBe(hists.length * repeat);
-    expect(predictor.relativeHistory.elements.length).toBe((hists.length * repeat) - 1);
+    expect(predictor.history.elements.length).toBe(hists.length * repeat);
     expect(predictor.predictions.elements.length).toBe((hists.length * repeat) - 30);
     const prediction = predictor.predictions.get([0])[0];
     expect(prediction.predictedValues).toStrictEqual({ a: 1, b: 4 });
@@ -66,12 +40,12 @@ describe('Predictor', () => {
     expect(results.length).toBe(0);
     results = predictor.getResults('b');
     expect(results.length).toBe(5);
-    results = predictor.getResults('b', 1, 'rawPredictedValues');
-    expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
     results = predictor.getResults('b', 1, 'predictedValues');
     expect(results.length).toBe(1);
-    expect(results).toStrictEqual([{ predicted: 5.582328274086311, actual: 6 }]);
+    expect(results).toStrictEqual([{ predicted: 6, actual: 6 }]);
+    results = predictor.getResults('b', 1, 'weightedPredictedValues');
+    expect(results.length).toBe(1);
+    expect(results).toStrictEqual([{ predicted: 5.8300146719765245, actual: 6 }]);
 
     predictor.setPredict(false);
     expect(predictor.predictions.elements.length).toBe(0);
@@ -94,10 +68,8 @@ describe('Predictor', () => {
     addHists(predictor, repeat);
 
     const copy = predictor.copy();
-    expect(copy.absoluteHistory.length).toBe(predictor.absoluteHistory.length);
-    expect(copy.absoluteHistory[0]).toStrictEqual(predictor.absoluteHistory[0]);
-    expect(copy.relativeHistory.length).toBe(predictor.relativeHistory.length);
-    expect(copy.relativeHistory[0]).toStrictEqual(predictor.relativeHistory[0]);
+    expect(copy.history.length).toBe(predictor.history.length);
+    expect(copy.history[0]).toStrictEqual(predictor.history[0]);
 
     expect(copy.learn).toBe(predictor.learn);
     expect(copy.cache.config).toStrictEqual(copy.cache.config);

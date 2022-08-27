@@ -1,18 +1,17 @@
 # predictive memory
 
-_predictive memory_ generates predictions using a hierarchical transformation sequence cache.
+_predictive memory_ generates predictions using a hierarchical sequence cache.
 
 ## Why
 
-Prediction can be implemented in low level neural networks (i.e. Numenta HTM). The goal of this module is to provide similar predictions but do it faster, while using less resources.
+Prediction can be implemented in low level neural networks (i.e. Numenta HTM). The goal of this module is to provide similar predictions, but do it faster while using less resources.
 
 The long term goal is to expand and use this module in order to research cognition and perhaps consciousness.
 
 ## How
 
-The sequence of records that it is presented with is automatically converted to transformations. A specific subset of those transformations is used to predict the next transformation, which is then converted to an absolute prediction using the latest input.
-
-The cache that is used to record transformation sequences (keys) to specific transformations (values) uses an internal hierarchy to quickly find similar key/value pairs in large amounts of historical data. In order to get balanced predictions, the second most similar cache result is used to weigh cache results whenever possible.
+This module provides a **Predictor** class that can _process_ historical objects. It uses a **Comparator** to compare individual objects and sequences of those objects to other previously recorded sequences. 
+The cache that is used to record sequences uses an internal hierarchy to quickly find similar key/value pairs in large amounts of historical data. In order to get balanced & weighted predictions, the second (or more) most similar cache result is used to weigh cache results whenever possible.
 
 ## Installation
 
