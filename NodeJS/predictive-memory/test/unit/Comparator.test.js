@@ -25,6 +25,10 @@ describe('Comparator', () => {
     expect(comparator.calculateValueSimilarity('Pizza', 1)).toBe(0);
     expect(comparator.calculateValueSimilarity('Pizza', '')).toBe(0);
     expect(comparator.calculateValueSimilarity('Pizza', 'Pizza')).toBe(1);
+    expect(comparator.calculateValueSimilarity('izza', 'Pizza')).toBe(0.8);
+    expect(comparator.calculateValueSimilarity('Pizza', 'izza')).toBe(0.8);
+    expect(comparator.calculateValueSimilarity('Pizza', 'pizza')).toBe(0.8);
+    expect(comparator.calculateValueSimilarity('Pizza', 'Fries')).toBe(0);
     expect(comparator.calculateValueSimilarity(null, comparator)).toBe(0);
     expect(comparator.calculateValueSimilarity(comparator, comparator)).toBe(1);
   });

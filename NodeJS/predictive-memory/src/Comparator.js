@@ -17,12 +17,40 @@ function Comparator() {
     return perc;
   };
 
+  this.calculateLevenshteinDistance = (a, b) => {
+    const c = a.length + 1;
+    const d = b.length + 1;
+    const r = Array(c);
+    for (let i = 0; i < c; i += 1) r[i] = Array(d);
+    for (let i = 0; i < c; i += 1) r[i][0] = i;
+    for (let j = 0; j < d; j += 1) r[0][j] = j;
+    for (let i = 1; i < c; i += 1) {
+      for (let j = 1; j < d; j += 1) {
+        const s = (a[i - 1] === b[j - 1] ? 0 : 1);
+        r[i][j] = Math.min(r[i - 1][j] + 1, r[i][j - 1] + 1, r[i - 1][j - 1] + s);
+      }
+    }
+    return r[a.length][b.length];
+  };
+
+  this.calculateStringSimilarity = (a, b) => {
+    let perc = 0.0;
+    if (a.length > 0 && b.length > 0) {
+      const dist = this.calculateLevenshteinDistance(a, b);
+      const len = Math.max(a.length, b.length);
+      perc = (len - dist) / len;
+    }
+    return perc;
+  };
+
   this.calculateValueSimilarity = (a, b) => {
     let perc = 0.0;
-    if (typeof (a) === 'number' && typeof (b) === 'number') {
-      perc = this.calculateNumberSimilarity(a, b);
-    } else if (a === b) {
+    if (a === b) {
       perc = 1.0;
+    } else if (typeof (a) === 'number' && typeof (b) === 'number') {
+      perc = this.calculateNumberSimilarity(a, b);
+    } else if (typeof (a) === 'string' && typeof (b) === 'string') {
+      perc = this.calculateStringSimilarity(a, b);
     }
     return perc;
   };
