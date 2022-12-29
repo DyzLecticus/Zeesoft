@@ -1,12 +1,10 @@
 const Comparator = require('../Comparator');
-const Transformer = require('../Transformer');
 const IndexGenerator = require('./IndexGenerator');
 const CacheConfig = require('../cache/CacheConfig');
 
 function PredictorConfig(size, depth) {
   this.maxHistorySize = size || 129;
   this.comparator = new Comparator();
-  this.transformer = new Transformer();
 
   this.cacheIndexes = (new IndexGenerator(depth)).generate();
   this.cacheConfig = new CacheConfig();

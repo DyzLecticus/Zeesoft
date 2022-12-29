@@ -1,4 +1,4 @@
-const minValue = 0.0000000001;
+const TRANSFORMER_MINIMUM_VANUE = 0.0000000001;
 
 function Transformer() {
   this.getMinValue = (value) => {
@@ -8,8 +8,8 @@ function Transformer() {
       reverse = true;
       r *= -1;
     }
-    if (r < minValue) {
-      r = minValue;
+    if (r < TRANSFORMER_MINIMUM_VANUE) {
+      r = TRANSFORMER_MINIMUM_VANUE;
     }
     if (reverse) {
       r *= -1;

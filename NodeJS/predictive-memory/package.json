@@ -8,7 +8,8 @@
     "test:unit": "jest --coverage",
     "test:e2e": "node test/e2e/rec-center-hourly.js",
     "lint": "npx eslint .",
-    "lint:fix": "npx eslint --fix ."
+    "lint:fix": "npx eslint --fix .",
+    "build": "npm run test:unit && node package.js && npm run lint"
   },
   "author": "André van der Zee",
   "license": "DBAD",

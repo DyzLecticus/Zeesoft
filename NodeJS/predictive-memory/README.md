@@ -21,7 +21,11 @@ Via [npm](https://www.npmjs.com/):
 npm install predictive-memory
 ```
 
-## Usage
+## Usage 
+
+This module can be used both server and client side.
+
+### Server side
 
 See the example implementation in test/e2e/rec-center-hourly.js.
 
@@ -50,3 +54,20 @@ console.log(analysis);
 const predictionsForNext24Steps = predictor.generatePredictions(24);
 console.log(predictionsForNext24Steps);
 ```
+
+### Client side
+
+See predictive-memory.js in the root of the module.
+**Please note** that all class names in this implementation have been prefixed with 'Pm'.
+
+```html
+<script type="text/javascript" src="predictive-memory.js" />
+<script type="text/javascript">
+const pc = new PmPredictorConfig();
+const predictor = new PmPredictor(pc);
+
+[...]
+
+</script>
+```
+
