@@ -57,17 +57,34 @@ console.log(predictionsForNext24Steps);
 
 ### Client side
 
-See predictive-memory.js in the root of the module.
+See predictive-memory.js in the root of the module and test/e2e/test.html.
 **Please note** that all class names in this implementation have been prefixed with 'Pm'.
 
 ```html
-<script type="text/javascript" src="predictive-memory.js" />
-<script type="text/javascript">
-const pc = new PmPredictorConfig();
-const predictor = new PmPredictor(pc);
-
-[...]
-
-</script>
+<html>
+    <head>
+        <script src="predictive-memory.js"></script>
+        <script type="text/javascript">
+            const onload = () => {
+                const pc = new PmPredictorConfig();
+                const predictor = new PmPredictor(pc);
+                for (let i = 0; i < 200; i++) {
+                    predictor.process({k: i % 5, v: i % 10});
+                    if (i > 10) {
+                        predictor.setPredict(true);
+                    }
+                }
+                const analyzer = new PmPredictorAnalyzer();
+                const analysis = analyzer.analyze(predictor, ['v']);
+                let str = JSON.stringify(analysis, null, 2);
+                str = str.replace(/ /g, '&nbsp;');
+                str = str.replace(/\n/g, '<br />');
+                document.getElementById('analysis').innerHTML = str;
+            };
+        </script>
+    </head>
+    <body onload="onload()">
+        <div id="analysis" />
+    </body>
+</html>
 ```
-
