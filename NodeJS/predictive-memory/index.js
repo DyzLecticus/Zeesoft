@@ -1,5 +1,7 @@
 module.exports.Comparator = require('./src/Comparator');
 module.exports.Transformer = require('./src/Transformer');
+module.exports.Symbol = require('./src/symbol/Symbol');
+module.exports.SymbolMap = require('./src/symbol/SymbolMap');
 module.exports.IndexGenerator = require('./src/predict/IndexGenerator');
 module.exports.PredictorConfig = require('./src/predict/PredictorConfig');
 module.exports.Predictor = require('./src/predict/Predictor');
