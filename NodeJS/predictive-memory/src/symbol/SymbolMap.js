@@ -45,6 +45,8 @@ function SymbolMap(characters) {
     return symbol;
   };
 
+  this.getAsArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
+
   this.getNearest = (str, max) => {
     const m = max || 1;
     const symbol = that.createSymbol(str);

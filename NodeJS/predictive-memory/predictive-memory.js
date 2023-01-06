@@ -628,7 +628,7 @@ function PmPredictorAnalyzer() {
 
   /**
    * @param {Predictor} predictor The predictor to analyze
-   * @param {Array} keys
+   * @param {Array} keys A list of value keys to analyze
    * @param {Object} options An optional object that specifies type and max results
    * @returns An object containing the results of the analysis
    */
@@ -666,6 +666,38 @@ function PmPredictorConfig(size, depth) {
   };
 
   this.setComparator(this.comparator);
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function PmMapAnalyzer() {
+  const that = this;
+
+  this.getDistances = (symbolMapA, symbolMapB) => {
+    const r = [];
+    const symbolsA = symbolMapA.getAsArray();
+    const symbolsB = symbolMapB ? symbolMapB.getAsArray() : symbolsA;
+    symbolsA.forEach((symbolA) => {
+      symbolsB.forEach((symbolB) => {
+        if (symbolA !== symbolB) {
+          r.push(symbolA.calculateDistance(symbolB));
+        } else {
+          r.push(0);
+        }
+      });
+    });
+    return r;
+  };
+
+  this.analyze = (symbolMapA, symbolMapB) => {
+    const distances = that.getDistances(symbolMapA, symbolMapB);
+    return {
+      distances,
+      average: PmMathUtil.getAverage(distances),
+      stdDev: PmMathUtil.getStandardDeviation(distances),
+      min: Math.min(...distances),
+      max: Math.max(...distances),
+    };
+  };
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
@@ -776,6 +808,8 @@ function PmSymbolMap(characters) {
     that.elements[symbol.toString()] = symbol;
     return symbol;
   };
+
+  this.getAsArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
 
   this.getNearest = (str, max) => {
     const m = max || 1;

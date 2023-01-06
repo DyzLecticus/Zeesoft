@@ -36,7 +36,7 @@ function PredictorAnalyzer() {
 
   /**
    * @param {Predictor} predictor The predictor to analyze
-   * @param {Array} keys
+   * @param {Array} keys A list of value keys to analyze
    * @param {Object} options An optional object that specifies type and max results
    * @returns An object containing the results of the analysis
    */
