@@ -48,10 +48,7 @@ function SymbolMap(characters) {
 
   this.createSymbol = (str, meta) => new Symbol(str, that.generateNumArray(str), meta);
 
-  this.get = (str) => {
-    const symbol = that.createSymbol(str);
-    return that.elements[symbol.toString()];
-  };
+  this.get = (str) => that.elements[that.createSymbol(str).toString()];
 
   this.put = (str, meta) => {
     const symbol = that.createSymbol(str, meta);
