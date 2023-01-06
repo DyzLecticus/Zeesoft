@@ -7,29 +7,43 @@ function SymbolMap(characters) {
 
   this.elements = {};
 
-  this.generateNumArray = (str) => {
-    const counts = [];
-    const indexes = [];
-    const transitions = [];
-    for (let c = 0; c < that.characters.length; c += 1) {
-      let count = 0;
-      const char = that.characters.substring(c, c + 1);
-      let transition = 0;
-      for (let i = 0; i < str.length; i += 1) {
-        const symChar = str.substring(i, i + 1);
-        if (symChar === char) {
-          count += 1;
-          if (i < str.length - 1) {
-            const nextSymChar = str.substring(i + 1, i + 2);
-            transition = (that.characters.indexOf(nextSymChar) + 1);
-          }
+  this.getCountTransitionReverse = (char, str) => {
+    let count = 0;
+    let transition = -1;
+    let reverse = -1;
+    for (let i = 0; i < str.length; i += 1) {
+      const symChar = str.substring(i, i + 1);
+      if (symChar === char) {
+        count += 1;
+        if (transition === -1 && i < str.length - 1) {
+          const nextSymChar = str.substring(i + 1, i + 2);
+          transition = (that.characters.indexOf(nextSymChar) + 1);
+        }
+        if (i > 0) {
+          const prevSymChar = str.substring(i - 1, i);
+          reverse = (that.characters.indexOf(prevSymChar) + 1);
         }
       }
-      counts.push(count);
-      indexes.push((str.indexOf(char) + 1));
-      transitions.push(transition);
     }
-    return [...counts, ...indexes, ...transitions];
+    transition = (transition === -1) ? 0 : transition;
+    reverse = (reverse === -1) ? 0 : reverse;
+    return { count, transition, reverse };
+  };
+
+  this.generateNumArray = (str) => {
+    const indexes = [];
+    const counts = [];
+    const transitions = [];
+    const reversed = [];
+    for (let c = 0; c < that.characters.length; c += 1) {
+      const char = that.characters.substring(c, c + 1);
+      const { count, transition, reverse } = that.getCountTransitionReverse(char, str);
+      indexes.push((str.indexOf(char) + 1));
+      counts.push(count);
+      transitions.push(transition);
+      reversed.push(reverse);
+    }
+    return [...indexes, ...counts, ...transitions, ...reversed];
   };
 
   this.createSymbol = (str, meta) => new Symbol(str, that.generateNumArray(str), meta);
