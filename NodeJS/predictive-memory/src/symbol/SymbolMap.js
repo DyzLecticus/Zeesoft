@@ -61,15 +61,19 @@ function SymbolMap(characters) {
 
   this.getAsArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
 
-  this.getNearest = (str, max) => {
-    const m = max || 1;
+  this.getDistances = (str) => {
     const symbol = that.createSymbol(str);
-    let r = Object.keys(that.elements).map(
+    return Object.keys(that.elements).map(
       (key) => ({
         symbol: that.elements[key],
         dist: symbol.calculateDistance(that.elements[key]),
       }),
-    ).sort(
+    );
+  };
+
+  this.getNearest = (str, max) => {
+    const m = max || 1;
+    let r = that.getDistances(str).sort(
       (a, b) => a.dist < b.dist,
     );
     if (r.length > m) {
