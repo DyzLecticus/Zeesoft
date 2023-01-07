@@ -10,7 +10,7 @@ describe('SymbolMap', () => {
     const symbol3 = map.put('Something else');
     const symbol4 = map.put(' something different');
 
-    expect(symbol1.toString()).toBe('372,4=2,18=3,19=4,45=1,53=5,97=1,111=1,112=1,138=1,146=1,190=19,204=20,205=54,231=5,283=46,297=5,298=19,332=20');
+    expect(symbol1.toString()).toBe('373,0=5,5=2,19=3,20=4,46=1,54=5,98=1,112=1,113=1,139=1,147=1,191=19,205=20,206=54,232=5,284=46,298=5,299=19,333=20');
     expect(map.getAsArray().length).toBe(4);
     expect(symbol1.meta).toBe('Meta');
 

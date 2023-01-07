@@ -807,15 +807,12 @@ function PmSymbolMap(characters) {
       transitions.push(transition);
       reversed.push(reverse);
     }
-    return [...indexes, ...counts, ...transitions, ...reversed];
+    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
   };
 
   this.createSymbol = (str, meta) => new PmSymbol(str, that.generateNumArray(str), meta);
 
-  this.get = (str) => {
-    const symbol = that.createSymbol(str);
-    return that.elements[symbol.toString()];
-  };
+  this.get = (str) => that.elements[that.createSymbol(str).toString()];
 
   this.put = (str, meta) => {
     const symbol = that.createSymbol(str, meta);

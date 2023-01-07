@@ -43,7 +43,7 @@ function SymbolMap(characters) {
       transitions.push(transition);
       reversed.push(reverse);
     }
-    return [...indexes, ...counts, ...transitions, ...reversed];
+    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
   };
 
   this.createSymbol = (str, meta) => new Symbol(str, that.generateNumArray(str), meta);
