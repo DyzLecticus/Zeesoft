@@ -68,13 +68,21 @@ function SymbolMap(characters) {
     );
   };
 
-  this.getNearest = (str, max) => {
-    const m = max || 1;
+  this.getNearest = (str, maxDistance) => {
     let r = that.getDistances(str).sort(
-      (a, b) => a.dist < b.dist,
+      (a, b) => a.dist - b.dist,
     );
-    if (r.length > m) {
-      r = r.slice(r.length - m);
+    if (maxDistance && maxDistance > 0) {
+      let idx = -1;
+      for (let i = 0; i < r.length; i += 1) {
+        idx = i;
+        if (r[i].dist > maxDistance) {
+          break;
+        }
+      }
+      if (idx > -1) {
+        r = r.slice(idx);
+      }
     }
     return r;
   };

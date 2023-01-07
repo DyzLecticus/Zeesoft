@@ -18,9 +18,10 @@ describe('SymbolMap', () => {
     expect(map.get('Something')).toBe(undefined);
     expect(map.get('Test1').str).toBe('Test1');
 
-    const results = map.getNearest('Something', 2);
-    expect(results[0].symbol).toBe(symbol3);
-    expect(results[1].symbol).toBe(symbol4);
-    expect(map.getNearest('Something').length).toBe(1);
+    const results = map.getNearest('Something weird');
+    expect(results[0].symbol.str).toBe(symbol3.str);
+    expect(results[1].symbol.str).toBe(symbol4.str);
+    expect(results.length).toBe(4);
+    expect(map.getNearest('Something weird', results[1].dist).length).toBe(2);
   });
 });
