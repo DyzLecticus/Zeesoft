@@ -669,6 +669,33 @@ function PmPredictorConfig(size, depth) {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function PmClassifier(symbolMap, mapAnalyzer) {
+  const that = this;
+  this.map = symbolMap || new PmSymbolMap();
+  this.analyzer = mapAnalyzer || new PmMapAnalyzer();
+
+  this.analysis = null;
+
+  this.put = (str, cls) => {
+    that.map.put(str, { cls });
+    that.analysis = null;
+  };
+
+  this.train = () => {
+    that.analysis = that.analyzer.analyze(that.map);
+  };
+
+  this.classify = (str) => {
+    if (that.analysis === null) {
+      that.train();
+    }
+    const maxDistance = that.analysis.average + that.analysis.stdDev;
+    const results = this.map.getNearest(str, maxDistance);
+    return results;
+  };
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmMapAnalyzer() {
   const that = this;
 
@@ -832,13 +859,21 @@ function PmSymbolMap(characters) {
     );
   };
 
-  this.getNearest = (str, max) => {
-    const m = max || 1;
+  this.getNearest = (str, maxDistance) => {
     let r = that.getDistances(str).sort(
-      (a, b) => a.dist < b.dist,
+      (a, b) => a.dist - b.dist,
     );
-    if (r.length > m) {
-      r = r.slice(r.length - m);
+    if (maxDistance && maxDistance > 0) {
+      let idx = -1;
+      for (let i = 0; i < r.length; i += 1) {
+        idx = i;
+        if (r[i].dist > maxDistance) {
+          break;
+        }
+      }
+      if (idx > -1) {
+        r = r.slice(0, idx);
+      }
     }
     return r;
   };

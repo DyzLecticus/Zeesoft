@@ -3,7 +3,7 @@ const SymbolMap = require('../../../src/symbol/SymbolMap');
 describe('SymbolMap', () => {
   test('Adds and gets elements correctly', () => {
     const map = new SymbolMap();
-    expect(map.getNearest('Pizza').length).toBe(0);
+    expect(map.getNearest('Pizza', 1).length).toBe(0);
 
     const symbol1 = map.put('Test1', 'Meta');
     map.put('Test2');

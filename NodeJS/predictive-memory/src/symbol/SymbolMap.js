@@ -81,7 +81,7 @@ function SymbolMap(characters) {
         }
       }
       if (idx > -1) {
-        r = r.slice(idx);
+        r = r.slice(0, idx);
       }
     }
     return r;
