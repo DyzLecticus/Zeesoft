@@ -13,4 +13,10 @@ describe('MathUtil', () => {
     expect(MathUtil.getStandardDeviation([1, 2, 3])).toBe(1);
     expect(MathUtil.getStandardDeviation([1, 1, 2, 2])).toBe(0.5773502691896257);
   });
+
+  test('Stringifies and parses number arrays correctly', () => {
+    const str = MathUtil.stringify([1, 0, 2, 0, 3, 0]);
+    expect(str).toBe('6,0=1,2=2,4=3');
+    expect(MathUtil.parse(str)).toStrictEqual([1, 0, 2, 0, 3, 0]);
+  });
 });

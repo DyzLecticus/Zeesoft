@@ -56,7 +56,11 @@ function SymbolMap(characters) {
     return symbol;
   };
 
-  this.getAsArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
+  this.toArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
+
+  this.addArray = (symbols) => {
+    symbols.forEach((symbol) => { that.elements[symbol.toString()] = symbol; });
+  };
 
   this.getDistances = (str) => {
     const symbol = that.createSymbol(str);
@@ -68,21 +72,29 @@ function SymbolMap(characters) {
     );
   };
 
+  this.filterMaxDistance = (results, maxDistance) => {
+    let r = results;
+    let idx = -1;
+    for (let i = 0; i < r.length; i += 1) {
+      idx = i;
+      if (r[i].dist > maxDistance) {
+        break;
+      }
+    }
+    if (idx > -1) {
+      r = r.slice(0, idx);
+    } else {
+      r = [];
+    }
+    return r;
+  };
+
   this.getNearest = (str, maxDistance) => {
     let r = that.getDistances(str).sort(
       (a, b) => a.dist - b.dist,
     );
-    if (maxDistance && maxDistance > 0) {
-      let idx = -1;
-      for (let i = 0; i < r.length; i += 1) {
-        idx = i;
-        if (r[i].dist > maxDistance) {
-          break;
-        }
-      }
-      if (idx > -1) {
-        r = r.slice(0, idx);
-      }
+    if (maxDistance > 0) {
+      r = that.filterMaxDistance(r, maxDistance);
     }
     return r;
   };

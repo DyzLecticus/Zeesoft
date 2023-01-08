@@ -3,10 +3,8 @@ const MathUtil = require('../MathUtil');
 function MapAnalyzer() {
   const that = this;
 
-  this.getDistances = (symbolMapA, symbolMapB) => {
+  this.getDistances = (symbolsA, symbolsB) => {
     const r = [];
-    const symbolsA = symbolMapA.getAsArray();
-    const symbolsB = symbolMapB ? symbolMapB.getAsArray() : symbolsA;
     symbolsA.forEach((symbolA) => {
       symbolsB.forEach((symbolB) => {
         if (symbolA !== symbolB) {
@@ -19,15 +17,19 @@ function MapAnalyzer() {
     return r;
   };
 
+  this.createAnalysis = (distances) => ({
+    distances,
+    average: MathUtil.getAverage(distances),
+    stdDev: MathUtil.getStandardDeviation(distances),
+    min: Math.min(...distances),
+    max: Math.max(...distances),
+  });
+
   this.analyze = (symbolMapA, symbolMapB) => {
-    const distances = that.getDistances(symbolMapA, symbolMapB);
-    return {
-      distances,
-      average: MathUtil.getAverage(distances),
-      stdDev: MathUtil.getStandardDeviation(distances),
-      min: Math.min(...distances),
-      max: Math.max(...distances),
-    };
+    const symbolsA = symbolMapA.toArray();
+    const symbolsB = symbolMapB ? symbolMapB.toArray() : symbolsA;
+    const distances = that.getDistances(symbolsA, symbolsB);
+    return that.createAnalysis(distances);
   };
 }
 module.exports = MapAnalyzer;

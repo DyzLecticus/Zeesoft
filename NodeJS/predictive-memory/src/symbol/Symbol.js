@@ -1,18 +1,12 @@
+const MathUtil = require('../MathUtil');
+
 function Symbol(str, numArray, meta) {
   const that = this;
   this.str = str.trim();
   this.numArray = numArray;
   this.meta = meta || null;
 
-  this.toString = () => {
-    let r = `${that.numArray.length}`;
-    that.numArray.forEach((num, index) => {
-      if (num !== 0) {
-        r += `,${index}=${num}`;
-      }
-    });
-    return r;
-  };
+  this.toString = () => MathUtil.stringify(that.numArray);
 
   this.equals = (other) => {
     let r = false;
@@ -32,8 +26,10 @@ function Symbol(str, numArray, meta) {
     let r = 0;
     if (!that.equals(other)) {
       that.numArray.forEach((num, index) => {
-        const diff = (num - other.numArray[index]);
-        r += (diff * diff);
+        if (num !== other.numArray[index]) {
+          const diff = (num - other.numArray[index]);
+          r += (diff * diff);
+        }
       });
       r = Math.sqrt(r);
     }

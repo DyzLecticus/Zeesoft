@@ -19,5 +19,29 @@ function MathUtil() {
     }
     return dev;
   };
+
+  this.stringify = (numArray) => {
+    let r = `${numArray.length}`;
+    numArray.forEach((num, index) => {
+      if (num !== 0) {
+        r += `,${index}=${num}`;
+      }
+    });
+    return r;
+  };
+
+  this.parse = (str) => {
+    let r = [];
+    const elems = str.split(',');
+    elems.forEach((elem, index) => {
+      if (index === 0) {
+        r = Array(parseInt(elem, 10)).fill(0);
+      } else {
+        const iv = elem.split('=');
+        r[parseInt(iv[0], 10)] = parseInt(iv[1], 10);
+      }
+    });
+    return r;
+  };
 }
 module.exports = new MathUtil();

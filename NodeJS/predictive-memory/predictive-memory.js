@@ -313,6 +313,30 @@ function _PmMathUtil() {
     }
     return dev;
   };
+
+  this.stringify = (numArray) => {
+    let r = `${numArray.length}`;
+    numArray.forEach((num, index) => {
+      if (num !== 0) {
+        r += `,${index}=${num}`;
+      }
+    });
+    return r;
+  };
+
+  this.parse = (str) => {
+    let r = [];
+    const elems = str.split(',');
+    elems.forEach((elem, index) => {
+      if (index === 0) {
+        r = Array(parseInt(elem, 10)).fill(0);
+      } else {
+        const iv = elem.split('=');
+        r[parseInt(iv[0], 10)] = parseInt(iv[1], 10);
+      }
+    });
+    return r;
+  };
 }
 const PmMathUtil = new _PmMathUtil();
 
@@ -669,29 +693,24 @@ function PmPredictorConfig(size, depth) {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
-function PmClassifier(symbolMap, mapAnalyzer) {
+function PmClassifier(characters, comparator) {
   const that = this;
-  this.map = symbolMap || new PmSymbolMap();
-  this.analyzer = mapAnalyzer || new PmMapAnalyzer();
-
-  this.analysis = null;
+  this.map = new PmSymbolMap(characters || PmSymbolConstants.CHARACTERS);
+  this.comparator = comparator || new PmComparator();
 
   this.put = (str, cls) => {
     that.map.put(str, { cls });
-    that.analysis = null;
-  };
-
-  this.train = () => {
-    that.analysis = that.analyzer.analyze(that.map);
   };
 
   this.classify = (str) => {
-    if (that.analysis === null) {
-      that.train();
+    const results = that.map.getNearest(str);
+    let classification = '';
+    let confidence = '';
+    if (results.length > 0) {
+      classification = results[0].symbol.meta.cls;
+      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
     }
-    const maxDistance = that.analysis.average + that.analysis.stdDev;
-    const results = this.map.getNearest(str, maxDistance);
-    return results;
+    return { results, classification, confidence };
   };
 }
 
@@ -699,10 +718,8 @@ function PmClassifier(symbolMap, mapAnalyzer) {
 function PmMapAnalyzer() {
   const that = this;
 
-  this.getDistances = (symbolMapA, symbolMapB) => {
+  this.getDistances = (symbolsA, symbolsB) => {
     const r = [];
-    const symbolsA = symbolMapA.getAsArray();
-    const symbolsB = symbolMapB ? symbolMapB.getAsArray() : symbolsA;
     symbolsA.forEach((symbolA) => {
       symbolsB.forEach((symbolB) => {
         if (symbolA !== symbolB) {
@@ -715,15 +732,19 @@ function PmMapAnalyzer() {
     return r;
   };
 
+  this.createAnalysis = (distances) => ({
+    distances,
+    average: PmMathUtil.getAverage(distances),
+    stdDev: PmMathUtil.getStandardDeviation(distances),
+    min: Math.min(...distances),
+    max: Math.max(...distances),
+  });
+
   this.analyze = (symbolMapA, symbolMapB) => {
-    const distances = that.getDistances(symbolMapA, symbolMapB);
-    return {
-      distances,
-      average: PmMathUtil.getAverage(distances),
-      stdDev: PmMathUtil.getStandardDeviation(distances),
-      min: Math.min(...distances),
-      max: Math.max(...distances),
-    };
+    const symbolsA = symbolMapA.toArray();
+    const symbolsB = symbolMapB ? symbolMapB.toArray() : symbolsA;
+    const distances = that.getDistances(symbolsA, symbolsB);
+    return that.createAnalysis(distances);
   };
 }
 
@@ -734,15 +755,7 @@ function PmSymbol(str, numArray, meta) {
   this.numArray = numArray;
   this.meta = meta || null;
 
-  this.toString = () => {
-    let r = `${that.numArray.length}`;
-    that.numArray.forEach((num, index) => {
-      if (num !== 0) {
-        r += `,${index}=${num}`;
-      }
-    });
-    return r;
-  };
+  this.toString = () => PmMathUtil.stringify(that.numArray);
 
   this.equals = (other) => {
     let r = false;
@@ -762,8 +775,10 @@ function PmSymbol(str, numArray, meta) {
     let r = 0;
     if (!that.equals(other)) {
       that.numArray.forEach((num, index) => {
-        const diff = (num - other.numArray[index]);
-        r += (diff * diff);
+        if (num !== other.numArray[index]) {
+          const diff = (num - other.numArray[index]);
+          r += (diff * diff);
+        }
       });
       r = Math.sqrt(r);
     }
@@ -847,7 +862,11 @@ function PmSymbolMap(characters) {
     return symbol;
   };
 
-  this.getAsArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
+  this.toArray = () => Object.keys(that.elements).map((key) => that.elements[key]);
+
+  this.addArray = (symbols) => {
+    symbols.forEach((symbol) => { that.elements[symbol.toString()] = symbol; });
+  };
 
   this.getDistances = (str) => {
     const symbol = that.createSymbol(str);
@@ -859,21 +878,29 @@ function PmSymbolMap(characters) {
     );
   };
 
+  this.filterMaxDistance = (results, maxDistance) => {
+    let r = results;
+    let idx = -1;
+    for (let i = 0; i < r.length; i += 1) {
+      idx = i;
+      if (r[i].dist > maxDistance) {
+        break;
+      }
+    }
+    if (idx > -1) {
+      r = r.slice(0, idx);
+    } else {
+      r = [];
+    }
+    return r;
+  };
+
   this.getNearest = (str, maxDistance) => {
     let r = that.getDistances(str).sort(
       (a, b) => a.dist - b.dist,
     );
-    if (maxDistance && maxDistance > 0) {
-      let idx = -1;
-      for (let i = 0; i < r.length; i += 1) {
-        idx = i;
-        if (r[i].dist > maxDistance) {
-          break;
-        }
-      }
-      if (idx > -1) {
-        r = r.slice(0, idx);
-      }
+    if (maxDistance > 0) {
+      r = that.filterMaxDistance(r, maxDistance);
     }
     return r;
   };

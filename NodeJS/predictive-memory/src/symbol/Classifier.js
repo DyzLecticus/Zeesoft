@@ -1,29 +1,25 @@
-const MapAnalyzer = require('./MapAnalyzer');
 const SymbolMap = require('./SymbolMap');
+const SymbolConstants = require('./SymbolConstants');
+const Comparator = require('../Comparator');
 
-function Classifier(symbolMap, mapAnalyzer) {
+function Classifier(characters, comparator) {
   const that = this;
-  this.map = symbolMap || new SymbolMap();
-  this.analyzer = mapAnalyzer || new MapAnalyzer();
-
-  this.analysis = null;
+  this.map = new SymbolMap(characters || SymbolConstants.CHARACTERS);
+  this.comparator = comparator || new Comparator();
 
   this.put = (str, cls) => {
     that.map.put(str, { cls });
-    that.analysis = null;
-  };
-
-  this.train = () => {
-    that.analysis = that.analyzer.analyze(that.map);
   };
 
   this.classify = (str) => {
-    if (that.analysis === null) {
-      that.train();
+    const results = that.map.getNearest(str);
+    let classification = '';
+    let confidence = '';
+    if (results.length > 0) {
+      classification = results[0].symbol.meta.cls;
+      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
     }
-    const maxDistance = that.analysis.average + that.analysis.stdDev;
-    const results = this.map.getNearest(str, maxDistance);
-    return results;
+    return { results, classification, confidence };
   };
 }
 module.exports = Classifier;
