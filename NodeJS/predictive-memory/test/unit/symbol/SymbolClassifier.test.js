@@ -1,15 +1,15 @@
-const Classifier = require('../../../src/symbol/Classifier');
+const SymbolClassifier = require('../../../src/symbol/SymbolClassifier');
 
-describe('MapAnalyzer', () => {
+describe('SymbolClassifier', () => {
   test('Constructs itself correctly', () => {
     const comparator = { name: 'B' };
-    const classifier = new Classifier('ABC123', comparator);
+    const classifier = new SymbolClassifier('ABC123', comparator);
     expect(classifier.map.characters).toBe('ABC123');
     expect(classifier.comparator).toStrictEqual(comparator);
   });
 
   test('Classifies strings correctly', () => {
-    const classifier = new Classifier();
+    const classifier = new SymbolClassifier();
 
     expect(classifier.classify('Pizza').results.length).toBe(0);
 

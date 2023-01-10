@@ -693,28 +693,6 @@ function PmPredictorConfig(size, depth) {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
-function PmClassifier(characters, comparator) {
-  const that = this;
-  this.map = new PmSymbolMap(characters || PmSymbolConstants.CHARACTERS);
-  this.comparator = comparator || new PmComparator();
-
-  this.put = (str, cls) => {
-    that.map.put(str, { cls });
-  };
-
-  this.classify = (str) => {
-    const results = that.map.getNearest(str);
-    let classification = '';
-    let confidence = '';
-    if (results.length > 0) {
-      classification = results[0].symbol.meta.cls;
-      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
-    }
-    return { results, classification, confidence };
-  };
-}
-
-// eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmMapAnalyzer() {
   const that = this;
 
@@ -783,6 +761,28 @@ function PmSymbol(str, numArray, meta) {
       r = Math.sqrt(r);
     }
     return r;
+  };
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function PmClassifier(characters, comparator) {
+  const that = this;
+  this.map = new PmSymbolMap(characters || PmSymbolConstants.CHARACTERS);
+  this.comparator = comparator || new PmComparator();
+
+  this.put = (str, cls) => {
+    that.map.put(str, { cls });
+  };
+
+  this.classify = (str) => {
+    const results = that.map.getNearest(str);
+    let classification = '';
+    let confidence = '';
+    if (results.length > 0) {
+      classification = results[0].symbol.meta.cls;
+      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
+    }
+    return { results, classification, confidence };
   };
 }
 
