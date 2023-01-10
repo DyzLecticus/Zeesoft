@@ -2,7 +2,7 @@ const MathUtil = require('../MathUtil');
 
 function Symbol(str, numArray, meta) {
   const that = this;
-  this.str = str.trim();
+  this.str = str;
   this.numArray = numArray;
   this.meta = meta || null;
 

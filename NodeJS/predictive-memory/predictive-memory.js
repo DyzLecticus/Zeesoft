@@ -751,7 +751,7 @@ function PmMapAnalyzer() {
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmSymbol(str, numArray, meta) {
   const that = this;
-  this.str = str.trim();
+  this.str = str;
   this.numArray = numArray;
   this.meta = meta || null;
 
@@ -792,11 +792,18 @@ function _PmSymbolConstants() {
   this.CAPITALS = this.ALPHABET.toUpperCase();
   this.NUMBERS = '0123456789';
   this.ALPHANUMERICS = this.ALPHABET + this.CAPITALS + this.NUMBERS;
+
   this.ENDERS = '.!?';
   this.SEPARATORS = ' -,/';
   this.BINDERS = '<>[]()\'"';
   this.SPECIALS = '@#$%^&*_+=|\\~';
   this.CONTROLS = '\r\n\t';
+
+  this.ALPHABET_EXTENDED = 'üéâäàåçêëèïîìôöòûùÿ';
+  this.CAPITALS_EXTENDED = 'ÇÄÅÉÖÜ';
+  this.ALPHABET_REPLACEMENTS = 'ueaaaaceeeiiiooouuy';
+  this.CAPITALS_REPLACEMENTS = 'CAAEOU';
+
   this.CHARACTERS = this.ALPHANUMERICS
       + this.ENDERS
       + this.SEPARATORS
@@ -810,51 +817,20 @@ const PmSymbolConstants = new _PmSymbolConstants();
 function PmSymbolMap(characters) {
   const that = this;
   this.characters = characters || PmSymbolConstants.CHARACTERS;
-
   this.elements = {};
 
-  this.getCountTransitionReverse = (char, str) => {
-    let count = 0;
-    let transition = -1;
-    let reverse = -1;
-    for (let i = 0; i < str.length; i += 1) {
-      const symChar = str.substring(i, i + 1);
-      if (symChar === char) {
-        count += 1;
-        if (transition === -1 && i < str.length - 1) {
-          const nextSymChar = str.substring(i + 1, i + 2);
-          transition = (that.characters.indexOf(nextSymChar) + 1);
-        }
-        if (i > 0) {
-          const prevSymChar = str.substring(i - 1, i);
-          reverse = (that.characters.indexOf(prevSymChar) + 1);
-        }
-      }
-    }
-    transition = (transition === -1) ? 0 : transition;
-    reverse = (reverse === -1) ? 0 : reverse;
-    return { count, transition, reverse };
+  this.format = (str) => PmSymbolUtil.format(str);
+
+  this.generateNumArray = (str) => PmSymbolUtil.generateNumArray(str, that.characters);
+
+  this.createSymbol = (str, meta) => {
+    const s = that.format(str);
+    return new PmSymbol(s, that.generateNumArray(s), meta);
   };
 
-  this.generateNumArray = (str) => {
-    const indexes = [];
-    const counts = [];
-    const transitions = [];
-    const reversed = [];
-    for (let c = 0; c < that.characters.length; c += 1) {
-      const char = that.characters.substring(c, c + 1);
-      const { count, transition, reverse } = that.getCountTransitionReverse(char, str);
-      indexes.push((str.indexOf(char) + 1));
-      counts.push(count);
-      transitions.push(transition);
-      reversed.push(reverse);
-    }
-    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
-  };
+  this.getById = (id) => that.elements[id];
 
-  this.createSymbol = (str, meta) => new PmSymbol(str, that.generateNumArray(str), meta);
-
-  this.get = (str) => that.elements[that.createSymbol(str).toString()];
+  this.get = (str) => that.getById(that.createSymbol(str).toString());
 
   this.put = (str, meta) => {
     const symbol = that.createSymbol(str, meta);
@@ -878,33 +854,86 @@ function PmSymbolMap(characters) {
     );
   };
 
-  this.filterMaxDistance = (results, maxDistance) => {
-    let r = results;
-    let idx = -1;
-    for (let i = 0; i < r.length; i += 1) {
-      idx = i;
-      if (r[i].dist > maxDistance) {
-        break;
+  this.getNearest = (str) => {
+    const r = that.getDistances(str).sort(
+      (a, b) => a.dist - b.dist,
+    );
+    return r;
+  };
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function _PmSymbolUtil() {
+  this.trim = (str) => {
+    let r = str.trim().replace(/ {4}/g, ' ');
+    r = r.replace(/ {3}/g, ' ');
+    r = r.replace(/ {2}/g, ' ');
+    return r;
+  };
+
+  this.replaceCharacters = (str, characters, replacements) => {
+    let r = '';
+    for (let i = 0; i < str.length; i += 1) {
+      const c = str.substring(i, i + 1);
+      const idx = characters.indexOf(c);
+      if (idx >= 0) {
+        r += replacements.substring(idx, idx + 1);
+      } else {
+        r += c;
       }
-    }
-    if (idx > -1) {
-      r = r.slice(0, idx);
-    } else {
-      r = [];
     }
     return r;
   };
 
-  this.getNearest = (str, maxDistance) => {
-    let r = that.getDistances(str).sort(
-      (a, b) => a.dist - b.dist,
-    );
-    if (maxDistance > 0) {
-      r = that.filterMaxDistance(r, maxDistance);
+  this.format = (str) => {
+    const characters = PmSymbolConstants.ALPHABET_EXTENDED
+      + PmSymbolConstants.CAPITALS_EXTENDED;
+    const replacements = PmSymbolConstants.ALPHABET_REPLACEMENTS
+      + PmSymbolConstants.CAPITALS_REPLACEMENTS;
+    const r = this.replaceCharacters(str, characters, replacements);
+    return this.trim(r);
+  };
+
+  this.getCountTransitionReverse = (char, str, characters) => {
+    let count = 0;
+    let transition = -1;
+    let reverse = -1;
+    for (let i = 0; i < str.length; i += 1) {
+      const symChar = str.substring(i, i + 1);
+      if (symChar === char) {
+        count += 1;
+        if (transition === -1 && i < str.length - 1) {
+          const nextSymChar = str.substring(i + 1, i + 2);
+          transition = (characters.indexOf(nextSymChar) + 1);
+        }
+        if (i > 0) {
+          const prevSymChar = str.substring(i - 1, i);
+          reverse = (characters.indexOf(prevSymChar) + 1);
+        }
+      }
     }
-    return r;
+    transition = (transition === -1) ? 0 : transition;
+    reverse = (reverse === -1) ? 0 : reverse;
+    return { count, transition, reverse };
+  };
+
+  this.generateNumArray = (str, characters) => {
+    const indexes = [];
+    const counts = [];
+    const transitions = [];
+    const reversed = [];
+    for (let c = 0; c < characters.length; c += 1) {
+      const char = characters.substring(c, c + 1);
+      const { count, transition, reverse } = this.getCountTransitionReverse(char, str, characters);
+      indexes.push((str.indexOf(char) + 1));
+      counts.push(count);
+      transitions.push(transition);
+      reversed.push(reverse);
+    }
+    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
   };
 }
+const PmSymbolUtil = new _PmSymbolUtil();
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmTransformer() {

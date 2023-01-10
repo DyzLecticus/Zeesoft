@@ -1,54 +1,24 @@
 const SymbolConstants = require('./SymbolConstants');
+const SymbolUtil = require('./SymbolUtil');
 const Symbol = require('./Symbol');
 
 function SymbolMap(characters) {
   const that = this;
   this.characters = characters || SymbolConstants.CHARACTERS;
-
   this.elements = {};
 
-  this.getCountTransitionReverse = (char, str) => {
-    let count = 0;
-    let transition = -1;
-    let reverse = -1;
-    for (let i = 0; i < str.length; i += 1) {
-      const symChar = str.substring(i, i + 1);
-      if (symChar === char) {
-        count += 1;
-        if (transition === -1 && i < str.length - 1) {
-          const nextSymChar = str.substring(i + 1, i + 2);
-          transition = (that.characters.indexOf(nextSymChar) + 1);
-        }
-        if (i > 0) {
-          const prevSymChar = str.substring(i - 1, i);
-          reverse = (that.characters.indexOf(prevSymChar) + 1);
-        }
-      }
-    }
-    transition = (transition === -1) ? 0 : transition;
-    reverse = (reverse === -1) ? 0 : reverse;
-    return { count, transition, reverse };
+  this.format = (str) => SymbolUtil.format(str);
+
+  this.generateNumArray = (str) => SymbolUtil.generateNumArray(str, that.characters);
+
+  this.createSymbol = (str, meta) => {
+    const s = that.format(str);
+    return new Symbol(s, that.generateNumArray(s), meta);
   };
 
-  this.generateNumArray = (str) => {
-    const indexes = [];
-    const counts = [];
-    const transitions = [];
-    const reversed = [];
-    for (let c = 0; c < that.characters.length; c += 1) {
-      const char = that.characters.substring(c, c + 1);
-      const { count, transition, reverse } = that.getCountTransitionReverse(char, str);
-      indexes.push((str.indexOf(char) + 1));
-      counts.push(count);
-      transitions.push(transition);
-      reversed.push(reverse);
-    }
-    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
-  };
+  this.getById = (id) => that.elements[id];
 
-  this.createSymbol = (str, meta) => new Symbol(str, that.generateNumArray(str), meta);
-
-  this.get = (str) => that.elements[that.createSymbol(str).toString()];
+  this.get = (str) => that.getById(that.createSymbol(str).toString());
 
   this.put = (str, meta) => {
     const symbol = that.createSymbol(str, meta);
@@ -72,30 +42,10 @@ function SymbolMap(characters) {
     );
   };
 
-  this.filterMaxDistance = (results, maxDistance) => {
-    let r = results;
-    let idx = -1;
-    for (let i = 0; i < r.length; i += 1) {
-      idx = i;
-      if (r[i].dist > maxDistance) {
-        break;
-      }
-    }
-    if (idx > -1) {
-      r = r.slice(0, idx);
-    } else {
-      r = [];
-    }
-    return r;
-  };
-
-  this.getNearest = (str, maxDistance) => {
-    let r = that.getDistances(str).sort(
+  this.getNearest = (str) => {
+    const r = that.getDistances(str).sort(
       (a, b) => a.dist - b.dist,
     );
-    if (maxDistance > 0) {
-      r = that.filterMaxDistance(r, maxDistance);
-    }
     return r;
   };
 }

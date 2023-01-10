@@ -1,5 +1,7 @@
 module.exports.Comparator = require('./src/Comparator');
 module.exports.Transformer = require('./src/Transformer');
+module.exports.SymbolConstants = require('./src/symbol/SymbolConstants');
+module.exports.SymbolUtil = require('./src/symbol/SymbolUtil');
 module.exports.Symbol = require('./src/symbol/Symbol');
 module.exports.SymbolMap = require('./src/symbol/SymbolMap');
 module.exports.MapAnalyzer = require('./src/symbol/MapAnalyzer');
