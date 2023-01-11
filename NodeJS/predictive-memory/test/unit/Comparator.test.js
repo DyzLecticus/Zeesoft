@@ -33,6 +33,15 @@ describe('Comparator', () => {
     expect(comparator.calculateValueSimilarity(comparator, comparator)).toBe(1);
   });
 
+  test('Calculates the similarity between two number arrays correctly', () => {
+    const comparator = new Comparator();
+    const a = [1, 2, 3, 4, 0, 5, 0];
+    const b = [1, 2, 5, 6, 0, 6, 1];
+    expect(comparator.calculateValueSimilarity(a, a)).toBe(1);
+    expect(comparator.calculateValueSimilarity(a, b)).toBe(0.7798701298701298);
+    expect(comparator.calculateValueSimilarity(a, [])).toBe(0);
+  });
+
   test('Calculates the similarity between two objects correctly', () => {
     const comparator = new Comparator();
     const a = {

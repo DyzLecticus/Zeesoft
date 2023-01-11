@@ -239,6 +239,24 @@ function PmComparator() {
     return perc;
   };
 
+  this.calculateArraySimilarity = (a, b, valueCompareFunction) => {
+    let perc = 1.0;
+    const max = Math.max(a.length, b.length);
+    if (max > 0) {
+      perc = 0;
+      for (let i = 0; i < max; i += 1) {
+        if (a.length > i && b.length > i) {
+          perc += valueCompareFunction(a[i], b[i]);
+        }
+      }
+      perc /= max;
+    }
+    return perc;
+  };
+
+  // eslint-disable-next-line max-len
+  this.calculateArrayValueSimilarity = (a, b) => this.calculateArraySimilarity(a, b, this.calculateValueSimilarity);
+
   this.calculateValueSimilarity = (a, b) => {
     let perc = 0.0;
     if (a === b) {
@@ -247,6 +265,8 @@ function PmComparator() {
       perc = this.calculateNumberSimilarity(a, b);
     } else if (typeof (a) === 'string' && typeof (b) === 'string') {
       perc = this.calculateStringSimilarity(a, b);
+    } else if (Array.isArray(a) && Array.isArray(b)) {
+      perc = this.calculateArrayValueSimilarity(a, b);
     }
     return perc;
   };
@@ -265,20 +285,8 @@ function PmComparator() {
     return perc;
   };
 
-  this.calculateObjectArraySimilarity = (a, b) => {
-    let perc = 1.0;
-    const max = Math.max(a.length, b.length);
-    if (max > 0) {
-      perc = 0;
-      for (let i = 0; i < max; i += 1) {
-        if (a.length > i && b.length > i) {
-          perc += this.calculateObjectSimilarity(a[i], b[i]);
-        }
-      }
-      perc /= max;
-    }
-    return perc;
-  };
+  // eslint-disable-next-line max-len
+  this.calculateObjectArraySimilarity = (a, b) => this.calculateArraySimilarity(a, b, this.calculateObjectSimilarity);
 
   this.calculateSimilarity = (a, b) => {
     let perc = 0.0;
@@ -693,6 +701,55 @@ function PmPredictorConfig(size, depth) {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function PmClassifier(config) {
+  const that = this;
+  this.config = config || new PmClassifierConfig();
+
+  this.map = new PmSymbolMap(this.config.characters);
+  this.cache = new PmCache(this.config.cacheConfig);
+
+  this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
+
+  this.put = (str, cls) => {
+    const symbol = that.map.put(str, { cls });
+    that.cache.process(that.getKey(symbol), {});
+  };
+
+  this.classify = (str) => {
+    const symbol = that.map.createSymbol(str);
+    const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
+    const results = cacheResult.getDeepestElements(2);
+    let classification = '';
+    let confidence = 0;
+    if (results.length > 0) {
+      const id = PmMathUtil.stringify(results[0].element.key.symNumArray);
+      const resultSymbol = that.map.getById(id);
+      classification = resultSymbol.meta.cls;
+      confidence = that.config.comparator.calculateValueSimilarity(str, resultSymbol.str);
+    }
+    return { results, classification, confidence };
+  };
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
+function PmClassifierConfig(characters) {
+  this.characters = characters || PmSymbolConstants.CHARACTERS;
+  this.comparator = new PmComparator();
+
+  this.cacheConfig = new PmCacheConfig();
+  // TODO: determine optimal default cache config for symbols
+  this.cacheConfig.initiatlizeDefault();
+  this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
+
+  this.setComparator = (com) => {
+    this.comparator = com;
+    this.cacheConfig.setComparator(com);
+  };
+
+  this.setComparator(this.comparator);
+}
+
+// eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmMapAnalyzer() {
   const that = this;
 
@@ -765,7 +822,7 @@ function PmSymbol(str, numArray, meta) {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
-function PmClassifier(characters, comparator) {
+function PmSymbolClassifier(characters, comparator) {
   const that = this;
   this.map = new PmSymbolMap(characters || PmSymbolConstants.CHARACTERS);
   this.comparator = comparator || new PmComparator();
@@ -780,7 +837,7 @@ function PmClassifier(characters, comparator) {
     let confidence = '';
     if (results.length > 0) {
       classification = results[0].symbol.meta.cls;
-      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
+      confidence = that.comparator.calculateValueSimilarity(str, results[0].symbol.str);
     }
     return { results, classification, confidence };
   };

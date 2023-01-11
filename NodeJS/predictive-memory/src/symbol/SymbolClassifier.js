@@ -2,7 +2,7 @@ const SymbolMap = require('./SymbolMap');
 const SymbolConstants = require('./SymbolConstants');
 const Comparator = require('../Comparator');
 
-function Classifier(characters, comparator) {
+function SymbolClassifier(characters, comparator) {
   const that = this;
   this.map = new SymbolMap(characters || SymbolConstants.CHARACTERS);
   this.comparator = comparator || new Comparator();
@@ -17,9 +17,9 @@ function Classifier(characters, comparator) {
     let confidence = '';
     if (results.length > 0) {
       classification = results[0].symbol.meta.cls;
-      confidence = that.comparator.calculateStringSimilarity(str, results[0].symbol.str);
+      confidence = that.comparator.calculateValueSimilarity(str, results[0].symbol.str);
     }
     return { results, classification, confidence };
   };
 }
-module.exports = Classifier;
+module.exports = SymbolClassifier;

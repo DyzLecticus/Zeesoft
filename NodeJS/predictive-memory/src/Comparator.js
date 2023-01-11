@@ -43,6 +43,24 @@ function Comparator() {
     return perc;
   };
 
+  this.calculateArraySimilarity = (a, b, valueCompareFunction) => {
+    let perc = 1.0;
+    const max = Math.max(a.length, b.length);
+    if (max > 0) {
+      perc = 0;
+      for (let i = 0; i < max; i += 1) {
+        if (a.length > i && b.length > i) {
+          perc += valueCompareFunction(a[i], b[i]);
+        }
+      }
+      perc /= max;
+    }
+    return perc;
+  };
+
+  // eslint-disable-next-line max-len
+  this.calculateArrayValueSimilarity = (a, b) => this.calculateArraySimilarity(a, b, this.calculateValueSimilarity);
+
   this.calculateValueSimilarity = (a, b) => {
     let perc = 0.0;
     if (a === b) {
@@ -51,6 +69,8 @@ function Comparator() {
       perc = this.calculateNumberSimilarity(a, b);
     } else if (typeof (a) === 'string' && typeof (b) === 'string') {
       perc = this.calculateStringSimilarity(a, b);
+    } else if (Array.isArray(a) && Array.isArray(b)) {
+      perc = this.calculateArrayValueSimilarity(a, b);
     }
     return perc;
   };
@@ -69,20 +89,8 @@ function Comparator() {
     return perc;
   };
 
-  this.calculateObjectArraySimilarity = (a, b) => {
-    let perc = 1.0;
-    const max = Math.max(a.length, b.length);
-    if (max > 0) {
-      perc = 0;
-      for (let i = 0; i < max; i += 1) {
-        if (a.length > i && b.length > i) {
-          perc += this.calculateObjectSimilarity(a[i], b[i]);
-        }
-      }
-      perc /= max;
-    }
-    return perc;
-  };
+  // eslint-disable-next-line max-len
+  this.calculateObjectArraySimilarity = (a, b) => this.calculateArraySimilarity(a, b, this.calculateObjectSimilarity);
 
   this.calculateSimilarity = (a, b) => {
     let perc = 0.0;
