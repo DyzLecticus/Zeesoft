@@ -29,14 +29,14 @@ describe('SymbolUtil', () => {
     let sequences = SymbolUtil.sequentialize('This thing consist of something,something else (with an example), and another thing.');
     expect(sequences.length).toBe(5);
     expect(sequences[0]).toBe('this thing consist of something , something else');
-    expect(sequences[4]).toBe(', and another thing .');
+    expect(sequences[4]).toBe('thing .');
     sequences = SymbolUtil.sequentialize('What is your  name?');
     expect(sequences.length).toBe(1);
     expect(sequences[0]).toBe('what is your name ?');
     sequences = SymbolUtil.sequentialize('This string/sentence has exactly nine tokens.');
     expect(sequences.length).toBe(2);
     expect(sequences[0]).toBe('this string / sentence has exactly nine tokens');
-    expect(sequences[1]).toBe('exactly nine tokens .');
+    expect(sequences[1]).toBe('has exactly nine tokens .');
   });
 
   test('Generates numArrays correctly', () => {

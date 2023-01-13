@@ -74,36 +74,26 @@ function SymbolUtil() {
   this.sequentialize = (str, maxLength) => {
     const max = maxLength || 8;
     const tokens = this.tokenize(str);
-    let seq = [];
-    let con = [];
     const ts = [];
-    for (let i = 0; i < tokens.length; i += 1) {
-      if (seq.length === max) {
+    for (let i = 0; i < tokens.length; i += (max / 2)) {
+      const seq = [];
+      for (let j = i; j < tokens.length; j += 1) {
+        seq.push(tokens[j]);
+        if (seq.length === max) {
+          break;
+        }
+      }
+      if (seq.length > 1) {
         ts.push(seq);
-        seq = [];
-      }
-      if (con.length === max) {
-        ts.push(con);
-        con = [];
-      }
-      seq.push(tokens[i]);
-      if (i > max / 2) {
-        con.push(tokens[i]);
       }
     }
-    if (seq.length > 1) {
-      ts.push(seq);
-    }
-    if (con.length >= max / 2) {
-      ts.push(con);
-    }
-    return ts.map((tok) => {
+    return ts.map((seq) => {
       let s = '';
-      for (let i = 0; i < tok.length; i += 1) {
+      for (let i = 0; i < seq.length; i += 1) {
         if (s.length > 0) {
           s += ' ';
         }
-        s += tok[i];
+        s += seq[i];
       }
       return s;
     });

@@ -4,6 +4,7 @@ const CacheConfig = require('../cache/CacheConfig');
 
 function ClassifierConfig(characters) {
   this.characters = characters || SymbolConstants.CLASSIFIER_CHARACTERS;
+  this.sequenceMaxLength = 4;
   this.comparator = new Comparator();
 
   this.cacheConfig = new CacheConfig();
