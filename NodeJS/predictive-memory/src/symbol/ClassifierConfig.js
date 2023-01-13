@@ -3,7 +3,7 @@ const Comparator = require('../Comparator');
 const CacheConfig = require('../cache/CacheConfig');
 
 function ClassifierConfig(characters) {
-  this.characters = characters || SymbolConstants.CHARACTERS;
+  this.characters = characters || SymbolConstants.CLASSIFIER_CHARACTERS;
   this.comparator = new Comparator();
 
   this.cacheConfig = new CacheConfig();

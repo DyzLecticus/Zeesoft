@@ -11,6 +11,34 @@ describe('SymbolUtil', () => {
     expect(s).toBe(SymbolConstants.CAPITALS_REPLACEMENTS);
   });
 
+  test('Formats strings for tokenization correctly', () => {
+    let s = SymbolUtil.tokenizeFormat('What is  your @name?');
+    expect(s).toBe('what is your name ?');
+    s = SymbolUtil.tokenizeFormat('This thing consist of something,something else (with an example), and another thing.');
+    expect(s).toBe('this thing consist of something , something else ( with an example ) , and another thing .');
+  });
+
+  test('Tokenizes strings correctly', () => {
+    const tokens = SymbolUtil.tokenize('What is your  name?');
+    expect(tokens.length).toBe(5);
+    expect(tokens[0]).toBe('what');
+    expect(tokens[4]).toBe('?');
+  });
+
+  test('Sequentializes strings correctly', () => {
+    let sequences = SymbolUtil.sequentialize('This thing consist of something,something else (with an example), and another thing.');
+    expect(sequences.length).toBe(5);
+    expect(sequences[0]).toBe('this thing consist of something , something else');
+    expect(sequences[4]).toBe(', and another thing .');
+    sequences = SymbolUtil.sequentialize('What is your  name?');
+    expect(sequences.length).toBe(1);
+    expect(sequences[0]).toBe('what is your name ?');
+    sequences = SymbolUtil.sequentialize('This string/sentence has exactly nine tokens.');
+    expect(sequences.length).toBe(2);
+    expect(sequences[0]).toBe('this string / sentence has exactly nine tokens');
+    expect(sequences[1]).toBe('exactly nine tokens .');
+  });
+
   test('Generates numArrays correctly', () => {
     const a = SymbolUtil.generateNumArray(SymbolConstants.CHARACTERS, SymbolConstants.CHARACTERS);
     expect(a.length).toBe(373);

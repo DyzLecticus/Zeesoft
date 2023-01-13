@@ -12,7 +12,7 @@ describe('Classifier', () => {
   test('Classifies strings correctly', () => {
     const classifier = new Classifier();
 
-    expect(classifier.classify('Pizza').results.length).toBe(0);
+    expect(classifier.classify('Pizza!')[0].results.length).toBe(0);
 
     classifier.put('This is some english language text.', 'EN');
     classifier.put('What language do you speak?', 'EN');
@@ -25,19 +25,19 @@ describe('Classifier', () => {
     classifier.put('Ik begrijp nederlands en engels.', 'NL');
 
     let result = classifier.classify('Do you understand the language I speak?');
-    expect(result.classification).toBe('EN');
-    expect(result.confidence).toBe(0.358974358974359);
+    expect(result[0].classification).toBe('EN');
+    expect(result[0].confidence).toBe(0.425);
 
     result = classifier.classify('Begrijp je de taal die ik spreek?');
-    expect(result.classification).toBe('NL');
-    expect(result.confidence).toBe(0.3333333333333333);
+    expect(result[0].classification).toBe('NL');
+    expect(result[0].confidence).toBe(0.35294117647058826);
 
     result = classifier.classify('What language do you speak?');
-    expect(result.classification).toBe('EN');
-    expect(result.confidence).toBe(1);
+    expect(result[0].classification).toBe('EN');
+    expect(result[0].confidence).toBe(1);
 
     result = classifier.classify('Pizza!');
-    expect(result.classification).toBe('NL');
-    expect(result.confidence).toBe(0.045454545454545456);
+    expect(result[0].classification).toBe('NL');
+    expect(result[0].confidence).toBe(0.08695652173913043);
   });
 });

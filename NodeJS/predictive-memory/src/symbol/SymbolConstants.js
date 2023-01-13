@@ -10,16 +10,23 @@ function SymbolConstants() {
   this.SPECIALS = '@#$%^&*_+=|\\~';
   this.CONTROLS = '\r\n\t';
 
+  this.NON_ALPHANUMERICS = this.ENDERS
+    + this.SEPARATORS
+    + this.BINDERS
+    + this.SPECIALS
+    + this.CONTROLS;
+
   this.ALPHABET_EXTENDED = 'üéâäàåçêëèïîìôöòûùÿ';
   this.CAPITALS_EXTENDED = 'ÇÄÅÉÖÜ';
   this.ALPHABET_REPLACEMENTS = 'ueaaaaceeeiiiooouuy';
   this.CAPITALS_REPLACEMENTS = 'CAAEOU';
 
-  this.CHARACTERS = this.ALPHANUMERICS
-      + this.ENDERS
-      + this.SEPARATORS
-      + this.BINDERS
-      + this.SPECIALS
-      + this.CONTROLS;
+  this.CHARACTERS = this.ALPHANUMERICS + this.NON_ALPHANUMERICS;
+
+  this.CLASSIFIER_CHARACTERS = this.ALPHABET
+    + this.NUMBERS
+    + this.ENDERS
+    + this.SEPARATORS
+    + this.BINDERS;
 }
 module.exports = new SymbolConstants();

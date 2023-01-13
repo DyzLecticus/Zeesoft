@@ -22,13 +22,91 @@ function SymbolUtil() {
     return r;
   };
 
-  this.format = (str) => {
+  this.replaceExtensions = (str) => {
     const characters = SymbolConstants.ALPHABET_EXTENDED
       + SymbolConstants.CAPITALS_EXTENDED;
     const replacements = SymbolConstants.ALPHABET_REPLACEMENTS
       + SymbolConstants.CAPITALS_REPLACEMENTS;
-    const r = this.replaceCharacters(str, characters, replacements);
+    return this.replaceCharacters(str, characters, replacements);
+  };
+
+  this.format = (str) => this.trim(this.replaceExtensions(str));
+
+  this.spaceOutNonAllowedCharacters = (str, allowedCharacters) => {
+    let r = '';
+    for (let i = 0; i < str.length; i += 1) {
+      const c = str.substring(i, i + 1);
+      const idx = allowedCharacters.indexOf(c);
+      if (idx < 0) {
+        r += ' ';
+      } else {
+        r += c;
+      }
+    }
+    return r;
+  };
+
+  this.spaceCharacters = (str, characters) => {
+    let r = '';
+    for (let i = 0; i < str.length; i += 1) {
+      const c = str.substring(i, i + 1);
+      const idx = characters.indexOf(c);
+      if (idx >= 0) {
+        r += ` ${c} `;
+      } else {
+        r += c;
+      }
+    }
+    return r;
+  };
+
+  this.tokenizeFormat = (str) => {
+    let r = str.toLowerCase();
+    r = this.replaceExtensions(r);
+    r = this.spaceOutNonAllowedCharacters(r, SymbolConstants.CLASSIFIER_CHARACTERS);
+    const spaceChars = SymbolConstants.NON_ALPHANUMERICS.replace(' ', '');
+    r = this.spaceCharacters(r, spaceChars);
     return this.trim(r);
+  };
+
+  this.tokenize = (str) => this.tokenizeFormat(str).split(' ');
+
+  this.sequentialize = (str, maxLength) => {
+    const max = maxLength || 8;
+    const tokens = this.tokenize(str);
+    let seq = [];
+    let con = [];
+    const ts = [];
+    for (let i = 0; i < tokens.length; i += 1) {
+      if (seq.length === max) {
+        ts.push(seq);
+        seq = [];
+      }
+      if (con.length === max) {
+        ts.push(con);
+        con = [];
+      }
+      seq.push(tokens[i]);
+      if (i > max / 2) {
+        con.push(tokens[i]);
+      }
+    }
+    if (seq.length > 1) {
+      ts.push(seq);
+    }
+    if (con.length >= max / 2) {
+      ts.push(con);
+    }
+    return ts.map((tok) => {
+      let s = '';
+      for (let i = 0; i < tok.length; i += 1) {
+        if (s.length > 0) {
+          s += ' ';
+        }
+        s += tok[i];
+      }
+      return s;
+    });
   };
 
   this.getCountTransitionReverse = (char, str, characters) => {

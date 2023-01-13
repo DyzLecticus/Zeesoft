@@ -711,29 +711,40 @@ function PmClassifier(config) {
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
   this.put = (str, cls) => {
-    const symbol = that.map.put(str, { cls });
-    that.cache.process(that.getKey(symbol), {});
+    const r = [];
+    const sequences = PmSymbolUtil.sequentialize(str);
+    sequences.forEach((sequence) => {
+      const symbol = that.map.put(sequence, { cls });
+      that.cache.process(that.getKey(symbol), {});
+      r.push(symbol);
+    });
+    return r;
   };
 
   this.classify = (str) => {
-    const symbol = that.map.createSymbol(str);
-    const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
-    const results = cacheResult.getDeepestElements(2);
-    let classification = '';
-    let confidence = 0;
-    if (results.length > 0) {
-      const id = PmMathUtil.stringify(results[0].element.key.symNumArray);
-      const resultSymbol = that.map.getById(id);
-      classification = resultSymbol.meta.cls;
-      confidence = that.config.comparator.calculateValueSimilarity(str, resultSymbol.str);
-    }
-    return { results, classification, confidence };
+    const r = [];
+    const sequences = PmSymbolUtil.sequentialize(str);
+    sequences.forEach((sequence) => {
+      const symbol = that.map.createSymbol(sequence);
+      const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
+      const results = cacheResult.getDeepestElements(2);
+      let classification = '';
+      let confidence = 0;
+      if (results.length > 0) {
+        const id = PmMathUtil.stringify(results[0].element.key.symNumArray);
+        const resultSymbol = that.map.getById(id);
+        classification = resultSymbol.meta.cls;
+        confidence = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
+      }
+      r.push({ results, classification, confidence });
+    });
+    return r;
   };
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmClassifierConfig(characters) {
-  this.characters = characters || PmSymbolConstants.CHARACTERS;
+  this.characters = characters || PmSymbolConstants.CLASSIFIER_CHARACTERS;
   this.comparator = new PmComparator();
 
   this.cacheConfig = new PmCacheConfig();
@@ -856,17 +867,24 @@ function _PmSymbolConstants() {
   this.SPECIALS = '@#$%^&*_+=|\\~';
   this.CONTROLS = '\r\n\t';
 
+  this.NON_ALPHANUMERICS = this.ENDERS
+    + this.SEPARATORS
+    + this.BINDERS
+    + this.SPECIALS
+    + this.CONTROLS;
+
   this.ALPHABET_EXTENDED = 'üéâäàåçêëèïîìôöòûùÿ';
   this.CAPITALS_EXTENDED = 'ÇÄÅÉÖÜ';
   this.ALPHABET_REPLACEMENTS = 'ueaaaaceeeiiiooouuy';
   this.CAPITALS_REPLACEMENTS = 'CAAEOU';
 
-  this.CHARACTERS = this.ALPHANUMERICS
-      + this.ENDERS
-      + this.SEPARATORS
-      + this.BINDERS
-      + this.SPECIALS
-      + this.CONTROLS;
+  this.CHARACTERS = this.ALPHANUMERICS + this.NON_ALPHANUMERICS;
+
+  this.CLASSIFIER_CHARACTERS = this.ALPHABET
+    + this.NUMBERS
+    + this.ENDERS
+    + this.SEPARATORS
+    + this.BINDERS;
 }
 const PmSymbolConstants = new _PmSymbolConstants();
 
@@ -942,13 +960,91 @@ function _PmSymbolUtil() {
     return r;
   };
 
-  this.format = (str) => {
+  this.replaceExtensions = (str) => {
     const characters = PmSymbolConstants.ALPHABET_EXTENDED
       + PmSymbolConstants.CAPITALS_EXTENDED;
     const replacements = PmSymbolConstants.ALPHABET_REPLACEMENTS
       + PmSymbolConstants.CAPITALS_REPLACEMENTS;
-    const r = this.replaceCharacters(str, characters, replacements);
+    return this.replaceCharacters(str, characters, replacements);
+  };
+
+  this.format = (str) => this.trim(this.replaceExtensions(str));
+
+  this.spaceOutNonAllowedCharacters = (str, allowedCharacters) => {
+    let r = '';
+    for (let i = 0; i < str.length; i += 1) {
+      const c = str.substring(i, i + 1);
+      const idx = allowedCharacters.indexOf(c);
+      if (idx < 0) {
+        r += ' ';
+      } else {
+        r += c;
+      }
+    }
+    return r;
+  };
+
+  this.spaceCharacters = (str, characters) => {
+    let r = '';
+    for (let i = 0; i < str.length; i += 1) {
+      const c = str.substring(i, i + 1);
+      const idx = characters.indexOf(c);
+      if (idx >= 0) {
+        r += ` ${c} `;
+      } else {
+        r += c;
+      }
+    }
+    return r;
+  };
+
+  this.tokenizeFormat = (str) => {
+    let r = str.toLowerCase();
+    r = this.replaceExtensions(r);
+    r = this.spaceOutNonAllowedCharacters(r, PmSymbolConstants.CLASSIFIER_CHARACTERS);
+    const spaceChars = PmSymbolConstants.NON_ALPHANUMERICS.replace(' ', '');
+    r = this.spaceCharacters(r, spaceChars);
     return this.trim(r);
+  };
+
+  this.tokenize = (str) => this.tokenizeFormat(str).split(' ');
+
+  this.sequentialize = (str, maxLength) => {
+    const max = maxLength || 8;
+    const tokens = this.tokenize(str);
+    let seq = [];
+    let con = [];
+    const ts = [];
+    for (let i = 0; i < tokens.length; i += 1) {
+      if (seq.length === max) {
+        ts.push(seq);
+        seq = [];
+      }
+      if (con.length === max) {
+        ts.push(con);
+        con = [];
+      }
+      seq.push(tokens[i]);
+      if (i > max / 2) {
+        con.push(tokens[i]);
+      }
+    }
+    if (seq.length > 1) {
+      ts.push(seq);
+    }
+    if (con.length >= max / 2) {
+      ts.push(con);
+    }
+    return ts.map((tok) => {
+      let s = '';
+      for (let i = 0; i < tok.length; i += 1) {
+        if (s.length > 0) {
+          s += ' ';
+        }
+        s += tok[i];
+      }
+      return s;
+    });
   };
 
   this.getCountTransitionReverse = (char, str, characters) => {
