@@ -6,6 +6,7 @@ const { ClassifierConfig, Classifier } = require('../../index');
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'text-classification.json');
 
 const testSet = [
+  { str: 'Can we create artificial general intelligence?', cls: 'artificial_intelligence.txt' },
   { str: 'What is the universe made of?', cls: 'artificial_intelligence.txt' },
   { str: 'How did life begin?', cls: 'philosophy.txt' },
   { str: 'Are we alone in the universe?', cls: 'chemistry.txt' },
@@ -40,7 +41,7 @@ Object.keys(data).forEach((key) => {
 });
 
 const start = Date.now();
-const results = [];
+const testResults = [];
 testSet.forEach((test) => {
   const result = classifier.classify(test.str);
   const cls = result.classifications[0].classification;
@@ -49,11 +50,16 @@ testSet.forEach((test) => {
     // eslint-disable-next-line no-console
     console.error(`${test.str}; '${cls}'!='${test.cls}'`);
   }
-  results.push({ test, ...result });
+  testResults.push({ test, ...result });
 });
 const analysis = {
   cacheSize: classifier.cache.size(),
   msPerObject: (Date.now() - start) / testSet.length,
-  results,
 };
-fs.writeFileSync(jsonPath, JSON.stringify(analysis, null, 2));
+// eslint-disable-next-line no-console
+console.log(analysis);
+const results = {
+  ...analysis,
+  testResults,
+};
+fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2));
