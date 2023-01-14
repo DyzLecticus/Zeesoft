@@ -55,6 +55,7 @@ function Classifier(config) {
   this.classifySequences = (sequences, classifications) => {
     const r = [];
     let totalCount = 0;
+    const simCache = {};
     sequences.forEach((sequence) => {
       const symbol = that.map.createSymbol(sequence);
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
@@ -69,7 +70,14 @@ function Classifier(config) {
           str: resultSymbol.str,
           classification,
         });
-        const sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
+        let sim = -1;
+        const simKey = `${sequence}_${resultSymbol.str}`;
+        if (simCache[simKey] === undefined) {
+          sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
+          simCache[simKey] = sim;
+        } else {
+          sim = simCache[simKey];
+        }
         const cl = that.getOrAddClassification(classifications, classification);
         cl.similarity += (sim * result.element.count);
         totalCount += result.element.count;
