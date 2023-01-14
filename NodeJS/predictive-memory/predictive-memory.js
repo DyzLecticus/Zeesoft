@@ -705,17 +705,29 @@ function PmClassifier(config) {
   const that = this;
   this.config = config || new PmClassifierConfig();
 
+  this.clss = [];
+
   this.map = new PmSymbolMap(this.config.characters);
   this.cache = new PmCache(this.config.cacheConfig);
 
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
+  this.getOrAddClass = (cls) => {
+    let r = that.clss.indexOf(cls);
+    if (r < 0) {
+      r = that.clss.length;
+      that.clss.push(cls);
+    }
+    return r;
+  };
+
   this.put = (str, cls) => {
     const r = [];
+    const clsIndex = that.getOrAddClass(cls);
     const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
     sequences.forEach((sequence) => {
-      const symbol = that.map.put(sequence, { cls });
-      that.cache.process(that.getKey(symbol), {});
+      const symbol = that.map.put(sequence);
+      that.cache.process(that.getKey(symbol), { clsIndex });
       r.push(symbol);
     });
     return r;
@@ -728,6 +740,7 @@ function PmClassifier(config) {
       cl = {
         classification,
         similarity: 0,
+        confidence: 0,
       };
       classifications.push(cl);
     } else {
@@ -744,15 +757,16 @@ function PmClassifier(config) {
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
       results.forEach((result) => {
+        const classification = that.clss[result.element.value.clsIndex];
         const id = PmMathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
         r.push({
           similarity: result.similarity,
           count: result.element.count,
-          symbol: resultSymbol,
+          str: resultSymbol.str,
+          classification,
         });
         const sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
-        const classification = resultSymbol.meta.cls;
         const cl = that.getOrAddClassification(classifications, classification);
         cl.similarity += (sim * result.element.count);
         totalCount += result.element.count;
@@ -765,14 +779,12 @@ function PmClassifier(config) {
     let classifications = [];
     const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
     const { results, totalCount } = that.classifySequences(sequences, classifications);
-    classifications = classifications.sort((a, b) => b.similarity - a.similarity);
-    let classification = '';
-    let confidence = '';
-    if (classifications.length > 0) {
-      classification = classifications[0].classification;
-      confidence = classifications[0].similarity / totalCount;
-    }
-    return { results, classification, confidence };
+    classifications.forEach((classification) => {
+      const c = classification;
+      c.confidence = c.similarity / totalCount;
+    });
+    classifications = classifications.sort((a, b) => b.confidence - a.confidence);
+    return { results, classifications };
   };
 }
 
@@ -783,8 +795,9 @@ function PmClassifierConfig(characters) {
   this.comparator = new PmComparator();
 
   this.cacheConfig = new PmCacheConfig();
-  // TODO: determine optimal default cache config for symbols
   this.cacheConfig.initiatlizeDefault();
+  this.cacheConfig.mergeSimilarity = 0.80;
+  this.cacheConfig.subConfig.mergeSimilarity = 0.85;
   this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
 
   this.setComparator = (com) => {

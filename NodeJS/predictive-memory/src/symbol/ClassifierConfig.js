@@ -8,8 +8,9 @@ function ClassifierConfig(characters) {
   this.comparator = new Comparator();
 
   this.cacheConfig = new CacheConfig();
-  // TODO: determine optimal default cache config for symbols
   this.cacheConfig.initiatlizeDefault();
+  this.cacheConfig.mergeSimilarity = 0.80;
+  this.cacheConfig.subConfig.mergeSimilarity = 0.85;
   this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
 
   this.setComparator = (com) => {

@@ -8,17 +8,29 @@ function Classifier(config) {
   const that = this;
   this.config = config || new ClassifierConfig();
 
+  this.clss = [];
+
   this.map = new SymbolMap(this.config.characters);
   this.cache = new Cache(this.config.cacheConfig);
 
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
+  this.getOrAddClass = (cls) => {
+    let r = that.clss.indexOf(cls);
+    if (r < 0) {
+      r = that.clss.length;
+      that.clss.push(cls);
+    }
+    return r;
+  };
+
   this.put = (str, cls) => {
     const r = [];
+    const clsIndex = that.getOrAddClass(cls);
     const sequences = SymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
     sequences.forEach((sequence) => {
-      const symbol = that.map.put(sequence, { cls });
-      that.cache.process(that.getKey(symbol), {});
+      const symbol = that.map.put(sequence);
+      that.cache.process(that.getKey(symbol), { clsIndex });
       r.push(symbol);
     });
     return r;
@@ -31,6 +43,7 @@ function Classifier(config) {
       cl = {
         classification,
         similarity: 0,
+        confidence: 0,
       };
       classifications.push(cl);
     } else {
@@ -47,15 +60,16 @@ function Classifier(config) {
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
       results.forEach((result) => {
+        const classification = that.clss[result.element.value.clsIndex];
         const id = MathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
         r.push({
           similarity: result.similarity,
           count: result.element.count,
-          symbol: resultSymbol,
+          str: resultSymbol.str,
+          classification,
         });
         const sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
-        const classification = resultSymbol.meta.cls;
         const cl = that.getOrAddClassification(classifications, classification);
         cl.similarity += (sim * result.element.count);
         totalCount += result.element.count;
@@ -68,14 +82,12 @@ function Classifier(config) {
     let classifications = [];
     const sequences = SymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
     const { results, totalCount } = that.classifySequences(sequences, classifications);
-    classifications = classifications.sort((a, b) => b.similarity - a.similarity);
-    let classification = '';
-    let confidence = '';
-    if (classifications.length > 0) {
-      classification = classifications[0].classification;
-      confidence = classifications[0].similarity / totalCount;
-    }
-    return { results, classification, confidence };
+    classifications.forEach((classification) => {
+      const c = classification;
+      c.confidence = c.similarity / totalCount;
+    });
+    classifications = classifications.sort((a, b) => b.confidence - a.confidence);
+    return { results, classifications };
   };
 }
 module.exports = Classifier;
