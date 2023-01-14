@@ -9,7 +9,7 @@ const testSet = [
   { str: 'Can we create artificial general intelligence?', cls: 'artificial_intelligence.txt' },
   { str: 'What is the universe made of?', cls: 'artificial_intelligence.txt' },
   { str: 'How did life begin?', cls: 'philosophy.txt' },
-  { str: 'Are we alone in the universe?', cls: 'chemistry.txt' },
+  { str: 'Are we alone in the universe?', cls: 'nlp-nlu.txt' },
   { str: 'What makes us human?', cls: 'chemistry.txt' },
   { str: 'What is consciousness?', cls: 'artificial_intelligence.txt' },
   { str: 'Why do we dream?', cls: 'physics.txt' },

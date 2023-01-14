@@ -64,10 +64,12 @@ function Classifier(config) {
         const classification = that.clss[result.element.value.clsIndex];
         const id = MathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
+        const count = result.element.count + result.parentCount;
         r.push({
-          similarity: result.similarity,
-          count: result.element.count,
+          sequence,
           str: resultSymbol.str,
+          similarity: result.similarity,
+          count,
           classification,
         });
         let sim = -1;
@@ -79,8 +81,8 @@ function Classifier(config) {
           sim = simCache[simKey];
         }
         const cl = that.getOrAddClassification(classifications, classification);
-        cl.similarity += (sim * result.element.count);
-        totalCount += result.element.count;
+        cl.similarity += (sim * count);
+        totalCount += count;
       });
     });
     return { results: r, totalCount };

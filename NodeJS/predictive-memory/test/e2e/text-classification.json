@@ -4,7 +4,7 @@
     "0.8": 140,
     "0.85": 848
   },
-  "msPerObject": 2.4615384615384617,
+  "msPerObject": 2.3076923076923075,
   "testResults": [
     {
       "test": {
@@ -13,47 +13,53 @@
       },
       "results": [
         {
-          "similarity": 0.8731289710736905,
-          "count": 1,
+          "sequence": "can we create artificial",
           "str": ". artificial intelligence was",
-          "classification": "artificial_intelligence.txt"
-        },
-        {
           "similarity": 0.8731289710736905,
-          "count": 1,
+          "count": 15,
+          "classification": "artificial_intelligence.txt"
+        },
+        {
+          "sequence": "can we create artificial",
           "str": ". artificial intelligence was",
+          "similarity": 0.8731289710736905,
+          "count": 25,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.9208131248701804,
-          "count": 1,
+          "sequence": "create artificial general intelligence",
           "str": "artificial intelligence ( ai",
-          "classification": "artificial_intelligence.txt"
-        },
-        {
           "similarity": 0.9208131248701804,
-          "count": 1,
+          "count": 27,
+          "classification": "artificial_intelligence.txt"
+        },
+        {
+          "sequence": "create artificial general intelligence",
           "str": "artificial intelligence ( ai",
+          "similarity": 0.9208131248701804,
+          "count": 25,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.9428308842094633,
-          "count": 1,
+          "sequence": "general intelligence ?",
           "str": ". general intelligence (",
+          "similarity": 0.9428308842094633,
+          "count": 27,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.9428308842094633,
-          "count": 1,
+          "sequence": "general intelligence ?",
           "str": ". general intelligence (",
+          "similarity": 0.9428308842094633,
+          "count": 25,
           "classification": "artificial_intelligence.txt"
         }
       ],
       "classifications": [
         {
           "classification": "artificial_intelligence.txt",
-          "similarity": 3.1111615245009077,
-          "confidence": 0.5185269207501513
+          "similarity": 78.40744101633393,
+          "confidence": 0.5444961181689857
         }
       ]
     },
@@ -64,57 +70,63 @@
       },
       "results": [
         {
-          "similarity": 0.8745146041953552,
-          "count": 1,
+          "sequence": "what is the universe",
           "str": "with a live human",
+          "similarity": 0.8745146041953552,
+          "count": 21,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8745146041953552,
-          "count": 1,
+          "sequence": "what is the universe",
           "str": "with a live human",
+          "similarity": 0.8745146041953552,
+          "count": 13,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8544283008489134,
-          "count": 1,
+          "sequence": "the universe made of",
           "str": "the development of industrialization",
+          "similarity": 0.8544283008489134,
+          "count": 16,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.8442551424655046,
-          "count": 1,
+          "sequence": "the universe made of",
           "str": "science that studies matter",
+          "similarity": 0.8442551424655046,
+          "count": 16,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.8289068769918592,
-          "count": 1,
+          "sequence": "made of ?",
           "str": "decades of the 21st",
+          "similarity": 0.8289068769918592,
+          "count": 37,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.8289068769918592,
-          "count": 1,
+          "sequence": "made of ?",
           "str": "decades of the 21st",
+          "similarity": 0.8289068769918592,
+          "count": 3,
           "classification": "artificial_intelligence.txt"
         }
       ],
       "classifications": [
         {
           "classification": "artificial_intelligence.txt",
-          "similarity": 0.7368421052631579,
-          "confidence": 0.12280701754385964
+          "similarity": 14.736842105263156,
+          "confidence": 0.13902681231380334
         },
         {
           "classification": "physics.txt",
-          "similarity": 0.4722222222222222,
-          "confidence": 0.0787037037037037
+          "similarity": 7.555555555555555,
+          "confidence": 0.07127882599580712
         },
         {
           "classification": "chatbots.txt",
-          "similarity": 0.4,
-          "confidence": 0.06666666666666667
+          "similarity": 6.800000000000001,
+          "confidence": 0.06415094339622643
         }
       ]
     },
@@ -125,96 +137,106 @@
       },
       "results": [
         {
-          "similarity": 0.8378071226538689,
-          "count": 1,
+          "sequence": "how did life begin",
           "str": "knowledge and belief ethics",
+          "similarity": 0.8378071226538689,
+          "count": 30,
           "classification": "philosophy.txt"
         },
         {
-          "similarity": 0.8334424568442541,
-          "count": 1,
+          "sequence": "how did life begin",
           "str": "the growth of modern",
+          "similarity": 0.8334424568442541,
+          "count": 30,
           "classification": "philosophy.txt"
         },
         {
-          "similarity": 0.8321807528005949,
-          "count": 1,
+          "sequence": "life begin ?",
           "str": "in building nlu vs",
+          "similarity": 0.8321807528005949,
+          "count": 20,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8321807528005949,
-          "count": 1,
+          "sequence": "life begin ?",
           "str": "in building nlu vs",
+          "similarity": 0.8321807528005949,
+          "count": 8,
           "classification": "nlp-nlu.txt"
         }
       ],
       "classifications": [
         {
           "classification": "philosophy.txt",
-          "similarity": 0.4833333333333333,
-          "confidence": 0.12083333333333332
+          "similarity": 14.5,
+          "confidence": 0.16477272727272727
         },
         {
           "classification": "nlp-nlu.txt",
-          "similarity": 0.4444444444444444,
-          "confidence": 0.1111111111111111
+          "similarity": 6.222222222222222,
+          "confidence": 0.0707070707070707
         }
       ]
     },
     {
       "test": {
         "str": "Are we alone in the universe?",
-        "cls": "chemistry.txt"
+        "cls": "nlp-nlu.txt"
       },
       "results": [
         {
-          "similarity": 0.8592909666517915,
-          "count": 1,
+          "sequence": "are we alone in",
           "str": "nlu ) whereas in",
+          "similarity": 0.8592909666517915,
+          "count": 14,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8592909666517915,
-          "count": 1,
+          "sequence": "are we alone in",
           "str": "nlu ) whereas in",
+          "similarity": 0.8592909666517915,
+          "count": 65,
           "classification": "nlp-nlu.txt"
         },
         {
+          "sequence": "alone in the universe",
+          "str": "natural science that covers",
           "similarity": 0.8910368531743956,
-          "count": 1,
-          "str": "natural science that covers",
+          "count": 19,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "alone in the universe",
+          "str": "natural science that covers",
           "similarity": 0.8910368531743956,
-          "count": 1,
-          "str": "natural science that covers",
+          "count": 22,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8385299510789324,
-          "count": 1,
+          "sequence": "the universe ?",
           "str": "natural science that covers",
+          "similarity": 0.8385299510789324,
+          "count": 6,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8385299510789324,
-          "count": 1,
+          "sequence": "the universe ?",
           "str": "natural science that covers",
+          "similarity": 0.8385299510789324,
+          "count": 22,
           "classification": "chemistry.txt"
         }
       ],
       "classifications": [
         {
-          "classification": "chemistry.txt",
-          "similarity": 1.111111111111111,
-          "confidence": 0.18518518518518515
+          "classification": "nlp-nlu.txt",
+          "similarity": 24.6875,
+          "confidence": 0.16680743243243243
         },
         {
-          "classification": "nlp-nlu.txt",
-          "similarity": 0.625,
-          "confidence": 0.10416666666666667
+          "classification": "chemistry.txt",
+          "similarity": 20.370370370370367,
+          "confidence": 0.13763763763763762
         }
       ]
     },
@@ -225,40 +247,44 @@
       },
       "results": [
         {
-          "similarity": 0.8947179517644469,
-          "count": 1,
+          "sequence": "what makes us human",
           "str": "the way a human",
+          "similarity": 0.8947179517644469,
+          "count": 13,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8880777287922059,
-          "count": 1,
+          "sequence": "what makes us human",
           "str": "that make up matter",
+          "similarity": 0.8880777287922059,
+          "count": 12,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8539233684456902,
-          "count": 1,
+          "sequence": "us human ?",
           "str": "the elements that make",
+          "similarity": 0.8539233684456902,
+          "count": 5,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8539233684456902,
-          "count": 1,
+          "sequence": "us human ?",
           "str": "the elements that make",
+          "similarity": 0.8539233684456902,
+          "count": 16,
           "classification": "chemistry.txt"
         }
       ],
       "classifications": [
         {
           "classification": "chemistry.txt",
-          "similarity": 0.8899521531100478,
-          "confidence": 0.22248803827751196
+          "similarity": 10.133971291866029,
+          "confidence": 0.220303723736218
         },
         {
           "classification": "chatbots.txt",
-          "similarity": 0.5263157894736842,
-          "confidence": 0.13157894736842105
+          "similarity": 6.842105263157895,
+          "confidence": 0.14874141876430205
         }
       ]
     },
@@ -269,35 +295,39 @@
       },
       "results": [
         {
+          "sequence": "what is consciousness ?",
+          "str": "this is done include",
           "similarity": 0.8582005097872321,
-          "count": 1,
-          "str": "this is done include",
+          "count": 27,
           "classification": "artificial_intelligence.txt"
         },
         {
+          "sequence": "what is consciousness ?",
+          "str": "this is done include",
           "similarity": 0.8582005097872321,
-          "count": 1,
-          "str": "this is done include",
+          "count": 62,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.8512278344025244,
-          "count": 1,
+          "sequence": "consciousness ?",
           "str": "this is done include",
+          "similarity": 0.8512278344025244,
+          "count": 16,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.8512278344025244,
-          "count": 1,
+          "sequence": "consciousness ?",
           "str": "this is done include",
+          "similarity": 0.8512278344025244,
+          "count": 62,
           "classification": "artificial_intelligence.txt"
         }
       ],
       "classifications": [
         {
           "classification": "artificial_intelligence.txt",
-          "similarity": 1.182608695652174,
-          "confidence": 0.2956521739130435
+          "similarity": 50.426086956521736,
+          "confidence": 0.30195261650611815
         }
       ]
     },
@@ -308,40 +338,44 @@
       },
       "results": [
         {
-          "similarity": 0.8375061819154296,
-          "count": 1,
+          "sequence": "why do we dream",
           "str": "but the methods were",
+          "similarity": 0.8375061819154296,
+          "count": 11,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8375061819154296,
-          "count": 1,
+          "sequence": "why do we dream",
           "str": "but the methods were",
+          "similarity": 0.8375061819154296,
+          "count": 27,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8515369197401031,
-          "count": 1,
+          "sequence": "we dream ?",
           "str": "were a part of",
+          "similarity": 0.8515369197401031,
+          "count": 27,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.8395664425351105,
-          "count": 1,
+          "sequence": "we dream ?",
           "str": ". new ideas in",
+          "similarity": 0.8395664425351105,
+          "count": 27,
           "classification": "physics.txt"
         }
       ],
       "classifications": [
         {
           "classification": "physics.txt",
-          "similarity": 0.7142857142857143,
-          "confidence": 0.17857142857142858
+          "similarity": 19.285714285714285,
+          "confidence": 0.20962732919254656
         },
         {
           "classification": "nlp-nlu.txt",
-          "similarity": 0.5,
-          "confidence": 0.125
+          "similarity": 9.5,
+          "confidence": 0.10326086956521739
         }
       ]
     },
@@ -352,35 +386,39 @@
       },
       "results": [
         {
+          "sequence": "are there other universes",
+          "str": "natural science that covers",
           "similarity": 0.879781912627129,
-          "count": 1,
-          "str": "natural science that covers",
+          "count": 23,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "are there other universes",
+          "str": "natural science that covers",
           "similarity": 0.879781912627129,
-          "count": 1,
-          "str": "natural science that covers",
+          "count": 22,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8587477065282894,
-          "count": 1,
+          "sequence": "other universes ?",
           "str": "natural science that covers",
+          "similarity": 0.8587477065282894,
+          "count": 6,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8587477065282894,
-          "count": 1,
+          "sequence": "other universes ?",
           "str": "natural science that covers",
+          "similarity": 0.8587477065282894,
+          "count": 22,
           "classification": "chemistry.txt"
         }
       ],
       "classifications": [
         {
           "classification": "chemistry.txt",
-          "similarity": 1.037037037037037,
-          "confidence": 0.25925925925925924
+          "similarity": 20.185185185185183,
+          "confidence": 0.2765093860984272
         }
       ]
     },
@@ -391,69 +429,77 @@
       },
       "results": [
         {
-          "similarity": 0.8748200562739246,
-          "count": 1,
+          "sequence": "where do we put",
           "str": "sentence to produce the",
+          "similarity": 0.8748200562739246,
+          "count": 29,
           "classification": "nlp-nlu.txt"
         },
         {
+          "sequence": "where do we put",
+          "str": "up matter to the",
           "similarity": 0.8679460414277721,
-          "count": 1,
-          "str": "up matter to the",
+          "count": 8,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "we put all the",
+          "str": "up matter to the",
           "similarity": 0.8794005036079058,
-          "count": 1,
-          "str": "up matter to the",
+          "count": 12,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "we put all the",
+          "str": "up matter to the",
           "similarity": 0.8794005036079058,
-          "count": 1,
-          "str": "up matter to the",
+          "count": 8,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "all the carbon ?",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8845803016897822,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 34,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "all the carbon ?",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8845803016897822,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 36,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8545466733947079,
-          "count": 1,
+          "sequence": "carbon ?",
           "str": "a chatbot or chatterbot",
+          "similarity": 0.8545466733947079,
+          "count": 13,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8545466733947079,
-          "count": 1,
+          "sequence": "carbon ?",
           "str": "a chatbot or chatterbot",
+          "similarity": 0.8545466733947079,
+          "count": 36,
           "classification": "chatbots.txt"
         }
       ],
       "classifications": [
         {
           "classification": "chatbots.txt",
-          "similarity": 0.9565217391304347,
-          "confidence": 0.11956521739130434
-        },
-        {
-          "classification": "chemistry.txt",
-          "similarity": 0.875,
-          "confidence": 0.109375
+          "similarity": 28.913043478260867,
+          "confidence": 0.1642786561264822
         },
         {
           "classification": "nlp-nlu.txt",
-          "similarity": 0.30434782608695654,
-          "confidence": 0.03804347826086957
+          "similarity": 8.82608695652174,
+          "confidence": 0.05014822134387353
+        },
+        {
+          "classification": "chemistry.txt",
+          "similarity": 8.5,
+          "confidence": 0.048295454545454544
         }
       ]
     },
@@ -464,81 +510,91 @@
       },
       "results": [
         {
+          "sequence": "how do we get",
+          "str": "to be \" between",
           "similarity": 0.8553193960511033,
-          "count": 1,
-          "str": "to be \" between",
+          "count": 8,
           "classification": "economics.txt"
         },
         {
+          "sequence": "how do we get",
+          "str": "to be \" between",
           "similarity": 0.8553193960511033,
-          "count": 1,
-          "str": "to be \" between",
+          "count": 6,
           "classification": "economics.txt"
         },
         {
+          "sequence": "we get more energy",
+          "str": "to be \" between",
           "similarity": 0.8483324084470557,
-          "count": 1,
-          "str": "to be \" between",
+          "count": 11,
           "classification": "economics.txt"
         },
         {
+          "sequence": "we get more energy",
+          "str": "to be \" between",
           "similarity": 0.8483324084470557,
-          "count": 1,
-          "str": "to be \" between",
+          "count": 6,
           "classification": "economics.txt"
         },
         {
-          "similarity": 0.8677954297854789,
-          "count": 1,
+          "sequence": "more energy from the",
           "str": "it employment of the",
-          "classification": "economics.txt"
-        },
-        {
           "similarity": 0.8677954297854789,
-          "count": 1,
-          "str": "it employment of the",
+          "count": 11,
           "classification": "economics.txt"
         },
         {
-          "similarity": 0.8770948523916592,
-          "count": 1,
+          "sequence": "more energy from the",
+          "str": "it employment of the",
+          "similarity": 0.8677954297854789,
+          "count": 11,
+          "classification": "economics.txt"
+        },
+        {
+          "sequence": "from the sun ?",
           "str": "the means for secure",
+          "similarity": 0.8770948523916592,
+          "count": 5,
           "classification": "computer_science.txt"
         },
         {
-          "similarity": 0.8770948523916592,
-          "count": 1,
+          "sequence": "from the sun ?",
           "str": "the means for secure",
+          "similarity": 0.8770948523916592,
+          "count": 28,
           "classification": "computer_science.txt"
         },
         {
-          "similarity": 0.8967550991299388,
-          "count": 1,
+          "sequence": "sun ?",
           "str": ") .",
+          "similarity": 0.8967550991299388,
+          "count": 29,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8967550991299388,
-          "count": 1,
+          "sequence": "sun ?",
           "str": ") .",
+          "similarity": 0.8967550991299388,
+          "count": 17,
           "classification": "chemistry.txt"
         }
       ],
       "classifications": [
         {
           "classification": "economics.txt",
-          "similarity": 1.688888888888889,
-          "confidence": 0.16888888888888892
-        },
-        {
-          "classification": "computer_science.txt",
-          "similarity": 0.4,
-          "confidence": 0.04
+          "similarity": 15.055555555555557,
+          "confidence": 0.11405723905723907
         },
         {
           "classification": "chemistry.txt",
-          "similarity": 0.4,
-          "confidence": 0.04
+          "similarity": 9.200000000000001,
+          "confidence": 0.0696969696969697
+        },
+        {
+          "classification": "computer_science.txt",
+          "similarity": 6.6000000000000005,
+          "confidence": 0.05
         }
       ]
     },
@@ -549,74 +605,82 @@
       },
       "results": [
         {
-          "similarity": 0.9003164792487044,
-          "count": 1,
+          "sequence": "what s so weird",
           "str": "what ' s viewed",
+          "similarity": 0.9003164792487044,
+          "count": 10,
           "classification": "economics.txt"
         },
         {
-          "similarity": 0.8761020201162438,
-          "count": 1,
+          "sequence": "what s so weird",
           "str": ") is a software",
+          "similarity": 0.8761020201162438,
+          "count": 8,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8343547603070697,
-          "count": 1,
+          "sequence": "so weird about prime",
           "str": "studies matter , its",
+          "similarity": 0.8343547603070697,
+          "count": 14,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.8343547603070697,
-          "count": 1,
+          "sequence": "so weird about prime",
           "str": "studies matter , its",
+          "similarity": 0.8343547603070697,
+          "count": 31,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.843611956635031,
-          "count": 1,
+          "sequence": "about prime numbers ?",
           "str": ". computer scientists and",
+          "similarity": 0.843611956635031,
+          "count": 20,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.843611956635031,
-          "count": 1,
+          "sequence": "about prime numbers ?",
           "str": ". computer scientists and",
+          "similarity": 0.843611956635031,
+          "count": 13,
           "classification": "artificial_intelligence.txt"
         },
         {
-          "similarity": 0.8592737973843215,
-          "count": 1,
+          "sequence": "numbers ?",
           "str": "firms , buyers ,",
+          "similarity": 0.8592737973843215,
+          "count": 30,
           "classification": "economics.txt"
         },
         {
-          "similarity": 0.8592737973843215,
-          "count": 1,
+          "sequence": "numbers ?",
           "str": "firms , buyers ,",
+          "similarity": 0.8592737973843215,
+          "count": 11,
           "classification": "economics.txt"
         }
       ],
       "classifications": [
         {
           "classification": "economics.txt",
-          "similarity": 1.35,
-          "confidence": 0.16875
+          "similarity": 21.375,
+          "confidence": 0.15602189781021897
         },
         {
           "classification": "physics.txt",
-          "similarity": 0.5,
-          "confidence": 0.0625
+          "similarity": 11.25,
+          "confidence": 0.08211678832116788
         },
         {
           "classification": "artificial_intelligence.txt",
-          "similarity": 0.48,
-          "confidence": 0.06
+          "similarity": 7.92,
+          "confidence": 0.057810218978102186
         },
         {
           "classification": "nlp-nlu.txt",
-          "similarity": 0.3333333333333333,
-          "confidence": 0.041666666666666664
+          "similarity": 2.6666666666666665,
+          "confidence": 0.019464720194647202
         }
       ]
     },
@@ -627,64 +691,72 @@
       },
       "results": [
         {
-          "similarity": 0.8662551198095493,
-          "count": 1,
+          "sequence": "when can i have",
           "str": "and advances in mechanics",
+          "similarity": 0.8662551198095493,
+          "count": 8,
           "classification": "physics.txt"
         },
         {
-          "similarity": 0.858576904391108,
-          "count": 1,
+          "sequence": "when can i have",
           "str": "with a live human",
+          "similarity": 0.858576904391108,
+          "count": 10,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "i have a robot",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8916106879543538,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 27,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "i have a robot",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8916106879543538,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 36,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "a robot butler ?",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8714134946914595,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 20,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "a robot butler ?",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8714134946914595,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 36,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8426547992193376,
-          "count": 1,
+          "sequence": "butler ?",
           "str": ". the term \"",
+          "similarity": 0.8426547992193376,
+          "count": 29,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8366578576509032,
-          "count": 1,
+          "sequence": "butler ?",
           "str": "text - to -",
+          "similarity": 0.8366578576509032,
+          "count": 31,
           "classification": "chatbots.txt"
         }
       ],
       "classifications": [
         {
           "classification": "chatbots.txt",
-          "similarity": 2.287530031775556,
-          "confidence": 0.2859412539719445
+          "similarity": 62.07029373014028,
+          "confidence": 0.3150776331479202
         },
         {
           "classification": "physics.txt",
-          "similarity": 0.28,
-          "confidence": 0.035
+          "similarity": 2.24,
+          "confidence": 0.01137055837563452
         }
       ]
     },
@@ -695,81 +767,91 @@
       },
       "results": [
         {
-          "similarity": 0.8942988486542494,
-          "count": 1,
+          "sequence": "what s at the",
           "str": ". it is a",
+          "similarity": 0.8942988486542494,
+          "count": 66,
           "classification": "chemistry.txt"
         },
         {
-          "similarity": 0.8942988486542494,
-          "count": 1,
+          "sequence": "what s at the",
           "str": ". it is a",
+          "similarity": 0.8942988486542494,
+          "count": 17,
           "classification": "chemistry.txt"
         },
         {
+          "sequence": "at the bottom of",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8795463876721566,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 34,
           "classification": "chatbots.txt"
         },
         {
+          "sequence": "at the bottom of",
+          "str": "a chatbot or chatterbot",
           "similarity": 0.8795463876721566,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 36,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8211392444053898,
-          "count": 1,
+          "sequence": "bottom of a black",
           "str": "term \" chatterbot \"",
-          "classification": "chatbots.txt"
-        },
-        {
           "similarity": 0.8211392444053898,
-          "count": 1,
+          "count": 34,
+          "classification": "chatbots.txt"
+        },
+        {
+          "sequence": "bottom of a black",
           "str": "term \" chatterbot \"",
+          "similarity": 0.8211392444053898,
+          "count": 36,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8625481069204736,
-          "count": 1,
+          "sequence": "a black hole ?",
           "str": "a chatbot or chatterbot",
-          "classification": "chatbots.txt"
-        },
-        {
           "similarity": 0.8625481069204736,
-          "count": 1,
-          "str": "a chatbot or chatterbot",
+          "count": 71,
           "classification": "chatbots.txt"
         },
         {
-          "similarity": 0.8615114153566127,
-          "count": 1,
+          "sequence": "a black hole ?",
+          "str": "a chatbot or chatterbot",
+          "similarity": 0.8625481069204736,
+          "count": 36,
+          "classification": "chatbots.txt"
+        },
+        {
+          "sequence": "hole ?",
           "str": "to be non -",
+          "similarity": 0.8615114153566127,
+          "count": 6,
           "classification": "nlp-nlu.txt"
         },
         {
-          "similarity": 0.8615114153566127,
-          "count": 1,
+          "sequence": "hole ?",
           "str": "to be non -",
+          "similarity": 0.8615114153566127,
+          "count": 64,
           "classification": "nlp-nlu.txt"
         }
       ],
       "classifications": [
         {
           "classification": "chatbots.txt",
-          "similarity": 1.5331807780320368,
-          "confidence": 0.15331807780320367
+          "similarity": 63.31350114416475,
+          "confidence": 0.15828375286041188
         },
         {
           "classification": "chemistry.txt",
-          "similarity": 0.6153846153846154,
-          "confidence": 0.06153846153846154
+          "similarity": 25.53846153846154,
+          "confidence": 0.06384615384615384
         },
         {
           "classification": "nlp-nlu.txt",
-          "similarity": 0.5454545454545454,
-          "confidence": 0.05454545454545454
+          "similarity": 19.09090909090909,
+          "confidence": 0.04772727272727272
         }
       ]
     }
