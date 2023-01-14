@@ -26,7 +26,7 @@ describe('Classifier', () => {
 
     let result = classifier.classify('Do you understand the language I speak?');
     expect(result.classification).toBe('EN');
-    expect(result.confidence).toBe(0.4454365079365079);
+    expect(result.confidence).toBe(0.44543650793650796);
 
     result = classifier.classify('Begrijp je de taal die ik spreek?');
     expect(result.classification).toBe('NL');

@@ -712,7 +712,7 @@ function PmClassifier(config) {
 
   this.put = (str, cls) => {
     const r = [];
-    const sequences = PmSymbolUtil.sequentialize(str);
+    const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
     sequences.forEach((sequence) => {
       const symbol = that.map.put(sequence, { cls });
       that.cache.process(that.getKey(symbol), {});
@@ -721,30 +721,65 @@ function PmClassifier(config) {
     return r;
   };
 
-  this.classify = (str) => {
+  this.getOrAddClassification = (classifications, classification) => {
+    const clss = classifications.filter((cl) => cl.classification === classification);
+    let cl = null;
+    if (clss.length === 0) {
+      cl = {
+        classification,
+        similarity: 0,
+      };
+      classifications.push(cl);
+    } else {
+      [cl] = clss;
+    }
+    return cl;
+  };
+
+  this.classifySequences = (sequences, classifications) => {
     const r = [];
-    const sequences = PmSymbolUtil.sequentialize(str);
+    let totalCount = 0;
     sequences.forEach((sequence) => {
       const symbol = that.map.createSymbol(sequence);
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
-      let classification = '';
-      let confidence = 0;
-      if (results.length > 0) {
-        const id = PmMathUtil.stringify(results[0].element.key.symNumArray);
+      results.forEach((result) => {
+        const id = PmMathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
-        classification = resultSymbol.meta.cls;
-        confidence = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
-      }
-      r.push({ results, classification, confidence });
+        r.push({
+          similarity: result.similarity,
+          count: result.element.count,
+          symbol: resultSymbol,
+        });
+        const sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
+        const classification = resultSymbol.meta.cls;
+        const cl = that.getOrAddClassification(classifications, classification);
+        cl.similarity += (sim * result.element.count);
+        totalCount += result.element.count;
+      });
     });
-    return r;
+    return { results: r, totalCount };
+  };
+
+  this.classify = (str) => {
+    let classifications = [];
+    const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
+    const { results, totalCount } = that.classifySequences(sequences, classifications);
+    classifications = classifications.sort((a, b) => b.similarity - a.similarity);
+    let classification = '';
+    let confidence = '';
+    if (classifications.length > 0) {
+      classification = classifications[0].classification;
+      confidence = classifications[0].similarity / totalCount;
+    }
+    return { results, classification, confidence };
   };
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
 function PmClassifierConfig(characters) {
   this.characters = characters || PmSymbolConstants.CLASSIFIER_CHARACTERS;
+  this.sequenceMaxLength = 4;
   this.comparator = new PmComparator();
 
   this.cacheConfig = new PmCacheConfig();
@@ -1012,36 +1047,26 @@ function _PmSymbolUtil() {
   this.sequentialize = (str, maxLength) => {
     const max = maxLength || 8;
     const tokens = this.tokenize(str);
-    let seq = [];
-    let con = [];
     const ts = [];
-    for (let i = 0; i < tokens.length; i += 1) {
-      if (seq.length === max) {
+    for (let i = 0; i < tokens.length; i += (max / 2)) {
+      const seq = [];
+      for (let j = i; j < tokens.length; j += 1) {
+        seq.push(tokens[j]);
+        if (seq.length === max) {
+          break;
+        }
+      }
+      if (seq.length > 1) {
         ts.push(seq);
-        seq = [];
-      }
-      if (con.length === max) {
-        ts.push(con);
-        con = [];
-      }
-      seq.push(tokens[i]);
-      if (i > max / 2) {
-        con.push(tokens[i]);
       }
     }
-    if (seq.length > 1) {
-      ts.push(seq);
-    }
-    if (con.length >= max / 2) {
-      ts.push(con);
-    }
-    return ts.map((tok) => {
+    return ts.map((seq) => {
       let s = '';
-      for (let i = 0; i < tok.length; i += 1) {
+      for (let i = 0; i < seq.length; i += 1) {
         if (s.length > 0) {
           s += ' ';
         }
-        s += tok[i];
+        s += seq[i];
       }
       return s;
     });

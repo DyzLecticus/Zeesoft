@@ -37,37 +37,45 @@ function Classifier(config) {
       [cl] = clss;
     }
     return cl;
-  }
+  };
 
   this.classifySequences = (sequences, classifications) => {
+    const r = [];
+    let totalCount = 0;
     sequences.forEach((sequence) => {
       const symbol = that.map.createSymbol(sequence);
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
-      if (results.length > 0) {
-        const id = MathUtil.stringify(results[0].element.key.symNumArray);
+      results.forEach((result) => {
+        const id = MathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
+        r.push({
+          similarity: result.similarity,
+          count: result.element.count,
+          symbol: resultSymbol,
+        });
+        const sim = that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
         const classification = resultSymbol.meta.cls;
         const cl = that.getOrAddClassification(classifications, classification);
-        cl.similarity
-          += that.config.comparator.calculateValueSimilarity(sequence, resultSymbol.str);
-      }
+        cl.similarity += (sim * result.element.count);
+        totalCount += result.element.count;
+      });
     });
+    return { results: r, totalCount };
   };
 
   this.classify = (str) => {
     let classifications = [];
     const sequences = SymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
-    that.classifySequences(sequences, classifications);
+    const { results, totalCount } = that.classifySequences(sequences, classifications);
     classifications = classifications.sort((a, b) => b.similarity - a.similarity);
-    console.log(classifications)
     let classification = '';
     let confidence = '';
     if (classifications.length > 0) {
       classification = classifications[0].classification;
-      confidence = classifications[0].similarity / sequences.length;
+      confidence = classifications[0].similarity / totalCount;
     }
-    return { classification, confidence };
+    return { results, classification, confidence };
   };
 }
 module.exports = Classifier;
