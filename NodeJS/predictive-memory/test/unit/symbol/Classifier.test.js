@@ -15,6 +15,10 @@ describe('Classifier', () => {
     expect(classifier.classify('Pizza!').classifications.length).toBe(0);
 
     classifier.put('This is some english language text.', 'EN');
+
+    expect(classifier.recordedInput.length).toBe(0);
+    classifier.setRecordInput(true);
+
     classifier.put('What language do you speak?', 'EN');
     classifier.put('Do you speak english?', 'EN');
     classifier.put('I can understand english and dutch.', 'EN');
@@ -23,6 +27,10 @@ describe('Classifier', () => {
     classifier.put('Welke taal spreek jij?', 'NL');
     classifier.put('Spreek je nederlands?', 'NL');
     classifier.put('Ik begrijp nederlands en engels.', 'NL');
+
+    expect(classifier.recordedInput.length).toBe(7);
+    expect(classifier.recordedInput[6].str).toBe('Ik begrijp nederlands en engels.');
+    expect(classifier.recordedInput[6].cls).toBe('NL');
 
     let result = classifier.classify('Do you understand the language I speak?');
     expect(result.classifications[0].classification).toBe('EN');

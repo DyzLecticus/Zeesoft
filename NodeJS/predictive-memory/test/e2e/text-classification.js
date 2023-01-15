@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { ClassifierConfig, Classifier, SymbolUtil } = require('../../index');
+const {
+  SymbolUtil, ClassifierConfig, Classifier, ClassifierAnalyzer,
+} = require('../../index');
 
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'text-classification.json');
 
@@ -35,6 +37,7 @@ files.forEach((file) => {
 
 const config = new ClassifierConfig();
 const classifier = new Classifier(config);
+classifier.setRecordInput(true);
 
 Object.keys(data).forEach((key) => {
   const sentences = SymbolUtil.parseSentences(data[key]);
@@ -43,26 +46,16 @@ Object.keys(data).forEach((key) => {
   });
 });
 
-const start = Date.now();
-const testResults = [];
-testSet.forEach((test) => {
-  const result = classifier.classify(test.str);
-  const cls = result.classifications[0].classification;
-  const correct = (cls === test.cls);
-  if (!correct) {
-    // eslint-disable-next-line no-console
-    console.error(`${test.str}; '${cls}'!='${test.cls}'`);
-  }
-  testResults.push({ test, ...result });
-});
-const analysis = {
+const analyzer = new ClassifierAnalyzer();
+const analysis = analyzer.analyze(classifier, testSet);
+const selfAnalysis = analyzer.analyze(classifier);
+const statistics = analyzer.mergeStatistics([analysis.statistics, selfAnalysis.statistics]);
+const results = {
+  statistics,
   cacheSize: classifier.cache.size(),
-  msPerObject: (Date.now() - start) / testSet.length,
 };
 // eslint-disable-next-line no-console
-console.log(analysis);
-const results = {
-  ...analysis,
-  testResults,
-};
+console.log(results);
+results.analysis = analysis;
+results.selfAnalysis = selfAnalysis;
 fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2));

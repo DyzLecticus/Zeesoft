@@ -13,6 +13,13 @@ function Classifier(config) {
   this.map = new SymbolMap(this.config.characters);
   this.cache = new Cache(this.config.cacheConfig);
 
+  this.recordInput = false;
+  this.recordedInput = [];
+
+  this.setRecordInput = (record) => {
+    this.recordInput = record;
+  };
+
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
   this.getOrAddClass = (cls) => {
@@ -25,6 +32,9 @@ function Classifier(config) {
   };
 
   this.put = (str, cls) => {
+    if (that.recordInput) {
+      that.recordedInput.push({ str, cls });
+    }
     const r = [];
     const clsIndex = that.getOrAddClass(cls);
     const sequences = SymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
