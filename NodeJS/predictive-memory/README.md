@@ -26,6 +26,8 @@ npm install predictive-memory
 ## Usage 
 
 This module can be used both server and client side.
+Client side implementation can be done by loading predictive-memory.js as provided the root of the module.
+**Please note** that all class names in the client side implementation have been prefixed with 'Pm'.
 
 ### Prediction
 
@@ -59,10 +61,9 @@ const predictionsForNext24Steps = predictor.generatePredictions(24);
 console.log(predictionsForNext24Steps);
 ```
 
-### Client side example
+#### Client side example
 
-See predictive-memory.js in the root of the module and test/e2e/test.html.
-**Please note** that all class names in this implementation have been prefixed with 'Pm'.
+See the example implementation in test/e2e/test.html.
 
 ```html
 <html>
