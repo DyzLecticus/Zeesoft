@@ -1,10 +1,10 @@
 # predictive memory
 
-_predictive memory_ generates predictions using a hierarchical sequence cache.
+_predictive memory_ generates predictions and classifications using a hierarchical sequence/object cache.
 
 ## Why
 
-Prediction can be implemented in low level neural networks (i.e. Numenta HTM). The goal of this module is to provide similar predictions, but do it faster while using less resources.
+Prediction and classification can be implemented in low level neural networks (i.e. Numenta HTM). The goal of this module is to provide similar features, but do it faster while using less resources.
 
 The long term goal is to expand and use this module in order to research cognition and perhaps consciousness.
 
@@ -12,6 +12,8 @@ The long term goal is to expand and use this module in order to research cogniti
 
 This module provides a **Predictor** class that can _process_ historical objects. It uses a **Comparator** to compare individual objects and sequences of those objects to other previously recorded sequences. 
 The cache that is used to record sequences uses an internal hierarchy to quickly find similar key/value pairs in large amounts of historical data. In order to get balanced & weighted predictions, the second (or more) most similar cache result is used to weigh cache results whenever possible.
+
+This module also provides support for text classification by providing a **Classifier** class. It uses the same type of hierarchical cache as the **Predictor**.
 
 ## Installation
 
@@ -25,7 +27,9 @@ npm install predictive-memory
 
 This module can be used both server and client side.
 
-### Server side
+### Prediction
+
+#### Server side example
 
 See the example implementation in test/e2e/rec-center-hourly.js.
 
@@ -55,7 +59,7 @@ const predictionsForNext24Steps = predictor.generatePredictions(24);
 console.log(predictionsForNext24Steps);
 ```
 
-### Client side
+### Client side example
 
 See predictive-memory.js in the root of the module and test/e2e/test.html.
 **Please note** that all class names in this implementation have been prefixed with 'Pm'.
@@ -87,4 +91,29 @@ See predictive-memory.js in the root of the module and test/e2e/test.html.
         <div id="analysis" />
     </body>
 </html>
+```
+
+### Classification
+
+#### Server side example
+
+See the example implementation in test/e2e/text-classification.js.
+
+```js
+const { ClasifierConfig, Classifier, ClassifierAnalyzer } = require('predictive-memory');
+
+const config = new ClassifierConfig();
+const classifier = new Classifier(config);
+// Record input for analyzer
+classifier.setRecordInput(true);
+
+classifier.put('String to associate1','Class to associate1');
+classifier.put('String to associate2','Class to associate2');
+
+const result classifier.classify('String to classify');
+console.log(result.classifications);
+
+const analyzer = new ClassifierAnalyzer();
+const analysis = analyzer.analyze(classifier);
+console.log(analysis);
 ```

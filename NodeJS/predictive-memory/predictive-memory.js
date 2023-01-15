@@ -96,7 +96,7 @@ function PmCache(config) {
   this.query = (key, options) => {
     const res = new PmCacheResult();
     const opts = options || this.config.getQueryOptions();
-    this.lookup(res, key, 0, 0, opts, true);
+    this.lookup(res, key, 0, 0, opts);
     return res;
   };
 
