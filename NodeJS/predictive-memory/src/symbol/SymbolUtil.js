@@ -71,6 +71,34 @@ function SymbolUtil() {
 
   this.tokenize = (str) => this.tokenizeFormat(str).split(' ');
 
+  this.stringify = (tokens) => {
+    let s = '';
+    tokens.forEach((token) => {
+      if (s.length > 0) {
+        s += ' ';
+      }
+      s += token;
+    });
+    return s;
+  };
+
+  this.parseSentences = (str) => {
+    const tokens = this.tokenize(str);
+    const ts = [];
+    let seq = [];
+    tokens.forEach((token) => {
+      seq.push(token);
+      if (SymbolConstants.ENDERS.indexOf(token) >= 0) {
+        ts.push(seq);
+        seq = [];
+      }
+    });
+    if (seq.length > 0) {
+      ts.push(seq);
+    }
+    return ts.map(this.stringify);
+  };
+
   this.sequentialize = (str, maxLength) => {
     const max = maxLength || 8;
     const tokens = this.tokenize(str);
@@ -87,16 +115,7 @@ function SymbolUtil() {
         ts.push(seq);
       }
     }
-    return ts.map((seq) => {
-      let s = '';
-      for (let i = 0; i < seq.length; i += 1) {
-        if (s.length > 0) {
-          s += ' ';
-        }
-        s += seq[i];
-      }
-      return s;
-    });
+    return ts.map(this.stringify);
   };
 
   this.getCountTransitionReverse = (char, str, characters) => {

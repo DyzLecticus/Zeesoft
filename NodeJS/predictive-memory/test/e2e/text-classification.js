@@ -1,24 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 
-const { ClassifierConfig, Classifier } = require('../../index');
+const { ClassifierConfig, Classifier, SymbolUtil } = require('../../index');
 
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'text-classification.json');
 
 const testSet = [
   { str: 'Can we create artificial general intelligence?', cls: 'artificial_intelligence.txt' },
-  { str: 'What is the universe made of?', cls: 'artificial_intelligence.txt' },
-  { str: 'How did life begin?', cls: 'philosophy.txt' },
-  { str: 'Are we alone in the universe?', cls: 'nlp-nlu.txt' },
-  { str: 'What makes us human?', cls: 'chemistry.txt' },
+  { str: 'What is the universe made of?', cls: 'chemistry.txt' },
+  { str: 'How did life begin?', cls: 'physics.txt' },
+  { str: 'Are we alone in the universe?', cls: 'physics.txt' },
+  { str: 'What makes us human?', cls: 'artificial_intelligence.txt' },
   { str: 'What is consciousness?', cls: 'artificial_intelligence.txt' },
-  { str: 'Why do we dream?', cls: 'physics.txt' },
-  { str: 'Are there other universes?', cls: 'chemistry.txt' },
+  { str: 'Why do we dream?', cls: 'chemistry.txt' },
+  { str: 'Are there other universes?', cls: 'physics.txt' },
   { str: 'Where do we put all the carbon?', cls: 'chatbots.txt' },
   { str: 'How do we get more energy from the sun?', cls: 'economics.txt' },
   { str: 'What’s so weird about prime numbers?', cls: 'economics.txt' },
   { str: 'When can I have a robot butler?', cls: 'chatbots.txt' },
-  { str: 'What’s at the bottom of a black hole?', cls: 'chatbots.txt' },
+  { str: 'What’s at the bottom of a black hole?', cls: 'economics.txt' },
 ];
 
 const data = {};
@@ -37,7 +37,10 @@ const config = new ClassifierConfig();
 const classifier = new Classifier(config);
 
 Object.keys(data).forEach((key) => {
-  classifier.put(data[key], key);
+  const sentences = SymbolUtil.parseSentences(data[key]);
+  sentences.forEach((sentence) => {
+    classifier.put(sentence, key);
+  });
 });
 
 const start = Date.now();

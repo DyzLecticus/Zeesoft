@@ -90,6 +90,8 @@ function Packager(srcDir, prefix, outputTo) {
     r = r.replaceAll(`function _${funcName}`, `function _${that.prefix}${funcName}`);
     r = r.replaceAll(`new _${funcName}`, `new _${that.prefix}${funcName}`);
     r = r.replaceAll(` ${funcName}.`, ` ${that.prefix}${funcName}.`);
+    r = r.replaceAll(`(${funcName}.`, `(${that.prefix}${funcName}.`);
+    r = r.replaceAll(`[${funcName}.`, `[${that.prefix}${funcName}.`);
     return r;
   };
 

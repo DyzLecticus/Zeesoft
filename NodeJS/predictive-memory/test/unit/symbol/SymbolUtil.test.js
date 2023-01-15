@@ -25,6 +25,17 @@ describe('SymbolUtil', () => {
     expect(tokens[4]).toBe('?');
   });
 
+  test('Parses sentences correctly', () => {
+    let sentences = SymbolUtil.parseSentences('Question?');
+    expect(sentences.length).toBe(1);
+    expect(sentences[0]).toBe('question ?');
+    sentences = SymbolUtil.parseSentences('Sentence number one. Sentence number two! Sentence number three');
+    expect(sentences.length).toBe(3);
+    expect(sentences[0]).toBe('sentence number one .');
+    expect(sentences[1]).toBe('sentence number two !');
+    expect(sentences[2]).toBe('sentence number three');
+  });
+
   test('Sequentializes strings correctly', () => {
     let sequences = SymbolUtil.sequentialize('This thing consist of something,something else (with an example), and another thing.');
     expect(sequences.length).toBe(5);
