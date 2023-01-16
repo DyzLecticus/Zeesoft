@@ -1,6 +1,6 @@
 {
   "name": "predictive-memory",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Generates predictions using a hierarchical sequence cache",
   "main": "index.js",
   "scripts": {
