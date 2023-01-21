@@ -1,20 +1,20 @@
 {
   "statistics": {
-    "accuracy": 1,
-    "confidence": 0.37411953669725684,
-    "confidenceStdDev": 0.1385425295522294,
+    "accuracy": 0.6923076923076923,
+    "confidence": 0.3146560953163113,
+    "confidenceStdDev": 0.1395841831111735,
     "msPerString": 4.142307692307693
   },
   "cacheSize": {
-    "1": 1268,
-    "0.8": 129,
-    "0.85": 793
+    "1": 1265,
+    "0.8": 168,
+    "0.85": 905
   },
   "analysis": {
     "statistics": {
-      "accuracy": 1,
-      "confidence": 0.21876680656963315,
-      "confidenceStdDev": 0.15006507407116826,
+      "accuracy": 0.38461538461538464,
+      "confidence": 0.2023318475782743,
+      "confidenceStdDev": 0.12459126111492856,
       "msPerString": 2.3846153846153846
     },
     "testResults": [
@@ -26,8 +26,8 @@
         "classifications": [
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 112.9091960670908,
-            "confidence": 0.6005808301441
+            "similarity": 74.07056101792944,
+            "confidence": 0.5527653807308167
           }
         ]
       },
@@ -39,13 +39,13 @@
         "classifications": [
           {
             "classification": "chemistry.txt",
-            "similarity": 26.666666666666668,
-            "confidence": 0.299625468164794
+            "similarity": 27.797101449275363,
+            "confidence": 0.2988935639707028
           },
           {
-            "classification": "physics.txt",
-            "similarity": 17.18181818181818,
-            "confidence": 0.19305413687436157
+            "classification": "chatbots.txt",
+            "similarity": 5.833333333333334,
+            "confidence": 0.06272401433691757
           }
         ]
       },
@@ -56,14 +56,14 @@
         },
         "classifications": [
           {
-            "classification": "physics.txt",
-            "similarity": 5.333333333333333,
-            "confidence": 0.14035087719298245
+            "classification": "artificial_intelligence.txt",
+            "similarity": 11.333333333333332,
+            "confidence": 0.2635658914728682
           },
           {
-            "classification": "philosophy.txt",
-            "similarity": 4.782608695652174,
-            "confidence": 0.12585812356979406
+            "classification": "chemistry.txt",
+            "similarity": 2,
+            "confidence": 0.046511627906976744
           }
         ]
       },
@@ -74,14 +74,19 @@
         },
         "classifications": [
           {
-            "classification": "physics.txt",
-            "similarity": 12.311688311688311,
-            "confidence": 0.20519480519480518
+            "classification": "philosophy.txt",
+            "similarity": 10.909090909090908,
+            "confidence": 0.11605415860735009
           },
           {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 7.1466666666666665,
-            "confidence": 0.11911111111111111
+            "classification": "chatbots.txt",
+            "similarity": 7.291666666666667,
+            "confidence": 0.07757092198581561
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 5.727272727272727,
+            "confidence": 0.06092843326885879
           }
         ]
       },
@@ -92,19 +97,24 @@
         },
         "classifications": [
           {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 21.815789473684212,
-            "confidence": 0.21599791558103182
-          },
-          {
-            "classification": "computer_science.txt",
-            "similarity": 11.4,
-            "confidence": 0.11287128712871287
-          },
-          {
             "classification": "chatbots.txt",
-            "similarity": 6.842105263157895,
-            "confidence": 0.06774361646690985
+            "similarity": 5.789473684210526,
+            "confidence": 0.10338345864661654
+          },
+          {
+            "classification": "economics.txt",
+            "similarity": 4.8,
+            "confidence": 0.08571428571428572
+          },
+          {
+            "classification": "nlp-nlu.txt",
+            "similarity": 4,
+            "confidence": 0.07142857142857142
+          },
+          {
+            "classification": "artificial_intelligence.txt",
+            "similarity": 1.894736842105263,
+            "confidence": 0.03383458646616541
           }
         ]
       },
@@ -115,14 +125,14 @@
         },
         "classifications": [
           {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 38.666666666666664,
-            "confidence": 0.15846994535519124
+            "classification": "economics.txt",
+            "similarity": 21.06086956521739,
+            "confidence": 0.18000743218134524
           },
           {
-            "classification": "economics.txt",
-            "similarity": 21.333333333333332,
-            "confidence": 0.08743169398907104
+            "classification": "artificial_intelligence.txt",
+            "similarity": 3.8000000000000003,
+            "confidence": 0.03247863247863248
           }
         ]
       },
@@ -133,19 +143,14 @@
         },
         "classifications": [
           {
-            "classification": "chemistry.txt",
-            "similarity": 9.090909090909092,
-            "confidence": 0.08496176720475787
-          },
-          {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 8.923076923076923,
-            "confidence": 0.08339324227174695
+            "classification": "computer_science.txt",
+            "similarity": 13.428571428571427,
+            "confidence": 0.16785714285714284
           },
           {
             "classification": "chatbots.txt",
-            "similarity": 4,
-            "confidence": 0.037383177570093455
+            "similarity": 4.714285714285714,
+            "confidence": 0.05892857142857143
           }
         ]
       },
@@ -156,9 +161,14 @@
         },
         "classifications": [
           {
-            "classification": "physics.txt",
-            "similarity": 13.207272727272727,
-            "confidence": 0.4127272727272727
+            "classification": "chatbots.txt",
+            "similarity": 11.160243407707911,
+            "confidence": 0.19579374399487565
+          },
+          {
+            "classification": "economics.txt",
+            "similarity": 6.352941176470589,
+            "confidence": 0.11145510835913314
           }
         ]
       },
@@ -170,13 +180,18 @@
         "classifications": [
           {
             "classification": "chatbots.txt",
-            "similarity": 26.956521739130434,
-            "confidence": 0.14811275680840896
+            "similarity": 28.565217391304348,
+            "confidence": 0.17104920593595418
+          },
+          {
+            "classification": "chemistry.txt",
+            "similarity": 7.826086956521738,
+            "confidence": 0.046862796146836756
           },
           {
             "classification": "nlp-nlu.txt",
-            "similarity": 22,
-            "confidence": 0.12087912087912088
+            "similarity": 5,
+            "confidence": 0.029940119760479042
           }
         ]
       },
@@ -187,24 +202,34 @@
         },
         "classifications": [
           {
+            "classification": "physics.txt",
+            "similarity": 14.225000000000001,
+            "confidence": 0.06939024390243903
+          },
+          {
             "classification": "economics.txt",
-            "similarity": 21.905982905982906,
-            "confidence": 0.10284499016893384
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 16.466666666666665,
-            "confidence": 0.07730829420970266
-          },
-          {
-            "classification": "chatbots.txt",
-            "similarity": 8.346153846153845,
-            "confidence": 0.03918382087396172
+            "similarity": 8.76923076923077,
+            "confidence": 0.04277673545966229
           },
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 6.947368421052631,
-            "confidence": 0.032616753150481834
+            "similarity": 8.461722488038276,
+            "confidence": 0.04127669506360135
+          },
+          {
+            "classification": "philosophy.txt",
+            "similarity": 5.066666666666666,
+            "confidence": 0.024715447154471545
+          },
+          {
+            "classification": "nlp-nlu.txt",
+            "similarity": 4,
+            "confidence": 0.01951219512195122
+          },
+          {
+            "classification": "chemistry.txt",
+            "similarity": 3.4000000000000004,
+            "confidence": 0.016585365853658537
           }
         ]
       },
@@ -216,23 +241,23 @@
         "classifications": [
           {
             "classification": "economics.txt",
-            "similarity": 15,
-            "confidence": 0.10067114093959731
+            "similarity": 14.4,
+            "confidence": 0.11076923076923077
           },
           {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 11.39807033924681,
-            "confidence": 0.07649711637078396
+            "classification": "nlp-nlu.txt",
+            "similarity": 11.26086956521739,
+            "confidence": 0.08662207357859532
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 4,
+            "confidence": 0.03076923076923077
           },
           {
             "classification": "chatbots.txt",
-            "similarity": 5.333333333333333,
-            "confidence": 0.035794183445190156
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 4.791666666666667,
-            "confidence": 0.03215883668903803
+            "similarity": 2.2222222222222223,
+            "confidence": 0.017094017094017096
           }
         ]
       },
@@ -244,13 +269,18 @@
         "classifications": [
           {
             "classification": "chatbots.txt",
-            "similarity": 71.6798418972332,
-            "confidence": 0.28220410195761103
+            "similarity": 41.537549407114625,
+            "confidence": 0.2472473178994918
           },
           {
             "classification": "chemistry.txt",
-            "similarity": 3.5,
-            "confidence": 0.013779527559055118
+            "similarity": 6.470588235294118,
+            "confidence": 0.03851540616246499
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 4.2,
+            "confidence": 0.025
           }
         ]
       },
@@ -261,34 +291,14 @@
         },
         "classifications": [
           {
-            "classification": "economics.txt",
-            "similarity": 23.333333333333336,
-            "confidence": 0.09222661396574441
-          },
-          {
             "classification": "chatbots.txt",
-            "similarity": 22.633540372670808,
-            "confidence": 0.08946063388407434
+            "similarity": 40.687370600414084,
+            "confidence": 0.15353724754873238
           },
           {
-            "classification": "philosophy.txt",
-            "similarity": 20.5,
-            "confidence": 0.08102766798418973
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 11,
-            "confidence": 0.043478260869565216
-          },
-          {
-            "classification": "physics.txt",
-            "similarity": 8.625,
-            "confidence": 0.03409090909090909
-          },
-          {
-            "classification": "nlp-nlu.txt",
-            "similarity": 7.857142857142858,
-            "confidence": 0.031055900621118016
+            "classification": "economics.txt",
+            "similarity": 22.779757085020243,
+            "confidence": 0.08596134749064242
           }
         ]
       }
@@ -297,8 +307,8 @@
   "selfAnalysis": {
     "statistics": {
       "accuracy": 1,
-      "confidence": 0.5294722668248805,
-      "confidenceStdDev": 0.12701998503329054,
+      "confidence": 0.42698034305434823,
+      "confidenceStdDev": 0.15457710510741843,
       "msPerString": 5.9
     },
     "testResults": [
@@ -310,23 +320,23 @@
         "classifications": [
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 382.78018575851394,
-            "confidence": 0.6047080343736397
-          },
-          {
-            "classification": "computer_science.txt",
-            "similarity": 38,
-            "confidence": 0.06003159557661927
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 17.029411764705884,
-            "confidence": 0.026902704209645946
+            "similarity": 276.0214536340852,
+            "confidence": 0.69178309181475
           },
           {
             "classification": "chatbots.txt",
-            "similarity": 15.600000000000001,
-            "confidence": 0.024644549763033177
+            "similarity": 11.15,
+            "confidence": 0.027944862155388474
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 8.7,
+            "confidence": 0.021804511278195486
+          },
+          {
+            "classification": "computer_science.txt",
+            "similarity": 4,
+            "confidence": 0.010025062656641603
           }
         ]
       },
@@ -338,33 +348,28 @@
         "classifications": [
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 568.3333333333333,
-            "confidence": 0.6773937226857369
+            "similarity": 427.7084419974886,
+            "confidence": 0.535975491224923
           },
           {
             "classification": "economics.txt",
-            "similarity": 21,
-            "confidence": 0.025029797377830752
-          },
-          {
-            "classification": "chatbots.txt",
-            "similarity": 19.88649237472767,
-            "confidence": 0.02370261308072428
-          },
-          {
-            "classification": "nlp-nlu.txt",
-            "similarity": 13.92156862745098,
-            "confidence": 0.0165930496155554
+            "similarity": 51.19288606130712,
+            "confidence": 0.0641514862923648
           },
           {
             "classification": "chemistry.txt",
-            "similarity": 8.518518518518517,
-            "confidence": 0.010153180594181785
+            "similarity": 21.217391304347828,
+            "confidence": 0.02658820965457121
           },
           {
-            "classification": "physics.txt",
-            "similarity": 5.378787878787879,
-            "confidence": 0.006410950987828222
+            "classification": "chatbots.txt",
+            "similarity": 16.44144880174292,
+            "confidence": 0.02060331930042972
+          },
+          {
+            "classification": "nlp-nlu.txt",
+            "similarity": 6.72,
+            "confidence": 0.008421052631578947
           }
         ]
       },
@@ -376,28 +381,23 @@
         "classifications": [
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 179,
-            "confidence": 0.6911196911196911
+            "similarity": 118,
+            "confidence": 0.4701195219123506
+          },
+          {
+            "classification": "chemistry.txt",
+            "similarity": 10.625,
+            "confidence": 0.04233067729083665
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 10,
+            "confidence": 0.0398406374501992
           },
           {
             "classification": "chatbots.txt",
             "similarity": 5.823529411764706,
-            "confidence": 0.022484669543493072
-          },
-          {
-            "classification": "computer_science.txt",
-            "similarity": 5,
-            "confidence": 0.019305019305019305
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 5,
-            "confidence": 0.019305019305019305
-          },
-          {
-            "classification": "philosophy.txt",
-            "similarity": 0.2857142857142857,
-            "confidence": 0.0011031439602868173
+            "confidence": 0.02320131239746895
           }
         ]
       },
@@ -409,38 +409,33 @@
         "classifications": [
           {
             "classification": "chemistry.txt",
-            "similarity": 502.695652173913,
-            "confidence": 0.4390355040820201
+            "similarity": 214.33333333333334,
+            "confidence": 0.2322137955940773
           },
           {
             "classification": "economics.txt",
-            "similarity": 100.75,
-            "confidence": 0.08799126637554586
-          },
-          {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 51.71231768231768,
-            "confidence": 0.045163596229098414
-          },
-          {
-            "classification": "nlp-nlu.txt",
-            "similarity": 20.75483870967742,
-            "confidence": 0.0181264966896746
-          },
-          {
-            "classification": "physics.txt",
-            "similarity": 14.545454545454545,
-            "confidence": 0.012703453751488685
+            "similarity": 114.18876811594201,
+            "confidence": 0.12371480835963382
           },
           {
             "classification": "chatbots.txt",
-            "similarity": 9,
-            "confidence": 0.007860262008733625
+            "similarity": 51.46153846153846,
+            "confidence": 0.05575464622051837
           },
           {
-            "classification": "philosophy.txt",
-            "similarity": 4.78125,
-            "confidence": 0.004175764192139738
+            "classification": "nlp-nlu.txt",
+            "similarity": 32.779761904761905,
+            "confidence": 0.03551436826084713
+          },
+          {
+            "classification": "artificial_intelligence.txt",
+            "similarity": 30.960692640692642,
+            "confidence": 0.03354354565622172
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 22.72222222222222,
+            "confidence": 0.024617792223426024
           }
         ]
       },
@@ -452,28 +447,28 @@
         "classifications": [
           {
             "classification": "computer_science.txt",
-            "similarity": 190.93548387096774,
-            "confidence": 0.5439757375241246
+            "similarity": 110,
+            "confidence": 0.3363914373088685
+          },
+          {
+            "classification": "artificial_intelligence.txt",
+            "similarity": 13.609204524721767,
+            "confidence": 0.041618362460922834
           },
           {
             "classification": "nlp-nlu.txt",
-            "similarity": 15.866666666666667,
-            "confidence": 0.04520417853751187
+            "similarity": 10.892857142857142,
+            "confidence": 0.03331148973350808
           },
           {
-            "classification": "chemistry.txt",
-            "similarity": 11.714285714285714,
-            "confidence": 0.03337403337403337
+            "classification": "economics.txt",
+            "similarity": 10.166666666666666,
+            "confidence": 0.031090723751274207
           },
           {
-            "classification": "philosophy.txt",
-            "similarity": 8.097902097902098,
-            "confidence": 0.023070946147869226
-          },
-          {
-            "classification": "physics.txt",
-            "similarity": 2.227272727272727,
-            "confidence": 0.006345506345506345
+            "classification": "chatbots.txt",
+            "similarity": 4.238095238095237,
+            "confidence": 0.01296053589631571
           }
         ]
       },
@@ -485,23 +480,28 @@
         "classifications": [
           {
             "classification": "economics.txt",
-            "similarity": 307.56,
-            "confidence": 0.5204060913705584
+            "similarity": 260.2,
+            "confidence": 0.6300242130750605
           },
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 61.58730158730159,
-            "confidence": 0.10420863212741385
-          },
-          {
-            "classification": "computer_science.txt",
-            "similarity": 8.593406593406593,
-            "confidence": 0.014540451088674439
+            "similarity": 11.52,
+            "confidence": 0.027893462469733656
           },
           {
             "classification": "chatbots.txt",
-            "similarity": 7.319444444444445,
-            "confidence": 0.01238484677570972
+            "similarity": 10,
+            "confidence": 0.024213075060532687
+          },
+          {
+            "classification": "chemistry.txt",
+            "similarity": 7.5,
+            "confidence": 0.018159806295399514
+          },
+          {
+            "classification": "computer_science.txt",
+            "similarity": 7.269230769230769,
+            "confidence": 0.017601043024771838
           }
         ]
       },
@@ -513,28 +513,33 @@
         "classifications": [
           {
             "classification": "nlp-nlu.txt",
-            "similarity": 287.8235294117647,
-            "confidence": 0.49032969235394325
-          },
-          {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 22.12121212121212,
-            "confidence": 0.03768519952506324
-          },
-          {
-            "classification": "chatbots.txt",
-            "similarity": 20.614973262032088,
-            "confidence": 0.035119204875693505
+            "similarity": 212.25925925925927,
+            "confidence": 0.40662693344685685
           },
           {
             "classification": "chemistry.txt",
-            "similarity": 14.726190476190478,
-            "confidence": 0.025087206944106436
+            "similarity": 33.90756302521008,
+            "confidence": 0.06495701728967448
+          },
+          {
+            "classification": "economics.txt",
+            "similarity": 31.304347826086953,
+            "confidence": 0.05997001499250374
           },
           {
             "classification": "physics.txt",
-            "similarity": 3.888888888888889,
-            "confidence": 0.006625023660798789
+            "similarity": 19.85333333333333,
+            "confidence": 0.038033205619412515
+          },
+          {
+            "classification": "artificial_intelligence.txt",
+            "similarity": 10.64,
+            "confidence": 0.02038314176245211
+          },
+          {
+            "classification": "chatbots.txt",
+            "similarity": 8.1,
+            "confidence": 0.015517241379310345
           }
         ]
       },
@@ -546,38 +551,38 @@
         "classifications": [
           {
             "classification": "nlp-nlu.txt",
-            "similarity": 701.4375,
-            "confidence": 0.427445155393053
-          },
-          {
-            "classification": "economics.txt",
-            "similarity": 72.30392156862746,
-            "confidence": 0.04406089065729888
-          },
-          {
-            "classification": "chatbots.txt",
-            "similarity": 54.32303921568628,
-            "confidence": 0.03310361926610986
+            "similarity": 339.6417748917749,
+            "confidence": 0.34586738787349786
           },
           {
             "classification": "artificial_intelligence.txt",
-            "similarity": 53.44300144300143,
-            "confidence": 0.0325673378689832
-          },
-          {
-            "classification": "computer_science.txt",
-            "similarity": 42.01965184390726,
-            "confidence": 0.025606125438090956
+            "similarity": 67.52328042328043,
+            "confidence": 0.06876097802778047
           },
           {
             "classification": "chemistry.txt",
-            "similarity": 31.883305100696408,
-            "confidence": 0.019429192626871667
+            "similarity": 48.12063086104006,
+            "confidence": 0.049002679084562184
+          },
+          {
+            "classification": "chatbots.txt",
+            "similarity": 29.05432692307692,
+            "confidence": 0.029586890960363463
           },
           {
             "classification": "philosophy.txt",
-            "similarity": 16.941176470588236,
-            "confidence": 0.010323690719432198
+            "similarity": 9.529411764705882,
+            "confidence": 0.009704085300107823
+          },
+          {
+            "classification": "physics.txt",
+            "similarity": 9.473684210526315,
+            "confidence": 0.009647336263265086
+          },
+          {
+            "classification": "computer_science.txt",
+            "similarity": 4.800000000000001,
+            "confidence": 0.004887983706720978
           }
         ]
       },
@@ -589,33 +594,28 @@
         "classifications": [
           {
             "classification": "philosophy.txt",
-            "similarity": 96,
-            "confidence": 0.27906976744186046
+            "similarity": 60,
+            "confidence": 0.24096385542168675
           },
           {
-            "classification": "chemistry.txt",
-            "similarity": 56.595238095238095,
-            "confidence": 0.16452104097452935
-          },
-          {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 12.055555555555555,
-            "confidence": 0.03504521963824289
-          },
-          {
-            "classification": "physics.txt",
-            "similarity": 5.115384615384615,
-            "confidence": 0.01487030411449016
+            "classification": "economics.txt",
+            "similarity": 21.680706521739133,
+            "confidence": 0.08707111052907282
           },
           {
             "classification": "computer_science.txt",
-            "similarity": 5,
-            "confidence": 0.014534883720930232
+            "similarity": 19.7841289145637,
+            "confidence": 0.07945433299021566
           },
           {
-            "classification": "chatbots.txt",
-            "similarity": 2.8260869565217392,
-            "confidence": 0.00821536905965622
+            "classification": "physics.txt",
+            "similarity": 10.333333333333332,
+            "confidence": 0.04149933065595716
+          },
+          {
+            "classification": "chemistry.txt",
+            "similarity": 4.521739130434782,
+            "confidence": 0.018159594901344507
           }
         ]
       },
@@ -627,28 +627,33 @@
         "classifications": [
           {
             "classification": "physics.txt",
-            "similarity": 286.3913043478261,
-            "confidence": 0.6212392719041782
-          },
-          {
-            "classification": "artificial_intelligence.txt",
-            "similarity": 21.141414141414142,
-            "confidence": 0.045859900523674925
-          },
-          {
-            "classification": "chemistry.txt",
-            "similarity": 9.658730158730158,
-            "confidence": 0.020951692318286676
-          },
-          {
-            "classification": "chatbots.txt",
-            "similarity": 9.545454545454545,
-            "confidence": 0.020705975152829816
+            "similarity": 135.22222222222223,
+            "confidence": 0.3798377028714108
           },
           {
             "classification": "economics.txt",
-            "similarity": 4.869565217391305,
-            "confidence": 0.010563048193907385
+            "similarity": 29.806451612903228,
+            "confidence": 0.08372598767669447
+          },
+          {
+            "classification": "nlp-nlu.txt",
+            "similarity": 14.166666666666668,
+            "confidence": 0.039794007490636704
+          },
+          {
+            "classification": "computer_science.txt",
+            "similarity": 12.222222222222223,
+            "confidence": 0.03433208489388265
+          },
+          {
+            "classification": "artificial_intelligence.txt",
+            "similarity": 7.318181818181818,
+            "confidence": 0.020556690500510726
+          },
+          {
+            "classification": "chatbots.txt",
+            "similarity": 6.777777777777778,
+            "confidence": 0.019038701622971287
           }
         ]
       }

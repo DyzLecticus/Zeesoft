@@ -143,18 +143,16 @@ function SymbolUtil() {
 
   this.generateNumArray = (str, characters) => {
     const indexes = [];
-    const counts = [];
     const transitions = [];
     const reversed = [];
     for (let c = 0; c < characters.length; c += 1) {
       const char = characters.substring(c, c + 1);
-      const { count, transition, reverse } = this.getCountTransitionReverse(char, str, characters);
+      const { transition, reverse } = this.getCountTransitionReverse(char, str, characters);
       indexes.push((str.indexOf(char) + 1));
-      counts.push(count);
       transitions.push(transition);
       reversed.push(reverse);
     }
-    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
+    return [...indexes, ...transitions, ...reversed];
   };
 }
 module.exports = new SymbolUtil();

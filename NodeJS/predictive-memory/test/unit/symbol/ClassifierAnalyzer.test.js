@@ -37,8 +37,8 @@ describe('ClassifierAnalyzer', () => {
     ];
     result = analyzer.analyze(classifier, testSet);
     expect(result.statistics.accuracy).toBe(0.6666666666666666);
-    expect(result.statistics.confidence).toBe(0.27796072291586443);
-    expect(result.statistics.confidenceStdDev).toBe(0.07082143822057696);
+    expect(result.statistics.confidence).toBe(0.2797945911900213);
+    expect(result.statistics.confidenceStdDev).toBe(0.03670292050635099);
   });
 
   test('Merges statistics correctly', () => {

@@ -14,7 +14,7 @@ describe('SymbolMap', () => {
 
     expect(symbol1.str).toBe('Test1');
     expect(symbol1.meta).toBe('Meta');
-    expect(symbol1.toString()).toBe('373,0=5,5=2,19=3,20=4,46=1,54=5,98=1,112=1,113=1,139=1,147=1,191=19,205=20,206=54,232=5,284=46,298=5,299=19,333=20');
+    expect(symbol1.toString()).toBe('279,4=2,18=3,19=4,45=1,53=5,97=19,111=20,112=54,138=5,190=46,204=5,205=19,239=20');
 
     expect(Object.keys(map.elements).length).toBe(4);
     expect(map.get('Something')).toBe(undefined);
