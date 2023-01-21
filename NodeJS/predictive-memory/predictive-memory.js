@@ -717,6 +717,12 @@ function PmClassifier(config) {
     this.recordInput = record;
   };
 
+  this.sequentialize = (str) => PmSymbolUtil.sequentialize(
+    str,
+    that.config.sequenceMaxLength,
+    that.config.characters,
+  );
+
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
   this.getOrAddClass = (cls) => {
@@ -734,7 +740,7 @@ function PmClassifier(config) {
     }
     const r = [];
     const clsIndex = that.getOrAddClass(cls);
-    const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
+    const sequences = that.sequentialize(str);
     sequences.forEach((sequence) => {
       const symbol = that.map.put(sequence);
       that.cache.process(that.getKey(symbol), { clsIndex });
@@ -797,7 +803,7 @@ function PmClassifier(config) {
 
   this.classify = (str) => {
     let classifications = [];
-    const sequences = PmSymbolUtil.sequentialize(str, that.config.sequenceMaxLength);
+    const sequences = that.sequentialize(str);
     const { results, totalCount } = that.classifySequences(sequences, classifications);
     classifications.forEach((classification) => {
       const c = classification;
@@ -1131,16 +1137,20 @@ function _PmSymbolUtil() {
     return r;
   };
 
-  this.tokenizeFormat = (str) => {
-    let r = str.toLowerCase();
+  this.tokenizeFormat = (str, characters) => {
+    const chars = characters || PmSymbolConstants.CLASSIFIER_CHARACTERS;
+    let r = str;
+    if (chars.indexOf(PmSymbolConstants.CAPITALS) < 0) {
+      r = r.toLowerCase();
+    }
     r = this.replaceExtensions(r);
-    r = this.spaceOutNonAllowedCharacters(r, PmSymbolConstants.CLASSIFIER_CHARACTERS);
+    r = this.spaceOutNonAllowedCharacters(r, chars);
     const spaceChars = PmSymbolConstants.NON_ALPHANUMERICS.replace(' ', '');
     r = this.spaceCharacters(r, spaceChars);
     return this.trim(r);
   };
 
-  this.tokenize = (str) => this.tokenizeFormat(str).split(' ');
+  this.tokenize = (str, characters) => this.tokenizeFormat(str, characters).split(' ');
 
   this.stringify = (tokens) => {
     let s = '';
@@ -1153,8 +1163,8 @@ function _PmSymbolUtil() {
     return s;
   };
 
-  this.parseSentences = (str) => {
-    const tokens = this.tokenize(str);
+  this.parseSentences = (str, characters) => {
+    const tokens = this.tokenize(str, characters);
     const ts = [];
     let seq = [];
     tokens.forEach((token) => {
@@ -1170,9 +1180,9 @@ function _PmSymbolUtil() {
     return ts.map(this.stringify);
   };
 
-  this.sequentialize = (str, maxLength) => {
+  this.sequentialize = (str, maxLength, characters) => {
     const max = maxLength || 8;
-    const tokens = this.tokenize(str);
+    const tokens = this.tokenize(str, characters);
     const ts = [];
     for (let i = 0; i < tokens.length; i += (max / 2)) {
       const seq = [];
@@ -1214,18 +1224,16 @@ function _PmSymbolUtil() {
 
   this.generateNumArray = (str, characters) => {
     const indexes = [];
-    const counts = [];
     const transitions = [];
     const reversed = [];
     for (let c = 0; c < characters.length; c += 1) {
       const char = characters.substring(c, c + 1);
-      const { count, transition, reverse } = this.getCountTransitionReverse(char, str, characters);
+      const { transition, reverse } = this.getCountTransitionReverse(char, str, characters);
       indexes.push((str.indexOf(char) + 1));
-      counts.push(count);
       transitions.push(transition);
       reversed.push(reverse);
     }
-    return [str.length, ...indexes, ...counts, ...transitions, ...reversed];
+    return [...indexes, ...transitions, ...reversed];
   };
 }
 const PmSymbolUtil = new _PmSymbolUtil();

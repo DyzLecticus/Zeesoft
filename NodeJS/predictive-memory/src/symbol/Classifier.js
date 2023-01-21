@@ -20,13 +20,11 @@ function Classifier(config) {
     this.recordInput = record;
   };
 
-  this.sequentialize = (str) => {
-    return SymbolUtil.sequentialize(
-      str,
-      that.config.sequenceMaxLength,
-      that.config.characters,
-    );
-  };
+  this.sequentialize = (str) => SymbolUtil.sequentialize(
+    str,
+    that.config.sequenceMaxLength,
+    that.config.characters,
+  );
 
   this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
 
@@ -108,7 +106,7 @@ function Classifier(config) {
 
   this.classify = (str) => {
     let classifications = [];
-    const sequences = that.sequentialize(str);;
+    const sequences = that.sequentialize(str);
     const { results, totalCount } = that.classifySequences(sequences, classifications);
     classifications.forEach((classification) => {
       const c = classification;
