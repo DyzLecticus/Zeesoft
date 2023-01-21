@@ -14,6 +14,9 @@ describe('SymbolUtil', () => {
   test('Formats strings for tokenization correctly', () => {
     let s = SymbolUtil.tokenizeFormat('What is  your @name?');
     expect(s).toBe('what is your name ?');
+    const characters = SymbolConstants.CAPITALS + SymbolConstants.CLASSIFIER_CHARACTERS;
+    s = SymbolUtil.tokenizeFormat('What is  your @name?', characters);
+    expect(s).toBe('What is your name ?');
     s = SymbolUtil.tokenizeFormat('This thing consist of something,something else (with an example), and another thing.');
     expect(s).toBe('this thing consist of something , something else ( with an example ) , and another thing .');
   });

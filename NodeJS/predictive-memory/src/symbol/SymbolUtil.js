@@ -60,16 +60,20 @@ function SymbolUtil() {
     return r;
   };
 
-  this.tokenizeFormat = (str) => {
-    let r = str.toLowerCase();
+  this.tokenizeFormat = (str, characters) => {
+    const chars = characters || SymbolConstants.CLASSIFIER_CHARACTERS;
+    let r = str;
+    if (chars.indexOf(SymbolConstants.CAPITALS) < 0) {
+      r = r.toLowerCase();
+    }
     r = this.replaceExtensions(r);
-    r = this.spaceOutNonAllowedCharacters(r, SymbolConstants.CLASSIFIER_CHARACTERS);
+    r = this.spaceOutNonAllowedCharacters(r, chars);
     const spaceChars = SymbolConstants.NON_ALPHANUMERICS.replace(' ', '');
     r = this.spaceCharacters(r, spaceChars);
     return this.trim(r);
   };
 
-  this.tokenize = (str) => this.tokenizeFormat(str).split(' ');
+  this.tokenize = (str, characters) => this.tokenizeFormat(str, characters).split(' ');
 
   this.stringify = (tokens) => {
     let s = '';
@@ -82,8 +86,8 @@ function SymbolUtil() {
     return s;
   };
 
-  this.parseSentences = (str) => {
-    const tokens = this.tokenize(str);
+  this.parseSentences = (str, characters) => {
+    const tokens = this.tokenize(str, characters);
     const ts = [];
     let seq = [];
     tokens.forEach((token) => {
@@ -99,9 +103,9 @@ function SymbolUtil() {
     return ts.map(this.stringify);
   };
 
-  this.sequentialize = (str, maxLength) => {
+  this.sequentialize = (str, maxLength, characters) => {
     const max = maxLength || 8;
-    const tokens = this.tokenize(str);
+    const tokens = this.tokenize(str, characters);
     const ts = [];
     for (let i = 0; i < tokens.length; i += (max / 2)) {
       const seq = [];
