@@ -103,11 +103,12 @@ function SymbolUtil() {
     return ts.map(this.stringify);
   };
 
-  this.sequentialize = (str, maxLength, characters) => {
+  this.sequentialize = (str, maxLength, stepSize, characters) => {
     const max = maxLength || 8;
+    const step = stepSize || (max / 2);
     const tokens = this.tokenize(str, characters);
     const ts = [];
-    for (let i = 0; i < tokens.length; i += (max / 2)) {
+    for (let i = 0; i < tokens.length; i += step) {
       const seq = [];
       for (let j = i; j < tokens.length; j += 1) {
         seq.push(tokens[j]);
@@ -115,7 +116,7 @@ function SymbolUtil() {
           break;
         }
       }
-      if (seq.length > 1) {
+      if (seq.length > 1 || tokens.length === 1) {
         ts.push(seq);
       }
     }

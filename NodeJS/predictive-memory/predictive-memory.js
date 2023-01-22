@@ -720,6 +720,7 @@ function PmClassifier(config) {
   this.sequentialize = (str) => PmSymbolUtil.sequentialize(
     str,
     that.config.sequenceMaxLength,
+    that.config.sequenceStepSize,
     that.config.characters,
   );
 
@@ -883,6 +884,7 @@ function PmClassifierAnalyzer(testPercentage) {
 function PmClassifierConfig(characters) {
   this.characters = characters || PmSymbolConstants.CLASSIFIER_CHARACTERS;
   this.sequenceMaxLength = 4;
+  this.sequenceStepSize = 2;
   this.comparator = new PmComparator();
 
   this.cacheConfig = new PmCacheConfig();
@@ -1180,11 +1182,12 @@ function _PmSymbolUtil() {
     return ts.map(this.stringify);
   };
 
-  this.sequentialize = (str, maxLength, characters) => {
+  this.sequentialize = (str, maxLength, stepSize, characters) => {
     const max = maxLength || 8;
+    const step = stepSize || (max / 2);
     const tokens = this.tokenize(str, characters);
     const ts = [];
-    for (let i = 0; i < tokens.length; i += (max / 2)) {
+    for (let i = 0; i < tokens.length; i += step) {
       const seq = [];
       for (let j = i; j < tokens.length; j += 1) {
         seq.push(tokens[j]);
@@ -1192,7 +1195,7 @@ function _PmSymbolUtil() {
           break;
         }
       }
-      if (seq.length > 1) {
+      if (seq.length > 1 || tokens.length === 1) {
         ts.push(seq);
       }
     }

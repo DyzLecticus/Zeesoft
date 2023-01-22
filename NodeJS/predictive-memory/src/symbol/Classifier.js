@@ -23,6 +23,7 @@ function Classifier(config) {
   this.sequentialize = (str) => SymbolUtil.sequentialize(
     str,
     that.config.sequenceMaxLength,
+    that.config.sequenceStepSize,
     that.config.characters,
   );
 

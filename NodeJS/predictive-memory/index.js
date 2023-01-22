@@ -17,4 +17,5 @@ module.exports.SymbolConstants = require('./src/symbol/SymbolConstants');
 module.exports.SymbolUtil = require('./src/symbol/SymbolUtil');
 module.exports.Symbol = require('./src/symbol/Symbol');
 module.exports.SymbolMap = require('./src/symbol/SymbolMap');
+module.exports.SymbolClassifier = require('./src/symbol/SymbolClassifier');
 module.exports.MapAnalyzer = require('./src/symbol/MapAnalyzer');

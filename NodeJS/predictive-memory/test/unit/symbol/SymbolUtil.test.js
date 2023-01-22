@@ -51,6 +51,13 @@ describe('SymbolUtil', () => {
     expect(sequences.length).toBe(2);
     expect(sequences[0]).toBe('this string / sentence has exactly nine tokens');
     expect(sequences[1]).toBe('has exactly nine tokens .');
+    sequences = SymbolUtil.sequentialize('Narrow sequentialization.', 4, 1);
+    expect(sequences.length).toBe(2);
+    expect(sequences[0]).toBe('narrow sequentialization .');
+    expect(sequences[1]).toBe('sequentialization .');
+    sequences = SymbolUtil.sequentialize('Single');
+    expect(sequences.length).toBe(1);
+    expect(sequences[0]).toBe('single');
   });
 
   test('Generates numArrays correctly', () => {
