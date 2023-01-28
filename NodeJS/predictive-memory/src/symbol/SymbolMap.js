@@ -1,5 +1,4 @@
 const SymbolConstants = require('./SymbolConstants');
-const SymbolUtil = require('./SymbolUtil');
 const Symbol = require('./Symbol');
 
 function SymbolMap(characters) {
@@ -7,14 +6,7 @@ function SymbolMap(characters) {
   this.characters = characters || SymbolConstants.CHARACTERS;
   this.elements = {};
 
-  this.format = (str) => SymbolUtil.format(str);
-
-  this.generateNumArray = (str) => SymbolUtil.generateNumArray(str, that.characters);
-
-  this.createSymbol = (str, meta) => {
-    const s = that.format(str);
-    return new Symbol(s, that.generateNumArray(s), meta);
-  };
+  this.createSymbol = (str, meta) => new Symbol(str, meta, that.characters);
 
   this.getById = (id) => that.elements[id];
 

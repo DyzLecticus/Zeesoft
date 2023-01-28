@@ -122,42 +122,5 @@ function SymbolUtil() {
     }
     return ts.map(this.stringify);
   };
-
-  this.getCountTransitionReverse = (char, str, characters) => {
-    let count = 0;
-    let transition = -1;
-    let reverse = -1;
-    for (let i = 0; i < str.length; i += 1) {
-      const symChar = str.substring(i, i + 1);
-      if (symChar === char) {
-        count += 1;
-        if (transition === -1 && i < str.length - 1) {
-          const nextSymChar = str.substring(i + 1, i + 2);
-          transition = (characters.indexOf(nextSymChar) + 1);
-        }
-        if (i > 0) {
-          const prevSymChar = str.substring(i - 1, i);
-          reverse = (characters.indexOf(prevSymChar) + 1);
-        }
-      }
-    }
-    transition = (transition === -1) ? 0 : transition;
-    reverse = (reverse === -1) ? 0 : reverse;
-    return { count, transition, reverse };
-  };
-
-  this.generateNumArray = (str, characters) => {
-    const indexes = [];
-    const transitions = [];
-    const reversed = [];
-    for (let c = 0; c < characters.length; c += 1) {
-      const char = characters.substring(c, c + 1);
-      const { transition, reverse } = this.getCountTransitionReverse(char, str, characters);
-      indexes.push((str.indexOf(char) + 1));
-      transitions.push(transition);
-      reversed.push(reverse);
-    }
-    return [...indexes, ...transitions, ...reversed];
-  };
 }
 module.exports = new SymbolUtil();

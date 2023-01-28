@@ -34,15 +34,15 @@ describe('Classifier', () => {
 
     let result = classifier.classify('Do you understand the language I speak?');
     expect(result.classifications[0].classification).toBe('EN');
-    expect(result.classifications[0].confidence).toBe(0.473328129065834);
+    expect(result.classifications[0].confidence).toBe(0.3747294372294372);
 
     result = classifier.classify('Begrijp je de taal die ik spreek?');
     expect(result.classifications[0].classification).toBe('NL');
-    expect(result.classifications[0].confidence).toBe(0.27530721966205834);
+    expect(result.classifications[0].confidence).toBe(0.31616465863453813);
 
     result = classifier.classify('This is some nederlandse tekst.');
     expect(result.classifications[0].classification).toBe('NL');
-    expect(result.classifications[0].confidence).toBe(0.5833333333333334);
+    expect(result.classifications[0].confidence).toBe(0.48444444444444446);
 
     result = classifier.classify('What language do you speak?');
     expect(result.classifications[0].classification).toBe('EN');
@@ -50,6 +50,6 @@ describe('Classifier', () => {
 
     result = classifier.classify('Pizza!');
     expect(result.classifications[0].classification).toBe('NL');
-    expect(result.classifications[0].confidence).toBe(0.14285714285714285);
+    expect(result.classifications[0].confidence).toBe(0.08843537414965985);
   });
 });

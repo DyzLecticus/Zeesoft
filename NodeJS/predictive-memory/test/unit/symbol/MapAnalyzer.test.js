@@ -25,25 +25,25 @@ describe('MapAnalyzer', () => {
     const analysis2 = analyzer.analyze(createMap2());
 
     expect(analysis1.distances.length).toBe(16);
-    expect(analysis1.average).toBe(128.18101201407677);
-    expect(analysis1.stdDev).toBe(85.75470853729789);
+    expect(analysis1.average).toBe(58.44395647138755);
+    expect(analysis1.stdDev).toBe(42.230212906187525);
     expect(analysis1.min).toBe(0);
-    expect(analysis1.max).toBe(204.05146409668322);
+    expect(analysis1.max).toBe(109.78160137290766);
 
     expect(analysis2.distances.length).toBe(9);
-    expect(analysis2.average).toBe(129.9983808955344);
-    expect(analysis2.stdDev).toBe(98.67610442810862);
+    expect(analysis2.average).toBe(71.36439426973175);
+    expect(analysis2.stdDev).toBe(58.107776022909064);
     expect(analysis2.min).toBe(0);
-    expect(analysis2.max).toBe(219.33991884743642);
+    expect(analysis2.max).toBe(132.32535660258014);
   });
 
   test('Compares two maps correctly', () => {
     const analyzer = new MapAnalyzer();
     const analysis = analyzer.analyze(createMap1(), createMap2());
     expect(analysis.distances.length).toBe(12);
-    expect(analysis.average).toBe(213.46582433818492);
-    expect(analysis.stdDev).toBe(21.58514235518637);
-    expect(analysis.min).toBe(184.29324458590446);
-    expect(analysis.max).toBe(251.70021851400924);
+    expect(analysis.average).toBe(121.113820844754);
+    expect(analysis.stdDev).toBe(19.24556337213142);
+    expect(analysis.min).toBe(101.1582918005242);
+    expect(analysis.max).toBe(164.26807358704855);
   });
 });

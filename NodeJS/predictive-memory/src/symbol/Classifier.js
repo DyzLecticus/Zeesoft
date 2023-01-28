@@ -27,7 +27,7 @@ function Classifier(config) {
     that.config.characters,
   );
 
-  this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
+  this.getKey = (symbol) => ({ symNumArray: symbol.toNumArray() });
 
   this.getOrAddClass = (cls) => {
     let r = that.clss.indexOf(cls);

@@ -25,7 +25,7 @@ describe('SymbolClassifier', () => {
 
     let result = classifier.classify('Do you understand the language I speak?');
     expect(result.classification).toBe('EN');
-    expect(result.confidence).toBe(0.358974358974359);
+    expect(result.confidence).toBe(0.38461538461538464);
 
     result = classifier.classify('Begrijp je de taal die ik spreek?');
     expect(result.classification).toBe('NL');
@@ -37,6 +37,6 @@ describe('SymbolClassifier', () => {
 
     result = classifier.classify('Pizza!');
     expect(result.classification).toBe('NL');
-    expect(result.confidence).toBe(0.045454545454545456);
+    expect(result.confidence).toBe(0.0625);
   });
 });
