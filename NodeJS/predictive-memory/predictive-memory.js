@@ -724,7 +724,7 @@ function PmClassifier(config) {
     that.config.characters,
   );
 
-  this.getKey = (symbol) => ({ symNumArray: symbol.numArray });
+  this.getKey = (symbol) => ({ symNumArray: symbol.toNumArray() });
 
   this.getOrAddClass = (cls) => {
     let r = that.clss.indexOf(cls);
@@ -936,34 +936,35 @@ function PmMapAnalyzer() {
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
-function PmSymbol(str, numArray, meta) {
+function PmSymbol(str, meta, characters) {
   const that = this;
-  this.str = str;
-  this.numArray = numArray;
+  this.str = PmSymbolUtil.format(str);
   this.meta = meta || null;
 
-  this.toString = () => PmMathUtil.stringify(that.numArray);
+  this.length = 0;
+  this.keyValues = {};
 
-  this.equals = (other) => {
-    let r = false;
-    if (other.numArray) {
-      r = true;
-      for (let i = 0; i < that.numArray.length; i += 1) {
-        if (that.numArray[i] !== other.numArray[i]) {
-          r = false;
-          break;
-        }
-      }
+  this.toNumArray = () => {
+    const r = [that.length];
+    for (let i = 0; i < that.length; i += 1) {
+      const v = that.keyValues[`${i}`] || 0;
+      r[i] = v;
     }
     return r;
   };
 
+  this.toString = () => PmMathUtil.stringify(that.toNumArray());
+
   this.calculateDistance = (other) => {
-    let r = 0;
-    if (!that.equals(other)) {
-      that.numArray.forEach((num, index) => {
-        if (num !== other.numArray[index]) {
-          const diff = (num - other.numArray[index]);
+    let r = -1;
+    if (that === other) {
+      r = 0;
+    } else if (that.length === other.length) {
+      r = 0;
+      const otherNumArray = other.toNumArray();
+      that.toNumArray().forEach((num, index) => {
+        if (num !== otherNumArray[index]) {
+          const diff = (num - otherNumArray[index]);
           r += (diff * diff);
         }
       });
@@ -971,6 +972,69 @@ function PmSymbol(str, numArray, meta) {
     }
     return r;
   };
+
+  this.getIndexes = (s, chars) => {
+    const idxs = {};
+    for (let i = 0; i < s.length; i += 1) {
+      const c = s.substring(i, i + 1);
+      const idx = chars.indexOf(c);
+      if (!idxs[`${idx}`]) {
+        idxs[`${idx}`] = (i + 1);
+      }
+    }
+    return idxs;
+  };
+
+  this.getTransitions = (s, chars) => {
+    const r = {};
+    let pc = '';
+    for (let i = 0; i < s.length; i += 1) {
+      const c = s.substring(i, i + 1);
+      const idx = chars.indexOf(c);
+      const tIdx = (chars.length + idx);
+      const fIdx = ((chars.length * 2) + idx);
+      if (i < (s.length - 1) && !r[`${tIdx}`]) {
+        const nc = s.substring(i, 1);
+        r[`${tIdx}`] = chars.indexOf(nc);
+      }
+      if (pc.length > 0) {
+        r[`${fIdx}`] = chars.indexOf(pc);
+      }
+      pc = c;
+    }
+    return r;
+  };
+
+  this.mergeTransitions = (transitions) => {
+    const r = {};
+    transitions.forEach((transition) => {
+      Object.keys(transition).forEach((key) => {
+        let v = r[key];
+        if (!v) {
+          v = 0;
+        }
+        v += transition[key];
+        r[key] = v;
+      });
+    });
+    return r;
+  };
+
+  this.generateKeyValues = (chars) => {
+    const chrs = chars || PmSymbolConstants.CLASSIFIER_CHARACTERS;
+    that.length = (chrs.length * 3);
+    const s = PmSymbolUtil.tokenizeFormat(that.str, chrs);
+    const indexes = that.getIndexes(s, chrs);
+    const transitions = [];
+    const tokens = s.split(' ');
+    tokens.forEach((token) => {
+      transitions.push(that.getTransitions(token, chrs));
+    });
+    const merged = that.mergeTransitions(transitions);
+    that.keyValues = { ...indexes, ...merged };
+  };
+
+  this.generateKeyValues(characters);
 }
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
@@ -1035,14 +1099,7 @@ function PmSymbolMap(characters) {
   this.characters = characters || PmSymbolConstants.CHARACTERS;
   this.elements = {};
 
-  this.format = (str) => PmSymbolUtil.format(str);
-
-  this.generateNumArray = (str) => PmSymbolUtil.generateNumArray(str, that.characters);
-
-  this.createSymbol = (str, meta) => {
-    const s = that.format(str);
-    return new PmSymbol(s, that.generateNumArray(s), meta);
-  };
+  this.createSymbol = (str, meta) => new PmSymbol(str, meta, that.characters);
 
   this.getById = (id) => that.elements[id];
 
@@ -1200,43 +1257,6 @@ function _PmSymbolUtil() {
       }
     }
     return ts.map(this.stringify);
-  };
-
-  this.getCountTransitionReverse = (char, str, characters) => {
-    let count = 0;
-    let transition = -1;
-    let reverse = -1;
-    for (let i = 0; i < str.length; i += 1) {
-      const symChar = str.substring(i, i + 1);
-      if (symChar === char) {
-        count += 1;
-        if (transition === -1 && i < str.length - 1) {
-          const nextSymChar = str.substring(i + 1, i + 2);
-          transition = (characters.indexOf(nextSymChar) + 1);
-        }
-        if (i > 0) {
-          const prevSymChar = str.substring(i - 1, i);
-          reverse = (characters.indexOf(prevSymChar) + 1);
-        }
-      }
-    }
-    transition = (transition === -1) ? 0 : transition;
-    reverse = (reverse === -1) ? 0 : reverse;
-    return { count, transition, reverse };
-  };
-
-  this.generateNumArray = (str, characters) => {
-    const indexes = [];
-    const transitions = [];
-    const reversed = [];
-    for (let c = 0; c < characters.length; c += 1) {
-      const char = characters.substring(c, c + 1);
-      const { transition, reverse } = this.getCountTransitionReverse(char, str, characters);
-      indexes.push((str.indexOf(char) + 1));
-      transitions.push(transition);
-      reversed.push(reverse);
-    }
-    return [...indexes, ...transitions, ...reversed];
   };
 }
 const PmSymbolUtil = new _PmSymbolUtil();
