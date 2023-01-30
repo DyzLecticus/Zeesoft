@@ -18,9 +18,9 @@ const testSet = [
   { str: 'Are there other universes?', cls: 'physics.txt' },
   { str: 'Where do we put all the carbon?', cls: 'chatbots.txt' },
   { str: 'How do we get more energy from the sun?', cls: 'economics.txt' },
-  { str: 'What’s so weird about prime numbers?', cls: 'economics.txt' },
+  { str: 'What is so weird about prime numbers?', cls: 'economics.txt' },
   { str: 'When can I have a robot butler?', cls: 'chatbots.txt' },
-  { str: 'What’s at the bottom of a black hole?', cls: 'economics.txt' },
+  { str: 'What is at the bottom of a black hole?', cls: 'economics.txt' },
 ];
 
 const data = {};

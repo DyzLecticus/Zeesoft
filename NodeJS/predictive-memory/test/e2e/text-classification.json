@@ -1,9 +1,9 @@
 {
   "statistics": {
     "accuracy": 0.7307692307692308,
-    "confidence": 0.3215481604828196,
-    "confidenceStdDev": 0.13152578785803873,
-    "msPerString": 2.592307692307692
+    "confidence": 0.32044167080074154,
+    "confidenceStdDev": 0.1331355859693339,
+    "msPerString": 2.6807692307692306
   },
   "cacheSize": {
     "1": 1269,
@@ -13,9 +13,9 @@
   "analysis": {
     "statistics": {
       "accuracy": 0.46153846153846156,
-      "confidence": 0.24631658463381673,
-      "confidenceStdDev": 0.11267791892855585,
-      "msPerString": 1.3846153846153846
+      "confidence": 0.2441036052696606,
+      "confidenceStdDev": 0.11589751515114617,
+      "msPerString": 1.4615384615384615
     },
     "testResults": [
       {
@@ -220,14 +220,14 @@
       },
       {
         "test": {
-          "str": "What’s so weird about prime numbers?",
+          "str": "What is so weird about prime numbers?",
           "cls": "economics.txt"
         },
         "classifications": [
           {
             "classification": "economics.txt",
-            "similarity": 82.8,
-            "confidence": 0.11694915254237288
+            "similarity": 59.625,
+            "confidence": 0.08421610169491525
           },
           {
             "classification": "philosophy.txt",
@@ -261,24 +261,24 @@
       },
       {
         "test": {
-          "str": "What’s at the bottom of a black hole?",
+          "str": "What is at the bottom of a black hole?",
           "cls": "economics.txt"
         },
         "classifications": [
           {
             "classification": "chatbots.txt",
             "similarity": 82.24805900621118,
-            "confidence": 0.1628674435766558
+            "confidence": 0.16683176269008354
           },
           {
             "classification": "economics.txt",
-            "similarity": 31.692307692307693,
-            "confidence": 0.06275704493526275
+            "similarity": 39,
+            "confidence": 0.07910750507099391
           },
           {
             "classification": "chemistry.txt",
             "similarity": 14.333333333333332,
-            "confidence": 0.02838283828382838
+            "confidence": 0.029073698444895196
           }
         ]
       }
@@ -289,7 +289,7 @@
       "accuracy": 1,
       "confidence": 0.39677973633182245,
       "confidenceStdDev": 0.1503736567875216,
-      "msPerString": 3.8
+      "msPerString": 3.9
     },
     "testResults": [
       {
