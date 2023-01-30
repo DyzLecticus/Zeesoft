@@ -5,10 +5,31 @@
     "confidenceStdDev": 0.1470945230600999,
     "msPerString": 3.0076923076923077
   },
-  "cacheSize": {
-    "1": 1266,
-    "0.825": 71,
-    "0.875": 772
+  "cacheAnalysis": {
+    "level1": {
+      "mergeSimilarity": 0.825,
+      "elements": 71,
+      "sizeMin": 1,
+      "sizeMax": 61,
+      "sizeAverage": 10.873239436619718,
+      "sizeStdDev": 11.31614469617229
+    },
+    "level2": {
+      "mergeSimilarity": 0.875,
+      "elements": 772,
+      "sizeMin": 1,
+      "sizeMax": 22,
+      "sizeAverage": 1.6398963730569949,
+      "sizeStdDev": 1.4752129225772261
+    },
+    "level3": {
+      "mergeSimilarity": 1,
+      "elements": 1266,
+      "sizeMin": 1,
+      "sizeMax": 1,
+      "sizeAverage": 1,
+      "sizeStdDev": 0
+    }
   },
   "analysis": {
     "statistics": {

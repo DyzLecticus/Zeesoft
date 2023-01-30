@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-  SymbolUtil, ClassifierConfig, Classifier, ClassifierAnalyzer,
+  SymbolUtil, ClassifierConfig, Classifier, ClassifierAnalyzer, CacheAnalyzer,
 } = require('../../index');
 
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'text-classification.json');
@@ -50,9 +50,13 @@ const analyzer = new ClassifierAnalyzer();
 const analysis = analyzer.analyze(classifier, testSet);
 const selfAnalysis = analyzer.analyze(classifier);
 const statistics = analyzer.mergeStatistics([analysis.statistics, selfAnalysis.statistics]);
+
+const cacheAnalyzer = new CacheAnalyzer();
+const cacheAnalysis = cacheAnalyzer.analyze(classifier.cache);
+
 const results = {
   statistics,
-  cacheSize: classifier.cache.size(),
+  cacheAnalysis,
 };
 // eslint-disable-next-line no-console
 console.log(results);

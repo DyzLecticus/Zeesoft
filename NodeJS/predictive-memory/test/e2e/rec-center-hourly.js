@@ -7,7 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { PredictorConfig, Predictor, PredictorAnalyzer } = require('../../index');
+const {
+  PredictorConfig, Predictor, PredictorAnalyzer, CacheAnalyzer,
+} = require('../../index');
 
 const csvPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.csv');
 const jsonPath = path.join(__dirname, '../', '../', 'test', 'e2e', 'rec-center-hourly.json');
@@ -46,7 +48,8 @@ for (let i = 3; i < lines.length; i += 1) {
 
 const analyzer = new PredictorAnalyzer();
 const analysis = analyzer.analyze(predictor, ['kwh']);
-analysis.cacheSize = predictor.cache.size();
+const cacheAnalyzer = new CacheAnalyzer();
+analysis.cacheAnalysis = cacheAnalyzer.analyze(predictor.cache);
 analysis.msPerObject = (Date.now() - start) / (lines.length - 3000);
 // eslint-disable-next-line no-console
 console.log(analysis);

@@ -3,6 +3,7 @@ module.exports.Transformer = require('./src/Transformer');
 
 module.exports.CacheConfig = require('./src/cache/CacheConfig');
 module.exports.Cache = require('./src/cache/Cache');
+module.exports.CacheAnalyzer = require('./src/cache/CacheAnalyzer');
 
 module.exports.IndexGenerator = require('./src/predict/IndexGenerator');
 module.exports.PredictorConfig = require('./src/predict/PredictorConfig');
