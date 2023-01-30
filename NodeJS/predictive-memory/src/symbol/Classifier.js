@@ -4,6 +4,8 @@ const Cache = require('../cache/Cache');
 const MathUtil = require('../MathUtil');
 const SymbolUtil = require('./SymbolUtil');
 
+const CLASSIFIER_INDEX_MOD = 100;
+
 function Classifier(config) {
   const that = this;
   this.config = config || new ClassifierConfig();
@@ -43,7 +45,7 @@ function Classifier(config) {
       that.recordedInput.push({ str, cls });
     }
     const r = [];
-    const clsIndex = that.getOrAddClass(cls);
+    const clsIndex = (that.getOrAddClass(cls) + CLASSIFIER_INDEX_MOD);
     const sequences = that.sequentialize(str);
     sequences.forEach((sequence) => {
       const symbol = that.map.put(sequence);
@@ -78,7 +80,7 @@ function Classifier(config) {
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
       results.forEach((result) => {
-        const classification = that.clss[result.element.value.clsIndex];
+        const classification = that.clss[(result.element.value.clsIndex - CLASSIFIER_INDEX_MOD)];
         const id = MathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
         const count = result.element.count + result.parentCount;

@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+const CLASSIFIER_INDEX_MOD = 100;
 const TRANSFORMER_MINIMUM_VANUE = 0.0000000001;
 
 // eslint-disable-next-line no-unused-vars, no-underscore-dangle
@@ -740,7 +741,7 @@ function PmClassifier(config) {
       that.recordedInput.push({ str, cls });
     }
     const r = [];
-    const clsIndex = that.getOrAddClass(cls);
+    const clsIndex = (that.getOrAddClass(cls) + CLASSIFIER_INDEX_MOD);
     const sequences = that.sequentialize(str);
     sequences.forEach((sequence) => {
       const symbol = that.map.put(sequence);
@@ -775,7 +776,7 @@ function PmClassifier(config) {
       const cacheResult = that.cache.query(that.getKey(symbol), that.config.cacheQueryOptions);
       const results = cacheResult.getDeepestElements(2);
       results.forEach((result) => {
-        const classification = that.clss[result.element.value.clsIndex];
+        const classification = that.clss[(result.element.value.clsIndex - CLASSIFIER_INDEX_MOD)];
         const id = PmMathUtil.stringify(result.element.key.symNumArray);
         const resultSymbol = that.map.getById(id);
         const count = result.element.count + result.parentCount;
@@ -889,8 +890,8 @@ function PmClassifierConfig(characters) {
 
   this.cacheConfig = new PmCacheConfig();
   this.cacheConfig.initiatlizeDefault();
-  this.cacheConfig.mergeSimilarity = 0.80;
-  this.cacheConfig.subConfig.mergeSimilarity = 0.85;
+  this.cacheConfig.mergeSimilarity = 0.825;
+  this.cacheConfig.subConfig.mergeSimilarity = 0.875;
   this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
 
   this.setComparator = (com) => {

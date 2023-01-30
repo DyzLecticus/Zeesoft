@@ -27,8 +27,8 @@ describe('ClassifierAnalyzer', () => {
 
     let result = analyzer.analyze(classifier);
     expect(result.statistics.accuracy).toBe(1);
-    expect(result.statistics.confidence).toBe(0.9736842105263158);
-    expect(result.statistics.confidenceStdDev).toBe(0.05263157894736842);
+    expect(result.statistics.confidence).toBe(1);
+    expect(result.statistics.confidenceStdDev).toBe(0);
 
     const testSet = [
       { str: 'Berijp je deze taal die ik spreek?', cls: 'NL' },
@@ -37,8 +37,8 @@ describe('ClassifierAnalyzer', () => {
     ];
     result = analyzer.analyze(classifier, testSet);
     expect(result.statistics.accuracy).toBe(0.6666666666666666);
-    expect(result.statistics.confidence).toBe(0.2386100808977556);
-    expect(result.statistics.confidenceStdDev).toBe(0.037164569705356316);
+    expect(result.statistics.confidence).toBe(0.28191438002480207);
+    expect(result.statistics.confidenceStdDev).toBe(0.07477944093043117);
   });
 
   test('Merges statistics correctly', () => {

@@ -10,8 +10,8 @@ function ClassifierConfig(characters) {
 
   this.cacheConfig = new CacheConfig();
   this.cacheConfig.initiatlizeDefault();
-  this.cacheConfig.mergeSimilarity = 0.80;
-  this.cacheConfig.subConfig.mergeSimilarity = 0.85;
+  this.cacheConfig.mergeSimilarity = 0.825;
+  this.cacheConfig.subConfig.mergeSimilarity = 0.875;
   this.cacheQueryOptions = this.cacheConfig.getQueryOptions();
 
   this.setComparator = (com) => {
