@@ -10,7 +10,7 @@
   "author": "Dyz Lecticus",
   "license": "ISC",
   "dependencies": {
-    "botbuilder": "^3.14.0",
+    "botbuilder": "^4.19.0",
     "zmbf": "file:../ZMBF"
   }
 }
